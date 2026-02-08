@@ -100,7 +100,7 @@ export default function AccueilPage() {
 
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
 
-    toast.success('Passage créé ✓');
+    toast.success('Passage créé');
     setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone('');
     setSelectedExisting(null);
     setSubmitting(false);

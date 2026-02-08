@@ -75,7 +75,7 @@ export default function AideSoignantPage() {
 
     const { error } = await supabase.from('vitals').insert(obj);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
-    toast.success('Constantes enregistrées ✓');
+    toast.success('Constantes enregistrées');
     setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
     setView('menu');
   };
@@ -92,7 +92,7 @@ export default function AideSoignantPage() {
       procedure_type: 'autre' as any,
       notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}`,
     });
-    toast.success('Surveillance tracée ✓');
+    toast.success('Surveillance tracée');
     setSurvNotes('');
     setView('menu');
   };
@@ -109,7 +109,7 @@ export default function AideSoignantPage() {
       procedure_type: 'autre' as any,
       notes: `Brancardage: ${brancDestination || 'Transport effectué'}`,
     });
-    toast.success('Brancardage tracé ✓');
+    toast.success('Brancardage tracé');
     setBrancDestination('');
     setView('menu');
   };
@@ -126,7 +126,7 @@ export default function AideSoignantPage() {
       procedure_type: 'autre' as any,
       notes: `Confort: ${confortNotes || 'Soins de confort effectués'}`,
     });
-    toast.success('Soin de confort tracé ✓');
+    toast.success('Soin de confort tracé');
     setConfortNotes('');
     setView('menu');
   };
@@ -221,7 +221,7 @@ export default function AideSoignantPage() {
                 <CardContent className="space-y-4">
                   <Textarea value={survNotes} onChange={e => setSurvNotes(e.target.value)} placeholder="Notes de surveillance (optionnel)..." rows={4} className="text-base" />
                   <Button onClick={handleSurveillance} className="w-full touch-target-lg text-lg" disabled={!selectedEncounter}>
-                    <Check className="h-5 w-5 mr-2" /> Patient vu ✓
+                    <Check className="h-5 w-5 mr-2" /> Patient vu
                   </Button>
                 </CardContent>
               </Card>
@@ -237,7 +237,7 @@ export default function AideSoignantPage() {
                       placeholder="Radio, Scanner, Bloc..." className="mt-1 text-lg h-14" />
                   </div>
                   <Button onClick={handleBrancardage} className="w-full touch-target-lg text-lg" disabled={!selectedEncounter}>
-                    <Check className="h-5 w-5 mr-2" /> Transport effectué ✓
+                    <Check className="h-5 w-5 mr-2" /> Transport effectué
                   </Button>
                 </CardContent>
               </Card>
@@ -250,7 +250,7 @@ export default function AideSoignantPage() {
                   <Textarea value={confortNotes} onChange={e => setConfortNotes(e.target.value)} 
                     placeholder="Hydratation, installation, couverture, repas..." rows={4} className="text-base" />
                   <Button onClick={handleConfort} className="w-full touch-target-lg text-lg" disabled={!selectedEncounter}>
-                    <Check className="h-5 w-5 mr-2" /> Enregistrer ✓
+                    <Check className="h-5 w-5 mr-2" /> Enregistrer
                   </Button>
                 </CardContent>
               </Card>

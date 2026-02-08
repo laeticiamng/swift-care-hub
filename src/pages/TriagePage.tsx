@@ -215,7 +215,7 @@ export default function TriagePage() {
         await supabase.from('vitals').insert(vObj);
       }
 
-      toast.success('Tri validé — patient orienté ✓');
+      toast.success('Tri validé — patient orienté');
       setSubmitting(false);
       navigate(role === 'ioa' ? '/ioa-queue' : '/board');
       return;
@@ -249,7 +249,7 @@ export default function TriagePage() {
       await supabase.from('vitals').insert(vObj);
     }
 
-    toast.success('Tri validé — patient orienté ✓');
+    toast.success('Tri validé — patient orienté');
     setSubmitting(false);
     navigate(role === 'ioa' ? '/ioa-queue' : '/board');
   };

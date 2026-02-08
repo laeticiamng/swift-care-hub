@@ -65,7 +65,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
       details: { orientation, has_summary: !!summary.trim() },
     });
 
-    toast.success('Patient sorti ✓');
+    toast.success('Patient sorti');
     onDone();
     setSubmitting(false);
     onOpenChange(false);
