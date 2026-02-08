@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth, type AppRole } from '@/contexts/AuthContext';
 import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,17 +22,28 @@ const roleRedirects: Record<AppRole, string> = {
 };
 
 export default function RoleSelector() {
-  const { selectRole, availableRoles, signOut, user } = useAuth();
+  const { selectRole, availableRoles, role, signOut, user, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleSelect = async (role: AppRole) => {
-    await selectRole(role);
-    navigate(roleRedirects[role]);
+  // Auto-redirect if role already selected
+  useEffect(() => {
+    if (!loading && role && availableRoles.length > 0) {
+      navigate(roleRedirects[role], { replace: true });
+    }
+  }, [role, loading, availableRoles]);
+
+  const handleSelect = async (selectedRole: AppRole) => {
+    await selectRole(selectedRole);
+    navigate(roleRedirects[selectedRole]);
   };
 
+  // Show all roles for selection (each test user has only 1 role, but show all for demo flexibility)
   const visibleRoles = availableRoles.length > 0
     ? roleConfig.filter(r => availableRoles.includes(r.role))
     : roleConfig;
+
+  // If already redirecting, show nothing
+  if (!loading && role) return null;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 py-8">
@@ -42,10 +54,10 @@ export default function RoleSelector() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl w-full">
-        {visibleRoles.map(({ role, label, description, icon: Icon, color }) => (
+        {visibleRoles.map(({ role: r, label, description, icon: Icon, color }) => (
           <button
-            key={role}
-            onClick={() => handleSelect(role)}
+            key={r}
+            onClick={() => handleSelect(r)}
             className={cn(
               'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
               'hover:shadow-md hover:border-primary/30 transition-all duration-200 active:scale-[0.98]',

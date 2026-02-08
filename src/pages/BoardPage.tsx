@@ -122,7 +122,7 @@ export default function BoardPage() {
                   <Card
                     key={encounter.id}
                     className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]"
-                    onClick={() => navigate(`/patient/${encounter.id}`)}
+                    onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
                   >
                     <CardContent className="p-4 space-y-2">
                       <div className="flex items-center justify-between">
