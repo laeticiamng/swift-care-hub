@@ -174,6 +174,14 @@ export default function TriagePage() {
     if (!user) return;
     setSubmitting(true);
 
+    // Client-side date validation
+    if (!selectedExisting) {
+      const birthDate = new Date(dateNaissance);
+      const today = new Date();
+      if (birthDate > today) { toast.error('La date de naissance ne peut pas être dans le futur'); setSubmitting(false); return; }
+      if (birthDate < new Date('1900-01-01')) { toast.error('Date de naissance invalide'); setSubmitting(false); return; }
+    }
+
     let patientId: string;
 
     if (selectedExisting) {
