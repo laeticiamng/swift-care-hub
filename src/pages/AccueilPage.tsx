@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { LogOut, UserPlus, Search, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateAge } from '@/lib/vitals-utils';
+import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { toast } from 'sonner';
 
 export default function AccueilPage() {
@@ -119,9 +121,13 @@ export default function AccueilPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
-          <h1 className="text-xl font-bold">UrgenceOS — Accueil</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold">UrgenceOS — Accueil</h1>
+            <NetworkStatus />
+          </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>Rôle</Button>
+            <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>

@@ -11,6 +11,8 @@ interface DischargeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   encounterId: string;
+  patientId: string;
+  userId: string;
   onDone: () => void;
 }
 
@@ -23,7 +25,7 @@ const ORIENTATIONS = [
   { value: 'fugue', label: 'Fugue / Sortie contre avis' },
 ];
 
-export function DischargeDialog({ open, onOpenChange, encounterId, onDone }: DischargeDialogProps) {
+export function DischargeDialog({ open, onOpenChange, encounterId, patientId, userId, onDone }: DischargeDialogProps) {
   const [orientation, setOrientation] = useState('domicile');
   const [summary, setSummary] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -38,10 +40,33 @@ export function DischargeDialog({ open, onOpenChange, encounterId, onDone }: Dis
 
     if (error) {
       toast.error('Erreur lors de la sortie');
-    } else {
-      toast.success('Patient sorti ✓');
-      onDone();
+      setSubmitting(false);
+      return;
     }
+
+    // Save summary as CRH in timeline_items
+    if (summary.trim()) {
+      await supabase.from('timeline_items').insert({
+        patient_id: patientId,
+        item_type: 'crh' as any,
+        content: summary.trim(),
+        source_author: userId,
+        source_date: new Date().toISOString().split('T')[0],
+        source_document: `Sortie — ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`,
+      });
+    }
+
+    // Audit log
+    await supabase.from('audit_logs').insert({
+      user_id: userId,
+      action: 'patient_discharge',
+      resource_type: 'encounter',
+      resource_id: encounterId,
+      details: { orientation, has_summary: !!summary.trim() },
+    });
+
+    toast.success('Patient sorti ✓');
+    onDone();
     setSubmitting(false);
     onOpenChange(false);
   };

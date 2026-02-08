@@ -44,6 +44,7 @@ export default function PancartePage() {
     const channel = supabase.channel('pancarte-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'vitals', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [encounterId]);
