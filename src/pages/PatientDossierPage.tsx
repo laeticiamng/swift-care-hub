@@ -23,7 +23,8 @@ import { categorizePrescription, PRESCRIPTION_SECTIONS, PRESCRIPTION_TEMPLATES, 
 export default function PatientDossierPage() {
   const { encounterId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  const isReadOnly = role === 'as' || role === 'secretaire';
   const [encounter, setEncounter] = useState<any>(null);
   const [patient, setPatient] = useState<any>(null);
   const [vitals, setVitals] = useState<any[]>([]);
@@ -254,66 +255,79 @@ export default function PatientDossierPage() {
         ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} onBack={() => navigate(-1)} />
 
       <div className="max-w-7xl mx-auto p-4">
-        {encounter.status !== 'finished' && (
+        {isReadOnly && (
+          <div className="mb-4">
+            <Badge variant="secondary" className="text-sm px-3 py-1">👁️ Consultation seule</Badge>
+          </div>
+        )}
+        {!isReadOnly && encounter.status !== 'finished' && (
           <div className="flex justify-end mb-4">
             <Button variant="outline" onClick={() => setDischargeOpen(true)}>
               <DoorOpen className="h-4 w-4 mr-1" /> Préparer sortie
             </Button>
           </div>
         )}
-        <DischargeDialog open={dischargeOpen} onOpenChange={setDischargeOpen} encounterId={encounter.id} patientId={encounter.patient_id} userId={user?.id || ''} onDone={() => { fetchAll(); navigate('/board'); }} />
+        {!isReadOnly && (
+          <DischargeDialog open={dischargeOpen} onOpenChange={setDischargeOpen} encounterId={encounter.id} patientId={encounter.patient_id} userId={user?.id || ''}
+            motif={encounter.motif_sfmu} prescriptions={prescriptions} diagnostics={timeline.filter(t => t.item_type === 'diagnostic')} vitals={vitals}
+            onDone={() => { fetchAll(); navigate('/board'); }} />
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Timeline — 3 cols */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Medical Notes */}
-            <Card className="animate-in fade-in duration-300">
-              <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)}
-                    placeholder="Observation clinique, hypothèse diagnostique, compte-rendu..." rows={3} className="flex-1" />
-                  <Button onClick={handleSaveNote} disabled={!noteContent.trim() || savingNote} className="self-end">
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Diagnostic CIM-10 */}
-            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '25ms', animationFillMode: 'both' }}>
-              <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)}
-                    placeholder="Diagnostic CIM-10 (ex: J18.9 — Pneumonie)" className="flex-1" />
-                  <Button onClick={async () => {
-                    if (!diagnosticContent.trim() || !patient || !user) return;
-                    setSavingDiag(true);
-                    await supabase.from('timeline_items').insert({
-                      patient_id: patient.id, item_type: 'diagnostic' as any,
-                      content: diagnosticContent.trim(), source_author: user.email,
-                      source_date: new Date().toISOString().split('T')[0],
-                    });
-                    toast.success('Diagnostic enregistré');
-                    setDiagnosticContent(''); setSavingDiag(false); fetchAll();
-                  }} disabled={!diagnosticContent.trim() || savingDiag}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-                {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
-                  <div className="mt-3 space-y-1.5">
-                    {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
-                      <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
-                        <Microscope className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-sm font-medium">{d.content}</span>
-                        <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
-                      </div>
-                    ))}
+            {/* Medical Notes — hidden for AS/secretaire */}
+            {!isReadOnly && (
+              <Card className="animate-in fade-in duration-300">
+                <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)}
+                      placeholder="Observation clinique, hypothèse diagnostique, compte-rendu..." rows={3} className="flex-1" />
+                    <Button onClick={handleSaveNote} disabled={!noteContent.trim() || savingNote} className="self-end">
+                      <Send className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Diagnostic CIM-10 — hidden for AS/secretaire */}
+            {!isReadOnly && (
+              <Card className="animate-in fade-in duration-300" style={{ animationDelay: '25ms', animationFillMode: 'both' }}>
+                <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="flex gap-2">
+                    <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)}
+                      placeholder="Diagnostic CIM-10 (ex: J18.9 — Pneumonie)" className="flex-1" />
+                    <Button onClick={async () => {
+                      if (!diagnosticContent.trim() || !patient || !user) return;
+                      setSavingDiag(true);
+                      await supabase.from('timeline_items').insert({
+                        patient_id: patient.id, item_type: 'diagnostic' as any,
+                        content: diagnosticContent.trim(), source_author: user.email,
+                        source_date: new Date().toISOString().split('T')[0],
+                      });
+                      toast.success('Diagnostic enregistré');
+                      setDiagnosticContent(''); setSavingDiag(false); fetchAll();
+                    }} disabled={!diagnosticContent.trim() || savingDiag}>
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
+                    <div className="mt-3 space-y-1.5">
+                      {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
+                        <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
+                          <Microscope className="h-3.5 w-3.5 text-primary" />
+                          <span className="text-sm font-medium">{d.content}</span>
+                          <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -500,6 +514,7 @@ export default function PatientDossierPage() {
               </CardContent>
             </Card>
 
+            {!isReadOnly && (
             <Card className="animate-in fade-in duration-300" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Prescriptions</CardTitle>
@@ -652,7 +667,9 @@ export default function PatientDossierPage() {
                 ))}
               </CardContent>
             </Card>
+            )}
 
+            {!isReadOnly && (
             <Card className="animate-in fade-in duration-300" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -686,6 +703,7 @@ export default function PatientDossierPage() {
                 ))}
               </CardContent>
             </Card>
+            )}
           </div>
         </div>
       </div>

@@ -14,7 +14,20 @@ interface DischargeDialogProps {
   patientId: string;
   userId: string;
   onDone: () => void;
+  motif?: string | null;
+  prescriptions?: any[];
+  diagnostics?: any[];
+  vitals?: any[];
 }
+
+const GEMSA_MAP: Record<string, string> = {
+  domicile: '1',
+  hospitalisation: '4',
+  uhcd: '3',
+  transfert: '5',
+  deces: '6',
+  fugue: '2',
+};
 
 const ORIENTATIONS = [
   { value: 'domicile', label: 'Retour à domicile' },
@@ -25,10 +38,36 @@ const ORIENTATIONS = [
   { value: 'fugue', label: 'Fugue / Sortie contre avis' },
 ];
 
-export function DischargeDialog({ open, onOpenChange, encounterId, patientId, userId, onDone }: DischargeDialogProps) {
+export function DischargeDialog({ open, onOpenChange, encounterId, patientId, userId, onDone, motif, prescriptions = [], diagnostics = [], vitals = [] }: DischargeDialogProps) {
   const [orientation, setOrientation] = useState('domicile');
   const [ccmuSortie, setCcmuSortie] = useState('');
-  const [gemsa, setGemsa] = useState('');
+  const [gemsa, setGemsa] = useState(GEMSA_MAP['domicile'] || '');
+
+  const handleOrientationChange = (value: string) => {
+    setOrientation(value);
+    setGemsa(GEMSA_MAP[value] || '');
+  };
+
+  const generateCRH = () => {
+    const parts: string[] = [];
+    if (motif) parts.push(`Motif : ${motif}`);
+    if (diagnostics.length > 0) parts.push(`Diagnostic : ${diagnostics.map(d => d.content).join(', ')}`);
+    if (prescriptions.length > 0) {
+      const rxList = prescriptions.filter(rx => rx.status === 'active' || rx.status === 'completed').map(rx => `${rx.medication_name} ${rx.dosage} ${rx.route}`);
+      if (rxList.length > 0) parts.push(`Traitements : ${rxList.join(' ; ')}`);
+    }
+    if (vitals.length > 0) {
+      const last = vitals[vitals.length - 1];
+      const vParts = [];
+      if (last.fc) vParts.push(`FC ${last.fc}`);
+      if (last.pa_systolique) vParts.push(`PA ${last.pa_systolique}/${last.pa_diastolique || '?'}`);
+      if (last.spo2) vParts.push(`SpO₂ ${last.spo2}%`);
+      if (last.temperature) vParts.push(`T° ${last.temperature}°C`);
+      if (vParts.length > 0) parts.push(`Dernières constantes : ${vParts.join(', ')}`);
+    }
+    parts.push(`Orientation : ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`);
+    setSummary(parts.join('\n'));
+  };
   const [summary, setSummary] = useState('');
   const [ordonnance, setOrdonnance] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -98,7 +137,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
         <div className="space-y-4">
           <div>
             <Label>Orientation</Label>
-            <Select value={orientation} onValueChange={setOrientation}>
+            <Select value={orientation} onValueChange={handleOrientationChange}>
               <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {ORIENTATIONS.map(o => (
@@ -132,8 +171,13 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
             </div>
           </div>
           <div>
-            <Label>Résumé de sortie</Label>
-            <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Synthèse clinique, consignes de sortie..." className="mt-1" rows={3} />
+            <div className="flex items-center justify-between mb-1">
+              <Label>Résumé de sortie</Label>
+              <Button type="button" variant="outline" size="sm" onClick={generateCRH} className="text-xs h-7">
+                ✨ Générer CRH
+              </Button>
+            </div>
+            <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Synthèse clinique, consignes de sortie..." className="mt-1" rows={4} />
           </div>
           <div>
             <Label>Ordonnance de sortie (optionnel)</Label>
