@@ -1,0 +1,287 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { PatientBanner } from '@/components/urgence/PatientBanner';
+import { calculateAge, isVitalAbnormal } from '@/lib/vitals-utils';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp } from 'lucide-react';
+import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
+
+export default function PancartePage() {
+  const { encounterId } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [encounter, setEncounter] = useState<any>(null);
+  const [patient, setPatient] = useState<any>(null);
+  const [vitals, setVitals] = useState<any[]>([]);
+  const [prescriptions, setPrescriptions] = useState<any[]>([]);
+  const [administrations, setAdministrations] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]);
+  const [resultsOpen, setResultsOpen] = useState(false);
+
+  // Vitals input
+  const [showVitalsInput, setShowVitalsInput] = useState(false);
+  const [newVitals, setNewVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+
+  // Procedures
+  const [procType, setProcType] = useState('');
+
+  // DAR
+  const [darResultats, setDarResultats] = useState('');
+  const [darCible, setDarCible] = useState('');
+
+  useEffect(() => {
+    if (!encounterId) return;
+    fetchAll();
+
+    const channel = supabase.channel('pancarte-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [encounterId]);
+
+  const fetchAll = async () => {
+    const { data: enc } = await supabase.from('encounters').select('*').eq('id', encounterId!).single();
+    if (!enc) return;
+    setEncounter(enc);
+
+    const [patRes, vitRes, rxRes, admRes, resRes] = await Promise.all([
+      supabase.from('patients').select('*').eq('id', enc.patient_id).single(),
+      supabase.from('vitals').select('*').eq('encounter_id', encounterId!).order('recorded_at', { ascending: true }),
+      supabase.from('prescriptions').select('*').eq('encounter_id', encounterId!).order('created_at', { ascending: false }),
+      supabase.from('administrations').select('*').eq('encounter_id', encounterId!).order('administered_at', { ascending: false }),
+      supabase.from('results').select('*').eq('encounter_id', encounterId!).order('received_at', { ascending: false }),
+    ]);
+
+    if (patRes.data) setPatient(patRes.data);
+    if (vitRes.data) setVitals(vitRes.data);
+    if (rxRes.data) setPrescriptions(rxRes.data);
+    if (admRes.data) setAdministrations(admRes.data);
+    if (resRes.data) setResults(resRes.data);
+  };
+
+  const handleAdminister = async (rx: any) => {
+    if (!user || !encounter) return;
+    await supabase.from('administrations').insert({
+      prescription_id: rx.id,
+      encounter_id: encounter.id,
+      patient_id: encounter.patient_id,
+      administered_by: user.id,
+      dose_given: rx.dosage,
+      route: rx.route,
+    });
+    await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
+    fetchAll();
+  };
+
+  const handleSaveVitals = async () => {
+    if (!user || !encounter) return;
+    const obj: any = { encounter_id: encounter.id, patient_id: encounter.patient_id, recorded_by: user.id };
+    if (newVitals.fc) obj.fc = parseInt(newVitals.fc);
+    if (newVitals.pa_systolique) obj.pa_systolique = parseInt(newVitals.pa_systolique);
+    if (newVitals.pa_diastolique) obj.pa_diastolique = parseInt(newVitals.pa_diastolique);
+    if (newVitals.spo2) obj.spo2 = parseInt(newVitals.spo2);
+    if (newVitals.temperature) obj.temperature = parseFloat(newVitals.temperature);
+    await supabase.from('vitals').insert(obj);
+    setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+    setShowVitalsInput(false);
+    fetchAll();
+  };
+
+  const handleProcedure = async () => {
+    if (!user || !encounter || !procType) return;
+    await supabase.from('procedures').insert({
+      encounter_id: encounter.id,
+      patient_id: encounter.patient_id,
+      performed_by: user.id,
+      procedure_type: procType as any,
+    });
+    setProcType('');
+    fetchAll();
+  };
+
+  const handleDAR = async () => {
+    if (!user || !encounter) return;
+    await supabase.from('transmissions').insert({
+      encounter_id: encounter.id,
+      patient_id: encounter.patient_id,
+      author_id: user.id,
+      donnees: `Dernières constantes disponibles`,
+      actions: `Administrations et actes tracés`,
+      resultats: darResultats,
+      cible: darCible,
+    });
+    setDarResultats('');
+    setDarCible('');
+    fetchAll();
+  };
+
+  if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground">Chargement...</div>;
+
+  const age = calculateAge(patient.date_naissance);
+  const isAdministered = (rxId: string) => administrations.some(a => a.prescription_id === rxId);
+  const newResults = results.filter(r => !r.is_read).length;
+
+  return (
+    <div className="min-h-screen bg-background pb-8">
+      <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []}
+        onBack={() => navigate(-1)} />
+
+      <div className="max-w-3xl mx-auto p-4 space-y-4">
+        {/* Section 1 — Constantes */}
+        <Card>
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-base">Constantes</CardTitle>
+            <Button size="sm" variant="outline" onClick={() => setShowVitalsInput(!showVitalsInput)}>
+              <Plus className="h-4 w-4 mr-1" /> Saisir
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-2">
+              {['fc', 'pa_systolique', 'spo2', 'temperature'].map(key => {
+                const data = vitals.map(v => ({ value: v[key] })).filter(d => d.value != null);
+                const last = data.length > 0 ? data[data.length - 1].value : null;
+                const abnormal = isVitalAbnormal(key, last);
+                const labels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA', spo2: 'SpO₂', temperature: 'T°' };
+                return (
+                  <div key={key} className={cn('p-2 rounded-lg border text-center', abnormal && 'border-medical-critical bg-medical-critical/5')}>
+                    <p className="text-xs text-muted-foreground">{labels[key]}</p>
+                    <p className={cn('text-lg font-bold', abnormal && 'text-medical-critical')}>{last ?? '—'}</p>
+                    {data.length > 1 && (
+                      <ResponsiveContainer width="100%" height={24}>
+                        <LineChart data={data}><YAxis hide domain={['auto', 'auto']} /><Line type="monotone" dataKey="value" stroke={abnormal ? 'hsl(var(--medical-critical))' : 'hsl(var(--primary))'} strokeWidth={1.5} dot={false} /></LineChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {showVitalsInput && (
+              <div className="grid grid-cols-5 gap-2 mt-3">
+                <Input type="number" placeholder="FC" value={newVitals.fc} onChange={e => setNewVitals({ ...newVitals, fc: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="PA sys" value={newVitals.pa_systolique} onChange={e => setNewVitals({ ...newVitals, pa_systolique: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="PA dia" value={newVitals.pa_diastolique} onChange={e => setNewVitals({ ...newVitals, pa_diastolique: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="SpO₂" value={newVitals.spo2} onChange={e => setNewVitals({ ...newVitals, spo2: e.target.value })} className="text-center h-10" />
+                <Button onClick={handleSaveVitals} size="sm" className="h-10">OK</Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Section 2 — Prescriptions with ✓ Administré */}
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-base">Prescriptions</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            {prescriptions.length === 0 && <p className="text-sm text-muted-foreground">Aucune prescription</p>}
+            {prescriptions.map(rx => {
+              const done = isAdministered(rx.id) || rx.status === 'completed';
+              return (
+                <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
+                  done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
+                  rx.priority === 'stat' && !done && 'border-medical-critical/30',
+                )}>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                    <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+                  </div>
+                  {done ? (
+                    <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                  ) : (
+                    <Button size="sm" onClick={() => handleAdminister(rx)}
+                      className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
+                      <Check className="h-4 w-4 mr-1" /> Administré
+                    </Button>
+                  )}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Section 3 — Actes */}
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-base">Actes de soins</CardTitle></CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <Select value={procType} onValueChange={setProcType}>
+                <SelectTrigger className="flex-1"><SelectValue placeholder="Sélectionner un acte" /></SelectTrigger>
+                <SelectContent>
+                  {[['vvp', 'VVP'], ['prelevement', 'Prélèvement sanguin'], ['pansement', 'Pansement'], ['sondage', 'Sondage'], ['ecg', 'ECG'], ['autre', 'Autre']].map(([v, l]) => (
+                    <SelectItem key={v} value={v}>{l}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button onClick={handleProcedure} disabled={!procType} className="touch-target">
+                <Plus className="h-4 w-4 mr-1" /> Tracer
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 4 — Transmissions DAR */}
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-base">Transmissions DAR</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-accent/50">
+                <p className="text-xs font-medium text-muted-foreground mb-1">D — Données</p>
+                <p className="text-sm">Auto-alimenté depuis constantes</p>
+              </div>
+              <div className="p-3 rounded-lg bg-accent/50">
+                <p className="text-xs font-medium text-muted-foreground mb-1">A — Actions</p>
+                <p className="text-sm">Auto-alimenté depuis actes</p>
+              </div>
+            </div>
+            <div>
+              <Label>Cible</Label>
+              <Input value={darCible} onChange={e => setDarCible(e.target.value)} placeholder="Douleur, respiratoire..." className="mt-1" />
+            </div>
+            <div>
+              <Label>R — Résultats</Label>
+              <Textarea value={darResultats} onChange={e => setDarResultats(e.target.value)} placeholder="Évaluation clinique..." className="mt-1" rows={3} />
+            </div>
+            <Button onClick={handleDAR} disabled={!darResultats} className="w-full touch-target">Valider transmission</Button>
+          </CardContent>
+        </Card>
+
+        {/* Section 5 — Résultats */}
+        <Card>
+          <CardHeader className="pb-2 cursor-pointer" onClick={() => setResultsOpen(!resultsOpen)}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                Résultats
+                {newResults > 0 && <Badge className="bg-medical-critical text-medical-critical-foreground">{newResults}</Badge>}
+              </CardTitle>
+              {resultsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </div>
+          </CardHeader>
+          {resultsOpen && (
+            <CardContent className="space-y-2">
+              {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
+              {results.map(r => (
+                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical')}>
+                  <div className="flex items-center gap-2">
+                    {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
+                    <span className="font-medium text-sm">{r.title}</span>
+                    {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}
