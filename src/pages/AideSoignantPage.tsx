@@ -34,7 +34,7 @@ export default function AideSoignantPage() {
   const [view, setView] = useState<ASView>('menu');
   const [encounters, setEncounters] = useState<EncounterItem[]>([]);
   const [selectedEncounter, setSelectedEncounter] = useState<string>('');
-  const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '' });
+  const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
   const [survNotes, setSurvNotes] = useState('');
   const [brancDestination, setBrancDestination] = useState('');
   const [confortNotes, setConfortNotes] = useState('');
@@ -60,10 +60,11 @@ export default function AideSoignantPage() {
     if (vitals.temperature) obj.temperature = parseFloat(vitals.temperature);
     if (vitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(vitals.frequence_respiratoire);
     if (vitals.gcs) obj.gcs = parseInt(vitals.gcs);
+    if (vitals.eva_douleur) obj.eva_douleur = parseInt(vitals.eva_douleur);
     const { error } = await supabase.from('vitals').insert(obj);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constantes enregistrées');
-    setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '' });
+    setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
     setView('menu');
   };
 
@@ -181,6 +182,7 @@ export default function AideSoignantPage() {
                     { key: 'temperature', label: 'Température (°C)', placeholder: '37.0' },
                     { key: 'frequence_respiratoire', label: 'FR (/min)', placeholder: '16' },
                     { key: 'gcs', label: 'GCS (/15)', placeholder: '15' },
+                    { key: 'eva_douleur', label: 'EVA douleur (/10)', placeholder: '0' },
                   ].map(v => {
                     const val = vitals[v.key as keyof typeof vitals];
                     const abnormal = val ? isVitalAbnormal(v.key, parseFloat(val)) : false;

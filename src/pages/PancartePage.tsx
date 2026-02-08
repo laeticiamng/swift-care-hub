@@ -131,8 +131,9 @@ export default function PancartePage() {
   const handleDAR = async () => {
     if (!user || !encounter) return;
     const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
+    const poidsStr = patient?.poids ? `Poids ${patient.poids} kg | ` : '';
     const donneesAuto = lastVital
-      ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
+      ? `${poidsStr}FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
       : 'Pas de constantes récentes';
     const recentProcs = procedures.slice(0, 3);
     const recentAdmins = administrations.slice(0, 3);
@@ -164,8 +165,9 @@ export default function PancartePage() {
   const activeRx = prescriptions.filter(rx => rx.status === 'active').length;
 
   const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
+  const poidsPreview = patient?.poids ? `Poids ${patient.poids} kg | ` : '';
   const donneesPreview = lastVital
-    ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
+    ? `${poidsPreview}FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
     : 'Aucune constante disponible';
   const recentProcs = procedures.slice(0, 3);
   const recentAdmins = administrations.slice(0, 3);
@@ -251,18 +253,25 @@ export default function PancartePage() {
                 <div className="space-y-2">
                   {rxGroups[s.key as keyof typeof rxGroups].map((rx: any) => {
                     const done = isAdministered(rx.id) || rx.status === 'completed';
+                    const isSuspended = rx.status === 'suspended';
+                    const isCancelled = rx.status === 'cancelled';
+                    const isInactive = isSuspended || isCancelled;
                     return (
                       <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
-                        done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
-                        rx.priority === 'stat' && !done && 'border-medical-critical/30 animate-pulse',
-                        rx.priority === 'urgent' && !done && 'border-medical-warning/30',
+                        done ? 'bg-medical-success/5 border-medical-success/20' : isInactive ? 'bg-muted/50 opacity-70' : 'bg-card',
+                        rx.priority === 'stat' && !done && !isInactive && 'border-medical-critical/30 animate-pulse',
+                        rx.priority === 'urgent' && !done && !isInactive && 'border-medical-warning/30',
                       )}>
                         <div className="flex-1">
-                          <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                          <p className={cn('font-medium text-sm', isCancelled && 'line-through text-muted-foreground')}>{rx.medication_name} — {rx.dosage}</p>
                           <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
                         </div>
                         {done ? (
                           <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                        ) : isSuspended ? (
+                          <Badge variant="secondary" className="bg-muted text-muted-foreground">Suspendue</Badge>
+                        ) : isCancelled ? (
+                          <Badge variant="outline" className="text-muted-foreground line-through">Annulée</Badge>
                         ) : (
                           <div className="flex items-center gap-2">
                             <Input

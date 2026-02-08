@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/urgence/StatCard';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { LogOut, ClipboardList, ArrowRight, AlertTriangle, Loader2, Users, Clock, Timer } from 'lucide-react';
+import { LogOut, ClipboardList, ArrowRight, AlertTriangle, Loader2, Users, Clock, Timer, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -24,6 +24,7 @@ export default function IOAQueuePage() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const [encounters, setEncounters] = useState<QueuePatient[]>([]);
+  const [triagedCount, setTriagedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [, setTick] = useState(0);
 
@@ -38,12 +39,17 @@ export default function IOAQueuePage() {
   }, []);
 
   const fetchQueue = async () => {
-    const { data } = await supabase
-      .from('encounters')
-      .select('id, patient_id, arrival_time, motif_sfmu, patients(nom, prenom, date_naissance, sexe, allergies)')
-      .eq('status', 'arrived')
-      .order('arrival_time', { ascending: true });
-    if (data) setEncounters(data as unknown as QueuePatient[]);
+    const [arrivedRes, triagedRes] = await Promise.all([
+      supabase.from('encounters')
+        .select('id, patient_id, arrival_time, motif_sfmu, patients(nom, prenom, date_naissance, sexe, allergies)')
+        .eq('status', 'arrived')
+        .order('arrival_time', { ascending: true }),
+      supabase.from('encounters')
+        .select('id', { count: 'exact', head: true })
+        .in('status', ['triaged', 'in-progress']),
+    ]);
+    if (arrivedRes.data) setEncounters(arrivedRes.data as unknown as QueuePatient[]);
+    setTriagedCount(triagedRes.count ?? 0);
     setLoading(false);
   };
 
@@ -80,8 +86,9 @@ export default function IOAQueuePage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-4 relative z-10">
-        <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
+        <div className="grid grid-cols-4 gap-3 animate-in fade-in duration-300">
           <StatCard label="En attente" value={encounters.length} icon={Users} />
+          <StatCard label="Triés/En cours" value={triagedCount} icon={Activity} />
           <StatCard label="Attente moy." value={`${avgWait} min`} icon={Clock} variant={avgWait > 30 ? 'warning' : 'default'} />
           <StatCard label="Attente max" value={`${maxWait} min`} icon={Timer} variant={maxWait > 60 ? 'critical' : 'default'} />
         </div>
