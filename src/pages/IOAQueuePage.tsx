@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { LogOut, ClipboardList, ArrowRight, AlertTriangle } from 'lucide-react';
+import { LogOut, ClipboardList, ArrowRight, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -65,7 +65,7 @@ export default function IOAQueuePage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-3">
-        {loading && <p className="text-muted-foreground text-center py-8">Chargement...</p>}
+        {loading && <div className="flex items-center justify-center py-8 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin mr-2" />Chargement...</div>}
         {!loading && encounters.length === 0 && (
           <p className="text-muted-foreground text-center py-12">Aucun patient en attente de tri</p>
         )}

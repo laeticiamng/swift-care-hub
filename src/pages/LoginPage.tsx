@@ -140,11 +140,11 @@ export default function LoginPage() {
               </div>
               <div className="space-y-1">
                 {[
-                  { email: 'martin@urgenceos.fr', label: 'Dr. Martin', role: 'Médecin' },
-                  { email: 'ioa@urgenceos.fr', label: 'IOA Dupont', role: 'IOA' },
-                  { email: 'ide@urgenceos.fr', label: 'IDE Leroy', role: 'IDE' },
-                  { email: 'as@urgenceos.fr', label: 'AS Bernard', role: 'Aide-soignant' },
-                  { email: 'sec@urgenceos.fr', label: 'Sec. Moreau', role: 'Secrétaire' },
+                  { email: 'martin@urgenceos.fr', label: 'Dr. Martin Dupont', role: 'Médecin' },
+                  { email: 'sophie@urgenceos.fr', label: 'Sophie Lefevre', role: 'IOA' },
+                  { email: 'julie@urgenceos.fr', label: 'Julie Bernard', role: 'IDE' },
+                  { email: 'marc@urgenceos.fr', label: 'Marc Petit', role: 'Aide-soignant' },
+                  { email: 'nathalie@urgenceos.fr', label: 'Nathalie Moreau', role: 'Secrétaire' },
                 ].map(account => (
                   <button
                     key={account.email}

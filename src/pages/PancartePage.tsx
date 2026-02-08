@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History } from 'lucide-react';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2 } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
@@ -83,7 +83,7 @@ export default function PancartePage() {
       user_id: user.id, action: 'administration', resource_type: 'prescription',
       resource_id: rx.id, details: { medication: rx.medication_name, dosage: rx.dosage },
     });
-    toast.success(`${rx.medication_name} administré ✓`);
+    toast.success(`${rx.medication_name} administré`);
     fetchAll();
   };
 
@@ -96,7 +96,7 @@ export default function PancartePage() {
     if (newVitals.spo2) obj.spo2 = parseInt(newVitals.spo2);
     if (newVitals.temperature) obj.temperature = parseFloat(newVitals.temperature);
     await supabase.from('vitals').insert(obj);
-    toast.success('Constantes enregistrées ✓');
+    toast.success('Constantes enregistrées');
     setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
     setShowVitalsInput(false);
     fetchAll();
@@ -109,7 +109,7 @@ export default function PancartePage() {
       performed_by: user.id, procedure_type: procType as any,
     });
     const procLabels: Record<string, string> = { vvp: 'VVP', prelevement: 'Prélèvement', pansement: 'Pansement', sondage: 'Sondage', ecg: 'ECG', autre: 'Acte' };
-    toast.success(`${procLabels[procType] || 'Acte'} tracé ✓`);
+    toast.success(`${procLabels[procType] || 'Acte'} tracé`);
     setProcType('');
     fetchAll();
   };
@@ -131,7 +131,7 @@ export default function PancartePage() {
       encounter_id: encounter.id, patient_id: encounter.patient_id, author_id: user.id,
       donnees: donneesAuto, actions: actionsAuto, resultats: darResultats, cible: darCible,
     });
-    toast.success('Transmission validée ✓');
+    toast.success('Transmission validée');
     setDarResultats('');
     setDarCible('');
     fetchAll();
@@ -142,7 +142,7 @@ export default function PancartePage() {
     fetchAll();
   };
 
-  if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground">Chargement...</div>;
+  if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   const age = calculateAge(patient.date_naissance);
   const isAdministered = (rxId: string) => administrations.some(a => a.prescription_id === rxId);

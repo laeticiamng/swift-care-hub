@@ -1,8 +1,10 @@
 # 🏥 UrgenceOS
 
-**Operating System de workflow pour services d'urgences hospitalières.**
+**Le système d'exploitation des urgences hospitalières.**
 
 UrgenceOS est une application web temps réel conçue pour digitaliser et fluidifier l'ensemble du parcours patient aux urgences — de l'admission à la sortie — avec des interfaces adaptées à chaque profil soignant.
+
+De **6-8 clics à 1 seul tap** pour chaque administration médicamenteuse.
 
 ---
 
@@ -10,7 +12,7 @@ UrgenceOS est une application web temps réel conçue pour digitaliser et fluidi
 
 | Module | Description |
 |---|---|
-| **Landing Page** | Vitrine Apple-like avec présentation des fonctionnalités |
+| **Landing Page** | Vitrine marketing avec sections Hero, Problème, Comment ça marche, Rôles, Features, Impact, CTA |
 | **Board panoramique** | Vue temps réel de tous les patients par zone (SAU, UHCD, Déchocage) |
 | **Dossier Patient** | Timeline médicale, prescriptions avec contrôle allergies, résultats, constantes |
 | **Pancarte IDE** | Interface unifiée infirmière : administrations 1-tap, transmissions DAR, actes |
@@ -38,10 +40,11 @@ UrgenceOS est une application web temps réel conçue pour digitaliser et fluidi
 
 - **Frontend** : React 18 · TypeScript · Vite
 - **UI** : Tailwind CSS · Shadcn/UI · Lucide React
-- **State** : TanStack React Query · Supabase Realtime
+- **State** : TanStack React Query · Realtime subscriptions
 - **Backend** : Lovable Cloud (PostgreSQL, Auth, Edge Functions, RLS)
 - **Graphiques** : Recharts
 - **Thème** : next-themes (dark/light mode)
+- **Validation** : Zod
 
 ---
 
@@ -63,6 +66,11 @@ UrgenceOS est une application web temps réel conçue pour digitaliser et fluidi
 - **Zéro popup bloquant** — toasts et banners uniquement
 - **Mobile-first** — touch targets ≥ 44px
 - **Temps réel** — mise à jour automatique sans rechargement
+- **Dark mode** — thème sombre complet disponible
+
+### Favicon
+
+Favicon SVG personnalisé : cercle bleu `#2b7fc3` avec la lettre « U » blanche, intégré en inline dans `index.html`.
 
 ---
 
@@ -98,7 +106,7 @@ UrgenceOS est une application web temps réel conçue pour digitaliser et fluidi
 
 ## ⚡ Temps réel
 
-Les tables suivantes sont synchronisées en temps réel via Supabase Realtime :
+Les tables suivantes sont synchronisées en temps réel :
 
 - `encounters` — mouvements patients sur le board
 - `prescriptions` — nouvelles prescriptions
