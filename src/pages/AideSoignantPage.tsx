@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { BigButton } from '@/components/urgence/BigButton';
+import { StatCard } from '@/components/urgence/StatCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
-import { Activity, Eye, Truck, Bed, LogOut, ArrowLeft, Check, User } from 'lucide-react';
+import { Activity, Eye, Truck, Bed, LogOut, ArrowLeft, Check, User, Users, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -143,6 +144,13 @@ export default function AideSoignantPage() {
       </header>
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
+        {/* StatCards */}
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard label="Patients" value={encounters.length} icon={Users} />
+          <StatCard label="Sélectionné" value={selectedPatient ? 1 : 0} icon={User} />
+          <StatCard label="En charge" value={encounters.length} icon={Activity} />
+        </div>
+
         {/* Patient selector */}
         <Select value={selectedEncounter} onValueChange={setSelectedEncounter}>
           <SelectTrigger className="h-12 text-base">

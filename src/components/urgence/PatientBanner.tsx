@@ -31,6 +31,8 @@ export function PatientBanner({
           </button>
         )}
         <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-semibold text-muted-foreground tracking-tight">Urgence<span className="text-primary">OS</span></span>
+          <span className="text-muted-foreground/30">|</span>
           <h2 className="text-lg font-semibold">{nom.toUpperCase()} {prenom}</h2>
           <span className="text-muted-foreground text-sm">{age} ans · {sexe}</span>
           {ccmu && <CCMUBadge level={ccmu} />}

@@ -61,7 +61,7 @@ export default function IOAQueuePage() {
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
             <ClipboardList className="h-5 w-5 text-medical-warning" />
-            <h1 className="text-xl font-bold">File d'attente IOA</h1>
+            <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span> <span className="text-muted-foreground font-normal">— IOA</span></h1>
             <NetworkStatus />
           </div>
           <div className="flex items-center gap-2">

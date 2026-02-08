@@ -11,7 +11,7 @@ const impacts = [
 
 export function ImpactSection() {
   return (
-    <Section className="bg-secondary/30 py-24 px-6">
+    <Section className="bg-secondary/30 py-24 px-6" id="impact">
       <div className="max-w-5xl mx-auto text-center">
         <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">Résultats</p>
         <h2 className="text-3xl sm:text-4xl font-bold mb-3">Des gains mesurables dès le premier jour</h2>
