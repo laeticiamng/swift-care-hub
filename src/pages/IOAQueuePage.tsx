@@ -56,7 +56,10 @@ export default function IOAQueuePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-medical-warning/3 via-transparent to-primary/3" />
+      </div>
       <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
@@ -74,7 +77,7 @@ export default function IOAQueuePage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto p-4 space-y-4">
+      <div className="max-w-3xl mx-auto p-4 space-y-4 relative z-10">
         <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="En attente" value={encounters.length} icon={Users} />
           <StatCard label="Attente moy." value={`${avgWait} min`} icon={Clock} variant={avgWait > 30 ? 'warning' : 'default'} />

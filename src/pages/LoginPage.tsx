@@ -146,12 +146,12 @@ export default function LoginPage() {
               </button>
             </form>
             {!isSignUp && (
-              <div className="mt-6 p-4 rounded-xl bg-muted/50 border border-border space-y-3">
+              <div className="mt-6 p-5 rounded-xl bg-muted/50 border border-border space-y-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Info className="h-3.5 w-3.5" />
                   Comptes de démonstration
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                   {[
                     { email: 'martin@urgenceos.fr', label: 'Dr. Martin Dupont', role: 'Médecin' },
                     { email: 'sophie@urgenceos.fr', label: 'Sophie Lefevre', role: 'IOA' },
@@ -161,9 +161,9 @@ export default function LoginPage() {
                   ].map(account => (
                     <button key={account.email} type="button"
                       onClick={() => { setEmail(account.email); setPassword('urgenceos2026'); }}
-                      className="flex items-center justify-between w-full text-xs text-primary hover:bg-accent rounded-lg px-2 py-1.5 transition-colors touch-target">
+                      className="flex items-center justify-between w-full text-sm text-primary hover:bg-accent hover:shadow-sm rounded-lg px-3 py-2.5 transition-all touch-target">
                       <span className="font-medium">{account.label}</span>
-                      <span className="text-muted-foreground">{account.role}</span>
+                      <span className="text-muted-foreground text-xs">{account.role}</span>
                     </button>
                   ))}
                 </div>

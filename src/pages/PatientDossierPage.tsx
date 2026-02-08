@@ -439,7 +439,9 @@ export default function PatientDossierPage() {
                     <div className="space-y-2">
                       {rxGroups[s.key as keyof typeof rxGroups].map((rx: any) => (
                         <div key={rx.id} className={cn('p-3 rounded-lg border flex items-center justify-between animate-in fade-in duration-200',
-                          rx.priority === 'stat' && 'border-medical-critical/30', rx.status === 'completed' && 'opacity-60')}>
+                          rx.priority === 'stat' && 'border-medical-critical/30 animate-pulse',
+                          rx.priority === 'urgent' && 'border-medical-warning/30',
+                          rx.status === 'completed' && 'opacity-60')}>
                           <div>
                             <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
                             <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>

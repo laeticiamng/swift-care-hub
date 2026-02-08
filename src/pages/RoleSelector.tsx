@@ -77,7 +77,7 @@ export default function RoleSelector() {
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl w-full">
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-3xl w-full">
         {visibleRoles.map(({ role: r, label, description, icon: Icon, color }, index) => (
           <button
             key={r}
@@ -85,7 +85,7 @@ export default function RoleSelector() {
             disabled={assigning}
             className={cn(
               'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
-              'hover:shadow-xl hover:border-primary/30 hover:scale-[1.03] transition-all duration-300 active:scale-[0.98]',
+              'hover:shadow-xl hover:border-primary/30 hover:scale-[1.05] transition-all duration-300 active:scale-[0.98]',
               'touch-target min-h-[140px]',
               'animate-in fade-in slide-in-from-bottom-4',
               assigning && 'opacity-50 pointer-events-none',

@@ -162,7 +162,7 @@ export default function AideSoignantPage() {
         )}
 
         {view !== 'menu' && (
-          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <Button variant="ghost" onClick={() => setView('menu')} className="touch-target">
               <ArrowLeft className="h-4 w-4 mr-2" /> Retour
             </Button>
@@ -183,10 +183,10 @@ export default function AideSoignantPage() {
                     return (
                       <div key={v.key}>
                         <Label className={cn('text-base', abnormal && 'text-medical-critical')}>{v.label}</Label>
-                        <Input type="number" step="0.1" value={val}
+                      <Input type="number" step="0.1" value={val}
                           onChange={e => setVitals({ ...vitals, [v.key]: e.target.value })}
                           placeholder={v.placeholder}
-                          className={cn('mt-1 text-xl font-semibold h-14', abnormal && 'border-medical-critical text-medical-critical')} />
+                          className={cn('mt-1 text-2xl font-semibold h-16', abnormal && 'border-medical-critical text-medical-critical')} />
                       </div>
                     );
                   })}

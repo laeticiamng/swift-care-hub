@@ -39,10 +39,12 @@ export default function BoardPage() {
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
+  const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem('urgenceos_selectedZone') as ZoneKey | 'all') || 'all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { localStorage.setItem('urgenceos_myOnly', String(myOnly)); }, [myOnly]);
   useEffect(() => { localStorage.setItem('urgenceos_viewMode', viewMode); }, [viewMode]);
+  useEffect(() => { localStorage.setItem('urgenceos_selectedZone', selectedZone); }, [selectedZone]);
 
   useEffect(() => {
     fetchEncounters();
@@ -133,10 +135,18 @@ export default function BoardPage() {
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
             <NetworkStatus />
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <StatCard label="Total" value={filtered.length} icon={Users} className="py-1 px-3" />
-            {!isMobile && ZONE_CONFIGS.map(z => (
-              <StatCard key={z.key} label={`${z.label}`} value={`${byZone(z.key).length}/${z.boxCount}`} icon={Users} className="py-1 px-3" />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button onClick={() => setSelectedZone('all')}
+              className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                selectedZone === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
+              Tous ({filtered.length})
+            </button>
+            {ZONE_CONFIGS.map(z => (
+              <button key={z.key} onClick={() => setSelectedZone(z.key)}
+                className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                  selectedZone === z.key ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
+                {z.label} {byZone(z.key).length}/{z.boxCount}
+              </button>
             ))}
             <StatCard label="En attente" value={waitingCount} icon={Hourglass} variant={waitingVariant as any} className="py-1 px-3" />
           </div>
@@ -175,7 +185,7 @@ export default function BoardPage() {
 
         {viewMode === 'grid' ? (
           <div className="space-y-6">
-            {ZONE_CONFIGS.map(z => (
+            {ZONE_CONFIGS.filter(z => selectedZone === 'all' || z.key === selectedZone).map(z => (
               <ZoneGrid
                 key={z.key}
                 zone={z}
