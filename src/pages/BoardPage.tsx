@@ -41,16 +41,17 @@ export default function BoardPage() {
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [rxCounts, setRxCounts] = useState<RxCount[]>([]);
   const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
-  const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
-  const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem('urgenceos_selectedZone') as ZoneKey | 'all') || 'all');
+  const userKey = user?.id ? `_${user.id}` : '';
+  const [myOnly, setMyOnly] = useState(() => localStorage.getItem(`urgenceos_myOnly${userKey}`) === 'true');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem(`urgenceos_viewMode${userKey}`) as 'grid' | 'list') || 'grid');
+  const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem(`urgenceos_selectedZone${userKey}`) as ZoneKey | 'all') || 'all');
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
 
-  useEffect(() => { localStorage.setItem('urgenceos_myOnly', String(myOnly)); }, [myOnly]);
-  useEffect(() => { localStorage.setItem('urgenceos_viewMode', viewMode); }, [viewMode]);
-  useEffect(() => { localStorage.setItem('urgenceos_selectedZone', selectedZone); }, [selectedZone]);
+  useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
+  useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
+  useEffect(() => { localStorage.setItem(`urgenceos_selectedZone${userKey}`, selectedZone); }, [selectedZone, userKey]);
 
   useEffect(() => {
     fetchEncounters();

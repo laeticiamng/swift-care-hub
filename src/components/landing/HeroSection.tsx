@@ -25,16 +25,16 @@ export function HeroSection() {
           Urgence<span className="text-primary">OS</span>
         </h1>
 
-        <p className="mt-6 text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+        <p className="mt-6 text-2xl sm:text-3xl font-semibold text-foreground max-w-2xl mx-auto leading-snug animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+          Moins de clics. Plus de soin.
+        </p>
+
+        <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
           Le système d'exploitation des urgences hospitalières.
         </p>
 
-        <p className="mt-3 text-lg sm:text-xl font-medium text-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-          De <span className="text-primary font-bold">6-8 clics</span> à <span className="text-primary font-bold">1 seul tap</span> pour chaque administration.
-        </p>
-
-        <p className="mt-2 text-sm text-muted-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          Un point d'entrée unique · Cinq profils · Zéro perte de temps
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          Un point d'entrée urgences · Une timeline patient sourcée · Une pancarte IDE en un écran
         </p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">

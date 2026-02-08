@@ -366,8 +366,8 @@ export default function PatientDossierPage() {
                         {item.source_document && (
                           <div className="flex items-center justify-between mt-1">
                             <p className="text-xs text-muted-foreground">Source : {item.source_document} {item.source_author && `— ${item.source_author}`}</p>
-                            <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={(e) => { e.stopPropagation(); toast.info('Document source non disponible en démo'); }}>
-                              <ExternalLink className="h-3 w-3 mr-1" /> Ouvrir
+                            <Button variant="ghost" size="sm" className="h-6 text-xs px-2 opacity-40 cursor-not-allowed" disabled title="Fonctionnalité démo">
+                              <ExternalLink className="h-3 w-3 mr-1" /> Source
                             </Button>
                           </div>
                         )}
