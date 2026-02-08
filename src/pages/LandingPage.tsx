@@ -73,7 +73,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur border-b">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
-          <span className="text-lg font-bold tracking-tight">Urgence<span className="text-primary">OS</span></span>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-lg font-bold tracking-tight cursor-pointer">Urgence<span className="text-primary">OS</span></button>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Button size="sm" onClick={() => navigate('/login')}>Connexion</Button>
@@ -85,16 +85,16 @@ export default function LandingPage() {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5 pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center px-6 pt-24 pb-20 relative">
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight">
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
             Urgence<span className="text-primary">OS</span>
           </h1>
-          <p className="mt-4 text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            La révolution des urgences hospitalières.<br className="hidden sm:block" />
-            Un système, cinq profils, zéro friction.
+          <p className="mt-4 text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+            Le système d'exploitation des urgences hospitalières.<br className="hidden sm:block" />
+            Un point d'entrée unique, cinq profils, zéro perte de temps.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button size="lg" onClick={() => navigate('/login')} className="gap-2">
-              Accès au système <ArrowRight className="h-4 w-4" />
+            <Button size="lg" onClick={() => navigate('/login')} className="gap-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+              Accéder à UrgenceOS <ArrowRight className="h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}>
               Découvrir
@@ -175,17 +175,19 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4">Prêt à transformer les urgences ?</h2>
           <Button size="lg" onClick={() => navigate('/login')} className="gap-2">
-            Accès au système <ArrowRight className="h-4 w-4" />
+            Accéder à UrgenceOS <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </Section>
 
       {/* Footer */}
       <footer className="border-t py-8 px-6 text-center text-sm text-muted-foreground">
-        <p>UrgenceOS — Réflexion académique — Février 2026</p>
-        <button onClick={() => navigate('/login')} className="text-primary hover:underline mt-1 text-sm">
-          Connexion
-        </button>
+        <p>UrgenceOS — Projet de recherche en systèmes d'information de santé — 2026</p>
+        <div className="mt-2 flex justify-center gap-4">
+          <button onClick={() => navigate('/login')} className="text-primary hover:underline text-sm">
+            Connexion
+          </button>
+        </div>
       </footer>
     </div>
   );

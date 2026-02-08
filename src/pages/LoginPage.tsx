@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, CheckCircle } from 'lucide-react';
+import { Activity, CheckCircle, ArrowLeft, Info } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -89,7 +89,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
+      <div className="w-full max-w-md mb-4">
+        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          Retour à l'accueil
+        </Link>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
@@ -126,6 +132,21 @@ export default function LoginPage() {
               {isSignUp ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
             </button>
           </form>
+          {!isSignUp && (
+            <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                <Info className="h-3.5 w-3.5" />
+                Compte démo
+              </div>
+              <button
+                type="button"
+                onClick={() => { setEmail('martin@urgenceos.fr'); setPassword('urgenceos2026'); }}
+                className="text-xs text-primary hover:underline"
+              >
+                Utiliser le compte Dr. Martin (médecin)
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
