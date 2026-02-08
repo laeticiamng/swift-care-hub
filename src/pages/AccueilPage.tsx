@@ -28,14 +28,12 @@ export default function AccueilPage() {
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
-
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
   useEffect(() => {
     fetchToday();
-    const channel = supabase
-      .channel('accueil-realtime')
+    const channel = supabase.channel('accueil-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchToday())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -53,89 +51,58 @@ export default function AccueilPage() {
 
   const searchPatients = useCallback(async (searchNom: string) => {
     if (searchNom.length < 2) { setSearchResults([]); return; }
-    const { data } = await supabase
-      .from('patients')
-      .select('id, nom, prenom, date_naissance, sexe, telephone')
-      .ilike('nom', `%${searchNom}%`)
-      .limit(5);
+    const { data } = await supabase.from('patients').select('id, nom, prenom, date_naissance, sexe, telephone').ilike('nom', `%${searchNom}%`).limit(5);
     if (data) setSearchResults(data);
   }, []);
 
-  const handleNomChange = (value: string) => {
-    setNom(value);
-    setSelectedExisting(null);
-    searchPatients(value);
-  };
-
+  const handleNomChange = (value: string) => { setNom(value); setSelectedExisting(null); searchPatients(value); };
   const selectExistingPatient = (patient: any) => {
-    setSelectedExisting(patient);
-    setNom(patient.nom);
-    setPrenom(patient.prenom);
-    setDateNaissance(patient.date_naissance);
-    setSexe(patient.sexe);
-    setTelephone(patient.telephone || '');
-    setSearchResults([]);
+    setSelectedExisting(patient); setNom(patient.nom); setPrenom(patient.prenom);
+    setDateNaissance(patient.date_naissance); setSexe(patient.sexe); setTelephone(patient.telephone || ''); setSearchResults([]);
   };
 
   const handleAdmission = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-
-    let patientId: string;
-
-    // Client-side date validation
     const birthDate = new Date(dateNaissance);
     const today = new Date();
     if (birthDate > today) { toast.error('La date de naissance ne peut pas être dans le futur'); setSubmitting(false); return; }
     if (birthDate < new Date('1900-01-01')) { toast.error('Date de naissance invalide'); setSubmitting(false); return; }
 
-    if (selectedExisting) {
-      patientId = selectedExisting.id;
-    } else {
-      const { data: patient, error } = await supabase.from('patients').insert({
-        nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null,
-      }).select().single();
+    let patientId: string;
+    if (selectedExisting) { patientId = selectedExisting.id; }
+    else {
+      const { data: patient, error } = await supabase.from('patients').insert({ nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null }).select().single();
       if (error || !patient) { toast.error('Erreur de création patient'); setSubmitting(false); return; }
       patientId = patient.id;
     }
-
-    const { error } = await supabase.from('encounters').insert({
-      patient_id: patientId,
-      status: 'arrived',
-      motif_sfmu: motif || null,
-    });
-
+    const { error } = await supabase.from('encounters').insert({ patient_id: patientId, status: 'arrived', motif_sfmu: motif || null });
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
-
     toast.success('Passage créé');
     setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero('');
-    setSelectedExisting(null);
-    setSubmitting(false);
-    fetchToday();
+    setSelectedExisting(null); setSubmitting(false); fetchToday();
   };
 
-  const statusLabels: Record<string, string> = {
-    planned: 'Planifié', arrived: 'Arrivé', triaged: 'Trié', 'in-progress': 'En cours', finished: 'Terminé',
-  };
+  const statusLabels: Record<string, string> = { planned: 'Planifié', arrived: 'Arrivé', triaged: 'Trié', 'in-progress': 'En cours', finished: 'Terminé' };
   const statusColors: Record<string, string> = {
-    arrived: 'bg-medical-warning/10 text-medical-warning',
-    triaged: 'bg-medical-info/10 text-medical-info',
-    'in-progress': 'bg-medical-success/10 text-medical-success',
-    finished: 'bg-muted text-muted-foreground',
+    arrived: 'bg-medical-warning/10 text-medical-warning', triaged: 'bg-medical-info/10 text-medical-info',
+    'in-progress': 'bg-medical-success/10 text-medical-success', finished: 'bg-muted text-muted-foreground',
   };
   const statusBorderColors: Record<string, string> = {
-    arrived: 'border-l-medical-warning',
-    triaged: 'border-l-medical-info',
-    'in-progress': 'border-l-medical-success',
-    finished: 'border-l-muted-foreground',
+    arrived: 'border-l-medical-warning', triaged: 'border-l-medical-info',
+    'in-progress': 'border-l-medical-success', finished: 'border-l-muted-foreground',
   };
 
   const waitingCount = todayEncounters.filter(e => e.status === 'arrived').length;
   const inProgressCount = todayEncounters.filter(e => e.status === 'in-progress').length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
+    <div className="min-h-screen bg-background relative">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-medical-success/3" />
+      </div>
+
+      <header className="sticky top-0 z-20 border-b px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span> — Accueil</h1>
@@ -149,15 +116,14 @@ export default function AccueilPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto p-4 space-y-6">
-        {/* StatCards */}
-        <div className="grid grid-cols-3 gap-3">
+      <div className="max-w-3xl mx-auto p-4 space-y-6 relative z-10">
+        <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="Admissions" value={todayEncounters.length} icon={Users} />
-          <StatCard label="En attente" value={waitingCount} icon={Clock} />
+          <StatCard label="En attente" value={waitingCount} icon={Clock} variant={waitingCount > 5 ? 'warning' : 'default'} />
           <StatCard label="En cours" value={inProgressCount} icon={Activity} />
         </div>
 
-        <Card>
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserPlus className="h-5 w-5 text-primary" /> Nouvelle admission
@@ -167,14 +133,14 @@ export default function AccueilPage() {
             <form onSubmit={handleAdmission} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative">
-                  <Label>Nom</Label>
+                  <Label className="text-sm font-medium">Nom</Label>
                   <Input value={nom} onChange={e => handleNomChange(e.target.value)} placeholder="DUPONT" required className="mt-1" />
                   {searchResults.length > 0 && (
                     <div className="absolute z-10 top-full left-0 right-0 bg-card border rounded-lg shadow-lg mt-1 overflow-hidden">
                       <p className="text-xs text-muted-foreground px-3 py-1.5 border-b">Patients existants :</p>
                       {searchResults.map(p => (
                         <button key={p.id} type="button" onClick={() => selectExistingPatient(p)}
-                          className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm">
+                          className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm touch-target">
                           <span className="font-medium">{p.nom} {p.prenom}</span>
                           <span className="text-muted-foreground ml-2">{p.date_naissance} · {p.sexe}</span>
                         </button>
@@ -182,32 +148,27 @@ export default function AccueilPage() {
                     </div>
                   )}
                   {selectedExisting && (
-                    <Badge variant="secondary" className="mt-1 text-xs">
-                      <Check className="h-3 w-3 mr-1" /> Patient existant sélectionné
-                    </Badge>
+                    <Badge variant="secondary" className="mt-1 text-xs"><Check className="h-3 w-3 mr-1" /> Patient existant sélectionné</Badge>
                   )}
                 </div>
-                <div><Label>Prénom</Label><Input value={prenom} onChange={e => setPrenom(e.target.value)} placeholder="Jean" required className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Prénom</Label><Input value={prenom} onChange={e => setPrenom(e.target.value)} placeholder="Jean" required className="mt-1" /></div>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <div><Label>Date de naissance</Label><Input type="date" value={dateNaissance} onChange={e => setDateNaissance(e.target.value)} required className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Date de naissance</Label><Input type="date" value={dateNaissance} onChange={e => setDateNaissance(e.target.value)} required className="mt-1" /></div>
                 <div>
-                  <Label>Sexe</Label>
+                  <Label className="text-sm font-medium">Sexe</Label>
                   <Select value={sexe} onValueChange={setSexe}>
                     <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="M">Masculin</SelectItem>
-                      <SelectItem value="F">Féminin</SelectItem>
-                    </SelectContent>
+                    <SelectContent><SelectItem value="M">Masculin</SelectItem><SelectItem value="F">Féminin</SelectItem></SelectContent>
                   </Select>
                 </div>
-                <div><Label>Téléphone</Label><Input value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06..." className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Téléphone</Label><Input value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06..." className="mt-1" /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>N° Sécurité Sociale (optionnel)</Label><Input value={insNumero} onChange={e => setInsNumero(e.target.value)} placeholder="1 85 07 75 123 456 78" className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">N° Sécurité Sociale (optionnel)</Label><Input value={insNumero} onChange={e => setInsNumero(e.target.value)} placeholder="1 85 07 75 123 456 78" className="mt-1" /></div>
               </div>
               <div>
-                <Label>Motif (optionnel)</Label>
+                <Label className="text-sm font-medium">Motif (optionnel)</Label>
                 <Input value={motif} onChange={e => setMotif(e.target.value)} placeholder="Motif administratif" className="mt-1" />
               </div>
               <Button type="submit" className="w-full touch-target text-base" disabled={submitting}>
@@ -217,7 +178,7 @@ export default function AccueilPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2"><Clock className="h-5 w-5 text-primary" /> Admissions du jour</span>
@@ -230,14 +191,10 @@ export default function AccueilPage() {
               {todayEncounters.map((enc, index) => {
                 const p = enc.patients;
                 return (
-                  <div
-                    key={enc.id}
-                    className={cn(
-                      'flex items-center justify-between p-3 rounded-lg border border-l-4 animate-in fade-in slide-in-from-bottom-2',
-                      statusBorderColors[enc.status] || 'border-l-muted-foreground',
-                    )}
-                    style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}
-                  >
+                  <div key={enc.id}
+                    className={cn('flex items-center justify-between p-3 rounded-lg border border-l-4 animate-in fade-in slide-in-from-bottom-2',
+                      statusBorderColors[enc.status] || 'border-l-muted-foreground')}
+                    style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}>
                     <div>
                       <p className="font-medium text-sm">{p?.nom?.toUpperCase()} {p?.prenom}</p>
                       <p className="text-xs text-muted-foreground">

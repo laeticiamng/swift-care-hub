@@ -1,0 +1,120 @@
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CCMUBadge } from '@/components/urgence/CCMUBadge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
+import { FlaskConical, Stethoscope, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type Zone = 'sau' | 'uhcd' | 'dechocage';
+const ZONES: { key: Zone; label: string }[] = [
+  { key: 'sau', label: 'SAU' },
+  { key: 'uhcd', label: 'UHCD' },
+  { key: 'dechocage', label: 'Déchocage' },
+];
+
+const ccmuBorderColors: Record<number, string> = {
+  1: 'border-l-medical-success',
+  2: 'border-l-medical-info',
+  3: 'border-l-medical-warning',
+  4: 'border-l-medical-critical',
+  5: 'border-l-medical-critical',
+};
+
+const zoneBadgeColors: Record<string, string> = {
+  sau: 'bg-medical-info/10 text-medical-info',
+  uhcd: 'bg-medical-warning/10 text-medical-warning',
+  dechocage: 'bg-medical-critical/10 text-medical-critical',
+};
+
+interface PatientCardProps {
+  encounter: {
+    id: string;
+    zone: Zone | null;
+    box_number: number | null;
+    ccmu: number | null;
+    motif_sfmu: string | null;
+    medecin_id: string | null;
+    arrival_time: string;
+    patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
+    medecin_profile?: { full_name: string } | null;
+  };
+  resultCount?: { unread: number; critical: number };
+  role: string | null;
+  index: number;
+  showZoneBadge?: boolean;
+  onMoveZone: (encounterId: string, zone: Zone) => void;
+  onClick: () => void;
+}
+
+export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, onMoveZone, onClick }: PatientCardProps) {
+  const p = encounter.patients;
+  const age = calculateAge(p.date_naissance);
+  const waitMin = getWaitTimeMinutes(encounter.arrival_time);
+  const waitStr = formatWaitTime(waitMin);
+  const waitCritical = waitMin > 240;
+  const waitWarning = waitMin > 120;
+  const rc = resultCount;
+  const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
+
+  return (
+    <Card
+      className={cn(
+        'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2',
+        borderColor && `border-l-4 ${borderColor}`,
+      )}
+      style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both' }}
+      onClick={onClick}
+    >
+      <CardContent className="p-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
+            <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
+            {showZoneBadge && encounter.zone && (
+              <Badge variant="outline" className={cn('text-xs', zoneBadgeColors[encounter.zone])}>
+                {encounter.zone.toUpperCase()}
+              </Badge>
+            )}
+          </div>
+          {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
+        </div>
+        {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
+        {encounter.medecin_profile && (
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Stethoscope className="h-3 w-3" /> {encounter.medecin_profile.full_name}
+          </p>
+        )}
+        <div className="flex items-center justify-between text-sm">
+          <span className={cn('font-medium', waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground')}>
+            {waitStr}
+          </span>
+          <div className="flex items-center gap-1.5">
+            {rc && rc.critical > 0 && (
+              <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
+                <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}
+              </Badge>
+            )}
+            {rc && rc.unread > 0 && rc.critical === 0 && (
+              <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.unread}
+              </Badge>
+            )}
+            {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
+          </div>
+          <Select value={encounter.zone || ''} onValueChange={(v) => onMoveZone(encounter.id, v as Zone)}>
+            <SelectTrigger className="w-auto h-7 text-xs" onClick={e => e.stopPropagation()}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ZONES.map(z => <SelectItem key={z.key} value={z.key}>{z.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        {p.allergies && p.allergies.length > 0 && (
+          <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

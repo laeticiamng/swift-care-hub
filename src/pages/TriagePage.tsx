@@ -275,7 +275,7 @@ export default function TriagePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
+      <header className="sticky top-0 z-20 border-b px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold">Tri IOA</h1>
@@ -284,7 +284,10 @@ export default function TriagePage() {
           <Progress value={((step + 1) / 5) * 100} className="h-2" />
           <div className="flex justify-between mt-2">
             {STEPS.map((s, i) => (
-              <span key={s} className={cn('text-xs', i <= step ? 'text-primary font-medium' : 'text-muted-foreground')}>{s}</span>
+              <div key={s} className="flex items-center gap-1">
+                <div className={cn('h-2 w-2 rounded-full transition-colors', i <= step ? 'bg-primary' : 'bg-muted-foreground/30')} />
+                <span className={cn('text-xs transition-colors', i <= step ? 'text-primary font-medium' : 'text-muted-foreground')}>{s}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -364,8 +367,8 @@ export default function TriagePage() {
                 <div className="flex flex-wrap gap-2">
                   {filteredMotifs.map(m => (
                     <button key={m} onClick={() => { setMotif(m); setMotifSearch(m); }}
-                      className={cn('px-3 py-2 rounded-full border text-sm transition-colors touch-target',
-                        motif === m ? 'bg-primary text-primary-foreground' : 'hover:bg-accent',
+                      className={cn('px-4 py-2.5 rounded-full border text-sm transition-all duration-200 touch-target',
+                        motif === m ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent hover:shadow-sm',
                       )}>
                       {m}
                     </button>

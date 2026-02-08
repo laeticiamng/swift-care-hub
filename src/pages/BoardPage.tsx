@@ -15,7 +15,7 @@ import { Users, LogOut, Filter, FlaskConical, UserPlus, Stethoscope, AlertTriang
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { toast } from 'sonner';
+import { PatientCard } from '@/components/urgence/BoardPatientCard';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
 const ZONES: { key: Zone; label: string; color: string; bgColor: string }[] = [
@@ -23,14 +23,6 @@ const ZONES: { key: Zone; label: string; color: string; bgColor: string }[] = [
   { key: 'uhcd', label: 'UHCD', color: 'bg-medical-warning', bgColor: 'bg-medical-warning/5' },
   { key: 'dechocage', label: 'Déchocage', color: 'bg-medical-critical', bgColor: 'bg-medical-critical/5' },
 ];
-
-const ccmuBorderColors: Record<number, string> = {
-  1: 'border-l-medical-success',
-  2: 'border-l-medical-info',
-  3: 'border-l-medical-warning',
-  4: 'border-l-medical-critical',
-  5: 'border-l-medical-critical',
-};
 
 interface EncounterWithPatient {
   id: string;
@@ -56,10 +48,15 @@ export default function BoardPage() {
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
   const [loading, setLoading] = useState(true);
+  const [activeZone, setActiveZone] = useState<string>(() => localStorage.getItem('urgenceos_activeZone') || 'all');
 
   useEffect(() => {
     localStorage.setItem('urgenceos_myOnly', String(myOnly));
   }, [myOnly]);
+
+  useEffect(() => {
+    localStorage.setItem('urgenceos_activeZone', activeZone);
+  }, [activeZone]);
 
   useEffect(() => {
     fetchEncounters();
@@ -126,100 +123,13 @@ export default function BoardPage() {
   const byZone = (zone: Zone) => filtered.filter(e => e.zone === zone);
   const getResultCount = (encId: string) => resultCounts.find(r => r.encounter_id === encId);
 
-  const renderPatientCard = (encounter: EncounterWithPatient) => {
-    const p = encounter.patients;
-    const age = calculateAge(p.date_naissance);
-    const waitMin = getWaitTimeMinutes(encounter.arrival_time);
-    const waitStr = formatWaitTime(waitMin);
-    const waitCritical = waitMin > 240;
-    const waitWarning = waitMin > 120;
-    const rc = getResultCount(encounter.id);
-    const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
-
-    return (
-      <Card
-        key={encounter.id}
-        className={cn(
-          'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]',
-          borderColor && `border-l-4 ${borderColor}`,
-        )}
-        onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
-      >
-        <CardContent className="p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
-              <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
-            </div>
-            {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
-          </div>
-          {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
-          {encounter.medecin_profile && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Stethoscope className="h-3 w-3" /> {encounter.medecin_profile.full_name}
-            </p>
-          )}
-          <div className="flex items-center justify-between text-sm">
-            <span className={cn('font-medium', waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground')}>
-              {waitStr}
-            </span>
-            <div className="flex items-center gap-1.5">
-              {rc && rc.critical > 0 && (
-                <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
-                  <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}
-                </Badge>
-              )}
-              {rc && rc.unread > 0 && rc.critical === 0 && (
-                <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                  <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.unread}
-                </Badge>
-              )}
-              {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
-            </div>
-            <Select value={encounter.zone || ''} onValueChange={(v) => handleMoveZone(encounter.id, v as Zone)}>
-              <SelectTrigger className="w-auto h-7 text-xs" onClick={e => e.stopPropagation()}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ZONES.map(z => <SelectItem key={z.key} value={z.key}>{z.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          {p.allergies && p.allergies.length > 0 && (
-            <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderZoneColumn = (zone: { key: Zone; label: string; color: string; bgColor: string }) => (
-    <div key={zone.key} className="space-y-3">
-      <div className={cn('rounded-xl p-3', zone.bgColor)}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className={cn('h-3 w-3 rounded-full', zone.color)} />
-            <h2 className="text-lg font-semibold">{zone.label}</h2>
-          </div>
-          <Badge variant="outline" className="font-semibold">{byZone(zone.key).length}</Badge>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {byZone(zone.key).map(renderPatientCard)}
-        {byZone(zone.key).length === 0 && (
-          <div className="text-center py-8 space-y-2">
-            <Inbox className="h-8 w-8 text-muted-foreground/40 mx-auto" />
-            <p className="text-sm text-muted-foreground">Aucun patient dans cette zone</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const displayedEncounters = activeZone === 'all' ? filtered : filtered.filter(e => e.zone === activeZone);
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 bg-card border-b shadow-sm px-4 py-3">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      {/* Glassmorphism header */}
+      <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
+        <div className="flex items-center justify-between max-w-5xl mx-auto">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
             <NetworkStatus />
@@ -250,27 +160,77 @@ export default function BoardPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-4">
-        {isMobile ? (
-          <Tabs defaultValue="sau">
-            <TabsList className="w-full">
-              {ZONES.map(z => (
-                <TabsTrigger key={z.key} value={z.key} className="flex-1">
-                  {z.label} ({byZone(z.key).length})
-                </TabsTrigger>
-              ))}
-            </TabsList>
+      <div className="max-w-5xl mx-auto p-4">
+        {/* Universal tabs — same on mobile + desktop */}
+        <Tabs value={activeZone} onValueChange={setActiveZone}>
+          <TabsList className="w-full mb-4 h-12">
+            <TabsTrigger value="all" className="flex-1 text-sm font-medium h-10">
+              Tous ({filtered.length})
+            </TabsTrigger>
             {ZONES.map(z => (
-              <TabsContent key={z.key} value={z.key}>
-                {renderZoneColumn(z)}
-              </TabsContent>
+              <TabsTrigger key={z.key} value={z.key} className="flex-1 text-sm font-medium h-10 gap-1.5">
+                <div className={cn('h-2.5 w-2.5 rounded-full', z.color)} />
+                {z.label} ({byZone(z.key).length})
+              </TabsTrigger>
             ))}
-          </Tabs>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {ZONES.map(renderZoneColumn)}
-          </div>
-        )}
+          </TabsList>
+
+          {/* All zones content */}
+          <TabsContent value="all">
+            <div className="space-y-3">
+              {displayedEncounters.length === 0 && (
+                <div className="text-center py-16 space-y-3">
+                  <Inbox className="h-10 w-10 text-muted-foreground/40 mx-auto" />
+                  <p className="text-muted-foreground">Aucun patient</p>
+                </div>
+              )}
+              {displayedEncounters.map((encounter, index) => (
+                <PatientCard
+                  key={encounter.id}
+                  encounter={encounter}
+                  resultCount={getResultCount(encounter.id)}
+                  role={role}
+                  index={index}
+                  showZoneBadge
+                  onMoveZone={handleMoveZone}
+                  onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
+                />
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Per-zone content */}
+          {ZONES.map(z => (
+            <TabsContent key={z.key} value={z.key}>
+              <div className={cn('rounded-xl p-3 mb-4', z.bgColor)}>
+                <div className="flex items-center gap-2">
+                  <div className={cn('h-3 w-3 rounded-full', z.color)} />
+                  <h2 className="text-lg font-semibold">{z.label}</h2>
+                  <Badge variant="outline" className="font-semibold ml-auto">{byZone(z.key).length}</Badge>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {byZone(z.key).length === 0 && (
+                  <div className="text-center py-16 space-y-3">
+                    <Inbox className="h-10 w-10 text-muted-foreground/40 mx-auto" />
+                    <p className="text-muted-foreground">Aucun patient dans cette zone</p>
+                  </div>
+                )}
+                {byZone(z.key).map((encounter, index) => (
+                  <PatientCard
+                    key={encounter.id}
+                    encounter={encounter}
+                    resultCount={getResultCount(encounter.id)}
+                    role={role}
+                    index={index}
+                    onMoveZone={handleMoveZone}
+                    onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
       </div>
     </div>
   );
