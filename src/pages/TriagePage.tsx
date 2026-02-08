@@ -76,8 +76,9 @@ export default function TriagePage() {
   const [motif, setMotif] = useState('');
   const [motifSearch, setMotifSearch] = useState('');
 
-  // Step 3 — Vitals
+  // Step 3 — Vitals + Poids
   const [vitalsData, setVitalsData] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
+  const [poids, setPoids] = useState('');
 
   // Step 4 — CIMU
   const [cimu, setCimu] = useState<number | null>(null);
@@ -226,6 +227,11 @@ export default function TriagePage() {
 
       if (encErr) { toast.error('Erreur mise à jour passage'); setSubmitting(false); return; }
 
+      // Update patient weight if provided
+      if (poids) {
+        await supabase.from('patients').update({ poids: parseFloat(poids) }).eq('id', patientId);
+      }
+
       // Insert vitals
       const hasVitals = Object.values(vitalsData).some(v => v !== '');
       if (hasVitals) {
@@ -260,6 +266,11 @@ export default function TriagePage() {
     }).select().single();
 
     if (encErr || !encounter) { toast.error('Erreur création passage'); setSubmitting(false); return; }
+
+    // Update patient weight if provided
+    if (poids) {
+      await supabase.from('patients').update({ poids: parseFloat(poids) }).eq('id', patientId);
+    }
 
     const hasVitals = Object.values(vitalsData).some(v => v !== '');
     if (hasVitals) {
@@ -397,7 +408,12 @@ export default function TriagePage() {
 
             {/* Step 2 — Constantes */}
             {step === 2 && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <Label>Poids (kg) — optionnel</Label>
+                  <Input type="number" step="0.1" value={poids} onChange={e => setPoids(e.target.value)} placeholder="70" className="mt-1 text-lg font-semibold h-12" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                 {[
                   { key: 'fc', label: 'FC (bpm)', placeholder: '80' },
                   { key: 'pa_systolique', label: 'PA sys (mmHg)', placeholder: '120' },
@@ -423,6 +439,7 @@ export default function TriagePage() {
                     </div>
                   );
                 })}
+                </div>
               </div>
             )}
 
