@@ -1,154 +1,176 @@
 
 
-# Audit complet et amelioration ergonomique de toutes les pages
+# Ajout des fonctionnalites manquantes -- Audit complet spec vs plateforme
 
-## Objectif
-Ameliorer l'ergonomie de chaque page non technique avec un design premium et minimaliste. Le board permettra de selectionner une seule zone (SAU, UHCD, Dechocage) au lieu d'afficher les 3 colonnes simultanement. Les prescriptions respecteront les 4 categories : Soins, Examens complementaires (Bilan), Imagerie, Traitements.
+## Analyse des ecarts
 
----
-
-## 1. BoardPage -- Selection de zone unique (priorite haute)
-
-**Probleme actuel** : En mode grille, les 3 zones sont affichees empilees verticalement, ce qui oblige a scroller. L'utilisateur veut pouvoir selectionner une zone specifique tout en gardant la vue d'ensemble.
-
-**Solution** :
-- Ajouter des boutons de filtre de zone cliquables dans le header (SAU, UHCD, Dechocage, Tous)
-- Par defaut : "Tous" affiche les 3 zones empilees (comportement actuel)
-- Cliquer sur une zone filtre la grille pour n'afficher que cette zone
-- Chaque bouton de zone affiche son compteur (ex: "SAU 7/17")
-- Le bouton actif a un style `bg-primary text-primary-foreground`
-- Etat persiste dans localStorage (`urgenceos_selectedZone`)
-- Le WaitingBanner reste toujours visible quel que soit le filtre
-- Ajout d'animations staggerees sur les BoxCells a l'entree
-
-**Fichier** : `src/pages/BoardPage.tsx`
+Apres comparaison detaillee du cahier des charges (50 pages) avec le code actuel, voici les fonctionnalites manquantes, classees par priorite.
 
 ---
 
-## 2. PatientDossierPage -- Ergonomie prescription + antecedents
+## 1. Dossier Patient -- Diagnostic et codage CIM-10 (manquant)
 
-**Etat actuel** : Les 4 categories de prescriptions sont presentes (Traitements, Soins, Examens Bio, Imagerie) via `prescription-utils.tsx`. Les antecedents sont en haut de la colonne droite. Le dialog de prescription (visible dans le screenshot utilisateur) fonctionne.
+Le spec prevoit : "Diagnostic CIM-10, code, severite" (section 12, FHIR model). Actuellement, le dossier patient n'a aucun champ diagnostic.
 
-**Ameliorations** :
-- Ajouter un compteur par categorie dans un mini-resume en haut de la section prescriptions (deja present mais peut etre ameliore visuellement)
-- Uniformiser les bordures laterales colorees sur les resultats critiques (border-l-4)
-- Ajouter une animation d'entree staggeree sur les cartes de resultats
-- Confirmer les 4 categories dans le code : Traitements (Pill), Soins (HeartPulse), Examens Bio (FlaskConical), Imagerie (ScanLine)
-- Ameliorer le contraste du dialog de prescription (fond opaque, z-index)
+**Ajouts :**
+- Section "Diagnostic" dans `PatientDossierPage.tsx` (colonne gauche, sous les notes medicales)
+- Champ texte libre pour le diagnostic + badge codage CIM-10 (optionnel)
+- Sauvegarde comme `timeline_item` de type `diagnostic` (type deja dans l'enum DB)
+- Affichage dans la timeline avec icone Microscope
 
 **Fichier** : `src/pages/PatientDossierPage.tsx`
 
 ---
 
-## 3. PancartePage -- Ergonomie IDE amelioree
+## 2. Dossier Patient -- Traitements en cours du patient (affichage manquant)
 
-**Etat actuel** : Resume rapide en haut (Rx actives, Actes, Resultats). 4 categories de prescriptions presentes. DAR avec cards separees D/A/R.
+Le spec prevoit : "Derniere ordonnance, traitements en cours remontes". Le champ `traitements_actuels` existe dans la table `patients` (jsonb) mais n'est affiche nulle part.
 
-**Ameliorations** :
-- Renforcer visuellement le resume rapide avec des couleurs plus distinctes
-- Ameliorer les animations staggerees (actuellement presentes mais timing a affiner)
-- Ajouter un indicateur visuel quand une prescription est urgente/STAT (pulse subtil)
+**Ajouts :**
+- Section "Traitements en cours" dans la colonne droite du dossier, sous les antecedents/allergies
+- Affichage des traitements actuels du patient (issus de `patient.traitements_actuels`)
+- Icone Pill, style coherent avec les badges antecedents
+
+**Fichier** : `src/pages/PatientDossierPage.tsx`
+
+---
+
+## 3. Pancarte IDE -- Frequence respiratoire + GCS + EVA douleur (manquants)
+
+Le spec prevoit 8 constantes : FC, PA, SpO2, T, FR, GCS, EVA. La pancarte n'affiche que 4 (FC, PA, SpO2, T) et la saisie n'inclut pas FR, GCS, EVA.
+
+**Ajouts :**
+- Ajouter FR, GCS, EVA dans l'affichage des constantes (grille 4 -> 7 colonnes adaptatives)
+- Ajouter FR, GCS, EVA dans le formulaire de saisie inline
+- Meme logique d'alerte anomalie (`isVitalAbnormal` deja supporte ces champs)
 
 **Fichier** : `src/pages/PancartePage.tsx`
 
 ---
 
-## 4. LoginPage -- Finitions premium
+## 4. Pancarte IDE -- Historique des transmissions DAR (lecture manquante)
 
-**Etat actuel** : Split layout desktop, animation pulse sur icone, comptes demo, gradient background.
+Les transmissions sont creees mais l'historique n'est pas affiche. Le spec dit "Transmissions DAR auto-alimentees".
 
-**Ameliorations** :
-- Ameliorer l'espacement de la zone de comptes demo (padding plus genereux)
-- Ajouter une transition douce entre les modes connexion/inscription (slide animation)
-- Renforcer le hover des boutons de comptes demo
+**Ajouts :**
+- Section depliable sous la DAR active montrant les transmissions anterieures
+- Chaque transmission avec horodatage, contenu D/A/R, et auteur
+- Collapsible pour ne pas surcharger l'ecran
 
-**Fichier** : `src/pages/LoginPage.tsx`
-
----
-
-## 5. RoleSelector -- Finitions
-
-**Etat actuel** : Bien construit avec animations staggerees, gradient background, design premium.
-
-**Ameliorations mineures** :
-- Ajouter un effet hover plus prononce avec scale et shadow (actuellement `hover:scale-[1.03]`, passer a `hover:scale-[1.05] hover:shadow-xl`)
-- Ameliorer l'espacement sur mobile (gap plus grand)
-
-**Fichier** : `src/pages/RoleSelector.tsx`
+**Fichier** : `src/pages/PancartePage.tsx`
 
 ---
 
-## 6. TriagePage -- Coherence visuelle
+## 5. Board -- Filtre "Mes patients" en mode grille (surbrillance manquante)
 
-**Etat actuel** : Stepper avec progress bar et points colores, BoxSelector visuel pour l'orientation.
+Le `highlightedIds` est passe a `ZoneGrid` mais le composant `BoxCell` ne l'utilise pas pour un effet visuel.
 
-**Ameliorations** :
-- Ameliorer les zones tactiles des boutons de motif SFMU (deja `touch-target`, verifier taille minimum 44px)
-- Ajouter des animations de transition entre les etapes (slide-in)
-- Ameliorer le stepper header avec un meilleur contraste
+**Ajouts :**
+- `BoxCell` : si le patient est dans les "highlighted", ajouter un ring/halo visuel (ring-2 ring-primary)
+- Les boxes non highlights restent en opacite reduite quand le filtre est actif
 
-**Fichier** : `src/pages/TriagePage.tsx`
-
----
-
-## 7. IOAQueuePage -- Amelioration de la lisibilite
-
-**Etat actuel** : StatCards en haut, cards avec bordure coloree par temps d'attente, heure d'arrivee visible.
-
-**Ameliorations** :
-- Renforcer le contraste des indicateurs d'attente (couleurs plus saturees)
-- Ajouter un fond gradient coherent avec les autres pages
-- Ameliorer l'animation vide (file d'attente vide)
-
-**Fichier** : `src/pages/IOAQueuePage.tsx`
+**Fichiers** : `src/components/urgence/BoxCell.tsx`, `src/components/urgence/ZoneGrid.tsx`
 
 ---
 
-## 8. AccueilPage -- Coherence design
+## 6. Sortie patient -- CCMU/GEMSA de sortie (manquant)
 
-**Etat actuel** : Gradient de fond subtil, StatCards, animations staggerees sur la liste.
+Le spec prevoit CCMU de sortie et codage GEMSA. Le `DischargeDialog` ne les inclut pas.
 
-**Ameliorations** :
-- Ameliorer le formulaire avec des labels plus visibles et un espacement coherent
-- Renforcer les animations staggerees sur les admissions du jour
-- Ajouter un hover sur les cards d'admission pour un retour visuel
+**Ajouts :**
+- Selecteur CCMU de sortie (1-5) dans le dialog
+- Selecteur GEMSA (1-6) dans le dialog
+- Sauvegarde dans l'encounter (champ ccmu deja present, ajouter un champ `gemsa` ou utiliser les `details` du audit_log)
+
+**Fichier** : `src/components/urgence/DischargeDialog.tsx`
+**Migration** : Ajouter colonne `gemsa integer` a la table `encounters`
+
+---
+
+## 7. Accueil Secretaire -- Adresse patient (champ manquant)
+
+Le spec prevoit adresse dans le formulaire d'admission. Le champ `adresse` existe dans la table `patients` mais n'est pas dans le formulaire.
+
+**Ajout :**
+- Champ "Adresse" dans le formulaire d'admission
 
 **Fichier** : `src/pages/AccueilPage.tsx`
 
 ---
 
-## 9. AideSoignantPage -- Ergonomie tactile
+## 8. Dossier Patient -- Poids du patient (manquant dans le bandeau)
 
-**Etat actuel** : Bien adapte au mobile avec BigButtons, gradient de fond, animations.
+Le spec prevoit "Identite, age, poids, CCMU, motif, allergies, medecin" dans le bandeau patient.
 
-**Ameliorations** :
-- Ameliorer le retour visuel sur la selection de patient (animation plus visible)
-- Ajouter une transition entre les vues plus fluide
-- Renforcer la taille des zones de saisie de constantes
+**Ajouts :**
+- Champ poids optionnel dans la fiche patient (necessite colonne `poids` dans `patients`)
+- Affichage dans le `PatientBanner` si present
 
-**Fichier** : `src/pages/AideSoignantPage.tsx`
-
----
-
-## 10. LandingPage -- Pas de changement
-
-La landing est bien structuree. Aucune modification prevue.
+**Fichier** : `src/components/urgence/PatientBanner.tsx`
+**Migration** : Ajouter colonne `poids numeric` a la table `patients`
 
 ---
 
-## Resume technique
+## 9. Board -- Assignation medecin depuis le board (manquant)
 
-| Page | Changement principal | Impact |
-|------|---------------------|--------|
-| BoardPage | Filtres de zone cliquables (SAU/UHCD/Dechocage/Tous) | Ergonomie majeure |
-| PatientDossierPage | Polish prescriptions + resultats | Lisibilite |
-| PancartePage | Polish resume + STAT pulse | Workflow IDE |
-| LoginPage | Espacement demo, transitions | Polish |
-| RoleSelector | Hover ameliore | Polish |
-| TriagePage | Transitions etapes | UX |
-| IOAQueuePage | Gradient, contraste | Coherence |
-| AccueilPage | Labels, hover admissions | Coherence |
-| AideSoignantPage | Transitions, taille saisie | Coherence |
+Le spec prevoit : "Notification medecin" lors de l'orientation. Le board permet de changer de zone mais pas d'assigner un medecin.
 
-Tous les changements respectent : icones Lucide uniquement (pas d'emoji), zones tactiles 44px minimum, code couleur semantique medical, animations staggerees, et les 4 categories de prescriptions (Soins, Examens Bio, Imagerie, Traitements).
+**Ajouts :**
+- Selecteur medecin dans la PatientCard du mode liste (dropdown)
+- Action "Assigner medecin" depuis le board
+
+**Fichier** : `src/components/urgence/BoardPatientCard.tsx`
+
+---
+
+## 10. IOA Queue -- Navigation vers le board (amelioration)
+
+Le spec prevoit que l'IOA puisse voir le board ET la file. Le bouton "Board" existe deja. RAS.
+
+---
+
+## 11. Medecin traitant (affichage manquant)
+
+Le champ `medecin_traitant` existe dans `patients` mais n'est affiche nulle part.
+
+**Ajout :**
+- Affichage dans le dossier patient, section antecedents/infos
+
+**Fichier** : `src/pages/PatientDossierPage.tsx`
+
+---
+
+## Resume des changements
+
+| Changement | Type | Fichier(s) | Migration DB |
+|---|---|---|---|
+| Diagnostic CIM-10 | Feature | PatientDossierPage | Non (enum existe) |
+| Traitements en cours | Affichage | PatientDossierPage | Non (champ existe) |
+| FR + GCS + EVA pancarte | Feature | PancartePage | Non (colonnes existent) |
+| Historique transmissions | Affichage | PancartePage | Non |
+| Surbrillance "Mes patients" | UX | BoxCell, ZoneGrid | Non |
+| CCMU/GEMSA sortie | Feature | DischargeDialog | Oui (colonne gemsa) |
+| Adresse admission | Affichage | AccueilPage | Non (champ existe) |
+| Poids patient | Feature | PatientBanner | Oui (colonne poids) |
+| Assignation medecin board | Feature | BoardPatientCard | Non |
+| Medecin traitant affichage | Affichage | PatientDossierPage | Non |
+
+## Migrations DB necessaires
+
+```sql
+ALTER TABLE encounters ADD COLUMN gemsa integer;
+ALTER TABLE patients ADD COLUMN poids numeric;
+```
+
+## Ce qui n'est PAS implemente (hors scope MVP)
+
+Les elements suivants sont decrits dans le spec comme V2/V3 et ne sont pas inclus dans ce plan :
+- IA RAG pipeline (V2)
+- Documentation ambiante (V2)
+- CRH/RPU auto-genere (V2)
+- Offline-first / Service Workers (architecture V1+)
+- Interop HL7v2/FHIR (V1)
+- DMP/MSSante (V2)
+- Guided tour onboarding (V2)
+- Drag and drop board (V2)
 
