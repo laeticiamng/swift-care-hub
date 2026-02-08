@@ -1,70 +1,139 @@
 
 
-# Ajouter les patients en attente au Board (avant et apres IOA)
+# Vue grille des boxes -- tout le service d'un coup d'oeil
 
-## Probleme
+## Concept
 
-Le board filtre les patients par zone (SAU, UHCD, Dechocage) mais les patients qui n'ont pas encore de zone assignee sont invisibles :
-- **Avant IOA** : status `arrived`, zone = null (patient enregistre par la secretaire, pas encore trie)
-- **Apres IOA sans box** : status `triaged`, zone assignee mais box_number = null (trie mais pas encore installe)
-- **Sans zone** : status `triaged` ou `in-progress` mais zone = null (cas marginal)
-
-Ces patients disparaissent du radar de l'equipe.
-
-## Solution
-
-### 1. Nouvelle section "En attente" sur le BoardPage
-
-Ajouter un 5e onglet/section visible en permanence dans les tabs :
+Remplacer la vue liste/onglets actuelle par une **vue grille** ou chaque box physique du service est represente par une cellule. L'ensemble des 3 zones + la file d'attente sont affiches **simultanement sur la meme page**, sans onglets.
 
 ```text
-[ Tous (30) ] [ SAU (17) ] [ UHCD (8) ] [ Dechocage (5) ] [ En attente (4) ]
++-----------------------------------------------------------------+
+| Header (stats globaux + filtres)                                |
++-----------------------------------------------------------------+
+| EN ATTENTE (bandeau horizontal)                                 |
+| [Pre-IOA: DUPONT] [A orienter: MARTIN] [A installer: LEROY]    |
++-----------------------------------------------------------------+
+| SAU (17 boxes)                              7/17 occupes        |
+| +----+ +----+ +----+ +----+ +----+ +----+                      |
+| | 1  | | 2  | | 3  | | 4  | | 5  | | 6  |                     |
+| |DUP.| |    | |MAR.| |LER.| |    | |PET.|                      |
+| |C3  | |    | |C2  | |C4  | |    | |C1  |                      |
+| +----+ +----+ +----+ +----+ +----+ +----+                      |
+| +----+ +----+ +----+ +----+ +----+ +----+                      |
+| | 7  | | 8  | | 9  | |10  | |11  | |12  |                     |
+| +----+ +----+ +----+ +----+ +----+ +----+                      |
+| +----+ +----+ +----+ +----+ +----+                              |
+| |13  | |14  | |15  | |16  | |17  |                             |
+| +----+ +----+ +----+ +----+ +----+                              |
++-----------------------------------------------------------------+
+| UHCD (8 boxes)                              3/8 occupes         |
+| +----+ +----+ +----+ +----+ +----+ +----+ +----+ +----+        |
+| | 1  | | 2  | | 3  | | 4  | | 5  | | 6  | | 7  | | 8  |      |
+| +----+ +----+ +----+ +----+ +----+ +----+ +----+ +----+        |
++-----------------------------------------------------------------+
+| DECHOCAGE (5 boxes)                         1/5 occupes         |
+| +----+ +----+ +----+ +----+ +----+                              |
+| | 1  | | 2  | | 3  | | 4  | | 5  |                             |
+| +----+ +----+ +----+ +----+ +----+                              |
++-----------------------------------------------------------------+
 ```
 
-Le compteur "En attente" combine :
-- Patients `arrived` (pre-IOA) : pastille orange "A trier"
-- Patients avec zone assignee mais sans box : pastille bleue "A installer"
-- Patients sans zone (triaged/in-progress) : pastille jaune "A orienter"
-
-### 2. Contenu de l'onglet "En attente"
-
-Deux sous-sections visuellement distinctes :
-
-**Pre-IOA** (status = `arrived`, zone = null)
-- Header avec icone `ClipboardList` et fond orange leger
-- Chaque card affiche : nom, age, sexe, heure d'arrivee, temps d'attente (colore si > 30min)
-- Bouton "Trier" qui redirige vers `/triage` avec le patientId pre-rempli (comme IOAQueuePage)
-
-**Post-IOA sans box** (status = `triaged` ou `in-progress`, box_number = null)
-- Header avec icone `MapPin` et fond bleu leger
-- Chaque card affiche : nom, age, sexe, CCMU, motif, zone assignee, temps d'attente
-- Dropdown pour assigner un box directement
-
-### 3. Statistique "En attente" dans le header
-
-Ajouter un StatCard supplementaire dans le header du board :
-- Icone `Clock` ou `Hourglass`
-- Valeur = nombre total de patients en attente
-- Variante `warning` si > 5, `critical` si > 10
-
-### 4. Indicateur visuel dans l'onglet "Tous"
-
-Dans la vue "Tous", les patients en attente (sans zone) apparaissent aussi, avec un badge distinctif :
-- "A trier" (orange) pour les `arrived`
-- "A installer" (bleu) pour ceux avec zone mais sans box
-
-### 5. Modification de la requete de donnees
-
-La requete `fetchEncounters` reste inchangee (elle recupere deja les status `arrived`, `triaged`, `in-progress`). Seul le filtrage cote client change pour inclure les patients sans zone dans la nouvelle section.
+Pas d'onglets, pas de changement de vue : tout est visible simultanement.
 
 ---
 
-## Fichiers modifies
+## Fichiers a creer
 
-| Fichier | Modification |
-|---------|-------------|
-| `src/pages/BoardPage.tsx` | Ajout onglet "En attente", StatCard attente dans header, logique de filtrage pour patients sans zone/box |
-| `src/components/urgence/BoardPatientCard.tsx` | Ajout props pour afficher badges "A trier" / "A installer", bouton Trier conditionnel |
+### 1. `src/lib/box-config.ts` -- Configuration du service
 
-Aucun nouveau fichier necessaire. Aucune modification base de donnees.
+Nombre de boxes par zone, configurable en un seul endroit :
+- SAU : 17 boxes
+- UHCD : 8 boxes
+- Dechocage : 5 boxes
+
+### 2. `src/components/urgence/BoxCell.tsx` -- Cellule d'un box
+
+Composant compact (environ 120x100px) representant un box physique :
+
+**Box occupe :**
+- Bordure gauche coloree selon le CCMU (meme code couleur existant)
+- Nom patient en gras (tronque si necessaire)
+- Age, sexe en petit
+- Temps d'attente (colore si > 2h / > 4h)
+- Icone resultat critique (pulse si critique)
+- Clic = ouvre le dossier patient
+
+**Box vide :**
+- Fond attenue, numero du box centre
+- Texte "Libre" discret
+- Bordure en pointilles
+
+### 3. `src/components/urgence/ZoneGrid.tsx` -- Grille d'une zone
+
+Affiche une zone complete :
+- Header : pastille coloree + nom zone + compteur "occupes/total"
+- Grille responsive : 6 colonnes desktop, 3 colonnes tablette, 2 colonnes mobile
+- Genere les cellules de 1 a N en mappant les encounters par box_number
+
+### 4. `src/components/urgence/WaitingBanner.tsx` -- Bandeau patients en attente
+
+Bandeau horizontal en haut du board, sous le header, affichant :
+- **Pre-IOA** (pastille orange) : patients `arrived` sans zone
+- **A orienter** (pastille jaune) : patients tries mais sans zone
+- **A installer** (pastille bleue) : patients avec zone mais sans box
+
+Chaque patient est un petit chip cliquable (nom + temps attente). Bouton "Trier" pour les pre-IOA si role IOA/medecin.
+
+---
+
+## Fichiers a modifier
+
+### 5. `src/pages/BoardPage.tsx` -- Refonte complete du layout
+
+- Supprimer le systeme d'onglets (Tabs/TabsList/TabsTrigger/TabsContent)
+- Elargir le container a `max-w-7xl` pour exploiter la largeur
+- Afficher les 3 zones empilees verticalement avec ZoneGrid
+- Afficher le WaitingBanner entre le header et les grilles
+- Toggle Grille/Liste persiste dans localStorage (`urgenceos_viewMode`)
+- Le mode liste reste disponible (vue actuelle avec PatientCard) comme fallback
+- Le filtre "Mes patients" met en surbrillance les boxes concernes dans la grille
+- StatCards du header : afficher le taux d'occupation (ex: "SAU 7/17")
+
+### 6. `src/pages/TriagePage.tsx` -- Selecteur visuel de box
+
+A l'etape Orientation (step 4), remplacer l'input numero par un selecteur visuel :
+- Afficher les boxes disponibles de la zone selectionnee en grille de badges cliquables
+- Boxes occupes = grise et non cliquable
+- Boxes libres = cliquable, le clic remplit le champ box_number
+- Necessite de passer les encounters en cours au composant (ou fetch les boxes occupes)
+
+### 7. `src/components/urgence/PatientBanner.tsx` -- Afficher le box
+
+Ajouter une prop optionnelle `boxNumber` :
+- Si present, afficher "Box X" a cote du nom du patient dans la banniere
+- Style discret mais visible (badge outline)
+
+### 8. `src/pages/PatientDossierPage.tsx` -- Passer boxNumber au banner
+
+Transmettre `encounter.box_number` au composant PatientBanner.
+
+### 9. `src/pages/PancartePage.tsx` -- Passer boxNumber au banner
+
+Meme chose : transmettre `encounter.box_number` au PatientBanner.
+
+---
+
+## Details techniques
+
+**Responsive :**
+- Desktop (>1280px) : 6 colonnes par zone, toutes zones visibles
+- Tablette (768-1280px) : 4 colonnes
+- Mobile (<768px) : 2 colonnes, zones collapsibles pour economiser l'espace vertical
+
+**Performance :**
+- Meme requete Supabase existante, pas de requete supplementaire
+- Realtime deja en place sur `encounters` et `results`
+- Les boxes vides sont generes cote client a partir de box-config.ts
+
+**Aucune modification base de donnees requise.**
 
