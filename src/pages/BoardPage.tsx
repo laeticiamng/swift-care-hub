@@ -54,8 +54,12 @@ export default function BoardPage() {
   const isMobile = useIsMobile();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
-  const [myOnly, setMyOnly] = useState(false);
+  const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem('urgenceos_myOnly', String(myOnly));
+  }, [myOnly]);
 
   useEffect(() => {
     fetchEncounters();

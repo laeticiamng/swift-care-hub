@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2 } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict } from '@/lib/allergy-check';
@@ -196,7 +196,14 @@ export default function PatientDossierPage() {
                           {item.source_date && <span className="text-xs text-muted-foreground">{item.source_date}</span>}
                         </div>
                         <p className="text-sm mt-1">{item.content}</p>
-                        {item.source_document && <p className="text-xs text-muted-foreground mt-1">Source : {item.source_document} {item.source_author && `— ${item.source_author}`}</p>}
+                        {item.source_document && (
+                          <div className="flex items-center justify-between mt-1">
+                            <p className="text-xs text-muted-foreground">Source : {item.source_document} {item.source_author && `— ${item.source_author}`}</p>
+                            <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={(e) => { e.stopPropagation(); toast.info('Document source non disponible en démo'); }}>
+                              <ExternalLink className="h-3 w-3 mr-1" /> Ouvrir
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
