@@ -1,73 +1,130 @@
-# Welcome to your Lovable project
+# 🏥 UrgenceOS
 
-## Project info
+**Operating System de workflow pour services d'urgences hospitalières.**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+UrgenceOS est une application web temps réel conçue pour digitaliser et fluidifier l'ensemble du parcours patient aux urgences — de l'admission à la sortie — avec des interfaces adaptées à chaque profil soignant.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## ✨ Fonctionnalités principales
 
-**Use Lovable**
+| Module | Description |
+|---|---|
+| **Landing Page** | Vitrine Apple-like avec présentation des fonctionnalités |
+| **Board panoramique** | Vue temps réel de tous les patients par zone (SAU, UHCD, Déchocage) |
+| **Dossier Patient** | Timeline médicale, prescriptions avec contrôle allergies, résultats, constantes |
+| **Pancarte IDE** | Interface unifiée infirmière : administrations 1-tap, transmissions DAR, actes |
+| **Tri IOA** | Wizard 5 étapes avec suggestion CIMU automatique |
+| **Interface Aide-Soignant** | Saisie rapide des constantes avec alertes visuelles |
+| **Accueil Secrétaire** | Admission patient < 90s, recherche par nom/INS |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 👥 Profils utilisateurs
 
-**Use your preferred IDE**
+| Rôle | Accès principal | Route | Email de test |
+|---|---|---|---|
+| **Médecin** | Board + Dossier Patient + Prescriptions | `/board` | `martin@urgenceos.fr` |
+| **IOA** | File d'attente + Tri patients | `/ioa-queue` | `sophie@urgenceos.fr` |
+| **IDE** | Board + Pancarte (administrations, actes) | `/board` → `/pancarte/:id` | `julie@urgenceos.fr` |
+| **Aide-soignant** | Constantes + Surveillance | `/as` | `marc@urgenceos.fr` |
+| **Secrétaire** | Admissions + Accueil | `/accueil` | `nathalie@urgenceos.fr` |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+> **Mot de passe commun** : `urgenceos2026`
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🛠 Stack technique
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+- **Frontend** : React 18 · TypeScript · Vite
+- **UI** : Tailwind CSS · Shadcn/UI · Lucide React
+- **State** : TanStack React Query · Supabase Realtime
+- **Backend** : Lovable Cloud (PostgreSQL, Auth, Edge Functions, RLS)
+- **Graphiques** : Recharts
+- **Thème** : next-themes (dark/light mode)
+
+---
+
+## 🎨 Design System
+
+### Couleurs sémantiques médicales
+
+| Token | Usage |
+|---|---|
+| `--medical-critical` | Rouge — Alertes, allergies, CCMU 1 |
+| `--medical-warning` | Orange — Attente prolongée, CCMU 2-3 |
+| `--medical-success` | Vert — Normal, administré, CCMU 4-5 |
+| `--medical-info` | Bleu — Informations, médecin |
+| `--muted` | Gris — Éléments secondaires |
+
+### Règles UX
+
+- **3 clics maximum** pour toute action critique
+- **Zéro popup bloquant** — toasts et banners uniquement
+- **Mobile-first** — touch targets ≥ 44px
+- **Temps réel** — mise à jour automatique sans rechargement
+
+---
+
+## 🗄 Base de données
+
+### Tables principales
+
+| Table | Description |
+|---|---|
+| `patients` | Identité, allergies, antécédents, traitements |
+| `encounters` | Passages aux urgences (zone, CCMU, CIMU, statut) |
+| `vitals` | Constantes (PA, FC, SpO2, T°, FR, GCS, EVA) |
+| `prescriptions` | Prescriptions médicamenteuses avec priorité |
+| `administrations` | Traçabilité des administrations IDE |
+| `procedures` | Actes infirmiers (VVP, prélèvement, ECG…) |
+| `transmissions` | Transmissions ciblées DAR |
+| `results` | Résultats (biologie, imagerie, ECG) |
+| `timeline_items` | Historique médical structuré |
+| `audit_logs` | Journal d'audit complet |
+| `profiles` | Profils utilisateurs |
+| `user_roles` | Attribution des rôles par utilisateur |
+
+---
+
+## 🔒 Sécurité
+
+- **Row Level Security (RLS)** active sur toutes les tables
+- **Politiques par rôle** : chaque profil accède uniquement aux données nécessaires
+- **Audit trail** : toutes les actions critiques sont journalisées (`audit_logs`)
+- **Authentification** : email/mot de passe via le système d'auth intégré
+
+---
+
+## ⚡ Temps réel
+
+Les tables suivantes sont synchronisées en temps réel via Supabase Realtime :
+
+- `encounters` — mouvements patients sur le board
+- `prescriptions` — nouvelles prescriptions
+- `results` — résultats critiques
+- `vitals` — constantes mises à jour
+
+---
+
+## 🚀 Installation locale
+
+```bash
+# Cloner le dépôt
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Installer les dépendances
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Lancer le serveur de développement
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+L'application sera disponible sur `http://localhost:5173`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 📄 Licence
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Projet interne — Usage hospitalier uniquement.
