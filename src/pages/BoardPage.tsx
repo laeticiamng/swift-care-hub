@@ -43,6 +43,7 @@ export default function BoardPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
   const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem('urgenceos_selectedZone') as ZoneKey | 'all') || 'all');
   const [loading, setLoading] = useState(true);
+  const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
 
   useEffect(() => { localStorage.setItem('urgenceos_myOnly', String(myOnly)); }, [myOnly]);
@@ -60,7 +61,21 @@ export default function BoardPage() {
     return () => { supabase.removeChannel(channel); clearInterval(timer); };
   }, []);
 
+  useEffect(() => {
+    if (role === 'as') { navigate('/as', { replace: true }); return; }
+    if (role === 'secretaire') { navigate('/accueil', { replace: true }); return; }
+  }, [role, navigate]);
+
   const fetchEncounters = async () => {
+    // Fetch finished encounters in last 24h
+    const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count } = await supabase
+      .from('encounters')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'finished')
+      .gte('arrival_time', since24h);
+    setFinishedCount(count ?? 0);
+
     // Fetch medecins list once
     if (medecins.length === 0) {
       const { data: roles } = await supabase.from('user_roles').select('user_id').eq('role', 'medecin');
@@ -212,7 +227,7 @@ export default function BoardPage() {
           <StatCard label="Total" value={filtered.length} icon={Users} />
           <StatCard label="Arrivés" value={filtered.filter(e => e.status === 'arrived').length} icon={Hourglass} variant="warning" />
           <StatCard label="En cours" value={filtered.filter(e => e.status === 'in-progress' || e.status === 'triaged').length} icon={Activity} variant="default" />
-          <StatCard label="Terminés (24h)" value={0} icon={CheckCircle} variant="success" />
+          <StatCard label="Terminés (24h)" value={finishedCount} icon={CheckCircle} variant="success" />
         </div>
 
         <WaitingBanner
