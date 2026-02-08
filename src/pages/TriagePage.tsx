@@ -9,6 +9,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { BoxSelector } from '@/components/urgence/BoxSelector';
+import { ZoneKey } from '@/lib/box-config';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
 import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle } from 'lucide-react';
@@ -85,6 +87,7 @@ export default function TriagePage() {
   const [boxNumber, setBoxNumber] = useState('');
   const [selectedMedecin, setSelectedMedecin] = useState('');
   const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
+  const [occupiedBoxes, setOccupiedBoxes] = useState<number[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -125,6 +128,21 @@ export default function TriagePage() {
     };
     fetchMedecins();
   }, []);
+
+  // Fetch occupied boxes when zone changes
+  useEffect(() => {
+    const fetchOccupied = async () => {
+      if (!zone) { setOccupiedBoxes([]); return; }
+      const { data } = await supabase
+        .from('encounters')
+        .select('box_number')
+        .eq('zone', zone as ZoneKey)
+        .in('status', ['arrived', 'triaged', 'in-progress'])
+        .not('box_number', 'is', null);
+      if (data) setOccupiedBoxes(data.map(d => d.box_number!));
+    };
+    fetchOccupied();
+  }, [zone]);
 
   const filteredMotifs = SFMU_MOTIFS.filter(m => m.toLowerCase().includes(motifSearch.toLowerCase()));
 
@@ -461,7 +479,20 @@ export default function TriagePage() {
                 </div>
                 <div>
                   <Label>N° de box (optionnel)</Label>
-                  <Input type="number" value={boxNumber} onChange={e => setBoxNumber(e.target.value)} placeholder="1" className="mt-1" />
+                  <div className="mt-2">
+                    <BoxSelector
+                      zone={zone as ZoneKey}
+                      occupiedBoxes={occupiedBoxes}
+                      selectedBox={boxNumber ? parseInt(boxNumber) : null}
+                      onSelect={(num) => setBoxNumber(String(num))}
+                    />
+                  </div>
+                  {boxNumber && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="secondary">Box {boxNumber}</Badge>
+                      <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setBoxNumber('')}>Retirer</Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
