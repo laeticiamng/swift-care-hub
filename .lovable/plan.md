@@ -1,101 +1,128 @@
 
+# Completions manquantes pour UrgenceOS
 
-# 🏥 UrgenceOS — Plan d'implémentation
+## Analyse des lacunes
 
-## Vision
-Un **Operating System de workflow urgences hospitalières** : une PWA React où chaque profil (Médecin, IOA, IDE, Aide-soignant, Secrétaire) voit uniquement ce qui est pertinent pour son rôle. Design Apple-like, minimaliste, code couleur sémantique strict.
-
----
-
-## Phase 1 — Fondations & Authentification
-
-### Design System
-- Palette sémantique : rouge (critique), orange (attention), vert (normal), bleu (en cours), gris (inactif)
-- Typographie Inter, touch targets 44px+, grid 8px, style minimaliste avec cards à ombres subtiles
-- Composants réutilisables de base : `CCMUBadge`, `PatientBanner`, `AlertBanner`, `BigButton`, `StatCard`
-
-### Base de données Supabase
-- Création de toutes les tables : profiles, patients, encounters, vitals, prescriptions, administrations, procedures, transmissions, results, timeline_items, audit_logs
-- Table `user_roles` séparée avec enum (medecin, ioa, ide, as, secretaire)
-- Row Level Security par rôle (AS ne voit jamais les prescriptions, Secrétaire jamais les données cliniques)
-- Activation Realtime sur encounters, prescriptions, results
-
-### Auth & Rôles
-- Page de connexion email/mot de passe
-- Sélection du rôle après login (cards visuelles avec icône par profil)
-- Redirection automatique selon le rôle sélectionné
-- Route guards par rôle
-
-### Seed Data
-- 15-20 patients avec variété d'âges, motifs, CCMU, zones, allergies, antécédents
-- 5 utilisateurs de test (Dr. Martin, Sophie IOA, Julie IDE, Marc AS, Nathalie Accueil)
-- Constantes vitales, prescriptions, résultats bio, timeline items
+Apres audit complet du code et de la base de donnees, voici ce qui manque par rapport au plan initial :
 
 ---
 
-## Phase 2 — Les 5 interfaces par rôle (premier passage complet)
+## 1. RLS : AS ne peut pas inserer procedures/vitals pour brancardage/surveillance/confort
 
-### 🩺 Board Médecin (écran principal)
-- 3 colonnes : SAU, UHCD, Déchocage
-- Cartes patient avec nom, âge, motif, CCMU coloré, temps d'attente (rouge si >4h)
-- Badges résultats bio/imagerie arrivés
-- Compteurs par zone dans le header
-- Filtre "Mes patients"
-- Bouton de réassignation de zone (dropdown, pas de drag & drop initial)
-- Clic sur carte → ouvre le dossier patient
+**Probleme** : L'interface AS utilise `procedures.insert()` pour surveillance, brancardage et confort, mais la policy RLS `IDE can insert procedures` n'autorise que le role IDE. L'AS est bloque en ecriture.
 
-### 📋 Dossier Patient Médecin
-- Bandeau patient sticky (identité, CCMU, allergies en rouge, motif)
-- Timeline chronologique (antécédents, allergies, traitements, CRH, résultats) avec source et date
-- Zone prescriptions avec modal 3 étapes (recherche médicament, posologie, validation)
-- Sparklines des constantes vitales avec points rouges si anormales
-- Panneau résultats avec liseré rouge si critique
-
-### 🔄 Workflow Tri IOA (5 étapes)
-- Progress bar horizontale 5 étapes
-- Étape 1 : Identité (pré-remplissage si patient connu)
-- Étape 2 : Motif (autocomplete thésaurus SFMU + chips top 10)
-- Étape 3 : Constantes (gros champs numériques, highlight rouge auto si anormale)
-- Étape 4 : Classification CIMU (5 gros boutons colorés + suggestion auto)
-- Étape 5 : Orientation (choix zone + médecin → patient apparaît sur le board)
-
-### 💊 Pancarte IDE (innovation clé — UN seul écran)
-- Bandeau patient sticky
-- Section constantes avec saisie inline et sparklines
-- Section prescriptions : chaque ligne avec bouton **✓ Administré en 1 tap** (horodatage auto, transition gris→vert)
-- Section actes de soins (1 tap = acte tracé)
-- Section transmissions DAR (D+A auto-alimentées, R en texte libre)
-- Section résultats (badge compteur, liseré rouge si critique)
-
-### 🟦 Interface Aide-Soignant (ultra simple)
-- 4 gros boutons en grille 2×2 (Constantes, Surveillance, Brancardage, Confort)
-- Zéro donnée médicale visible
-- Zones tactiles 60px, texte 18pt
-- Sélecteur patient en haut
-
-### 📝 Interface Secrétaire / Accueil
-- Formulaire admission en 1 page (< 90 secondes)
-- Pré-remplissage si patient connu
-- Liste des patients admis aujourd'hui avec statut
+**Correction** : Ajouter le role AS dans la policy INSERT sur `procedures`.
 
 ---
 
-## Phase 3 — Temps réel & Règles métier
+## 2. Pas de medecin selectable dans le Triage etape 5 (Orientation)
 
-### Realtime Supabase
-- Board : nouveau patient apparaît en live, changements de statut mis à jour
-- Pancarte IDE : nouvelles prescriptions apparaissent instantanément
-- File IOA : nouveau patient admis par secrétaire visible immédiatement
+**Probleme** : Le plan prevoit un dropdown de selection du medecin a l'etape 5 du triage. Actuellement seuls la zone et le numero de box sont proposes.
 
-### Règles métier critiques
-- Allergies toujours en rouge, alerte bloquante si prescription incompatible
-- Résultats critiques avec liseré rouge + badge
-- Temps d'attente coloré (orange >2h, rouge >4h)
-- Constantes anormales highlight automatique selon seuils définis
-- Administration 1 tap = insert + update statut + auto-feed DAR
+**Correction** : Ajouter un `Select` qui affiche les profils avec role `medecin`, et assigner `medecin_id` sur le `encounters.insert`.
 
 ---
 
-## Résultat attendu
-Une application complète et fonctionnelle avec 5 interfaces métier distinctes, un backend Supabase avec données réalistes, sécurité par rôle, et mises à jour temps réel — le tout dans un design élégant et minimaliste pensé pour le geste clinique.
+## 3. Dossier Patient : pas de workflow "Preparer sortie"
 
+**Probleme** : Le plan mentionne un bouton "Preparer sortie" dans le dossier patient medecin, avec un workflow (CRH + ordonnance + orientation). Non implemente.
+
+**Correction** : Ajouter un bouton "Preparer sortie" qui :
+- Ouvre une modale avec champs : orientation (domicile/hospitalisation/transfert), resume de sortie (textarea), ordonnances de sortie
+- Met a jour `encounters.status = 'finished'`, `discharge_time = now()`, `orientation = valeur choisie`
+
+---
+
+## 4. Dossier Patient : pas de toggle "Essentiel / Voir tout" sur la timeline
+
+**Probleme** : Le plan mentionne un filtre "Essentiel" vs "Voir tout" pour la timeline. Absent actuellement.
+
+**Correction** : Ajouter un toggle qui filtre les items : mode "Essentiel" ne montre que `allergie`, `crh`, et items critiques.
+
+---
+
+## 5. Prescriptions : pas de verification d'allergie avant prescription
+
+**Probleme** : Le plan exige une alerte bloquante rouge si un medicament prescrit est de la meme famille qu'une allergie connue. Non implemente.
+
+**Correction** : Ajouter une table de mapping medicament-famille d'allergie (cote client, constante). Avant validation, verifier si le medicament contient un mot-cle d'allergie. Si oui, afficher une alerte rouge bloquante dans la modale de prescription.
+
+---
+
+## 6. Board : pas de lien "Nouveau patient" pour IOA
+
+**Probleme** : Le header du board devrait avoir un bouton "Nouveau patient" qui lance le workflow IOA (lien vers /triage). Absent.
+
+**Correction** : Ajouter un bouton dans le header du board, visible pour les roles IOA et medecin, qui navigue vers `/triage`.
+
+---
+
+## 7. Pancarte IDE : temperature manquante dans la saisie inline
+
+**Probleme** : Le formulaire de saisie inline des constantes dans la pancarte affiche FC, PA sys, PA dia, SpO2 mais pas la temperature.
+
+**Correction** : Ajouter un input T degrees dans la grille de saisie (5 champs + bouton OK = 6 colonnes, ou reorganiser).
+
+---
+
+## 8. Realtime : pas de realtime sur la page Accueil
+
+**Probleme** : Quand un nouveau patient est admis par la secretaire, l'IOA ne voit pas le patient apparaitre en temps reel dans le triage/board.
+
+**Correction** : La liste Accueil devrait aussi se rafraichir en realtime (channel sur encounters).
+
+---
+
+## 9. Board : pas de compteur total dans le header
+
+**Probleme** : Le header affiche SAU/UHCD/Dechocage mais pas le total global de patients.
+
+**Correction** : Ajouter un `StatCard` "Total" avec le nombre total de patients filtres.
+
+---
+
+## 10. Composant NetworkStatus manquant
+
+**Probleme** : Le plan prevoit un composant `NetworkStatus` (pastille vert/orange/rouge indiquant la connexion). Non implemente.
+
+**Correction** : Creer un composant leger qui ecoute `navigator.onLine` et les evenements `online`/`offline`, affiche une pastille dans le header.
+
+---
+
+## Plan d'implementation technique
+
+### Migration SQL
+- Modifier la policy RLS `IDE can insert procedures` pour inclure le role `as`
+
+### Fichiers a modifier
+
+1. **`src/pages/BoardPage.tsx`**
+   - Ajouter bouton "Nouveau patient" (visible IOA/medecin) dans le header
+   - Ajouter StatCard "Total" dans le header
+
+2. **`src/pages/PatientDossierPage.tsx`**
+   - Ajouter toggle "Essentiel / Voir tout" sur la timeline
+   - Ajouter bouton "Preparer sortie" avec modale (orientation, resume, ordonnances)
+   - Ajouter verification d'allergie dans la modale de prescription (mapping medicament -> famille)
+
+3. **`src/pages/TriagePage.tsx`**
+   - Ajouter dropdown selection medecin a l'etape 5 (fetch profiles avec role medecin)
+   - Assigner `medecin_id` au `encounters.insert`
+
+4. **`src/pages/PancartePage.tsx`**
+   - Ajouter champ temperature dans la saisie inline des constantes
+
+5. **`src/pages/AccueilPage.tsx`**
+   - Ajouter channel realtime sur encounters pour rafraichir la liste automatiquement
+
+6. **`src/components/urgence/NetworkStatus.tsx`** (nouveau)
+   - Composant pastille qui ecoute `navigator.onLine`
+   - Integrer dans le header commun ou dans chaque page
+
+### Ordre de priorite
+1. Fix RLS AS (bloquant)
+2. Verification allergie prescription (securite patient)
+3. Selection medecin au triage
+4. Workflow sortie patient
+5. Toggle timeline + bouton nouveau patient + total board
+6. Temperature pancarte + realtime accueil + NetworkStatus
