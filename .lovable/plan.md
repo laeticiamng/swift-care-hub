@@ -1,71 +1,105 @@
 
 
-# Audit final spec v15 -- Dernieres micro-finitions premium
+# Audit multi-directionnel UrgenceOS -- Corrections premium v16
 
-Apres 9 rounds d'implementation, la couverture fonctionnelle est a 97%+. Le v15 ajoute une PARTIE VII (specs dev architecture) qui n'est pas implementable (microservices, Keycloak, etc. -- hors scope Lovable). Les ecarts restants sont des violations de design system et des finitions de coherence.
-
----
-
-## 1. Suppression des emojis -- Violation du design system
-
-Le spec (page 16) dit : "Icones universelles, vocabulaire clinique francais". Le memory design indique explicitement : "L'interface proscrit l'utilisation d'emojis au profit exclusif des icones Lucide."
-
-3 fichiers violent cette regle :
-
-- `LandingPage.tsx` lignes 100-102 : emojis dans la section "Pourquoi maintenant ?" (icones de texte au lieu de composants Lucide)
-- `TriagePage.tsx` ligne 430 : emoji pilule dans "Traitements en cours"
-- `PatientDossierPage.tsx` ligne 260 : emoji oeil dans badge "Consultation seule"
-
-**Correction :**
-- Remplacer les emojis par des icones Lucide appropriees (Building2, Zap, Scale pour la landing ; Pill pour les traitements ; Eye pour la consultation)
-
-**Fichiers** : `src/pages/LandingPage.tsx`, `src/pages/TriagePage.tsx`, `src/pages/PatientDossierPage.tsx`
+Audit complet sous 4 angles : Marketing visuel, CEO strategique, COO organisationnel, DPO RGPD.
 
 ---
 
-## 2. Landing -- Section "Pourquoi maintenant ?" avec emojis au lieu de composants Lucide
+## DIAGNOSTIC RAPIDE
 
-Les icones sont actuellement des strings emoji rendues dans un `<span>`. Elles devraient etre des composants Lucide comme dans toutes les autres sections de la landing.
+**Test 3 secondes (CEO)** : le hero PASSE -- "Moins de clics. Plus de soin." est clair et impactant. On comprend immediatement qu'il s'agit de simplifier les urgences hospitalieres.
 
-**Correction :**
-- Transformer les items en utilisant des composants Lucide (Building2, Zap, Scale) au lieu de strings emoji
-- Aligner le style avec les autres sections (icone dans un div rond `bg-primary/10`)
+**Problemes identifies** : 6 corrections classees par priorite.
+
+---
+
+## PRIORITE 1 -- DPO : Bandeau cookies manquant (OBLIGATOIRE avant mise en ligne)
+
+Aucun mecanisme de consentement cookies n'existe. Meme si l'app n'utilise pas de cookies marketing, le RGPD impose d'informer l'utilisateur. La CNIL exige un bandeau conforme.
+
+**Actions :**
+- Creer un composant `CookieConsent` minimaliste et premium (bandeau bas de page, fond glassmorphism)
+- Stocker le consentement dans `localStorage`
+- Ne s'affiche qu'une fois, disparait apres acceptation
+- Lien vers la politique de confidentialite
+
+**Fichier** : `src/components/urgence/CookieConsent.tsx` (nouveau) + integration dans `App.tsx`
+
+---
+
+## PRIORITE 2 -- DPO : Section cookies manquante dans la politique de confidentialite
+
+La politique de confidentialite ne mentionne pas les cookies. C'est une obligation legale.
+
+**Actions :**
+- Ajouter une section "Cookies et traceurs" dans `PolitiqueConfidentialitePage.tsx`
+- Contenu : types de cookies utilises (techniques uniquement), finalite, duree, refus possible
+- Fixer la date de "Derniere mise a jour" en dur (fevrier 2026) au lieu de `new Date()` dynamique (la date change chaque jour, ce qui est incorrect juridiquement)
+
+**Fichier** : `src/pages/PolitiqueConfidentialitePage.tsx`
+
+---
+
+## PRIORITE 3 -- DPO : Fixer la date dynamique des CGU
+
+Meme probleme : `new Date().toLocaleDateString()` change chaque jour. Une date de mise a jour legale doit etre fixe.
+
+**Fichier** : `src/pages/CGUPage.tsx`
+
+---
+
+## PRIORITE 4 -- Marketing : Supprimer les 3 slogans separateurs (effet "cheap")
+
+La landing page contient 3 citations italiques entre les sections :
+- "Un logiciel pense PAR des soignants, POUR des soignants."
+- "L'urgence n'attend pas. Votre logiciel non plus."
+- "8 clics hier. 1 tap aujourd'hui."
+
+Ces separateurs repetitifs diluent l'impact et donnent un aspect amateur. Un site premium Apple-like ne met pas de slogans entre chaque section.
+
+**Action :** Supprimer les 3 blocs `<div className="py-8 ...">` dans `LandingPage.tsx`.
 
 **Fichier** : `src/pages/LandingPage.tsx`
 
 ---
 
-## 3. Resultats labo/imagerie visibles en lecture seule pour AS et secretaire
+## PRIORITE 5 -- Marketing/CEO : Consolider Impact + Metriques (redondance)
 
-Actuellement, dans `PatientDossierPage.tsx`, la section "Resultats" (ligne 672-706) est encapsulee dans `{!isReadOnly && (...)}`, ce qui la masque pour les AS et secretaires. Or :
-- Le spec dit que l'AS voit "zero donnee medicale" -- correct de masquer.
-- Mais les constantes et la timeline sont visibles pour ces roles.
-- Les resultats de labo sont des donnees medicales -- correct de masquer pour AS.
-- Le secretaire devrait voir le statut des resultats (nombre) mais pas le contenu.
+La landing affiche les memes donnees deux fois :
+- Section "Impact" : 4 cartes (1 tap, < 2 min, < 90 sec, 0 logiciel)
+- Section "Metriques" : 10 cartes reprenant les memes + 6 supplementaires
 
-Le comportement actuel est acceptable et conforme au spec. Pas de changement necessaire ici.
+C'est redondant. La section Impact suffit si on l'enrichit avec les 10 metriques completes dans un format plus compact.
 
----
+**Action :**
+- Retirer la section "Metriques" inline (lignes 122-148)
+- Enrichir `ImpactSection.tsx` pour afficher les 10 metriques du spec dans un format 2 rangees de 5, premium
 
-## 4. Board -- Emojis residuels dans le code
-
-Verifier et nettoyer tout emoji residuel dans les composants urgence. Seuls les 3 fichiers identifies contiennent des emojis.
+**Fichiers** : `src/pages/LandingPage.tsx` + `src/components/landing/ImpactSection.tsx`
 
 ---
 
-## 5. Coherence du design "Pourquoi maintenant ?"
+## PRIORITE 6 -- CEO : Badge hero "Projet de recherche" a nuancer
 
-La section utilise actuellement `text-3xl` pour l'icone emoji. En passant aux icones Lucide, la taille doit etre alignee avec les autres sections (h-6 w-6 dans un conteneur rond de 48px).
+Le badge "Projet de recherche 2026" dans le hero est transparent mais peut freiner la conversion. Le spec (page 38) recommande la "Signature de preuve" comme element de credibilite.
+
+**Action :** Changer le badge en "Workflow urgences 2026" -- plus positif, toujours honnete.
+
+**Fichier** : `src/components/landing/HeroSection.tsx`
 
 ---
 
-## Resume des changements
+## RESUME
 
-| Changement | Type | Fichier(s) | Migration DB |
-|---|---|---|---|
-| Emojis -> Lucide icons landing | Design system | LandingPage | Non |
-| Emoji -> Lucide icon triage | Design system | TriagePage | Non |
-| Emoji -> Lucide icon dossier | Design system | PatientDossierPage | Non |
+| # | Correction | Type | Priorite | Fichier(s) |
+|---|---|---|---|---|
+| 1 | Bandeau cookie consent | DPO/Legal | Critique | CookieConsent (new) + App |
+| 2 | Section cookies privacy | DPO/Legal | Critique | PolitiqueConfidentialite |
+| 3 | Date fixe CGU | DPO/Legal | Haute | CGUPage |
+| 4 | Retrait slogans separateurs | Marketing | Haute | LandingPage |
+| 5 | Fusion Impact + Metriques | Marketing/CEO | Moyenne | LandingPage + ImpactSection |
+| 6 | Badge hero reformule | CEO | Moyenne | HeroSection |
 
-Aucune migration DB necessaire. Ce sont des corrections cosmetiques de conformite au design system.
+Aucune migration DB necessaire.
 
