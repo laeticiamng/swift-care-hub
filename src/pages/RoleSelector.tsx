@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth, type AppRole } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut, AlertTriangle } from 'lucide-react';
+import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut, AlertTriangle, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
@@ -28,7 +28,6 @@ export default function RoleSelector() {
   const navigate = useNavigate();
   const [assigning, setAssigning] = useState(false);
 
-  // Auto-redirect if role already selected
   useEffect(() => {
     if (!loading && role && availableRoles.length > 0) {
       navigate(roleRedirects[role], { replace: true });
@@ -36,7 +35,6 @@ export default function RoleSelector() {
   }, [role, loading, availableRoles]);
 
   const handleSelect = async (selectedRole: AppRole) => {
-    // If user has no roles yet, insert into user_roles first
     if (availableRoles.length === 0 && user) {
       setAssigning(true);
       const { error } = await supabase
@@ -53,16 +51,25 @@ export default function RoleSelector() {
     navigate(roleRedirects[selectedRole]);
   };
 
-  // Show all roles if user has none (new user), otherwise only their assigned roles
   const isNewUser = !loading && availableRoles.length === 0;
   const visibleRoles = isNewUser ? roleConfig : roleConfig.filter(r => availableRoles.includes(r.role));
 
-  // If already redirecting, show nothing
   if (!loading && role) return null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4 py-8">
-      <div className="text-center mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
+        <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 -right-32 w-80 h-80 bg-medical-success/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 text-center mb-8">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Activity className="h-8 w-8 text-primary" />
+          <span className="text-2xl font-bold">Urgence<span className="text-primary">OS</span></span>
+        </div>
         <h1 className="text-2xl font-bold">
           {isNewUser ? 'Bienvenue ! Choisissez votre rôle' : 'Sélection du rôle'}
         </h1>
@@ -79,20 +86,24 @@ export default function RoleSelector() {
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl w-full">
-        {visibleRoles.map(({ role: r, label, description, icon: Icon, color }) => (
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl w-full">
+        {visibleRoles.map(({ role: r, label, description, icon: Icon, color }, index) => (
           <button
             key={r}
             onClick={() => handleSelect(r)}
             disabled={assigning}
             className={cn(
               'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
-              'hover:shadow-md hover:border-primary/30 transition-all duration-200 active:scale-[0.98]',
+              'hover:shadow-lg hover:border-primary/30 transition-all duration-300 active:scale-[0.98]',
               'touch-target min-h-[140px]',
+              'animate-in fade-in slide-in-from-bottom-4',
               assigning && 'opacity-50 pointer-events-none',
             )}
+            style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
           >
-            <Icon className={cn('h-10 w-10', color)} />
+            <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Icon className={cn('h-8 w-8', color)} />
+            </div>
             <div className="text-center">
               <p className="font-semibold text-lg">{label}</p>
               <p className="text-sm text-muted-foreground mt-1">{description}</p>
@@ -101,7 +112,7 @@ export default function RoleSelector() {
         ))}
       </div>
 
-      <Button variant="ghost" onClick={signOut} className="mt-8 text-muted-foreground">
+      <Button variant="ghost" onClick={signOut} className="mt-8 text-muted-foreground relative z-10">
         <LogOut className="h-4 w-4 mr-2" /> Déconnexion
       </Button>
     </div>

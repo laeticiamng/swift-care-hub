@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, UserPlus, Search, Check } from 'lucide-react';
+import { StatCard } from '@/components/urgence/StatCard';
+import { LogOut, UserPlus, Check, Users, Clock, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateAge } from '@/lib/vitals-utils';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 export default function AccueilPage() {
   const { signOut } = useAuth();
@@ -26,7 +28,6 @@ export default function AccueilPage() {
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
 
-  // Patient search
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
@@ -49,7 +50,6 @@ export default function AccueilPage() {
     if (data) setTodayEncounters(data as any[]);
   };
 
-  // Debounced patient search
   const searchPatients = useCallback(async (searchNom: string) => {
     if (searchNom.length < 2) { setSearchResults([]); return; }
     const { data } = await supabase
@@ -116,6 +116,15 @@ export default function AccueilPage() {
     'in-progress': 'bg-medical-success/10 text-medical-success',
     finished: 'bg-muted text-muted-foreground',
   };
+  const statusBorderColors: Record<string, string> = {
+    arrived: 'border-l-medical-warning',
+    triaged: 'border-l-medical-info',
+    'in-progress': 'border-l-medical-success',
+    finished: 'border-l-muted-foreground',
+  };
+
+  const waitingCount = todayEncounters.filter(e => e.status === 'arrived').length;
+  const inProgressCount = todayEncounters.filter(e => e.status === 'in-progress').length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,10 +143,17 @@ export default function AccueilPage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-6">
+        {/* StatCards */}
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard label="Admissions" value={todayEncounters.length} icon={Users} />
+          <StatCard label="En attente" value={waitingCount} icon={Clock} />
+          <StatCard label="En cours" value={inProgressCount} icon={Activity} />
+        </div>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" /> Nouvelle admission
+              <UserPlus className="h-5 w-5 text-primary" /> Nouvelle admission
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -153,9 +169,7 @@ export default function AccueilPage() {
                         <button key={p.id} type="button" onClick={() => selectExistingPatient(p)}
                           className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm">
                           <span className="font-medium">{p.nom} {p.prenom}</span>
-                          <span className="text-muted-foreground ml-2">
-                            {p.date_naissance} · {p.sexe}
-                          </span>
+                          <span className="text-muted-foreground ml-2">{p.date_naissance} · {p.sexe}</span>
                         </button>
                       ))}
                     </div>
@@ -196,17 +210,24 @@ export default function AccueilPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Admissions du jour</span>
+              <span className="flex items-center gap-2"><Clock className="h-5 w-5 text-primary" /> Admissions du jour</span>
               <Badge variant="outline">{todayEncounters.length} passages</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {todayEncounters.length === 0 && <p className="text-sm text-muted-foreground">Aucune admission aujourd'hui</p>}
             <div className="space-y-2">
-              {todayEncounters.map(enc => {
+              {todayEncounters.map((enc, index) => {
                 const p = enc.patients;
                 return (
-                  <div key={enc.id} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div
+                    key={enc.id}
+                    className={cn(
+                      'flex items-center justify-between p-3 rounded-lg border border-l-4 animate-in fade-in slide-in-from-bottom-2',
+                      statusBorderColors[enc.status] || 'border-l-muted-foreground',
+                    )}
+                    style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}
+                  >
                     <div>
                       <p className="font-medium text-sm">{p?.nom?.toUpperCase()} {p?.prenom}</p>
                       <p className="text-xs text-muted-foreground">
