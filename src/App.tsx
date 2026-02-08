@@ -48,6 +48,7 @@ function AppRoutes() {
       <Route path="/board" element={<ProtectedRoute><RoleGuard><BoardPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/patient/:encounterId" element={<ProtectedRoute><RoleGuard><PatientDossierPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/triage" element={<ProtectedRoute><RoleGuard><TriagePage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/triage/:encounterId" element={<ProtectedRoute><RoleGuard><TriagePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/pancarte/:encounterId" element={<ProtectedRoute><RoleGuard><PancartePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/as" element={<ProtectedRoute><RoleGuard><AideSoignantPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/accueil" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
@@ -55,6 +56,7 @@ function AppRoutes() {
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
       <Route path="/cgu" element={<CGUPage />} />
+      <Route path="/landing" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
       <Route path="/" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

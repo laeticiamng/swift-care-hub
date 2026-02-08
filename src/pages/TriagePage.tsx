@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -56,12 +56,13 @@ function suggestCIMU(vitals: Record<string, string>): number | null {
 export default function TriagePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   const { user, role } = useAuth();
   const [step, setStep] = useState(0);
 
-  // Pre-fill from IOA queue
+  // Pre-fill from IOA queue (supports location.state, URL params, and query params)
   const prefillPatientId = (location.state as any)?.patientId as string | undefined;
-  const prefillEncounterId = (location.state as any)?.encounterId as string | undefined;
+  const prefillEncounterId = params.encounterId || (location.state as any)?.encounterId as string | undefined;
   const [prefilled, setPrefilled] = useState(false);
 
   // Step 1 — Identity
@@ -96,25 +97,30 @@ export default function TriagePage() {
 
   const [submitting, setSubmitting] = useState(false);
 
-  // Pre-fill patient from IOA queue
+  // Pre-fill patient from IOA queue or URL params
   useEffect(() => {
-    if (prefillPatientId && !prefilled) {
-      const fetchPatient = async () => {
-        const { data } = await supabase.from('patients').select('*').eq('id', prefillPatientId).single();
-        if (data) {
-          setSelectedExisting(data);
-          setNom(data.nom);
-          setPrenom(data.prenom);
-          setDateNaissance(data.date_naissance);
-          setSexe(data.sexe);
-          setPrefilled(true);
-          // Skip to step 1 (motif)
-          setStep(1);
-        }
-      };
-      fetchPatient();
-    }
-  }, [prefillPatientId, prefilled]);
+    if (prefilled) return;
+    const prefill = async () => {
+      let patientId = prefillPatientId;
+      // If we have encounterId from URL but no patientId, resolve it
+      if (!patientId && prefillEncounterId) {
+        const { data: enc } = await supabase.from('encounters').select('patient_id').eq('id', prefillEncounterId).single();
+        if (enc) patientId = enc.patient_id;
+      }
+      if (!patientId) return;
+      const { data } = await supabase.from('patients').select('*').eq('id', patientId).single();
+      if (data) {
+        setSelectedExisting(data);
+        setNom(data.nom);
+        setPrenom(data.prenom);
+        setDateNaissance(data.date_naissance);
+        setSexe(data.sexe);
+        setPrefilled(true);
+        setStep(1);
+      }
+    };
+    prefill();
+  }, [prefillPatientId, prefillEncounterId, prefilled]);
 
   // Fetch medecins for step 5
   useEffect(() => {
