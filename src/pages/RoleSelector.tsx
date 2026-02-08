@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth, type AppRole } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut } from 'lucide-react';
+import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
@@ -72,8 +72,8 @@ export default function RoleSelector() {
             : 'Choisissez votre profil pour cette session'}
         </p>
         {isNewUser && (
-          <p className="text-xs text-medical-warning mt-2 font-medium">
-            ⚠ Ce choix est définitif. Contactez un administrateur pour le modifier ultérieurement.
+          <p className="text-xs text-medical-warning mt-2 font-medium flex items-center justify-center gap-1">
+            <AlertTriangle className="h-3.5 w-3.5 inline shrink-0" /> Ce choix est définitif. Contactez un administrateur pour le modifier ultérieurement.
           </p>
         )}
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
