@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict } from '@/lib/allergy-check';
@@ -221,13 +221,23 @@ export default function PatientDossierPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {timeline.length === 0 && <p className="text-sm text-muted-foreground">Aucun élément</p>}
-                {timeline.filter(item => !timelineEssential || ['allergie', 'crh', 'diagnostic'].includes(item.item_type)).map(item => {
+                {(() => {
+                  const filteredItems = timeline.filter(item => !timelineEssential || ['allergie', 'crh', 'diagnostic'].includes(item.item_type));
+                  
+                  // Group antecedents together
+                  const antecedents = filteredItems.filter(item => item.item_type === 'antecedent');
+                  const allergies = filteredItems.filter(item => item.item_type === 'allergie');
+                  const otherItems = filteredItems.filter(item => item.item_type !== 'antecedent' && item.item_type !== 'allergie');
+                  
                   const iconMap: Record<string, React.ReactNode> = {
                     allergie: <AlertTriangle className="h-4 w-4 text-medical-critical" />,
                     crh: <FileText className="h-4 w-4 text-primary" />,
                     resultat: <FlaskConical className="h-4 w-4 text-medical-info" />,
+                    diagnostic: <Microscope className="h-4 w-4 text-primary" />,
+                    traitement: <Pill className="h-4 w-4 text-medical-warning" />,
                   };
-                  return (
+
+                  const renderSingleItem = (item: any) => (
                     <div key={item.id} className={cn('flex gap-3 p-3 rounded-lg border', item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5')}>
                       <div className="mt-0.5">{iconMap[item.item_type] || <Clock className="h-4 w-4 text-muted-foreground" />}</div>
                       <div className="flex-1 min-w-0">
@@ -247,7 +257,47 @@ export default function PatientDossierPage() {
                       </div>
                     </div>
                   );
-                })}
+
+                  return (
+                    <>
+                      {/* Grouped allergies */}
+                      {allergies.length > 0 && (
+                        <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <AlertTriangle className="h-4 w-4 text-medical-critical" />
+                            <span className="text-sm font-semibold text-medical-critical">Allergies ({allergies.length})</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {allergies.map(a => (
+                              <Badge key={a.id} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">
+                                {a.content.replace('Allergie : ', '')}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Grouped antecedents */}
+                      {antecedents.length > 0 && (
+                        <div className="p-3 rounded-lg border bg-muted/30">
+                          <div className="flex items-center gap-2 mb-2">
+                            <History className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-semibold">Antécédents ({antecedents.length})</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {antecedents.map(a => (
+                              <Badge key={a.id} variant="secondary" className="text-xs">{a.content}</Badge>
+                            ))}
+                          </div>
+                          {antecedents[0]?.source_document && (
+                            <p className="text-xs text-muted-foreground mt-2">Source : {antecedents[0].source_document} {antecedents[0].source_author && `— ${antecedents[0].source_author}`}</p>
+                          )}
+                        </div>
+                      )}
+                      {/* Other timeline items */}
+                      {otherItems.map(renderSingleItem)}
+                    </>
+                  );
+                })()}
               </CardContent>
             </Card>
           </div>
@@ -369,15 +419,15 @@ export default function PatientDossierPage() {
                   );
 
                   const sections = [
-                    { key: 'traitements', label: '💊 Traitements', items: groups.traitements },
-                    { key: 'soins', label: '🩹 Soins', items: groups.soins },
-                    { key: 'examens_bio', label: '🧪 Examens — Bilan biologique', items: groups.examens_bio },
-                    { key: 'examens_imagerie', label: '📷 Examens — Imagerie', items: groups.examens_imagerie },
+                    { key: 'traitements', label: 'Traitements', icon: <Pill className="h-3.5 w-3.5" />, items: groups.traitements },
+                    { key: 'soins', label: 'Soins', icon: <HeartPulse className="h-3.5 w-3.5" />, items: groups.soins },
+                    { key: 'examens_bio', label: 'Examens — Bilan biologique', icon: <FlaskConical className="h-3.5 w-3.5" />, items: groups.examens_bio },
+                    { key: 'examens_imagerie', label: 'Examens — Imagerie', icon: <ScanLine className="h-3.5 w-3.5" />, items: groups.examens_imagerie },
                   ];
 
                   return sections.filter(s => s.items.length > 0).map(s => (
                     <div key={s.key}>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{s.label}</p>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
                       <div className="space-y-2">{s.items.map(renderRxItem)}</div>
                     </div>
                   ));
