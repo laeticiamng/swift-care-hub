@@ -1,103 +1,137 @@
 
 
-# Ecarts restants -- Audit final spec v10 vs plateforme
+# Audit final spec v11 -- Polissage premium de la plateforme
 
-Apres 5 rounds d'implementation et comparaison exhaustive du spec (50 pages) avec le code actuel, voici les fonctionnalites encore manquantes ou incompletes.
-
----
-
-## 1. Board -- "Termines (24h)" affiche toujours 0
-
-Le stat card "Termines (24h)" dans `BoardPage.tsx` ligne 215 est code en dur a `value={0}`. Il devrait compter les encounters avec `status='finished'` des dernieres 24h. Ce compteur est essentiel pour le "board panoramique" du spec.
-
-**Correction :**
-- Ajouter un fetch des encounters termines dans les dernieres 24h
-- Afficher le vrai compteur dans le stat card
-
-**Fichier** : `src/pages/BoardPage.tsx`
+Apres 6 rounds d'implementation et comparaison exhaustive du spec (50 pages) avec le code actuel, la couverture fonctionnelle est tres bonne. Les ecarts restants sont principalement des finitions UX premium et des details du spec non encore implementes.
 
 ---
 
-## 2. AS -- EVA douleur manquant dans le formulaire constantes
+## 1. Landing page -- Testimonials et section "7 innovations" manquantes
 
-Le formulaire aide-soignant (`AideSoignantPage.tsx`) inclut FC, PA, SpO2, T, FR et GCS mais pas EVA douleur. Le spec dit "constantes de base" et EVA est une constante de surveillance frequente saisie par l'AS.
+Le composant `TestimonialsSection` est importe dans le fichier mais n'est **pas affiche** dans `LandingPage.tsx`. La section "7 innovations cles" du spec (page 21) n'est pas non plus presente.
 
-La colonne `eva_douleur` existe dans la table `vitals` et est deja present dans les formulaires IDE et IOA.
+**Corrections :**
+- Ajouter `<TestimonialsSection />` dans le rendu de `LandingPage.tsx` (entre ImpactSection et la section metriques)
+- Ajouter une section "7 innovations cles" avec les items du spec : Pancarte unifiee, DAR, Interface adaptative, Admin 1 tap, Timeline IA, Offline-first, Secure-by-design
+- Ajouter le tagline Apple-like du spec ("Moins de clics. Plus de soin.") dans le hero ou CTA
+
+**Fichier** : `src/pages/LandingPage.tsx`
+
+---
+
+## 2. Diagnostic CIM-10 -- Pas de sauvegarde sur l'encounter
+
+Le medecin peut saisir un diagnostic CIM-10 dans `PatientDossierPage.tsx` mais celui-ci est enregistre dans `timeline_items` et non sur l'encounter directement. Le spec dit que le diagnostic doit apparaitre sur le board pour les medecins. Actuellement, le board n'affiche aucun diagnostic.
 
 **Ajout :**
-- Ajouter `eva_douleur: ''` dans le state `vitals` (ligne 37)
-- Ajouter le champ EVA dans la liste des inputs (ligne 183, apres GCS)
-- Ajouter `if (vitals.eva_douleur) obj.eva_douleur = parseInt(vitals.eva_douleur);` dans `handleSaveVitals`
-- Reset EVA dans le state apres sauvegarde (ligne 66)
+- Afficher le dernier diagnostic (de type `diagnostic` dans `timeline_items`) sur la `PatientCard` du board en mode liste
+- Ajouter un champ texte sous le nom du patient montrant le diagnostic si disponible
 
-**Fichier** : `src/pages/AideSoignantPage.tsx`
+**Fichiers** : `src/components/urgence/BoardPatientCard.tsx`, `src/pages/BoardPage.tsx`
 
 ---
 
-## 3. Pancarte IDE -- Prescriptions suspendues non affichees
+## 3. Board mode liste -- Drag and drop entre zones manquant
 
-Sur la pancarte, seules les prescriptions `active` et `completed` sont visibles via le bouton "Administre". Les prescriptions `suspended` et `cancelled` ne sont pas distinguees visuellement -- elles ne sont pas filtrees mais n'ont aucun badge specifique.
+Le spec dit (page 13, section 9.1) : "Board panoramique SAU/UHCD/Dechocage. Drag and drop entre zones." Actuellement, le changement de zone se fait via un Select dropdown. Il manque un mecanisme de drag and drop visuel.
 
-Le dossier medecin affiche correctement les badges "Suspendue"/"Annulee" mais la pancarte IDE ne fait pas cette distinction.
+Implementer un vrai drag and drop est complexe, mais on peut ameliorer l'UX avec des boutons rapides de changement de zone directement visibles (au lieu d'un select cache).
 
 **Ajout :**
-- Ajouter un badge "Suspendue" (grise) sur les prescriptions suspendues dans la pancarte
-- Ajouter un badge "Annulee" (barre) sur les prescriptions annulees
-- Desactiver le bouton d'administration et le champ titration pour ces statuts
+- Sur chaque `PatientCard` en mode liste, remplacer le Select de zone par 3 boutons compacts colores (SAU/UHCD/Dechocage) avec l'actif mis en evidence
+- Plus intuitif et plus rapide que le dropdown actuel
+
+**Fichier** : `src/components/urgence/BoardPatientCard.tsx`
+
+---
+
+## 4. Onboarding zero-training -- Guided tour premier login
+
+Le spec dit (page 16, section 11) : "Guided tour 3-5 min premier login (different par role). Tooltips contextuels." Actuellement, aucun onboarding n'existe.
+
+**Ajout :**
+- Detecter si c'est le premier login du role (via `localStorage` flag `urgenceos_onboarded_{role}`)
+- Afficher un bandeau d'aide contextuel en haut de la page principale du role avec 3-4 tips specifiques au role
+- Bouton "J'ai compris" pour ne plus afficher
+- Pas de librairie externe, simple composant `OnboardingBanner`
+
+**Fichiers** : `src/components/urgence/OnboardingBanner.tsx` (nouveau), `src/pages/BoardPage.tsx`, `src/pages/PancartePage.tsx`, `src/pages/IOAQueuePage.tsx`, `src/pages/AideSoignantPage.tsx`, `src/pages/AccueilPage.tsx`
+
+---
+
+## 5. PatientBanner -- Manque le motif en gras et le separateur premium
+
+Le bandeau patient fonctionne mais peut etre plus premium visuellement. Le spec insiste sur une esthetique "Apple-like".
+
+**Ajouts premium :**
+- Motif affiche en badge discret au lieu de texte brut
+- Separateurs visuels plus nets entre les elements
+- Micro-animation de fade-in sur le bandeau
+- Fond degrade subtil sur le bandeau (glassmorphism)
+
+**Fichier** : `src/components/urgence/PatientBanner.tsx`
+
+---
+
+## 6. Pancarte IDE -- Compteur de temps depuis derniere constante
+
+Le spec met l'accent sur la surveillance. Il serait utile d'afficher depuis combien de temps la derniere constante a ete prise, avec un code couleur (vert < 30 min, orange 30-60 min, rouge > 1h).
+
+**Ajout :**
+- Sous la section constantes de la pancarte, afficher "Dernieres constantes il y a X min" avec couleur contextuelle
+- Timer qui se met a jour automatiquement
 
 **Fichier** : `src/pages/PancartePage.tsx`
 
 ---
 
-## 4. Board -- Affichage different par role (spec section 10.1)
+## 7. Board grille -- Animation premium sur les BoxCells
 
-Le spec dit : "Board partage mais affiche differemment selon role : medecin voit diagnostics + Rx, IOA voit file d'attente, IDE voit statut soins, AS voit localisation, secretaire voit statut admin."
+Les BoxCells sont fonctionnelles mais manquent de polish premium. Le spec dit "Apple-like".
 
-Actuellement, le board redirige correctement les IOA vers `/ioa-queue` et les AS vers `/as`, mais quand un **secretaire** accede au board, il voit la meme interface que le medecin. Le secretaire devrait etre redirige vers `/accueil` automatiquement ou voir une vue adaptee.
+**Ajouts :**
+- Hover scale subtil (scale-[1.02]) sur les boxes occupees
+- Transition de couleur fluide quand un patient est ajoute/retire
+- Ombre portee plus marquee sur hover
+- Micro-badge du temps d'attente dans la box
 
-La page `RoleSelector` gere deja les redirections initiales (`secretaire -> /accueil`, `as -> /as`). Mais si un secretaire ou AS navigue manuellement vers `/board`, il voit tout.
-
-**Ajout :**
-- Dans `BoardPage.tsx`, ajouter une redirection automatique si le role est `as` ou `secretaire` (vers `/as` ou `/accueil`)
-- Cela garantit l'isolation des vues par profil
-
-**Fichier** : `src/pages/BoardPage.tsx`
+**Fichier** : `src/components/urgence/BoxCell.tsx`
 
 ---
 
-## 5. Pancarte IDE -- Transmissions : champ "Donnees" n'affiche pas le poids patient
+## 8. Secretaire -- Compteur temps reel et bouton "Board" de contexte
 
-Le spec (bandeau patient) dit : "Identite, age, **poids**, CCMU, motif, allergies, medecin. Toujours visible."
-
-Le poids est affiche dans le bandeau (`PatientBanner`), mais les donnees auto-generees dans les transmissions DAR ne mentionnent pas le poids du patient alors qu'il pourrait etre utile cliniquement.
-
-**Ajout leger :**
-- Dans `donneesAuto` et `donneesPreview` (lignes 134-136 et 167-169), ajouter le poids du patient si disponible : `Poids ${patient.poids} kg | ...`
-
-**Fichier** : `src/pages/PancartePage.tsx`
-
----
-
-## 6. Accueil secretaire -- Liste admissions non cliquable
-
-La liste "Admissions du jour" dans `AccueilPage.tsx` affiche les passages mais ils ne sont pas cliquables. Le secretaire devrait pouvoir naviguer vers le dossier d'un patient pour consulter son statut (en lecture seule).
+La page secretaire n'a pas de timer temps reel ni de lien vers le board (le secretaire est redirige depuis le board, mais ne peut pas voir le board en lecture).
 
 **Ajout :**
-- Rendre chaque carte cliquable avec navigation vers `/patient/:encounterId`
-- Le dossier est deja protege par RLS (lecture seule pour secretaire)
+- Timer avec `setInterval` (60s) pour rafraichir les temps d'attente dans la liste des admissions
+- Afficher le temps ecoule depuis l'arrivee pour chaque admission dans la liste
 
 **Fichier** : `src/pages/AccueilPage.tsx`
 
 ---
 
-## 7. IOA queue -- Lien vers board manquant pour contexte
+## 9. Discharge Dialog -- Ordonnance de sortie
 
-Le bouton "Board" existe deja dans le header de `IOAQueuePage.tsx` (ligne 74). Cependant, il n'y a pas de compteur total de patients (tries + en cours) visible depuis la file IOA pour donner du contexte a l'IOA.
+Le spec dit (page 13) : "Sortie : CRH auto, ordonnance auto, RPU auto, envoi DMP/MSSante 1 clic." Le dialog de sortie permet un resume mais pas d'ordonnance de sortie.
 
 **Ajout :**
-- Ajouter un stat card supplementaire "Tries/En cours" avec un count des encounters non-arrived
+- Champ "Ordonnance de sortie" (textarea optionnel) dans le `DischargeDialog`
+- Sauvegarde comme `timeline_item` de type `ordonnance`
 
-**Fichier** : `src/pages/IOAQueuePage.tsx`
+**Fichier** : `src/components/urgence/DischargeDialog.tsx`
+
+---
+
+## 10. Prescription -- Templates contextuels incomplets
+
+Le spec dit "Suggestions contextuelles (motif + gravite)". Les templates existent pour certains motifs mais la liste est incomplete. Il manque des templates pour les motifs courants restants.
+
+**Ajout :**
+- Ajouter des templates pour : Chute personne agee, Malaise/syncope, Intoxication, AEG, Plaie/brulure
+- Enrichir les templates existants
+
+**Fichier** : `src/lib/prescription-utils.tsx`
 
 ---
 
@@ -105,13 +139,16 @@ Le bouton "Board" existe deja dans le header de `IOAQueuePage.tsx` (ligne 74). C
 
 | Changement | Type | Fichier(s) | Migration DB |
 |---|---|---|---|
-| Termines (24h) compteur reel | Fix | BoardPage | Non |
-| EVA douleur dans constantes AS | Fix | AideSoignantPage | Non |
-| Prescriptions suspendues/annulees sur pancarte | Fix | PancartePage | Non |
-| Redirection board par role (AS/secretaire) | UX | BoardPage | Non |
-| Poids dans donnees DAR | UX | PancartePage | Non |
-| Admissions cliquables accueil | UX | AccueilPage | Non |
-| Stat "Tries/En cours" file IOA | UX | IOAQueuePage | Non |
+| Landing : testimonials + 7 innovations | UX | LandingPage | Non |
+| Diagnostic sur board | Feature | BoardPatientCard, BoardPage | Non |
+| Zone quick-switch boutons | UX | BoardPatientCard | Non |
+| Onboarding banner par role | Feature | nouveau composant + 5 pages | Non |
+| PatientBanner premium | UX | PatientBanner | Non |
+| Timer dernieres constantes | UX | PancartePage | Non |
+| BoxCell animations premium | UX | BoxCell | Non |
+| Timer temps reel accueil | UX | AccueilPage | Non |
+| Ordonnance dans discharge | Feature | DischargeDialog | Non |
+| Templates Rx supplementaires | Feature | prescription-utils | Non |
 
 Aucune migration DB necessaire.
 
