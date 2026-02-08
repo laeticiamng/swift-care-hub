@@ -142,11 +142,11 @@ export default function LoginPage() {
               {isSignUp ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
             </button>
           </form>
-          {!isSignUp && import.meta.env.DEV && (
+          {!isSignUp && (
             <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                 <Info className="h-3.5 w-3.5" />
-                Comptes démo (dev uniquement)
+                Comptes de démonstration
               </div>
               <div className="space-y-1">
                 {[
