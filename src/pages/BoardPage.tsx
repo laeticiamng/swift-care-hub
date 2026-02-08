@@ -37,6 +37,7 @@ export default function BoardPage() {
   const isMobile = useIsMobile();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
+  const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
   const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
   const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem('urgenceos_selectedZone') as ZoneKey | 'all') || 'all');
@@ -57,6 +58,14 @@ export default function BoardPage() {
   }, []);
 
   const fetchEncounters = async () => {
+    // Fetch medecins list once
+    if (medecins.length === 0) {
+      const { data: roles } = await supabase.from('user_roles').select('user_id').eq('role', 'medecin');
+      if (roles && roles.length > 0) {
+        const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', roles.map(r => r.user_id));
+        if (profiles) setMedecins(profiles);
+      }
+    }
     const [encRes, resRes] = await Promise.all([
       supabase
         .from('encounters')
@@ -102,6 +111,17 @@ export default function BoardPage() {
       await supabase.from('audit_logs').insert({
         user_id: user.id, action: 'zone_change', resource_type: 'encounter',
         resource_id: encounterId, details: { new_zone: newZone },
+      });
+    }
+    fetchEncounters();
+  };
+
+  const handleAssignMedecin = async (encounterId: string, medecinId: string) => {
+    await supabase.from('encounters').update({ medecin_id: medecinId }).eq('id', encounterId);
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'medecin_assigned', resource_type: 'encounter',
+        resource_id: encounterId, details: { medecin_id: medecinId },
       });
     }
     fetchEncounters();
@@ -212,7 +232,9 @@ export default function BoardPage() {
                 index={i}
                 showZoneBadge
                 showWaitingBadge
+                medecins={medecins}
                 onMoveZone={handleMoveZone}
+                onAssignMedecin={handleAssignMedecin}
                 onTriage={handleTriage}
                 onClick={() => navigateToPatient(enc)}
               />

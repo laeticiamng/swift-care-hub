@@ -27,16 +27,21 @@ const ORIENTATIONS = [
 
 export function DischargeDialog({ open, onOpenChange, encounterId, patientId, userId, onDone }: DischargeDialogProps) {
   const [orientation, setOrientation] = useState('domicile');
+  const [ccmuSortie, setCcmuSortie] = useState('');
+  const [gemsa, setGemsa] = useState('');
   const [summary, setSummary] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const { error } = await supabase.from('encounters').update({
+    const updateData: any = {
       status: 'finished' as any,
       discharge_time: new Date().toISOString(),
       orientation,
-    }).eq('id', encounterId);
+    };
+    if (ccmuSortie) updateData.ccmu = parseInt(ccmuSortie);
+    if (gemsa) updateData.gemsa = parseInt(gemsa);
+    const { error } = await supabase.from('encounters').update(updateData).eq('id', encounterId);
 
     if (error) {
       toast.error('Erreur lors de la sortie');
@@ -88,6 +93,30 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>CCMU de sortie</Label>
+              <Select value={ccmuSortie} onValueChange={setCcmuSortie}>
+                <SelectTrigger className="mt-1"><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5].map(n => (
+                    <SelectItem key={n} value={String(n)}>CCMU {n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>GEMSA</Label>
+              <Select value={gemsa} onValueChange={setGemsa}>
+                <SelectTrigger className="mt-1"><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5, 6].map(n => (
+                    <SelectItem key={n} value={String(n)}>GEMSA {n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
             <Label>Résumé de sortie</Label>

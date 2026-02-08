@@ -35,7 +35,7 @@ export default function PancartePage() {
   const [historyOpen, setHistoryOpen] = useState(false);
 
   const [showVitalsInput, setShowVitalsInput] = useState(false);
-  const [newVitals, setNewVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+  const [newVitals, setNewVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
   const [procType, setProcType] = useState('');
   const [darResultats, setDarResultats] = useState('');
   const [darCible, setDarCible] = useState('');
@@ -96,9 +96,12 @@ export default function PancartePage() {
     if (newVitals.pa_diastolique) obj.pa_diastolique = parseInt(newVitals.pa_diastolique);
     if (newVitals.spo2) obj.spo2 = parseInt(newVitals.spo2);
     if (newVitals.temperature) obj.temperature = parseFloat(newVitals.temperature);
+    if (newVitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(newVitals.frequence_respiratoire);
+    if (newVitals.gcs) obj.gcs = parseInt(newVitals.gcs);
+    if (newVitals.eva_douleur) obj.eva_douleur = parseInt(newVitals.eva_douleur);
     await supabase.from('vitals').insert(obj);
     toast.success('Constantes enregistrées');
-    setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+    setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
     setShowVitalsInput(false);
     fetchAll();
   };
@@ -172,7 +175,7 @@ export default function PancartePage() {
   return (
     <div className="min-h-screen bg-background pb-8">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         {/* Résumé rapide */}
@@ -192,12 +195,12 @@ export default function PancartePage() {
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-4 gap-2">
-              {['fc', 'pa_systolique', 'spo2', 'temperature'].map(key => {
+            <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+              {['fc', 'pa_systolique', 'spo2', 'temperature', 'frequence_respiratoire', 'gcs', 'eva_douleur'].map(key => {
                 const data = vitals.map(v => ({ value: v[key] })).filter(d => d.value != null);
                 const last = data.length > 0 ? data[data.length - 1].value : null;
                 const abnormal = isVitalAbnormal(key, last);
-                const labels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA', spo2: 'SpO₂', temperature: 'T°' };
+                const labels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA', spo2: 'SpO₂', temperature: 'T°', frequence_respiratoire: 'FR', gcs: 'GCS', eva_douleur: 'EVA' };
                 return (
                   <div key={key} className={cn('p-2 rounded-lg border text-center', abnormal && 'border-medical-critical bg-medical-critical/5')}>
                     <p className="text-xs text-muted-foreground">{labels[key]}</p>
@@ -212,12 +215,15 @@ export default function PancartePage() {
               })}
             </div>
             {showVitalsInput && (
-              <div className="grid grid-cols-6 gap-2 mt-3">
+              <div className="grid grid-cols-3 sm:grid-cols-9 gap-2 mt-3">
                 <Input type="number" placeholder="FC" value={newVitals.fc} onChange={e => setNewVitals({ ...newVitals, fc: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="PA sys" value={newVitals.pa_systolique} onChange={e => setNewVitals({ ...newVitals, pa_systolique: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="PA dia" value={newVitals.pa_diastolique} onChange={e => setNewVitals({ ...newVitals, pa_diastolique: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="SpO₂" value={newVitals.spo2} onChange={e => setNewVitals({ ...newVitals, spo2: e.target.value })} className="text-center h-10" />
                 <Input type="number" step="0.1" placeholder="T°C" value={newVitals.temperature} onChange={e => setNewVitals({ ...newVitals, temperature: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="FR" value={newVitals.frequence_respiratoire} onChange={e => setNewVitals({ ...newVitals, frequence_respiratoire: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="GCS" value={newVitals.gcs} onChange={e => setNewVitals({ ...newVitals, gcs: e.target.value })} className="text-center h-10" />
+                <Input type="number" placeholder="EVA" value={newVitals.eva_douleur} onChange={e => setNewVitals({ ...newVitals, eva_douleur: e.target.value })} className="text-center h-10" />
                 <Button onClick={handleSaveVitals} size="sm" className="h-10">OK</Button>
               </div>
             )}
