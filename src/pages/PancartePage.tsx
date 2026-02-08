@@ -172,7 +172,7 @@ export default function PancartePage() {
   return (
     <div className="min-h-screen bg-background pb-8">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         {/* Résumé rapide */}

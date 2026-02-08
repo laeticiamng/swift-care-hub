@@ -13,12 +13,13 @@ interface PatientBannerProps {
   motif?: string | null;
   allergies?: string[];
   medecinName?: string;
+  boxNumber?: number | null;
   onBack?: () => void;
   className?: string;
 }
 
 export function PatientBanner({
-  nom, prenom, age, sexe, ccmu, motif, allergies = [], medecinName, onBack, className,
+  nom, prenom, age, sexe, ccmu, motif, allergies = [], medecinName, boxNumber, onBack, className,
 }: PatientBannerProps) {
   const hasAllergies = allergies.length > 0;
 
@@ -36,6 +37,11 @@ export function PatientBanner({
           <h2 className="text-lg font-semibold">{nom.toUpperCase()} {prenom}</h2>
           <span className="text-muted-foreground text-sm">{age} ans · {sexe}</span>
           {ccmu && <CCMUBadge level={ccmu} />}
+          {boxNumber && (
+            <span className="text-xs font-medium border rounded px-1.5 py-0.5 text-muted-foreground">
+              Box {boxNumber}
+            </span>
+          )}
         </div>
         {motif && <span className="text-sm text-muted-foreground">— {motif}</span>}
         {hasAllergies && (
