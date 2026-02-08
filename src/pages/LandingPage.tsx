@@ -219,7 +219,7 @@ export default function LandingPage() {
             <Button size="lg" onClick={() => navigate('/login')} className="gap-2">
               Accéder à UrgenceOS <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
+            <Button size="lg" variant="outline" onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}>
               Découvrir la démo
             </Button>
           </div>
@@ -231,7 +231,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p className="font-medium">Urgence<span className="text-primary">OS</span> — Projet de recherche en systèmes d'information de santé — 2026</p>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/login')} className="text-primary hover:underline">Connexion</button>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-primary hover:underline">Haut de page</button>
             <span className="text-muted-foreground/40">|</span>
             <span className="text-xs">React · TypeScript · Temps réel</span>
           </div>
