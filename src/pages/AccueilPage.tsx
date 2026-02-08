@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, UserPlus } from 'lucide-react';
+import { LogOut, UserPlus, Search, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateAge } from '@/lib/vitals-utils';
+import { toast } from 'sonner';
 
 export default function AccueilPage() {
   const { signOut } = useAuth();
@@ -18,9 +19,14 @@ export default function AccueilPage() {
   const [prenom, setPrenom] = useState('');
   const [dateNaissance, setDateNaissance] = useState('');
   const [sexe, setSexe] = useState('M');
+  const [telephone, setTelephone] = useState('');
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
+
+  // Patient search
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
   useEffect(() => { fetchToday(); }, []);
 
@@ -34,29 +40,72 @@ export default function AccueilPage() {
     if (data) setTodayEncounters(data as any[]);
   };
 
+  // Debounced patient search
+  const searchPatients = useCallback(async (searchNom: string) => {
+    if (searchNom.length < 2) { setSearchResults([]); return; }
+    const { data } = await supabase
+      .from('patients')
+      .select('id, nom, prenom, date_naissance, sexe, telephone')
+      .ilike('nom', `%${searchNom}%`)
+      .limit(5);
+    if (data) setSearchResults(data);
+  }, []);
+
+  const handleNomChange = (value: string) => {
+    setNom(value);
+    setSelectedExisting(null);
+    searchPatients(value);
+  };
+
+  const selectExistingPatient = (patient: any) => {
+    setSelectedExisting(patient);
+    setNom(patient.nom);
+    setPrenom(patient.prenom);
+    setDateNaissance(patient.date_naissance);
+    setSexe(patient.sexe);
+    setTelephone(patient.telephone || '');
+    setSearchResults([]);
+  };
+
   const handleAdmission = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
-    const { data: patient } = await supabase.from('patients').insert({
-      nom, prenom, date_naissance: dateNaissance, sexe,
-    }).select().single();
+    let patientId: string;
 
-    if (patient) {
-      await supabase.from('encounters').insert({
-        patient_id: patient.id,
-        status: 'arrived',
-        motif_sfmu: motif || null,
-      });
+    if (selectedExisting) {
+      patientId = selectedExisting.id;
+    } else {
+      const { data: patient, error } = await supabase.from('patients').insert({
+        nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null,
+      }).select().single();
+      if (error || !patient) { toast.error('Erreur de création patient'); setSubmitting(false); return; }
+      patientId = patient.id;
     }
 
-    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif('');
+    const { error } = await supabase.from('encounters').insert({
+      patient_id: patientId,
+      status: 'arrived',
+      motif_sfmu: motif || null,
+    });
+
+    if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
+
+    toast.success('Passage créé ✓');
+    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone('');
+    setSelectedExisting(null);
     setSubmitting(false);
     fetchToday();
   };
 
   const statusLabels: Record<string, string> = {
     planned: 'Planifié', arrived: 'Arrivé', triaged: 'Trié', 'in-progress': 'En cours', finished: 'Terminé',
+  };
+  const statusColors: Record<string, string> = {
+    arrived: 'bg-medical-warning/10 text-medical-warning',
+    triaged: 'bg-medical-info/10 text-medical-info',
+    'in-progress': 'bg-medical-success/10 text-medical-success',
+    finished: 'bg-muted text-muted-foreground',
   };
 
   return (
@@ -81,10 +130,32 @@ export default function AccueilPage() {
           <CardContent>
             <form onSubmit={handleAdmission} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label>Nom</Label><Input value={nom} onChange={e => setNom(e.target.value)} placeholder="DUPONT" required className="mt-1" /></div>
+                <div className="relative">
+                  <Label>Nom</Label>
+                  <Input value={nom} onChange={e => handleNomChange(e.target.value)} placeholder="DUPONT" required className="mt-1" />
+                  {searchResults.length > 0 && (
+                    <div className="absolute z-10 top-full left-0 right-0 bg-card border rounded-lg shadow-lg mt-1 overflow-hidden">
+                      <p className="text-xs text-muted-foreground px-3 py-1.5 border-b">Patients existants :</p>
+                      {searchResults.map(p => (
+                        <button key={p.id} type="button" onClick={() => selectExistingPatient(p)}
+                          className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm">
+                          <span className="font-medium">{p.nom} {p.prenom}</span>
+                          <span className="text-muted-foreground ml-2">
+                            {p.date_naissance} · {p.sexe}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {selectedExisting && (
+                    <Badge variant="secondary" className="mt-1 text-xs">
+                      <Check className="h-3 w-3 mr-1" /> Patient existant sélectionné
+                    </Badge>
+                  )}
+                </div>
                 <div><Label>Prénom</Label><Input value={prenom} onChange={e => setPrenom(e.target.value)} placeholder="Jean" required className="mt-1" /></div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div><Label>Date de naissance</Label><Input type="date" value={dateNaissance} onChange={e => setDateNaissance(e.target.value)} required className="mt-1" /></div>
                 <div>
                   <Label>Sexe</Label>
@@ -96,6 +167,7 @@ export default function AccueilPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div><Label>Téléphone</Label><Input value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06..." className="mt-1" /></div>
               </div>
               <div>
                 <Label>Motif (optionnel)</Label>
@@ -109,7 +181,12 @@ export default function AccueilPage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Admissions du jour</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Admissions du jour</span>
+              <Badge variant="outline">{todayEncounters.length} passages</Badge>
+            </CardTitle>
+          </CardHeader>
           <CardContent>
             {todayEncounters.length === 0 && <p className="text-sm text-muted-foreground">Aucune admission aujourd'hui</p>}
             <div className="space-y-2">
@@ -119,9 +196,13 @@ export default function AccueilPage() {
                   <div key={enc.id} className="flex items-center justify-between p-3 rounded-lg border">
                     <div>
                       <p className="font-medium text-sm">{p?.nom?.toUpperCase()} {p?.prenom}</p>
-                      <p className="text-xs text-muted-foreground">{enc.motif_sfmu || 'Pas de motif'} · {new Date(enc.arrival_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {enc.motif_sfmu || 'Pas de motif'} · {new Date(enc.arrival_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
                     </div>
-                    <Badge variant="outline">{statusLabels[enc.status] || enc.status}</Badge>
+                    <Badge className={statusColors[enc.status] || ''} variant="outline">
+                      {statusLabels[enc.status] || enc.status}
+                    </Badge>
                   </div>
                 );
               })}

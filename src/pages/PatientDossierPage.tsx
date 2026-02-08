@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { PatientBanner } from '@/components/urgence/PatientBanner';
-import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { calculateAge, isVitalAbnormal } from '@/lib/vitals-utils';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,8 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
+import { toast } from 'sonner';
 
 export default function PatientDossierPage() {
   const { encounterId } = useParams();
@@ -32,6 +32,13 @@ export default function PatientDossierPage() {
   useEffect(() => {
     if (!encounterId) return;
     fetchAll();
+
+    const channel = supabase.channel(`dossier-${encounterId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [encounterId]);
 
   const fetchAll = async () => {
@@ -56,7 +63,7 @@ export default function PatientDossierPage() {
 
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
-    await supabase.from('prescriptions').insert({
+    const { error } = await supabase.from('prescriptions').insert({
       encounter_id: encounter.id,
       patient_id: encounter.patient_id,
       prescriber_id: user.id,
@@ -66,8 +73,15 @@ export default function PatientDossierPage() {
       frequency: newRx.frequency,
       priority: newRx.priority as any,
     });
+    if (error) { toast.error('Erreur de prescription'); return; }
+    toast.success('Prescription validée');
     setNewRx({ medication_name: '', dosage: '', route: 'PO', frequency: '', priority: 'routine' });
     setPrescribeOpen(false);
+    fetchAll();
+  };
+
+  const handleMarkRead = async (resultId: string) => {
+    await supabase.from('results').update({ is_read: true }).eq('id', resultId);
     fetchAll();
   };
 
@@ -77,6 +91,20 @@ export default function PatientDossierPage() {
   const vitalKeys = ['fc', 'pa_systolique', 'spo2', 'temperature'];
   const vitalLabels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA sys', spo2: 'SpO₂', temperature: 'T°' };
   const vitalUnits: Record<string, string> = { fc: 'bpm', pa_systolique: 'mmHg', spo2: '%', temperature: '°C' };
+
+  const renderResultContent = (content: any) => {
+    if (!content || typeof content !== 'object') return null;
+    return (
+      <div className="grid grid-cols-2 gap-1 mt-2">
+        {Object.entries(content).map(([k, v]) => (
+          <div key={k} className="text-xs">
+            <span className="text-muted-foreground">{k}: </span>
+            <span className="font-medium">{String(v)}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +136,7 @@ export default function PatientDossierPage() {
                         {item.source_date && <span className="text-xs text-muted-foreground">{item.source_date}</span>}
                       </div>
                       <p className="text-sm mt-1">{item.content}</p>
-                      {item.source_document && <p className="text-xs text-muted-foreground mt-1">Source : {item.source_document}</p>}
+                      {item.source_document && <p className="text-xs text-muted-foreground mt-1">Source : {item.source_document} {item.source_author && `— ${item.source_author}`}</p>}
                     </div>
                   </div>
                 );
@@ -214,7 +242,7 @@ export default function PatientDossierPage() {
                     <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
                     <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
                   </div>
-                  <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status}</Badge>
+                  <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status}</Badge>
                 </div>
               ))}
             </CardContent>
@@ -233,15 +261,22 @@ export default function PatientDossierPage() {
             <CardContent className="space-y-2">
               {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
               {results.map(r => (
-                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical')}>
+                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
                       <span className="font-medium text-sm">{r.title}</span>
                     </div>
-                    {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
-                    {!r.is_read && <Badge variant="secondary" className="text-xs">Nouveau</Badge>}
+                    <div className="flex items-center gap-1.5">
+                      {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
+                      {!r.is_read && (
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleMarkRead(r.id)}>
+                          <Eye className="h-3 w-3 mr-1" /> Lu
+                        </Button>
+                      )}
+                    </div>
                   </div>
+                  {renderResultContent(r.content)}
                 </div>
               ))}
             </CardContent>
