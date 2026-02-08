@@ -125,16 +125,56 @@ export default function PatientDossierPage() {
   const vitalLabels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA sys', spo2: 'SpO₂', temperature: 'T°' };
   const vitalUnits: Record<string, string> = { fc: 'bpm', pa_systolique: 'mmHg', spo2: '%', temperature: '°C' };
 
-  const renderResultContent = (content: any) => {
+  const bioNormalRanges: Record<string, { unit: string; min?: number; max?: number }> = {
+    hemoglobine: { unit: 'g/dL', min: 12, max: 17 },
+    leucocytes: { unit: 'G/L', min: 4, max: 10 },
+    creatinine: { unit: 'µmol/L', min: 45, max: 104 },
+    potassium: { unit: 'mmol/L', min: 3.5, max: 5.0 },
+    troponine_us: { unit: 'ng/L', max: 14 },
+    CRP: { unit: 'mg/L', max: 5 },
+    lactates: { unit: 'mmol/L', max: 2 },
+    procalcitonine: { unit: 'ng/mL', max: 0.5 },
+    BNP: { unit: 'pg/mL', max: 100 },
+  };
+
+  const renderResultContent = (content: any, category: string) => {
     if (!content || typeof content !== 'object') return null;
+    const entries = Object.entries(content);
+    if (category === 'imagerie' || category === 'ecg') {
+      return (
+        <div className="mt-2 space-y-1">
+          {entries.map(([k, v]) => (
+            <div key={k} className="text-xs">
+              <span className="text-muted-foreground capitalize">{k.replace(/_/g, ' ')} : </span>
+              <span className="font-medium">{String(v)}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
     return (
-      <div className="grid grid-cols-2 gap-1 mt-2">
-        {Object.entries(content).map(([k, v]) => (
-          <div key={k} className="text-xs">
-            <span className="text-muted-foreground">{k}: </span>
-            <span className="font-medium">{String(v)}</span>
-          </div>
-        ))}
+      <div className="mt-2 rounded-md border overflow-hidden">
+        <table className="w-full text-xs">
+          <thead><tr className="bg-muted/50"><th className="text-left px-2 py-1 font-medium">Paramètre</th><th className="text-right px-2 py-1 font-medium">Valeur</th><th className="text-right px-2 py-1 font-medium">Réf.</th></tr></thead>
+          <tbody>
+            {entries.map(([k, v]) => {
+              const range = bioNormalRanges[k];
+              const numVal = parseFloat(String(v));
+              const isAbnormal = range && !isNaN(numVal) && ((range.min !== undefined && numVal < range.min) || (range.max !== undefined && numVal > range.max));
+              return (
+                <tr key={k} className={cn('border-t', isAbnormal && 'bg-medical-critical/5')}>
+                  <td className="px-2 py-1 capitalize">{k.replace(/_/g, ' ')}</td>
+                  <td className={cn('text-right px-2 py-1 font-semibold', isAbnormal && 'text-medical-critical')}>
+                    {String(v)} {range?.unit && <span className="font-normal text-muted-foreground">{range.unit}</span>}
+                  </td>
+                  <td className="text-right px-2 py-1 text-muted-foreground">
+                    {range ? `${range.min !== undefined ? range.min : ''}-${range.max !== undefined ? range.max : ''}` : ''}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -372,7 +412,7 @@ export default function PatientDossierPage() {
                         )}
                       </div>
                     </div>
-                    {renderResultContent(r.content)}
+                    {renderResultContent(r.content, r.category)}
                   </div>
                 ))}
               </CardContent>

@@ -379,16 +379,49 @@ export default function PancartePage() {
                       )}
                     </div>
                   </div>
-                  {r.content && typeof r.content === 'object' && (
-                    <div className="grid grid-cols-2 gap-1 mt-2">
-                      {Object.entries(r.content).map(([k, v]) => (
-                        <div key={k} className="text-xs">
-                          <span className="text-muted-foreground">{k}: </span>
-                          <span className="font-medium">{String(v)}</span>
+                  {r.content && typeof r.content === 'object' && (() => {
+                    const entries = Object.entries(r.content);
+                    const bioNormals: Record<string, { unit: string; min?: number; max?: number }> = {
+                      hemoglobine: { unit: 'g/dL', min: 12, max: 17 }, leucocytes: { unit: 'G/L', min: 4, max: 10 },
+                      creatinine: { unit: 'µmol/L', min: 45, max: 104 }, potassium: { unit: 'mmol/L', min: 3.5, max: 5.0 },
+                      troponine_us: { unit: 'ng/L', max: 14 }, CRP: { unit: 'mg/L', max: 5 }, lactates: { unit: 'mmol/L', max: 2 },
+                      procalcitonine: { unit: 'ng/mL', max: 0.5 }, BNP: { unit: 'pg/mL', max: 100 },
+                    };
+                    if (r.category === 'imagerie' || r.category === 'ecg') {
+                      return (
+                        <div className="mt-2 space-y-1">
+                          {entries.map(([k, v]) => (
+                            <div key={k} className="text-xs">
+                              <span className="text-muted-foreground capitalize">{k.replace(/_/g, ' ')} : </span>
+                              <span className="font-medium">{String(v)}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      );
+                    }
+                    return (
+                      <div className="mt-2 rounded-md border overflow-hidden">
+                        <table className="w-full text-xs">
+                          <thead><tr className="bg-muted/50"><th className="text-left px-2 py-1 font-medium">Param.</th><th className="text-right px-2 py-1 font-medium">Valeur</th></tr></thead>
+                          <tbody>
+                            {entries.map(([k, v]) => {
+                              const range = bioNormals[k];
+                              const numVal = parseFloat(String(v));
+                              const isAbn = range && !isNaN(numVal) && ((range.min !== undefined && numVal < range.min) || (range.max !== undefined && numVal > range.max));
+                              return (
+                                <tr key={k} className={cn('border-t', isAbn && 'bg-medical-critical/5')}>
+                                  <td className="px-2 py-1 capitalize">{k.replace(/_/g, ' ')}</td>
+                                  <td className={cn('text-right px-2 py-1 font-semibold', isAbn && 'text-medical-critical')}>
+                                    {String(v)} {range?.unit && <span className="font-normal text-muted-foreground">{range.unit}</span>}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  })()}
                 </div>
               ))}
             </CardContent>
