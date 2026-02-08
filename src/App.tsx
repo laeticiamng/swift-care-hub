@@ -20,6 +20,7 @@ import AideSoignantPage from "./pages/AideSoignantPage";
 import AccueilPage from "./pages/AccueilPage";
 import IOAQueuePage from "./pages/IOAQueuePage";
 import NotFound from "./pages/NotFound";
+import { CookieConsent } from "./components/urgence/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <AppRoutes />
+            <CookieConsent />
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
