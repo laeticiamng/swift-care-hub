@@ -21,10 +21,10 @@ export function useFadeIn() {
   return ref;
 }
 
-export function Section({ children, className }: { children: React.ReactNode; className?: string }) {
+export function Section({ children, className, id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useFadeIn();
   return (
-    <section ref={ref} className={cn('opacity-0 translate-y-6 transition-all duration-700 ease-out', className)}>
+    <section ref={ref} id={id} className={cn('opacity-0 translate-y-6 transition-all duration-700 ease-out', className)}>
       {children}
     </section>
   );
