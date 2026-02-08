@@ -12,8 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
+import { toast } from 'sonner';
 
 export default function PancartePage() {
   const { encounterId } = useParams();
@@ -24,6 +25,7 @@ export default function PancartePage() {
   const [vitals, setVitals] = useState<any[]>([]);
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [administrations, setAdministrations] = useState<any[]>([]);
+  const [procedures, setProcedures] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
   const [resultsOpen, setResultsOpen] = useState(false);
 
@@ -55,11 +57,12 @@ export default function PancartePage() {
     if (!enc) return;
     setEncounter(enc);
 
-    const [patRes, vitRes, rxRes, admRes, resRes] = await Promise.all([
+    const [patRes, vitRes, rxRes, admRes, procRes, resRes] = await Promise.all([
       supabase.from('patients').select('*').eq('id', enc.patient_id).single(),
       supabase.from('vitals').select('*').eq('encounter_id', encounterId!).order('recorded_at', { ascending: true }),
       supabase.from('prescriptions').select('*').eq('encounter_id', encounterId!).order('created_at', { ascending: false }),
       supabase.from('administrations').select('*').eq('encounter_id', encounterId!).order('administered_at', { ascending: false }),
+      supabase.from('procedures').select('*').eq('encounter_id', encounterId!).order('performed_at', { ascending: false }),
       supabase.from('results').select('*').eq('encounter_id', encounterId!).order('received_at', { ascending: false }),
     ]);
 
@@ -67,6 +70,7 @@ export default function PancartePage() {
     if (vitRes.data) setVitals(vitRes.data);
     if (rxRes.data) setPrescriptions(rxRes.data);
     if (admRes.data) setAdministrations(admRes.data);
+    if (procRes.data) setProcedures(procRes.data);
     if (resRes.data) setResults(resRes.data);
   };
 
@@ -81,6 +85,7 @@ export default function PancartePage() {
       route: rx.route,
     });
     await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
+    toast.success(`${rx.medication_name} administré ✓`);
     fetchAll();
   };
 
@@ -93,6 +98,7 @@ export default function PancartePage() {
     if (newVitals.spo2) obj.spo2 = parseInt(newVitals.spo2);
     if (newVitals.temperature) obj.temperature = parseFloat(newVitals.temperature);
     await supabase.from('vitals').insert(obj);
+    toast.success('Constantes enregistrées ✓');
     setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
     setShowVitalsInput(false);
     fetchAll();
@@ -106,23 +112,45 @@ export default function PancartePage() {
       performed_by: user.id,
       procedure_type: procType as any,
     });
+    const procLabels: Record<string, string> = { vvp: 'VVP', prelevement: 'Prélèvement', pansement: 'Pansement', sondage: 'Sondage', ecg: 'ECG', autre: 'Acte' };
+    toast.success(`${procLabels[procType] || 'Acte'} tracé ✓`);
     setProcType('');
     fetchAll();
   };
 
   const handleDAR = async () => {
     if (!user || !encounter) return;
+
+    // Auto-populate D and A from real data
+    const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
+    const donneesAuto = lastVital
+      ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
+      : 'Pas de constantes récentes';
+
+    const recentProcs = procedures.slice(0, 3);
+    const recentAdmins = administrations.slice(0, 3);
+    const actionsAuto = [
+      ...recentAdmins.map(a => `Admin: ${a.dose_given} ${a.route}`),
+      ...recentProcs.map(p => `Acte: ${p.procedure_type}`),
+    ].join(' | ') || 'Aucun acte récent';
+
     await supabase.from('transmissions').insert({
       encounter_id: encounter.id,
       patient_id: encounter.patient_id,
       author_id: user.id,
-      donnees: `Dernières constantes disponibles`,
-      actions: `Administrations et actes tracés`,
+      donnees: donneesAuto,
+      actions: actionsAuto,
       resultats: darResultats,
       cible: darCible,
     });
+    toast.success('Transmission validée ✓');
     setDarResultats('');
     setDarCible('');
+    fetchAll();
+  };
+
+  const handleMarkRead = async (resultId: string) => {
+    await supabase.from('results').update({ is_read: true }).eq('id', resultId);
     fetchAll();
   };
 
@@ -131,6 +159,19 @@ export default function PancartePage() {
   const age = calculateAge(patient.date_naissance);
   const isAdministered = (rxId: string) => administrations.some(a => a.prescription_id === rxId);
   const newResults = results.filter(r => !r.is_read).length;
+
+  // Build auto-populated DAR preview
+  const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
+  const donneesPreview = lastVital
+    ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
+    : 'Aucune constante disponible';
+
+  const recentProcs = procedures.slice(0, 3);
+  const recentAdmins = administrations.slice(0, 3);
+  const actionsPreview = [
+    ...recentAdmins.map(a => `${a.dose_given} ${a.route}`),
+    ...recentProcs.map(p => p.procedure_type.toUpperCase()),
+  ].join(', ') || 'Aucun acte récent';
 
   return (
     <div className="min-h-screen bg-background pb-8">
@@ -212,7 +253,7 @@ export default function PancartePage() {
         {/* Section 3 — Actes */}
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-base">Actes de soins</CardTitle></CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <div className="flex gap-2">
               <Select value={procType} onValueChange={setProcType}>
                 <SelectTrigger className="flex-1"><SelectValue placeholder="Sélectionner un acte" /></SelectTrigger>
@@ -226,6 +267,16 @@ export default function PancartePage() {
                 <Plus className="h-4 w-4 mr-1" /> Tracer
               </Button>
             </div>
+            {procedures.length > 0 && (
+              <div className="space-y-1">
+                {procedures.slice(0, 5).map(p => (
+                  <div key={p.id} className="flex items-center justify-between text-sm p-2 rounded bg-accent/30">
+                    <span className="font-medium">{p.procedure_type.toUpperCase()}</span>
+                    <span className="text-xs text-muted-foreground">{new Date(p.performed_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -236,11 +287,11 @@ export default function PancartePage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-lg bg-accent/50">
                 <p className="text-xs font-medium text-muted-foreground mb-1">D — Données</p>
-                <p className="text-sm">Auto-alimenté depuis constantes</p>
+                <p className="text-sm">{donneesPreview}</p>
               </div>
               <div className="p-3 rounded-lg bg-accent/50">
                 <p className="text-xs font-medium text-muted-foreground mb-1">A — Actions</p>
-                <p className="text-sm">Auto-alimenté depuis actes</p>
+                <p className="text-sm">{actionsPreview}</p>
               </div>
             </div>
             <div>
@@ -270,12 +321,31 @@ export default function PancartePage() {
             <CardContent className="space-y-2">
               {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
               {results.map(r => (
-                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical')}>
-                  <div className="flex items-center gap-2">
-                    {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
-                    <span className="font-medium text-sm">{r.title}</span>
-                    {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
+                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
+                      <span className="font-medium text-sm">{r.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
+                      {!r.is_read && (
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleMarkRead(r.id)}>
+                          <Eye className="h-3 w-3 mr-1" /> Lu
+                        </Button>
+                      )}
+                    </div>
                   </div>
+                  {r.content && typeof r.content === 'object' && (
+                    <div className="grid grid-cols-2 gap-1 mt-2">
+                      {Object.entries(r.content).map(([k, v]) => (
+                        <div key={k} className="text-xs">
+                          <span className="text-muted-foreground">{k}: </span>
+                          <span className="font-medium">{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </CardContent>

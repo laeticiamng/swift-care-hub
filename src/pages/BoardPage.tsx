@@ -4,10 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { StatCard } from '@/components/urgence/StatCard';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { Users, LogOut, Filter, FlaskConical, Radio } from 'lucide-react';
+import { Users, LogOut, Filter, FlaskConical, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -37,10 +38,17 @@ interface EncounterWithPatient {
   };
 }
 
+interface ResultCount {
+  encounter_id: string;
+  unread: number;
+  critical: number;
+}
+
 export default function BoardPage() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
+  const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [myOnly, setMyOnly] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -49,22 +57,41 @@ export default function BoardPage() {
 
     const channel = supabase
       .channel('board-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => {
-        fetchEncounters();
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchEncounters())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, () => fetchEncounters())
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, []);
 
   const fetchEncounters = async () => {
-    const { data } = await supabase
-      .from('encounters')
-      .select('id, patient_id, status, zone, box_number, ccmu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
-      .in('status', ['arrived', 'triaged', 'in-progress'])
-      .order('arrival_time', { ascending: true });
+    const [encRes, resRes] = await Promise.all([
+      supabase
+        .from('encounters')
+        .select('id, patient_id, status, zone, box_number, ccmu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
+        .in('status', ['arrived', 'triaged', 'in-progress'])
+        .order('arrival_time', { ascending: true }),
+      supabase
+        .from('results')
+        .select('encounter_id, is_read, is_critical'),
+    ]);
 
-    if (data) setEncounters(data as unknown as EncounterWithPatient[]);
+    if (encRes.data) setEncounters(encRes.data as unknown as EncounterWithPatient[]);
+
+    // Compute result counts per encounter
+    if (resRes.data) {
+      const map = new Map<string, ResultCount>();
+      for (const r of resRes.data) {
+        if (!map.has(r.encounter_id)) {
+          map.set(r.encounter_id, { encounter_id: r.encounter_id, unread: 0, critical: 0 });
+        }
+        const entry = map.get(r.encounter_id)!;
+        if (!r.is_read) entry.unread++;
+        if (r.is_critical) entry.critical++;
+      }
+      setResultCounts(Array.from(map.values()));
+    }
+
     setLoading(false);
   };
 
@@ -75,10 +102,10 @@ export default function BoardPage() {
 
   const filtered = myOnly ? encounters.filter(e => e.medecin_id === user?.id) : encounters;
   const byZone = (zone: Zone) => filtered.filter(e => e.zone === zone);
+  const getResultCount = (encId: string) => resultCounts.find(r => r.encounter_id === encId);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-20 bg-card border-b shadow-sm px-4 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <h1 className="text-xl font-bold">UrgenceOS</h1>
@@ -101,7 +128,6 @@ export default function BoardPage() {
         </div>
       </header>
 
-      {/* Board columns */}
       <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         {ZONES.map(zone => (
           <div key={zone.key} className="space-y-3">
@@ -117,6 +143,7 @@ export default function BoardPage() {
                 const waitStr = formatWaitTime(waitMin);
                 const waitCritical = waitMin > 240;
                 const waitWarning = waitMin > 120;
+                const rc = getResultCount(encounter.id);
 
                 return (
                   <Card
@@ -142,7 +169,19 @@ export default function BoardPage() {
                         )}>
                           {waitStr}
                         </span>
-                        {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
+                        <div className="flex items-center gap-1.5">
+                          {rc && rc.critical > 0 && (
+                            <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
+                              <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}
+                            </Badge>
+                          )}
+                          {rc && rc.unread > 0 && rc.critical === 0 && (
+                            <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                              <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.unread}
+                            </Badge>
+                          )}
+                          {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
+                        </div>
                         <Select
                           value={encounter.zone || ''}
                           onValueChange={(v) => { handleMoveZone(encounter.id, v as Zone); }}
