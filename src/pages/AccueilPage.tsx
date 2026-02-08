@@ -192,7 +192,7 @@ export default function AccueilPage() {
                 const p = enc.patients;
                 return (
                   <div key={enc.id}
-                    className={cn('flex items-center justify-between p-3 rounded-lg border border-l-4 animate-in fade-in slide-in-from-bottom-2',
+                    className={cn('flex items-center justify-between p-3 rounded-lg border border-l-4 animate-in fade-in slide-in-from-bottom-2 hover:shadow-sm hover:bg-accent/30 transition-all cursor-default',
                       statusBorderColors[enc.status] || 'border-l-muted-foreground')}
                     style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}>
                     <div>

@@ -177,8 +177,8 @@ export default function PancartePage() {
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         {/* Résumé rapide */}
         <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
-          <StatCard label="Rx actives" value={activeRx} icon={ClipboardList} />
-          <StatCard label="Actes" value={procedures.length} icon={Activity} />
+          <StatCard label="Rx actives" value={activeRx} icon={ClipboardList} variant={activeRx > 0 ? 'warning' : 'default'} />
+          <StatCard label="Actes" value={procedures.length} icon={Activity} variant={procedures.length > 0 ? 'success' : 'default'} />
           <StatCard label="Résultats" value={newResults > 0 ? `${newResults} new` : results.length.toString()} icon={FlaskConical}
             variant={newResults > 0 ? 'critical' : 'default'} />
         </div>
@@ -238,7 +238,8 @@ export default function PancartePage() {
                     return (
                       <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
                         done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
-                        rx.priority === 'stat' && !done && 'border-medical-critical/30',
+                        rx.priority === 'stat' && !done && 'border-medical-critical/30 animate-pulse',
+                        rx.priority === 'urgent' && !done && 'border-medical-warning/30',
                       )}>
                         <div className="flex-1">
                           <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
