@@ -82,6 +82,12 @@ export default function AccueilPage() {
 
     let patientId: string;
 
+    // Client-side date validation
+    const birthDate = new Date(dateNaissance);
+    const today = new Date();
+    if (birthDate > today) { toast.error('La date de naissance ne peut pas être dans le futur'); setSubmitting(false); return; }
+    if (birthDate < new Date('1900-01-01')) { toast.error('Date de naissance invalide'); setSubmitting(false); return; }
+
     if (selectedExisting) {
       patientId = selectedExisting.id;
     } else {
