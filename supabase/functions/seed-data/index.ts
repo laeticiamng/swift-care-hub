@@ -145,8 +145,9 @@ Deno.serve(async (req) => {
     await supabaseAdmin.from('vitals').insert(vitalsInserts)
     console.log(`Inserted ${vitalsInserts.length} vitals`)
 
-    // Prescriptions — enriched with more meds and priorities
+    // Prescriptions — enriched with soins, examens, traitements
     const meds = [
+      // Traitements
       { name: 'Paracétamol', dosage: '1g', route: 'PO', freq: 'Toutes les 6h', priority: 'routine' },
       { name: 'Morphine', dosage: '5mg', route: 'IV', freq: 'Si EVA > 6', priority: 'urgent' },
       { name: 'NaCl 0.9%', dosage: '500ml', route: 'IV', freq: 'En 2h', priority: 'routine' },
@@ -159,6 +160,22 @@ Deno.serve(async (req) => {
       { name: 'Salbutamol', dosage: '5mg', route: 'INH', freq: 'Toutes les 4h', priority: 'urgent' },
       { name: 'Morphine', dosage: '10mg', route: 'IV', freq: 'Titration', priority: 'stat' },
       { name: 'Adrénaline', dosage: '1mg', route: 'IV', freq: 'Si ACR', priority: 'stat' },
+      // Soins
+      { name: 'Pansement plaie main droite', dosage: 'Compresses stériles', route: 'PO', freq: 'Toutes les 12h', priority: 'routine' },
+      { name: 'Surveillance scope continue', dosage: 'Monitoring', route: 'PO', freq: 'Continu', priority: 'urgent' },
+      { name: 'Soins de nursing', dosage: 'Toilette + mobilisation', route: 'PO', freq: 'Toutes les 8h', priority: 'routine' },
+      // Examens — Bilan biologique
+      { name: 'Bilan NFS + Iono + CRP', dosage: '3 tubes', route: 'IV', freq: 'Ponctuel', priority: 'urgent' },
+      { name: 'Bilan hépatique complet', dosage: '2 tubes', route: 'IV', freq: 'Ponctuel', priority: 'routine' },
+      { name: 'Troponine H0 + H3', dosage: '1 tube', route: 'IV', freq: 'H0 puis H+3', priority: 'stat' },
+      { name: 'Gaz du sang artériel', dosage: 'Seringue héparinée', route: 'IV', freq: 'Ponctuel', priority: 'urgent' },
+      { name: 'Hémostase TP TCA', dosage: '1 tube citraté', route: 'IV', freq: 'Ponctuel', priority: 'routine' },
+      // Examens — Imagerie
+      { name: 'Radio thorax face', dosage: 'Face debout', route: 'PO', freq: 'Ponctuel', priority: 'urgent' },
+      { name: 'Scanner abdomino-pelvien', dosage: 'Avec injection', route: 'PO', freq: 'Ponctuel', priority: 'urgent' },
+      { name: 'Écho abdominale', dosage: 'FAST écho', route: 'PO', freq: 'Ponctuel', priority: 'stat' },
+      { name: 'Radio cheville droite F+P', dosage: 'Face + profil', route: 'PO', freq: 'Ponctuel', priority: 'routine' },
+      { name: 'IRM cérébrale', dosage: 'Sans injection', route: 'PO', freq: 'Ponctuel', priority: 'urgent' },
     ]
 
     const rxInserts: any[] = []

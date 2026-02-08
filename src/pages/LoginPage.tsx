@@ -92,20 +92,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
-        <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 -right-32 w-80 h-80 bg-medical-success/5 rounded-full blur-3xl" />
+    <div className="min-h-screen flex relative overflow-hidden">
+      {/* Left panel — illustration (desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-medical-success/10 flex-col items-center justify-center p-12 relative">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-0 w-80 h-80 bg-medical-success/10 rounded-full blur-3xl" />
+        </div>
+        <div className="relative z-10 text-center space-y-6 max-w-md">
+          <div className="mx-auto flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/15">
+            <Activity className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="text-3xl font-bold">Urgence<span className="text-primary">OS</span></h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            Pilotez votre service d'urgences en temps réel. Triage, prescriptions, résultats et coordination — tout en un seul outil.
+          </p>
+          <div className="grid grid-cols-3 gap-4 pt-4">
+            {[
+              { value: '< 30s', label: 'Temps de triage' },
+              { value: '100%', label: 'Traçabilité' },
+              { value: '0', label: 'Papier' },
+            ].map(stat => (
+              <div key={stat.label} className="text-center">
+                <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="w-full max-w-md mb-4 relative z-10">
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Retour à l'accueil
-        </Link>
-      </div>
+      {/* Right panel — login form */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
+        <div className="absolute inset-0 pointer-events-none lg:hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
+          <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 -right-32 w-80 h-80 bg-medical-success/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="w-full max-w-md mb-4 relative z-10">
+          <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="h-4 w-4" />
+            Retour à l'accueil
+          </Link>
+        </div>
       <Card className="w-full max-w-md shadow-lg border relative z-10">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
@@ -170,7 +200,8 @@ export default function LoginPage() {
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
