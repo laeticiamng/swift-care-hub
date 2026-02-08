@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 const roleConfig: { role: AppRole; label: string; description: string; icon: React.ElementType; color: string }[] = [
   { role: 'medecin', label: 'Médecin', description: 'Board panoramique & dossiers patients', icon: Stethoscope, color: 'text-medical-info' },
-  { role: 'ioa', label: 'IOA', description: 'Tri & orientation des patients', icon: ClipboardList, color: 'text-medical-warning' },
+  { role: 'ioa', label: 'IOA', description: 'File d\'attente & tri des patients', icon: ClipboardList, color: 'text-medical-warning' },
   { role: 'ide', label: 'IDE', description: 'Pancarte unifiée & administrations', icon: Syringe, color: 'text-medical-success' },
   { role: 'as', label: 'Aide-soignant', description: 'Constantes & surveillance', icon: Heart, color: 'text-medical-critical' },
   { role: 'secretaire', label: 'Secrétaire', description: 'Admissions & accueil', icon: UserPlus, color: 'text-muted-foreground' },
@@ -15,7 +15,7 @@ const roleConfig: { role: AppRole; label: string; description: string; icon: Rea
 
 const roleRedirects: Record<AppRole, string> = {
   medecin: '/board',
-  ioa: '/triage',
+  ioa: '/ioa-queue',
   ide: '/board',
   as: '/as',
   secretaire: '/accueil',
