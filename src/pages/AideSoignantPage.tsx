@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
-import { Activity, Eye, Truck, Bed, LogOut, ArrowLeft, Check } from 'lucide-react';
+import { Activity, Eye, Truck, Bed, LogOut, ArrowLeft, Check, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -34,16 +34,9 @@ export default function AideSoignantPage() {
   const [encounters, setEncounters] = useState<EncounterItem[]>([]);
   const [selectedEncounter, setSelectedEncounter] = useState<string>('');
 
-  // Vitals
   const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
-
-  // Surveillance
   const [survNotes, setSurvNotes] = useState('');
-
-  // Brancardage
   const [brancDestination, setBrancDestination] = useState('');
-
-  // Confort
   const [confortNotes, setConfortNotes] = useState('');
 
   useEffect(() => { fetchEncounters(); }, []);
@@ -138,7 +131,7 @@ export default function AideSoignantPage() {
       <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">UrgenceOS — AS</h1>
+            <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span> — AS</h1>
             <NetworkStatus />
           </div>
           <div className="flex items-center gap-2">
@@ -165,13 +158,19 @@ export default function AideSoignantPage() {
         </Select>
 
         {selectedPatient && (
-          <p className="text-sm text-center text-muted-foreground font-medium">
-            Patient sélectionné : <span className="text-foreground">{selectedPatient.patients?.nom} {selectedPatient.patients?.prenom}</span>
-          </p>
+          <div className="flex items-center justify-center gap-2 p-3 rounded-xl bg-primary/10 border border-primary/20">
+            <User className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-primary">
+              {selectedPatient.patients?.nom?.toUpperCase()} {selectedPatient.patients?.prenom}
+            </span>
+            {selectedPatient.box_number && (
+              <Badge variant="outline" className="text-xs ml-1">Box {selectedPatient.box_number}</Badge>
+            )}
+          </div>
         )}
 
         {view === 'menu' && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 animate-in fade-in duration-300">
             <BigButton label="Constantes" icon={Activity} onClick={() => setView('constantes')} />
             <BigButton label="Surveillance" icon={Eye} onClick={() => setView('surveillance')} />
             <BigButton label="Brancardage" icon={Truck} onClick={() => setView('brancardage')} />
@@ -180,7 +179,7 @@ export default function AideSoignantPage() {
         )}
 
         {view !== 'menu' && (
-          <>
+          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
             <Button variant="ghost" onClick={() => setView('menu')} className="touch-target">
               <ArrowLeft className="h-4 w-4 mr-2" /> Retour
             </Button>
@@ -255,7 +254,7 @@ export default function AideSoignantPage() {
                 </CardContent>
               </Card>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>

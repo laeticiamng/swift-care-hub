@@ -18,11 +18,19 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
-const ZONES: { key: Zone; label: string }[] = [
-  { key: 'sau', label: 'SAU' },
-  { key: 'uhcd', label: 'UHCD' },
-  { key: 'dechocage', label: 'Déchocage' },
+const ZONES: { key: Zone; label: string; color: string; bgColor: string }[] = [
+  { key: 'sau', label: 'SAU', color: 'bg-medical-info', bgColor: 'bg-medical-info/5' },
+  { key: 'uhcd', label: 'UHCD', color: 'bg-medical-warning', bgColor: 'bg-medical-warning/5' },
+  { key: 'dechocage', label: 'Déchocage', color: 'bg-medical-critical', bgColor: 'bg-medical-critical/5' },
 ];
+
+const ccmuBorderColors: Record<number, string> = {
+  1: 'border-l-medical-success',
+  2: 'border-l-medical-info',
+  3: 'border-l-medical-warning',
+  4: 'border-l-medical-critical',
+  5: 'border-l-medical-critical',
+};
 
 interface EncounterWithPatient {
   id: string;
@@ -72,7 +80,6 @@ export default function BoardPage() {
     let encountersData: EncounterWithPatient[] = [];
     if (encRes.data) {
       encountersData = encRes.data as unknown as EncounterWithPatient[];
-      // Fetch medecin profiles for encounters that have a medecin_id
       const medecinIds = [...new Set(encountersData.filter(e => e.medecin_id).map(e => e.medecin_id!))];
       if (medecinIds.length > 0) {
         const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', medecinIds);
@@ -102,7 +109,6 @@ export default function BoardPage() {
 
   const handleMoveZone = async (encounterId: string, newZone: Zone) => {
     await supabase.from('encounters').update({ zone: newZone }).eq('id', encounterId);
-    // Audit log
     if (user) {
       await supabase.from('audit_logs').insert({
         user_id: user.id, action: 'zone_change', resource_type: 'encounter',
@@ -124,11 +130,15 @@ export default function BoardPage() {
     const waitCritical = waitMin > 240;
     const waitWarning = waitMin > 120;
     const rc = getResultCount(encounter.id);
+    const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
 
     return (
       <Card
         key={encounter.id}
-        className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]"
+        className={cn(
+          'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]',
+          borderColor && `border-l-4 ${borderColor}`,
+        )}
         onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
       >
         <CardContent className="p-4 space-y-2">
@@ -179,11 +189,16 @@ export default function BoardPage() {
     );
   };
 
-  const renderZoneColumn = (zone: { key: Zone; label: string }) => (
+  const renderZoneColumn = (zone: { key: Zone; label: string; color: string; bgColor: string }) => (
     <div key={zone.key} className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{zone.label}</h2>
-        <span className="text-sm text-muted-foreground">{byZone(zone.key).length} patients</span>
+      <div className={cn('rounded-xl p-3', zone.bgColor)}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className={cn('h-3 w-3 rounded-full', zone.color)} />
+            <h2 className="text-lg font-semibold">{zone.label}</h2>
+          </div>
+          <Badge variant="outline" className="font-semibold">{byZone(zone.key).length}</Badge>
+        </div>
       </div>
       <div className="space-y-2">
         {byZone(zone.key).map(renderPatientCard)}
@@ -201,8 +216,8 @@ export default function BoardPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-20 bg-card border-b shadow-sm px-4 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">UrgenceOS</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
             <NetworkStatus />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
