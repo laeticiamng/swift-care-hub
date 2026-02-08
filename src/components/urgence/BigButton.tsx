@@ -20,8 +20,8 @@ export function BigButton({ label, icon: Icon, onClick, variant = 'default', cla
     <button
       onClick={onClick}
       className={cn(
-        'touch-target-lg flex flex-col items-center justify-center gap-3 rounded-xl p-6 shadow-sm transition-all duration-200 active:scale-[0.98]',
-        'text-lg font-medium min-h-[120px]',
+        'touch-target-lg flex flex-col items-center justify-center gap-3 rounded-xl p-6 shadow-sm transition-all duration-150 active:scale-[0.95]',
+        'text-lg font-medium min-h-[140px] sm:min-h-[120px]',
         variantClasses[variant],
         className,
       )}

@@ -90,12 +90,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pourquoi maintenant ? */}
+      <section className="py-16 px-6 bg-background">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3 text-center">Timing</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">Pourquoi maintenant ?</h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              { icon: '🏥', title: 'Tension hospitalière maximale', desc: "Les urgences françaises font face à une crise sans précédent. Le statu quo logiciel n'est plus tenable : chaque minute perdue en clics est une minute volée au patient." },
+              { icon: '⚡', title: 'Technologie mature', desc: "Temps réel, PWA offline, RLS natif, déploiement cloud en un clic. Les briques techniques pour un logiciel médical moderne existent enfin — sans compromis sur la sécurité." },
+              { icon: '📋', title: 'Cadre réglementaire stabilisé', desc: "RPU normalisé, identité INS, FHIR R4 : les standards sont posés. UrgenceOS s'y conforme nativement, sans couche d'adaptation coûteuse." },
+            ].map(item => (
+              <div key={item.title} className="p-6 rounded-xl border bg-card text-center space-y-3">
+                <span className="text-3xl">{item.icon}</span>
+                <h3 className="font-bold text-lg">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Slogan separator */}
       <div className="py-8 px-6 text-center">
         <p className="text-xl sm:text-2xl font-bold text-primary italic">"8 clics hier. 1 tap aujourd'hui."</p>
       </div>
 
-      {/* Métriques clés spec */}
+      {/* Métriques clés spec — 10 métriques complètes */}
       <section className="py-16 px-6 bg-background">
         <div className="max-w-5xl mx-auto">
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3 text-center">Métriques vérifiables</p>
@@ -108,6 +129,11 @@ export default function LandingPage() {
               { metric: '< 90s', label: 'Admission patient' },
               { metric: '0', label: 'Changement de page IDE' },
               { metric: '3 clics', label: 'Prescription complète' },
+              { metric: '< 30 min', label: 'Autonomie formation' },
+              { metric: '< 1 min', label: 'Transmission DAR' },
+              { metric: '0 sec', label: 'Accès CRH auto' },
+              { metric: '> 80', label: 'Score SUS cible' },
+              { metric: '> 4h', label: 'Mode offline' },
             ].map(m => (
               <div key={m.label} className="text-center p-4 rounded-xl border bg-card">
                 <p className="text-2xl font-extrabold text-primary">{m.metric}</p>
