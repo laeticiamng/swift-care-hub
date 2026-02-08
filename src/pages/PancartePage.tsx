@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2 } from 'lucide-react';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2, Pill, HeartPulse, ScanLine } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
@@ -255,15 +255,15 @@ export default function PancartePage() {
               };
 
               const sections = [
-                { key: 'traitements', label: '💊 Traitements', items: groups.traitements },
-                { key: 'soins', label: '🩹 Soins', items: groups.soins },
-                { key: 'examens_bio', label: '🧪 Examens — Bilan biologique', items: groups.examens_bio },
-                { key: 'examens_imagerie', label: '📷 Examens — Imagerie', items: groups.examens_imagerie },
+                { key: 'traitements', label: 'Traitements', icon: <Pill className="h-3.5 w-3.5" />, items: groups.traitements },
+                { key: 'soins', label: 'Soins', icon: <HeartPulse className="h-3.5 w-3.5" />, items: groups.soins },
+                { key: 'examens_bio', label: 'Examens — Bilan', icon: <FlaskConical className="h-3.5 w-3.5" />, items: groups.examens_bio },
+                { key: 'examens_imagerie', label: 'Examens — Imagerie', icon: <ScanLine className="h-3.5 w-3.5" />, items: groups.examens_imagerie },
               ];
 
               return sections.filter(s => s.items.length > 0).map(s => (
                 <div key={s.key}>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{s.label}</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
                   <div className="space-y-2">{s.items.map(renderRxItem)}</div>
                 </div>
               ));
