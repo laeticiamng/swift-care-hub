@@ -30,6 +30,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
   const [ccmuSortie, setCcmuSortie] = useState('');
   const [gemsa, setGemsa] = useState('');
   const [summary, setSummary] = useState('');
+  const [ordonnance, setOrdonnance] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -61,13 +62,25 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
       });
     }
 
+    // Save ordonnance in timeline_items
+    if (ordonnance.trim()) {
+      await supabase.from('timeline_items').insert({
+        patient_id: patientId,
+        item_type: 'crh' as any,
+        content: `Ordonnance de sortie :\n${ordonnance.trim()}`,
+        source_author: userId,
+        source_date: new Date().toISOString().split('T')[0],
+        source_document: `Ordonnance — ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`,
+      });
+    }
+
     // Audit log
     await supabase.from('audit_logs').insert({
       user_id: userId,
       action: 'patient_discharge',
       resource_type: 'encounter',
       resource_id: encounterId,
-      details: { orientation, has_summary: !!summary.trim() },
+      details: { orientation, has_summary: !!summary.trim(), has_ordonnance: !!ordonnance.trim() },
     });
 
     toast.success('Patient sorti');
@@ -78,7 +91,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Préparer la sortie</DialogTitle>
         </DialogHeader>
@@ -120,7 +133,11 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
           </div>
           <div>
             <Label>Résumé de sortie</Label>
-            <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Synthèse clinique, consignes de sortie..." className="mt-1" rows={4} />
+            <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Synthèse clinique, consignes de sortie..." className="mt-1" rows={3} />
+          </div>
+          <div>
+            <Label>Ordonnance de sortie (optionnel)</Label>
+            <Textarea value={ordonnance} onChange={e => setOrdonnance(e.target.value)} placeholder="Paracétamol 1g x3/j pendant 5 jours..." className="mt-1" rows={3} />
           </div>
         </div>
         <DialogFooter>

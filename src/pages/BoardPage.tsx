@@ -10,6 +10,7 @@ import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { PatientCard } from '@/components/urgence/BoardPatientCard';
 import { ZoneGrid } from '@/components/urgence/ZoneGrid';
 import { WaitingBanner } from '@/components/urgence/WaitingBanner';
+import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -27,6 +28,7 @@ interface EncounterWithPatient {
   arrival_time: string;
   patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
   medecin_profile?: { full_name: string } | null;
+  diagnostic?: string | null;
 }
 
 interface ResultCount { encounter_id: string; unread: number; critical: number; }
@@ -97,6 +99,7 @@ export default function BoardPage() {
     let encountersData: EncounterWithPatient[] = [];
     if (encRes.data) {
       encountersData = encRes.data as unknown as EncounterWithPatient[];
+      // Fetch medecin profiles
       const medecinIds = [...new Set(encountersData.filter(e => e.medecin_id).map(e => e.medecin_id!))];
       if (medecinIds.length > 0) {
         const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', medecinIds);
@@ -105,6 +108,23 @@ export default function BoardPage() {
           encountersData = encountersData.map(e => ({
             ...e,
             medecin_profile: e.medecin_id ? profileMap.get(e.medecin_id) || null : null,
+          }));
+        }
+      }
+      // Fetch latest diagnostics for each patient
+      const patientIds = [...new Set(encountersData.map(e => e.patient_id))];
+      if (patientIds.length > 0) {
+        const { data: diags } = await supabase.from('timeline_items')
+          .select('patient_id, content')
+          .eq('item_type', 'diagnostic')
+          .in('patient_id', patientIds)
+          .order('created_at', { ascending: false });
+        if (diags) {
+          const diagMap = new Map<string, string>();
+          for (const d of diags) { if (!diagMap.has(d.patient_id)) diagMap.set(d.patient_id, d.content); }
+          encountersData = encountersData.map(e => ({
+            ...e,
+            diagnostic: diagMap.get(e.patient_id) || null,
           }));
         }
       }
@@ -222,6 +242,7 @@ export default function BoardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto p-4 space-y-4">
+        {role && <OnboardingBanner role={role} />}
         {/* Global stat cards */}
         <div className="grid grid-cols-4 gap-3">
           <StatCard label="Total" value={filtered.length} icon={Users} />

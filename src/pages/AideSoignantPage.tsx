@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
+import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 
 type ASView = 'menu' | 'constantes' | 'surveillance' | 'brancardage' | 'confort';
 
@@ -118,6 +119,7 @@ export default function AideSoignantPage() {
       </header>
 
       <div className="max-w-lg mx-auto p-4 space-y-4 relative z-10">
+        <OnboardingBanner role="as" />
         <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="Patients" value={encounters.length} icon={Users} />
           <StatCard label="Sélectionné" value={selectedPatient ? 1 : 0} icon={User} />

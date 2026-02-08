@@ -7,7 +7,8 @@ import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { RolesSection } from '@/components/landing/RolesSection';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { ImpactSection } from '@/components/landing/ImpactSection';
-
+import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
+import { InnovationsSection } from '@/components/landing/InnovationsSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { FooterSection } from '@/components/landing/FooterSection';
 
@@ -61,12 +62,15 @@ export default function LandingPage() {
       <RolesSection />
       <FeaturesSection />
       <ImpactSection />
+      <TestimonialsSection />
+      <InnovationsSection />
 
       {/* Métriques clés spec */}
       <section className="py-16 px-6 bg-background">
         <div className="max-w-5xl mx-auto">
           <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3 text-center">Métriques vérifiables</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">Chaque interaction optimisée</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">Moins de clics. Plus de soin.</h2>
+          <p className="text-center text-muted-foreground mb-8 max-w-lg mx-auto">Chaque interaction a été optimisée pour redonner du temps au soignant.</p>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             {[
               { metric: '< 2 min', label: 'Tri IOA complet' },

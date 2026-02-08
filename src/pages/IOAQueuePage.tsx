@@ -11,6 +11,7 @@ import { LogOut, ClipboardList, ArrowRight, AlertTriangle, Loader2, Users, Clock
 import { cn } from '@/lib/utils';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 
 interface QueuePatient {
   id: string;
@@ -86,6 +87,7 @@ export default function IOAQueuePage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-4 relative z-10">
+        <OnboardingBanner role="ioa" />
         <div className="grid grid-cols-4 gap-3 animate-in fade-in duration-300">
           <StatCard label="En attente" value={encounters.length} icon={Users} />
           <StatCard label="Triés/En cours" value={triagedCount} icon={Activity} />

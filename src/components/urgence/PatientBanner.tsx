@@ -2,6 +2,7 @@ import { AlertTriangle, ArrowLeft } from 'lucide-react';
 import { CCMUBadge } from './CCMUBadge';
 import { ThemeToggle } from './ThemeToggle';
 import { NetworkStatus } from './NetworkStatus';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 interface PatientBannerProps {
@@ -25,35 +26,43 @@ export function PatientBanner({
   const hasAllergies = allergies.length > 0;
 
   return (
-    <div className={cn('sticky top-0 z-30 bg-card border-b px-4 py-3 shadow-sm', className)}>
+    <div className={cn(
+      'sticky top-0 z-30 border-b px-4 py-3 shadow-sm animate-in fade-in duration-300',
+      'bg-card/80 backdrop-blur-xl',
+      className,
+    )}>
       <div className="flex items-center gap-3 flex-wrap">
         {onBack && (
           <button onClick={onBack} className="touch-target flex items-center justify-center rounded-lg hover:bg-accent transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </button>
         )}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
           <span className="text-xs font-semibold text-muted-foreground tracking-tight">Urgence<span className="text-primary">OS</span></span>
-          <span className="text-muted-foreground/30">|</span>
+          <div className="h-4 w-px bg-border" />
           <h2 className="text-lg font-semibold">{nom.toUpperCase()} {prenom}</h2>
           <span className="text-muted-foreground text-sm">{age} ans · {sexe}{poids ? ` · ${poids} kg` : ''}</span>
           {ccmu && <CCMUBadge level={ccmu} />}
           {boxNumber && (
-            <span className="text-xs font-medium border rounded px-1.5 py-0.5 text-muted-foreground">
+            <Badge variant="outline" className="text-xs font-medium">
               Box {boxNumber}
-            </span>
+            </Badge>
           )}
         </div>
-        {motif && <span className="text-sm text-muted-foreground">— {motif}</span>}
+        {motif && (
+          <Badge variant="secondary" className="text-xs font-medium">
+            {motif}
+          </Badge>
+        )}
         {hasAllergies && (
-          <div className="flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4 text-medical-critical" />
-            <span className="text-sm font-medium text-medical-critical">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-medical-critical/10 border border-medical-critical/20">
+            <AlertTriangle className="h-3.5 w-3.5 text-medical-critical" />
+            <span className="text-xs font-semibold text-medical-critical">
               {allergies.join(', ')}
             </span>
           </div>
         )}
-        <div className="flex items-center gap-1 ml-auto">
+        <div className="flex items-center gap-1.5 ml-auto">
           {medecinName && (
             <span className="text-sm text-muted-foreground mr-2">Dr. {medecinName}</span>
           )}
