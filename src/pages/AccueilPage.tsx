@@ -28,7 +28,14 @@ export default function AccueilPage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
-  useEffect(() => { fetchToday(); }, []);
+  useEffect(() => {
+    fetchToday();
+    const channel = supabase
+      .channel('accueil-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchToday())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const fetchToday = async () => {
     const today = new Date().toISOString().split('T')[0];

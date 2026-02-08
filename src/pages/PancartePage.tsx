@@ -209,11 +209,12 @@ export default function PancartePage() {
               })}
             </div>
             {showVitalsInput && (
-              <div className="grid grid-cols-5 gap-2 mt-3">
+              <div className="grid grid-cols-6 gap-2 mt-3">
                 <Input type="number" placeholder="FC" value={newVitals.fc} onChange={e => setNewVitals({ ...newVitals, fc: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="PA sys" value={newVitals.pa_systolique} onChange={e => setNewVitals({ ...newVitals, pa_systolique: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="PA dia" value={newVitals.pa_diastolique} onChange={e => setNewVitals({ ...newVitals, pa_diastolique: e.target.value })} className="text-center h-10" />
                 <Input type="number" placeholder="SpO₂" value={newVitals.spo2} onChange={e => setNewVitals({ ...newVitals, spo2: e.target.value })} className="text-center h-10" />
+                <Input type="number" step="0.1" placeholder="T°C" value={newVitals.temperature} onChange={e => setNewVitals({ ...newVitals, temperature: e.target.value })} className="text-center h-10" />
                 <Button onClick={handleSaveVitals} size="sm" className="h-10">OK</Button>
               </div>
             )}

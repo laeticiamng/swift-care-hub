@@ -12,9 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
+import { checkAllergyConflict } from '@/lib/allergy-check';
+import { DischargeDialog } from '@/components/urgence/DischargeDialog';
+import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 
 export default function PatientDossierPage() {
   const { encounterId } = useParams();
@@ -27,6 +30,9 @@ export default function PatientDossierPage() {
   const [results, setResults] = useState<any[]>([]);
   const [timeline, setTimeline] = useState<any[]>([]);
   const [prescribeOpen, setPrescribeOpen] = useState(false);
+  const [allergyWarning, setAllergyWarning] = useState<string[]>([]);
+  const [dischargeOpen, setDischargeOpen] = useState(false);
+  const [timelineEssential, setTimelineEssential] = useState(false);
   const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string });
 
   useEffect(() => {
@@ -61,8 +67,19 @@ export default function PatientDossierPage() {
     if (tlRes.data) setTimeline(tlRes.data);
   };
 
+  const handleMedNameChange = (name: string) => {
+    setNewRx({ ...newRx, medication_name: name });
+    if (patient?.allergies) {
+      setAllergyWarning(checkAllergyConflict(name, patient.allergies));
+    }
+  };
+
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
+    if (allergyWarning.length > 0) {
+      toast.error(`⚠ ALLERGIE DÉTECTÉE: ${allergyWarning.join(', ')} — Prescription bloquée`);
+      return;
+    }
     const { error } = await supabase.from('prescriptions').insert({
       encounter_id: encounter.id,
       patient_id: encounter.patient_id,
@@ -76,6 +93,7 @@ export default function PatientDossierPage() {
     if (error) { toast.error('Erreur de prescription'); return; }
     toast.success('Prescription validée');
     setNewRx({ medication_name: '', dosage: '', route: 'PO', frequency: '', priority: 'routine' });
+    setAllergyWarning([]);
     setPrescribeOpen(false);
     fetchAll();
   };
@@ -114,14 +132,31 @@ export default function PatientDossierPage() {
         allergies={patient.allergies || []} onBack={() => navigate(-1)}
       />
 
-      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className="max-w-7xl mx-auto p-4">
+        {/* Discharge button */}
+        {encounter.status !== 'finished' && (
+          <div className="flex justify-end mb-4">
+            <Button variant="outline" onClick={() => setDischargeOpen(true)}>
+              <DoorOpen className="h-4 w-4 mr-1" /> Préparer sortie
+            </Button>
+          </div>
+        )}
+        <DischargeDialog open={dischargeOpen} onOpenChange={setDischargeOpen} encounterId={encounter.id} onDone={() => { fetchAll(); navigate('/board'); }} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Timeline — 3 cols */}
         <div className="lg:col-span-3 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-lg">Timeline patient</CardTitle></CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg">Timeline patient</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setTimelineEssential(!timelineEssential)}>
+                {timelineEssential ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+                {timelineEssential ? 'Essentiel' : 'Voir tout'}
+              </Button>
+            </CardHeader>
             <CardContent className="space-y-3">
               {timeline.length === 0 && <p className="text-sm text-muted-foreground">Aucun élément</p>}
-              {timeline.map(item => {
+              {timeline.filter(item => !timelineEssential || ['allergie', 'crh', 'diagnostic'].includes(item.item_type)).map(item => {
                 const iconMap: Record<string, React.ReactNode> = {
                   allergie: <AlertTriangle className="h-4 w-4 text-medical-critical" />,
                   crh: <FileText className="h-4 w-4 text-primary" />,
@@ -192,7 +227,15 @@ export default function PatientDossierPage() {
                   <div className="space-y-3">
                     <div>
                       <Label>Médicament</Label>
-                      <Input value={newRx.medication_name} onChange={e => setNewRx({ ...newRx, medication_name: e.target.value })} placeholder="Paracétamol" />
+                      <Input value={newRx.medication_name} onChange={e => handleMedNameChange(e.target.value)} placeholder="Paracétamol" />
+                      {allergyWarning.length > 0 && (
+                        <div className="mt-1 p-2 rounded bg-medical-critical/10 border border-medical-critical/30">
+                          <p className="text-xs font-bold text-medical-critical flex items-center gap-1">
+                            <AlertTriangle className="h-3 w-3" /> ALLERGIE: {allergyWarning.join(', ')}
+                          </p>
+                          <p className="text-xs text-medical-critical">Prescription bloquée — choisir un autre médicament</p>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <Label>Posologie</Label>
@@ -224,7 +267,7 @@ export default function PatientDossierPage() {
                       <Label>Fréquence</Label>
                       <Input value={newRx.frequency} onChange={e => setNewRx({ ...newRx, frequency: e.target.value })} placeholder="Toutes les 6h" />
                     </div>
-                    <Button onClick={handlePrescribe} className="w-full" disabled={!newRx.medication_name || !newRx.dosage}>
+                    <Button onClick={handlePrescribe} className="w-full" disabled={!newRx.medication_name || !newRx.dosage || allergyWarning.length > 0}>
                       Valider la prescription
                     </Button>
                   </div>
@@ -281,6 +324,7 @@ export default function PatientDossierPage() {
               ))}
             </CardContent>
           </Card>
+        </div>
         </div>
       </div>
     </div>
