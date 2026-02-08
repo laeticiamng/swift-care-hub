@@ -18,6 +18,7 @@ import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
+import { categorizePrescription, PRESCRIPTION_SECTIONS } from '@/lib/prescription-utils';
 
 export default function PatientDossierPage() {
   const { encounterId } = useParams();
@@ -34,8 +35,6 @@ export default function PatientDossierPage() {
   const [dischargeOpen, setDischargeOpen] = useState(false);
   const [timelineEssential, setTimelineEssential] = useState(false);
   const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string });
-
-  // Medical notes
   const [noteContent, setNoteContent] = useState('');
   const [savingNote, setSavingNote] = useState(false);
 
@@ -84,7 +83,6 @@ export default function PatientDossierPage() {
       route: newRx.route as any, frequency: newRx.frequency, priority: newRx.priority as any,
     });
     if (error) { toast.error('Erreur de prescription'); return; }
-    // Audit log
     await supabase.from('audit_logs').insert({
       user_id: user.id, action: 'prescription_created', resource_type: 'prescription',
       resource_id: encounter.id, details: { medication: newRx.medication_name, dosage: newRx.dosage },
@@ -179,6 +177,14 @@ export default function PatientDossierPage() {
     );
   };
 
+  // Prescription category counts
+  const rxGroups = {
+    soins: prescriptions.filter(rx => categorizePrescription(rx) === 'soins'),
+    examens_bio: prescriptions.filter(rx => categorizePrescription(rx) === 'examens_bio'),
+    examens_imagerie: prescriptions.filter(rx => categorizePrescription(rx) === 'examens_imagerie'),
+    traitements: prescriptions.filter(rx => categorizePrescription(rx) === 'traitements'),
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
@@ -198,7 +204,7 @@ export default function PatientDossierPage() {
           {/* Timeline — 3 cols */}
           <div className="lg:col-span-3 space-y-4">
             {/* Medical Notes */}
-            <Card>
+            <Card className="animate-in fade-in duration-300">
               <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
               <CardContent>
                 <div className="flex gap-2">
@@ -211,7 +217,7 @@ export default function PatientDossierPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Timeline patient</CardTitle>
                 <Button variant="ghost" size="sm" onClick={() => setTimelineEssential(!timelineEssential)}>
@@ -223,8 +229,6 @@ export default function PatientDossierPage() {
                 {timeline.length === 0 && <p className="text-sm text-muted-foreground">Aucun élément</p>}
                 {(() => {
                   const filteredItems = timeline.filter(item => !timelineEssential || ['allergie', 'crh', 'diagnostic'].includes(item.item_type));
-                  
-                  // Group antecedents together
                   const antecedents = filteredItems.filter(item => item.item_type === 'antecedent');
                   const allergies = filteredItems.filter(item => item.item_type === 'allergie');
                   const otherItems = filteredItems.filter(item => item.item_type !== 'antecedent' && item.item_type !== 'allergie');
@@ -237,8 +241,9 @@ export default function PatientDossierPage() {
                     traitement: <Pill className="h-4 w-4 text-medical-warning" />,
                   };
 
-                  const renderSingleItem = (item: any) => (
-                    <div key={item.id} className={cn('flex gap-3 p-3 rounded-lg border', item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5')}>
+                  const renderSingleItem = (item: any, idx: number) => (
+                    <div key={item.id} className={cn('flex gap-3 p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5')}
+                      style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}>
                       <div className="mt-0.5">{iconMap[item.item_type] || <Clock className="h-4 w-4 text-muted-foreground" />}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -260,7 +265,6 @@ export default function PatientDossierPage() {
 
                   return (
                     <>
-                      {/* Grouped allergies */}
                       {allergies.length > 0 && (
                         <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
                           <div className="flex items-center gap-2 mb-2">
@@ -276,7 +280,6 @@ export default function PatientDossierPage() {
                           </div>
                         </div>
                       )}
-                      {/* Grouped antecedents */}
                       {antecedents.length > 0 && (
                         <div className="p-3 rounded-lg border bg-muted/30">
                           <div className="flex items-center gap-2 mb-2">
@@ -293,8 +296,7 @@ export default function PatientDossierPage() {
                           )}
                         </div>
                       )}
-                      {/* Other timeline items */}
-                      {otherItems.map(renderSingleItem)}
+                      {otherItems.map((item, idx) => renderSingleItem(item, idx))}
                     </>
                   );
                 })()}
@@ -304,7 +306,41 @@ export default function PatientDossierPage() {
 
           {/* Actions — 2 cols */}
           <div className="lg:col-span-2 space-y-4">
-            <Card>
+            {/* Antécédents + Allergies summary at TOP of right column */}
+            {(patient.antecedents?.length > 0 || patient.allergies?.length > 0) && (
+              <Card className="animate-in fade-in duration-300">
+                <CardContent className="p-4 space-y-3">
+                  {patient.allergies?.length > 0 && (
+                    <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <AlertTriangle className="h-4 w-4 text-medical-critical" />
+                        <span className="text-xs font-semibold text-medical-critical uppercase tracking-wide">Allergies</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {patient.allergies.map((a: string, i: number) => (
+                          <Badge key={i} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">{a}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {patient.antecedents?.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <History className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Antécédents</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {patient.antecedents.map((a: string, i: number) => (
+                          <Badge key={i} variant="secondary" className="text-xs">{a}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2"><CardTitle className="text-lg">Constantes</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3">
@@ -334,7 +370,7 @@ export default function PatientDossierPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Prescriptions</CardTitle>
                 <Dialog open={prescribeOpen} onOpenChange={setPrescribeOpen}>
@@ -386,56 +422,38 @@ export default function PatientDossierPage() {
                 </Dialog>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Mini-résumé par catégorie */}
+                {prescriptions.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {PRESCRIPTION_SECTIONS.filter(s => rxGroups[s.key as keyof typeof rxGroups].length > 0).map(s => (
+                      <Badge key={s.key} variant="outline" className="text-xs gap-1">
+                        {s.icon} {s.label} ({rxGroups[s.key as keyof typeof rxGroups].length})
+                      </Badge>
+                    ))}
+                  </div>
+                )}
                 {prescriptions.length === 0 && <p className="text-sm text-muted-foreground">Aucune prescription</p>}
-                {(() => {
-                  const soinsKeywords = ['pansement', 'soin', 'nursing', 'toilette', 'surveillance', 'scope', 'monitoring'];
-                  const examBioKeywords = ['bilan', 'nfs', 'iono', 'crp', 'troponine', 'hémostase', 'gaz du sang', 'lactate', 'bhu', 'hémoglobine'];
-                  const examImagerieKeywords = ['radio', 'scanner', 'irm', 'écho', 'imagerie', 'rx', 'tdm', 'radiographie'];
-                  
-                  const categorize = (rx: any) => {
-                    const name = rx.medication_name.toLowerCase();
-                    if (soinsKeywords.some(k => name.includes(k))) return 'soins';
-                    if (examBioKeywords.some(k => name.includes(k))) return 'examens_bio';
-                    if (examImagerieKeywords.some(k => name.includes(k))) return 'examens_imagerie';
-                    return 'traitements';
-                  };
-                  
-                  const groups = {
-                    soins: prescriptions.filter(rx => categorize(rx) === 'soins'),
-                    examens_bio: prescriptions.filter(rx => categorize(rx) === 'examens_bio'),
-                    examens_imagerie: prescriptions.filter(rx => categorize(rx) === 'examens_imagerie'),
-                    traitements: prescriptions.filter(rx => categorize(rx) === 'traitements'),
-                  };
-
-                  const renderRxItem = (rx: any) => (
-                    <div key={rx.id} className={cn('p-3 rounded-lg border flex items-center justify-between',
-                      rx.priority === 'stat' && 'border-medical-critical/30', rx.status === 'completed' && 'opacity-60')}>
-                      <div>
-                        <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
-                        <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
-                      </div>
-                      <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status}</Badge>
+                {PRESCRIPTION_SECTIONS.filter(s => rxGroups[s.key as keyof typeof rxGroups].length > 0).map(s => (
+                  <div key={s.key}>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
+                    <div className="space-y-2">
+                      {rxGroups[s.key as keyof typeof rxGroups].map((rx: any) => (
+                        <div key={rx.id} className={cn('p-3 rounded-lg border flex items-center justify-between animate-in fade-in duration-200',
+                          rx.priority === 'stat' && 'border-medical-critical/30', rx.status === 'completed' && 'opacity-60')}>
+                          <div>
+                            <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                            <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+                          </div>
+                          <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status}</Badge>
+                        </div>
+                      ))}
                     </div>
-                  );
-
-                  const sections = [
-                    { key: 'traitements', label: 'Traitements', icon: <Pill className="h-3.5 w-3.5" />, items: groups.traitements },
-                    { key: 'soins', label: 'Soins', icon: <HeartPulse className="h-3.5 w-3.5" />, items: groups.soins },
-                    { key: 'examens_bio', label: 'Examens — Bilan biologique', icon: <FlaskConical className="h-3.5 w-3.5" />, items: groups.examens_bio },
-                    { key: 'examens_imagerie', label: 'Examens — Imagerie', icon: <ScanLine className="h-3.5 w-3.5" />, items: groups.examens_imagerie },
-                  ];
-
-                  return sections.filter(s => s.items.length > 0).map(s => (
-                    <div key={s.key}>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
-                      <div className="space-y-2">{s.items.map(renderRxItem)}</div>
-                    </div>
-                  ));
-                })()}
+                  </div>
+                ))}
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
                   Résultats
@@ -446,8 +464,9 @@ export default function PatientDossierPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
-                {results.map(r => (
-                  <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}>
+                {results.map((r, idx) => (
+                  <div key={r.id} className={cn('p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}
+                    style={{ animationDelay: `${idx * 40}ms`, animationFillMode: 'both' }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}

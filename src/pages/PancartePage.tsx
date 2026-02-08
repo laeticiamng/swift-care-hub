@@ -13,9 +13,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2, Pill, HeartPulse, ScanLine } from 'lucide-react';
+import { StatCard } from '@/components/urgence/StatCard';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2, Pill, HeartPulse, ScanLine, ClipboardList, Activity, FileText } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
+import { categorizePrescription, PRESCRIPTION_SECTIONS } from '@/lib/prescription-utils';
 
 export default function PancartePage() {
   const { encounterId } = useParams();
@@ -78,7 +80,6 @@ export default function PancartePage() {
       administered_by: user.id, dose_given: rx.dosage, route: rx.route,
     });
     await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
-    // Audit log
     await supabase.from('audit_logs').insert({
       user_id: user.id, action: 'administration', resource_type: 'prescription',
       resource_id: rx.id, details: { medication: rx.medication_name, dosage: rx.dosage },
@@ -147,6 +148,7 @@ export default function PancartePage() {
   const age = calculateAge(patient.date_naissance);
   const isAdministered = (rxId: string) => administrations.some(a => a.prescription_id === rxId);
   const newResults = results.filter(r => !r.is_read).length;
+  const activeRx = prescriptions.filter(rx => rx.status === 'active').length;
 
   const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
   const donneesPreview = lastVital
@@ -159,14 +161,30 @@ export default function PancartePage() {
     ...recentProcs.map(p => p.procedure_type.toUpperCase()),
   ].join(', ') || 'Aucun acte récent';
 
+  // Prescription groups using shared utility
+  const rxGroups = {
+    soins: prescriptions.filter(rx => categorizePrescription(rx) === 'soins'),
+    examens_bio: prescriptions.filter(rx => categorizePrescription(rx) === 'examens_bio'),
+    examens_imagerie: prescriptions.filter(rx => categorizePrescription(rx) === 'examens_imagerie'),
+    traitements: prescriptions.filter(rx => categorizePrescription(rx) === 'traitements'),
+  };
+
   return (
     <div className="min-h-screen bg-background pb-8">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
         ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
+        {/* Résumé rapide */}
+        <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
+          <StatCard label="Rx actives" value={activeRx} icon={ClipboardList} />
+          <StatCard label="Actes" value={procedures.length} icon={Activity} />
+          <StatCard label="Résultats" value={newResults > 0 ? `${newResults} new` : results.length.toString()} icon={FlaskConical}
+            variant={newResults > 0 ? 'critical' : 'default'} />
+        </div>
+
         {/* Section 1 — Constantes */}
-        <Card>
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-base">Constantes</CardTitle>
             <Button size="sm" variant="outline" onClick={() => setShowVitalsInput(!showVitalsInput)}>
@@ -206,73 +224,45 @@ export default function PancartePage() {
           </CardContent>
         </Card>
 
-        {/* Section 2 — Prescriptions */}
-        <Card>
+        {/* Section 2 — Prescriptions with shared categories */}
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2"><CardTitle className="text-base">Prescriptions</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             {prescriptions.length === 0 && <p className="text-sm text-muted-foreground">Aucune prescription</p>}
-            {(() => {
-              const soinsKeywords = ['pansement', 'soin', 'nursing', 'toilette', 'surveillance', 'scope', 'monitoring'];
-              const examBioKeywords = ['bilan', 'nfs', 'iono', 'crp', 'troponine', 'hémostase', 'gaz du sang', 'lactate', 'bhu', 'hémoglobine'];
-              const examImagerieKeywords = ['radio', 'scanner', 'irm', 'écho', 'imagerie', 'rx', 'tdm', 'radiographie'];
-              
-              const categorize = (rx: any) => {
-                const name = rx.medication_name.toLowerCase();
-                if (soinsKeywords.some(k => name.includes(k))) return 'soins';
-                if (examBioKeywords.some(k => name.includes(k))) return 'examens_bio';
-                if (examImagerieKeywords.some(k => name.includes(k))) return 'examens_imagerie';
-                return 'traitements';
-              };
-              
-              const groups = {
-                soins: prescriptions.filter(rx => categorize(rx) === 'soins'),
-                examens_bio: prescriptions.filter(rx => categorize(rx) === 'examens_bio'),
-                examens_imagerie: prescriptions.filter(rx => categorize(rx) === 'examens_imagerie'),
-                traitements: prescriptions.filter(rx => categorize(rx) === 'traitements'),
-              };
-
-              const renderRxItem = (rx: any) => {
-                const done = isAdministered(rx.id) || rx.status === 'completed';
-                return (
-                  <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
-                    done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
-                    rx.priority === 'stat' && !done && 'border-medical-critical/30',
-                  )}>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
-                      <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
-                    </div>
-                    {done ? (
-                      <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
-                    ) : (
-                      <Button size="sm" onClick={() => handleAdminister(rx)}
-                        className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
-                        <Check className="h-4 w-4 mr-1" /> Administré
-                      </Button>
-                    )}
-                  </div>
-                );
-              };
-
-              const sections = [
-                { key: 'traitements', label: 'Traitements', icon: <Pill className="h-3.5 w-3.5" />, items: groups.traitements },
-                { key: 'soins', label: 'Soins', icon: <HeartPulse className="h-3.5 w-3.5" />, items: groups.soins },
-                { key: 'examens_bio', label: 'Examens — Bilan', icon: <FlaskConical className="h-3.5 w-3.5" />, items: groups.examens_bio },
-                { key: 'examens_imagerie', label: 'Examens — Imagerie', icon: <ScanLine className="h-3.5 w-3.5" />, items: groups.examens_imagerie },
-              ];
-
-              return sections.filter(s => s.items.length > 0).map(s => (
-                <div key={s.key}>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
-                  <div className="space-y-2">{s.items.map(renderRxItem)}</div>
+            {PRESCRIPTION_SECTIONS.filter(s => rxGroups[s.key as keyof typeof rxGroups].length > 0).map(s => (
+              <div key={s.key}>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
+                <div className="space-y-2">
+                  {rxGroups[s.key as keyof typeof rxGroups].map((rx: any) => {
+                    const done = isAdministered(rx.id) || rx.status === 'completed';
+                    return (
+                      <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
+                        done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
+                        rx.priority === 'stat' && !done && 'border-medical-critical/30',
+                      )}>
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                          <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+                        </div>
+                        {done ? (
+                          <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                        ) : (
+                          <Button size="sm" onClick={() => handleAdminister(rx)}
+                            className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
+                            <Check className="h-4 w-4 mr-1" /> Administré
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ));
-            })()}
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Section 3 — Actes */}
-        <Card>
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2"><CardTitle className="text-base">Actes de soins</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <div className="flex gap-2">
@@ -290,8 +280,9 @@ export default function PancartePage() {
             </div>
             {procedures.length > 0 && (
               <div className="space-y-1">
-                {procedures.slice(0, 5).map(p => (
-                  <div key={p.id} className="flex items-center justify-between text-sm p-2 rounded bg-accent/30">
+                {procedures.slice(0, 5).map((p, idx) => (
+                  <div key={p.id} className="flex items-center justify-between text-sm p-2 rounded bg-accent/30 animate-in fade-in"
+                    style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}>
                     <span className="font-medium">{p.procedure_type.toUpperCase()}</span>
                     <span className="text-xs text-muted-foreground">{new Date(p.performed_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
@@ -301,18 +292,22 @@ export default function PancartePage() {
           </CardContent>
         </Card>
 
-        {/* Section 4 — Transmissions DAR */}
-        <Card>
+        {/* Section 4 — Transmissions DAR with separate cards for D/A/R */}
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2"><CardTitle className="text-base">Transmissions DAR</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg bg-accent/50">
-                <p className="text-xs font-medium text-muted-foreground mb-1">D — Données</p>
-                <p className="text-sm">{donneesPreview}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3 rounded-lg border bg-accent/30">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">D — Données</p>
+                <p className="text-sm leading-relaxed">{donneesPreview}</p>
               </div>
-              <div className="p-3 rounded-lg bg-accent/50">
-                <p className="text-xs font-medium text-muted-foreground mb-1">A — Actions</p>
-                <p className="text-sm">{actionsPreview}</p>
+              <div className="p-3 rounded-lg border bg-accent/30">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">A — Actions</p>
+                <p className="text-sm leading-relaxed">{actionsPreview}</p>
+              </div>
+              <div className="p-3 rounded-lg border bg-primary/5 border-primary/20">
+                <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">R — Résultats</p>
+                <p className="text-sm text-muted-foreground italic">À compléter ci-dessous</p>
               </div>
             </div>
             <div>
@@ -335,8 +330,9 @@ export default function PancartePage() {
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-2 mt-2">
                 {transmissions.length === 0 && <p className="text-sm text-muted-foreground">Aucune transmission précédente</p>}
-                {transmissions.map(t => (
-                  <div key={t.id} className="p-3 rounded-lg border space-y-1">
+                {transmissions.map((t, idx) => (
+                  <div key={t.id} className="p-3 rounded-lg border space-y-1 animate-in fade-in"
+                    style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}>
                     <p className="text-xs text-muted-foreground">{new Date(t.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</p>
                     {t.cible && <p className="text-sm"><span className="font-medium">Cible :</span> {t.cible}</p>}
                     {t.donnees && <p className="text-xs text-muted-foreground">D: {t.donnees}</p>}
@@ -350,7 +346,7 @@ export default function PancartePage() {
         </Card>
 
         {/* Section 5 — Résultats */}
-        <Card>
+        <Card className="animate-in fade-in duration-300" style={{ animationDelay: '250ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2 cursor-pointer" onClick={() => setResultsOpen(!resultsOpen)}>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
@@ -363,8 +359,9 @@ export default function PancartePage() {
           {resultsOpen && (
             <CardContent className="space-y-2">
               {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
-              {results.map(r => (
-                <div key={r.id} className={cn('p-3 rounded-lg border', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}>
+              {results.map((r, idx) => (
+                <div key={r.id} className={cn('p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}
+                  style={{ animationDelay: `${idx * 40}ms`, animationFillMode: 'both' }}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}

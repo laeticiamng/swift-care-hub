@@ -37,15 +37,9 @@ export default function RoleSelector() {
   const handleSelect = async (selectedRole: AppRole) => {
     if (availableRoles.length === 0 && user) {
       setAssigning(true);
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({ user_id: user.id, role: selectedRole });
+      const { error } = await supabase.from('user_roles').insert({ user_id: user.id, role: selectedRole });
       setAssigning(false);
-      if (error) {
-        toast.error('Impossible d\'attribuer le rôle. Réessayez.');
-        console.error('Role assignment error:', error);
-        return;
-      }
+      if (error) { toast.error('Impossible d\'attribuer le rôle. Réessayez.'); return; }
     }
     await selectRole(selectedRole);
     navigate(roleRedirects[selectedRole]);
@@ -58,14 +52,13 @@ export default function RoleSelector() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
-      {/* Gradient background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
         <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-10 -right-32 w-80 h-80 bg-medical-success/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 text-center mb-8">
+      <div className="relative z-10 text-center mb-8 animate-in fade-in duration-300">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Activity className="h-8 w-8 text-primary" />
           <span className="text-2xl font-bold">Urgence<span className="text-primary">OS</span></span>
@@ -74,9 +67,7 @@ export default function RoleSelector() {
           {isNewUser ? 'Bienvenue ! Choisissez votre rôle' : 'Sélection du rôle'}
         </h1>
         <p className="text-muted-foreground mt-1">
-          {isNewUser
-            ? 'Ce rôle sera attribué de façon permanente à votre compte'
-            : 'Choisissez votre profil pour cette session'}
+          {isNewUser ? 'Ce rôle sera attribué de façon permanente à votre compte' : 'Choisissez votre profil pour cette session'}
         </p>
         {isNewUser && (
           <p className="text-xs text-medical-warning mt-2 font-medium flex items-center justify-center gap-1">
@@ -94,7 +85,7 @@ export default function RoleSelector() {
             disabled={assigning}
             className={cn(
               'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
-              'hover:shadow-lg hover:border-primary/30 transition-all duration-300 active:scale-[0.98]',
+              'hover:shadow-xl hover:border-primary/30 hover:scale-[1.03] transition-all duration-300 active:scale-[0.98]',
               'touch-target min-h-[140px]',
               'animate-in fade-in slide-in-from-bottom-4',
               assigning && 'opacity-50 pointer-events-none',

@@ -34,7 +34,6 @@ export default function AideSoignantPage() {
   const [view, setView] = useState<ASView>('menu');
   const [encounters, setEncounters] = useState<EncounterItem[]>([]);
   const [selectedEncounter, setSelectedEncounter] = useState<string>('');
-
   const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
   const [survNotes, setSurvNotes] = useState('');
   const [brancDestination, setBrancDestination] = useState('');
@@ -43,30 +42,22 @@ export default function AideSoignantPage() {
   useEffect(() => { fetchEncounters(); }, []);
 
   const fetchEncounters = async () => {
-    const { data } = await supabase
-      .from('encounters')
-      .select('id, patient_id, box_number, zone, patients(nom, prenom)')
-      .in('status', ['arrived', 'triaged', 'in-progress']);
+    const { data } = await supabase.from('encounters').select('id, patient_id, box_number, zone, patients(nom, prenom)').in('status', ['arrived', 'triaged', 'in-progress']);
     if (data) setEncounters(data as unknown as EncounterItem[]);
   };
 
-  const getSelectedPatientId = () => {
-    const enc = encounters.find(e => e.id === selectedEncounter);
-    return enc?.patient_id;
-  };
+  const getSelectedPatientId = () => encounters.find(e => e.id === selectedEncounter)?.patient_id;
 
   const handleSaveVitals = async () => {
     if (!user || !selectedEncounter) return;
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-
     const obj: any = { encounter_id: selectedEncounter, patient_id: patientId, recorded_by: user.id };
     if (vitals.fc) obj.fc = parseInt(vitals.fc);
     if (vitals.pa_systolique) obj.pa_systolique = parseInt(vitals.pa_systolique);
     if (vitals.pa_diastolique) obj.pa_diastolique = parseInt(vitals.pa_diastolique);
     if (vitals.spo2) obj.spo2 = parseInt(vitals.spo2);
     if (vitals.temperature) obj.temperature = parseFloat(vitals.temperature);
-
     const { error } = await supabase.from('vitals').insert(obj);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constantes enregistrées');
@@ -78,58 +69,38 @@ export default function AideSoignantPage() {
     if (!user || !selectedEncounter) return;
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-
-    await supabase.from('procedures').insert({
-      encounter_id: selectedEncounter,
-      patient_id: patientId,
-      performed_by: user.id,
-      procedure_type: 'autre' as any,
-      notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}`,
-    });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user.id, procedure_type: 'autre' as any, notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}` });
     toast.success('Surveillance tracée');
-    setSurvNotes('');
-    setView('menu');
+    setSurvNotes(''); setView('menu');
   };
 
   const handleBrancardage = async () => {
     if (!user || !selectedEncounter) return;
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-
-    await supabase.from('procedures').insert({
-      encounter_id: selectedEncounter,
-      patient_id: patientId,
-      performed_by: user.id,
-      procedure_type: 'autre' as any,
-      notes: `Brancardage: ${brancDestination || 'Transport effectué'}`,
-    });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user.id, procedure_type: 'autre' as any, notes: `Brancardage: ${brancDestination || 'Transport effectué'}` });
     toast.success('Brancardage tracé');
-    setBrancDestination('');
-    setView('menu');
+    setBrancDestination(''); setView('menu');
   };
 
   const handleConfort = async () => {
     if (!user || !selectedEncounter) return;
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-
-    await supabase.from('procedures').insert({
-      encounter_id: selectedEncounter,
-      patient_id: patientId,
-      performed_by: user.id,
-      procedure_type: 'autre' as any,
-      notes: `Confort: ${confortNotes || 'Soins de confort effectués'}`,
-    });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user.id, procedure_type: 'autre' as any, notes: `Confort: ${confortNotes || 'Soins de confort effectués'}` });
     toast.success('Soin de confort tracé');
-    setConfortNotes('');
-    setView('menu');
+    setConfortNotes(''); setView('menu');
   };
 
   const selectedPatient = encounters.find(e => e.id === selectedEncounter);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
+    <div className="min-h-screen bg-background relative">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-medical-critical/3" />
+      </div>
+
+      <header className="sticky top-0 z-20 border-b px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span> — AS</h1>
@@ -143,15 +114,13 @@ export default function AideSoignantPage() {
         </div>
       </header>
 
-      <div className="max-w-lg mx-auto p-4 space-y-4">
-        {/* StatCards */}
-        <div className="grid grid-cols-3 gap-3">
+      <div className="max-w-lg mx-auto p-4 space-y-4 relative z-10">
+        <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="Patients" value={encounters.length} icon={Users} />
           <StatCard label="Sélectionné" value={selectedPatient ? 1 : 0} icon={User} />
           <StatCard label="En charge" value={encounters.length} icon={Activity} />
         </div>
 
-        {/* Patient selector */}
         <Select value={selectedEncounter} onValueChange={setSelectedEncounter}>
           <SelectTrigger className="h-12 text-base">
             <SelectValue placeholder="Sélectionner un patient" />
@@ -166,7 +135,7 @@ export default function AideSoignantPage() {
         </Select>
 
         {selectedPatient && (
-          <div className="flex items-center justify-center gap-2 p-3 rounded-xl bg-primary/10 border border-primary/20">
+          <div className="flex items-center justify-center gap-2 p-3 rounded-xl bg-primary/10 border border-primary/20 animate-in fade-in scale-in duration-200">
             <User className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-primary">
               {selectedPatient.patients?.nom?.toUpperCase()} {selectedPatient.patients?.prenom}
@@ -178,11 +147,17 @@ export default function AideSoignantPage() {
         )}
 
         {view === 'menu' && (
-          <div className="grid grid-cols-2 gap-4 animate-in fade-in duration-300">
-            <BigButton label="Constantes" icon={Activity} onClick={() => setView('constantes')} />
-            <BigButton label="Surveillance" icon={Eye} onClick={() => setView('surveillance')} />
-            <BigButton label="Brancardage" icon={Truck} onClick={() => setView('brancardage')} />
-            <BigButton label="Confort" icon={Bed} onClick={() => setView('confort')} />
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: 'Constantes', icon: Activity, view: 'constantes' as ASView },
+              { label: 'Surveillance', icon: Eye, view: 'surveillance' as ASView },
+              { label: 'Brancardage', icon: Truck, view: 'brancardage' as ASView },
+              { label: 'Confort', icon: Bed, view: 'confort' as ASView },
+            ].map((item, idx) => (
+              <div key={item.view} className="animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${idx * 60}ms`, animationFillMode: 'both' }}>
+                <BigButton label={item.label} icon={item.icon} onClick={() => setView(item.view)} />
+              </div>
+            ))}
           </div>
         )}
 
@@ -240,8 +215,7 @@ export default function AideSoignantPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-base">Destination</Label>
-                    <Input value={brancDestination} onChange={e => setBrancDestination(e.target.value)} 
-                      placeholder="Radio, Scanner, Bloc..." className="mt-1 text-lg h-14" />
+                    <Input value={brancDestination} onChange={e => setBrancDestination(e.target.value)} placeholder="Radio, Scanner, Bloc..." className="mt-1 text-lg h-14" />
                   </div>
                   <Button onClick={handleBrancardage} className="w-full touch-target-lg text-lg" disabled={!selectedEncounter}>
                     <Check className="h-5 w-5 mr-2" /> Transport effectué
@@ -254,8 +228,7 @@ export default function AideSoignantPage() {
               <Card>
                 <CardHeader><CardTitle>Soins de confort</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
-                  <Textarea value={confortNotes} onChange={e => setConfortNotes(e.target.value)} 
-                    placeholder="Hydratation, installation, couverture, repas..." rows={4} className="text-base" />
+                  <Textarea value={confortNotes} onChange={e => setConfortNotes(e.target.value)} placeholder="Hydratation, installation, couverture, repas..." rows={4} className="text-base" />
                   <Button onClick={handleConfort} className="w-full touch-target-lg text-lg" disabled={!selectedEncounter}>
                     <Check className="h-5 w-5 mr-2" /> Enregistrer
                   </Button>

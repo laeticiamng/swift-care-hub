@@ -57,7 +57,7 @@ export default function IOAQueuePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 bg-card border-b shadow-sm px-4 py-3">
+      <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
             <ClipboardList className="h-5 w-5 text-medical-warning" />
@@ -75,11 +75,10 @@ export default function IOAQueuePage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
-        {/* StatCards */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="En attente" value={encounters.length} icon={Users} />
-          <StatCard label="Attente moy." value={`${avgWait} min`} icon={Clock} />
-          <StatCard label="Attente max" value={`${maxWait} min`} icon={Timer} />
+          <StatCard label="Attente moy." value={`${avgWait} min`} icon={Clock} variant={avgWait > 30 ? 'warning' : 'default'} />
+          <StatCard label="Attente max" value={`${maxWait} min`} icon={Timer} variant={maxWait > 60 ? 'critical' : 'default'} />
         </div>
 
         {loading && (
@@ -89,13 +88,13 @@ export default function IOAQueuePage() {
         )}
 
         {!loading && encounters.length === 0 && (
-          <div className="text-center py-16 space-y-4">
+          <div className="text-center py-16 space-y-4 animate-in fade-in duration-300">
             <div className="mx-auto h-20 w-20 rounded-2xl bg-medical-success/10 flex items-center justify-center">
               <ClipboardList className="h-10 w-10 text-medical-success" />
             </div>
             <div>
               <p className="text-lg font-semibold">File d'attente vide</p>
-              <p className="text-sm text-muted-foreground mt-1">Tous les patients ont été triés. Bravo !</p>
+              <p className="text-sm text-muted-foreground mt-1">Tous les patients ont été triés.</p>
             </div>
           </div>
         )}
@@ -108,6 +107,7 @@ export default function IOAQueuePage() {
             const waitStr = formatWaitTime(waitMin);
             const waitCritical = waitMin > 60;
             const waitWarning = waitMin > 30;
+            const arrivalTime = new Date(enc.arrival_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
             return (
               <Card
@@ -125,16 +125,19 @@ export default function IOAQueuePage() {
                       <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
                     </div>
                     {enc.motif_sfmu && <p className="text-sm text-muted-foreground">{enc.motif_sfmu}</p>}
-                    <p className={cn('text-sm font-medium',
-                      waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground'
-                    )}>
-                      Attente : {waitStr}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className={cn('text-sm font-medium',
+                        waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground'
+                      )}>
+                        Attente : {waitStr}
+                      </p>
+                      <span className="text-xs text-muted-foreground">Arrivée {arrivalTime}</span>
+                    </div>
                     {p.allergies && p.allergies.length > 0 && (
                       <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>
                     )}
                   </div>
-                  <Button onClick={() => navigate('/triage', { state: { patientId: enc.patient_id, encounterId: enc.id } })}>
+                  <Button onClick={() => navigate('/triage', { state: { patientId: enc.patient_id, encounterId: enc.id } })} className="touch-target">
                     Trier <ArrowRight className="h-4 w-4 ml-1" />
                   </Button>
                 </CardContent>
