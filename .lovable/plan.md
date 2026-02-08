@@ -1,142 +1,114 @@
 
 
-# Ajout des fonctionnalites manquantes -- Audit complet spec vs plateforme
+# Fonctionnalites encore manquantes -- Audit final spec vs code
 
-## Analyse des ecarts
-
-Apres comparaison detaillee du cahier des charges (50 pages) avec le code actuel, voici les fonctionnalites manquantes, classees par priorite.
+Apres comparaison detaillee entre le cahier des charges et le code actuel (post-implementations precedentes), voici les ecarts restants.
 
 ---
 
-## 1. Dossier Patient -- Diagnostic et codage CIM-10 (manquant)
+## 1. Seuil EVA douleur manquant dans vitals-utils.ts
 
-Le spec prevoit : "Diagnostic CIM-10, code, severite" (section 12, FHIR model). Actuellement, le dossier patient n'a aucun champ diagnostic.
-
-**Ajouts :**
-- Section "Diagnostic" dans `PatientDossierPage.tsx` (colonne gauche, sous les notes medicales)
-- Champ texte libre pour le diagnostic + badge codage CIM-10 (optionnel)
-- Sauvegarde comme `timeline_item` de type `diagnostic` (type deja dans l'enum DB)
-- Affichage dans la timeline avec icone Microscope
-
-**Fichier** : `src/pages/PatientDossierPage.tsx`
-
----
-
-## 2. Dossier Patient -- Traitements en cours du patient (affichage manquant)
-
-Le spec prevoit : "Derniere ordonnance, traitements en cours remontes". Le champ `traitements_actuels` existe dans la table `patients` (jsonb) mais n'est affiche nulle part.
-
-**Ajouts :**
-- Section "Traitements en cours" dans la colonne droite du dossier, sous les antecedents/allergies
-- Affichage des traitements actuels du patient (issus de `patient.traitements_actuels`)
-- Icone Pill, style coherent avec les badges antecedents
-
-**Fichier** : `src/pages/PatientDossierPage.tsx`
-
----
-
-## 3. Pancarte IDE -- Frequence respiratoire + GCS + EVA douleur (manquants)
-
-Le spec prevoit 8 constantes : FC, PA, SpO2, T, FR, GCS, EVA. La pancarte n'affiche que 4 (FC, PA, SpO2, T) et la saisie n'inclut pas FR, GCS, EVA.
-
-**Ajouts :**
-- Ajouter FR, GCS, EVA dans l'affichage des constantes (grille 4 -> 7 colonnes adaptatives)
-- Ajouter FR, GCS, EVA dans le formulaire de saisie inline
-- Meme logique d'alerte anomalie (`isVitalAbnormal` deja supporte ces champs)
-
-**Fichier** : `src/pages/PancartePage.tsx`
-
----
-
-## 4. Pancarte IDE -- Historique des transmissions DAR (lecture manquante)
-
-Les transmissions sont creees mais l'historique n'est pas affiche. Le spec dit "Transmissions DAR auto-alimentees".
-
-**Ajouts :**
-- Section depliable sous la DAR active montrant les transmissions anterieures
-- Chaque transmission avec horodatage, contenu D/A/R, et auteur
-- Collapsible pour ne pas surcharger l'ecran
-
-**Fichier** : `src/pages/PancartePage.tsx`
-
----
-
-## 5. Board -- Filtre "Mes patients" en mode grille (surbrillance manquante)
-
-Le `highlightedIds` est passe a `ZoneGrid` mais le composant `BoxCell` ne l'utilise pas pour un effet visuel.
-
-**Ajouts :**
-- `BoxCell` : si le patient est dans les "highlighted", ajouter un ring/halo visuel (ring-2 ring-primary)
-- Les boxes non highlights restent en opacite reduite quand le filtre est actif
-
-**Fichiers** : `src/components/urgence/BoxCell.tsx`, `src/components/urgence/ZoneGrid.tsx`
-
----
-
-## 6. Sortie patient -- CCMU/GEMSA de sortie (manquant)
-
-Le spec prevoit CCMU de sortie et codage GEMSA. Le `DischargeDialog` ne les inclut pas.
-
-**Ajouts :**
-- Selecteur CCMU de sortie (1-5) dans le dialog
-- Selecteur GEMSA (1-6) dans le dialog
-- Sauvegarde dans l'encounter (champ ccmu deja present, ajouter un champ `gemsa` ou utiliser les `details` du audit_log)
-
-**Fichier** : `src/components/urgence/DischargeDialog.tsx`
-**Migration** : Ajouter colonne `gemsa integer` a la table `encounters`
-
----
-
-## 7. Accueil Secretaire -- Adresse patient (champ manquant)
-
-Le spec prevoit adresse dans le formulaire d'admission. Le champ `adresse` existe dans la table `patients` mais n'est pas dans le formulaire.
+Le fichier `vitals-utils.ts` definit des seuils pour FC, PA, SpO2, T, FR, GCS mais pas pour `eva_douleur`. Le spec prevoit une detection automatique des anomalies pour toutes les constantes.
 
 **Ajout :**
-- Champ "Adresse" dans le formulaire d'admission
+- Seuil `eva_douleur: { max: 6 }` (EVA > 6 = alerte)
+- Cela activera automatiquement la mise en evidence rouge sur la pancarte et le dossier patient
 
-**Fichier** : `src/pages/AccueilPage.tsx`
+**Fichier** : `src/lib/vitals-utils.ts`
 
 ---
 
-## 8. Dossier Patient -- Poids du patient (manquant dans le bandeau)
+## 2. Saisie du poids patient (formulaire manquant)
 
-Le spec prevoit "Identite, age, poids, CCMU, motif, allergies, medecin" dans le bandeau patient.
+La colonne `poids` existe dans la table `patients` et s'affiche dans le bandeau, mais aucun formulaire ne permet de le saisir.
 
 **Ajouts :**
-- Champ poids optionnel dans la fiche patient (necessite colonne `poids` dans `patients`)
-- Affichage dans le `PatientBanner` si present
+- Champ poids dans le formulaire d'admission secretaire (`AccueilPage.tsx`)
+- Champ poids dans l'etape Identite du tri IOA (`TriagePage.tsx`)
+- Mise a jour du patient existant si le poids est saisi
 
-**Fichier** : `src/components/urgence/PatientBanner.tsx`
-**Migration** : Ajouter colonne `poids numeric` a la table `patients`
-
----
-
-## 9. Board -- Assignation medecin depuis le board (manquant)
-
-Le spec prevoit : "Notification medecin" lors de l'orientation. Le board permet de changer de zone mais pas d'assigner un medecin.
-
-**Ajouts :**
-- Selecteur medecin dans la PatientCard du mode liste (dropdown)
-- Action "Assigner medecin" depuis le board
-
-**Fichier** : `src/components/urgence/BoardPatientCard.tsx`
+**Fichiers** : `src/pages/AccueilPage.tsx`, `src/pages/TriagePage.tsx`
 
 ---
 
-## 10. IOA Queue -- Navigation vers le board (amelioration)
+## 3. Aide-soignant -- Constantes FR manquante
 
-Le spec prevoit que l'IOA puisse voir le board ET la file. Le bouton "Board" existe deja. RAS.
-
----
-
-## 11. Medecin traitant (affichage manquant)
-
-Le champ `medecin_traitant` existe dans `patients` mais n'est affiche nulle part.
+L'interface AS ne saisit que FC, PA sys/dia, SpO2, T. Le spec dit que l'AS peut saisir les constantes de base. Il manque au minimum FR (frequence respiratoire).
 
 **Ajout :**
-- Affichage dans le dossier patient, section antecedents/infos
+- Champ FR dans le formulaire constantes AS
+- Envoi du champ `frequence_respiratoire` dans l'insert vitals
+
+**Fichier** : `src/pages/AideSoignantPage.tsx`
+
+---
+
+## 4. Selecteur de type de prescription (Soins / Examens Bio / Imagerie / Traitements)
+
+Actuellement la categorisation est entierement basee sur des mots-cles dans le nom du medicament. Le spec prevoit 3 clics max pour prescrire, avec un type explicite.
+
+**Ajouts :**
+- Ajouter un selecteur "Type" dans le dialog de prescription (`PatientDossierPage.tsx`) : Traitement, Soins, Examens Bio, Imagerie
+- Stocker le type dans le champ `notes` ou `frequency` (pas de nouvelle colonne DB necessaire) sous forme de prefixe lisible, ex: `[TYPE:soins]`
+- Modifier `categorizePrescription()` pour d'abord verifier le prefixe de type, puis fallback sur mots-cles
+
+**Fichiers** : `src/pages/PatientDossierPage.tsx`, `src/lib/prescription-utils.tsx`
+
+---
+
+## 5. Medecin affiche dans le bandeau patient
+
+La prop `medecinName` existe dans `PatientBanner` mais n'est jamais passee depuis `PatientDossierPage` ni `PancartePage`.
+
+**Ajouts :**
+- Charger le profil du medecin assigne (`encounter.medecin_id`) dans `PatientDossierPage` et `PancartePage`
+- Passer `medecinName` au composant `PatientBanner`
+
+**Fichiers** : `src/pages/PatientDossierPage.tsx`, `src/pages/PancartePage.tsx`
+
+---
+
+## 6. Board adaptatif par role (vue differente selon le profil)
+
+Le spec prevoit : "Board partage mais affiche differemment selon role : medecin voit diagnostics + Rx, IOA voit file d'attente, IDE voit statut soins, AS voit localisation, secretaire voit statut admin."
+
+Actuellement le board est identique quel que soit le role.
+
+**Ajouts :**
+- En mode liste, afficher des infos supplementaires selon le role :
+  - Medecin : badge nombre de prescriptions actives
+  - IDE : badge "Rx a administrer" (nombre de prescriptions actives)
+  - IOA : deja gere (bouton Trier visible)
+  - AS : vue simplifiee deja geree via AideSoignantPage (RAS)
+  - Secretaire : badge statut administratif
+- En mode grille (BoxCell) : ajouter un indicateur contextuel selon le role
+
+**Fichier** : `src/components/urgence/BoardPatientCard.tsx`, `src/pages/BoardPage.tsx`
+
+---
+
+## 7. Templates de prescription pre-remplis
+
+Le spec prevoit "suggestions contextuelles, posologie pre-remplie" pour atteindre 3 clics max.
+
+**Ajouts :**
+- Liste de prescriptions frequentes avec posologie pre-remplie dans le dialog de prescription
+- Suggestions basees sur le motif SFMU (ex: "Douleur thoracique" -> Aspirine 250mg PO, Heparine...)
+- Boutons rapides cliquables qui pre-remplissent le formulaire
 
 **Fichier** : `src/pages/PatientDossierPage.tsx`
+
+---
+
+## 8. Saisie de poids dans le tri IOA (etape Identite)
+
+Le spec mentionne "poids" dans le bandeau patient. Lors du tri, l'IOA peut mesurer le poids.
+
+**Ajout :**
+- Champ poids optionnel dans l'etape Constantes du tri
+- Sauvegarde dans la table `patients` via update
+
+**Fichier** : `src/pages/TriagePage.tsx`
 
 ---
 
@@ -144,33 +116,13 @@ Le champ `medecin_traitant` existe dans `patients` mais n'est affiche nulle part
 
 | Changement | Type | Fichier(s) | Migration DB |
 |---|---|---|---|
-| Diagnostic CIM-10 | Feature | PatientDossierPage | Non (enum existe) |
-| Traitements en cours | Affichage | PatientDossierPage | Non (champ existe) |
-| FR + GCS + EVA pancarte | Feature | PancartePage | Non (colonnes existent) |
-| Historique transmissions | Affichage | PancartePage | Non |
-| Surbrillance "Mes patients" | UX | BoxCell, ZoneGrid | Non |
-| CCMU/GEMSA sortie | Feature | DischargeDialog | Oui (colonne gemsa) |
-| Adresse admission | Affichage | AccueilPage | Non (champ existe) |
-| Poids patient | Feature | PatientBanner | Oui (colonne poids) |
-| Assignation medecin board | Feature | BoardPatientCard | Non |
-| Medecin traitant affichage | Affichage | PatientDossierPage | Non |
+| Seuil EVA douleur | Fix | vitals-utils.ts | Non |
+| Saisie poids admission | Feature | AccueilPage, TriagePage | Non (colonne existe) |
+| FR dans constantes AS | Fix | AideSoignantPage | Non |
+| Selecteur type prescription | Feature | PatientDossierPage, prescription-utils | Non |
+| Medecin dans bandeau | Fix | PatientDossierPage, PancartePage | Non |
+| Board adaptatif par role | Feature | BoardPatientCard, BoardPage | Non |
+| Templates prescription | Feature | PatientDossierPage | Non |
 
-## Migrations DB necessaires
-
-```sql
-ALTER TABLE encounters ADD COLUMN gemsa integer;
-ALTER TABLE patients ADD COLUMN poids numeric;
-```
-
-## Ce qui n'est PAS implemente (hors scope MVP)
-
-Les elements suivants sont decrits dans le spec comme V2/V3 et ne sont pas inclus dans ce plan :
-- IA RAG pipeline (V2)
-- Documentation ambiante (V2)
-- CRH/RPU auto-genere (V2)
-- Offline-first / Service Workers (architecture V1+)
-- Interop HL7v2/FHIR (V1)
-- DMP/MSSante (V2)
-- Guided tour onboarding (V2)
-- Drag and drop board (V2)
+Aucune migration DB necessaire -- toutes les colonnes et tables existent deja.
 
