@@ -110,6 +110,7 @@ export type Database = {
           cimu: number | null
           created_at: string
           discharge_time: string | null
+          gemsa: number | null
           id: string
           ide_id: string | null
           medecin_id: string | null
@@ -127,6 +128,7 @@ export type Database = {
           cimu?: number | null
           created_at?: string
           discharge_time?: string | null
+          gemsa?: number | null
           id?: string
           ide_id?: string | null
           medecin_id?: string | null
@@ -144,6 +146,7 @@ export type Database = {
           cimu?: number | null
           created_at?: string
           discharge_time?: string | null
+          gemsa?: number | null
           id?: string
           ide_id?: string | null
           medecin_id?: string | null
@@ -175,6 +178,7 @@ export type Database = {
           ins_numero: string | null
           medecin_traitant: string | null
           nom: string
+          poids: number | null
           prenom: string
           sexe: string
           telephone: string | null
@@ -190,6 +194,7 @@ export type Database = {
           ins_numero?: string | null
           medecin_traitant?: string | null
           nom: string
+          poids?: number | null
           prenom: string
           sexe: string
           telephone?: string | null
@@ -205,6 +210,7 @@ export type Database = {
           ins_numero?: string | null
           medecin_traitant?: string | null
           nom?: string
+          poids?: number | null
           prenom?: string
           sexe?: string
           telephone?: string | null

@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History, Stethoscope } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict } from '@/lib/allergy-check';
@@ -37,6 +37,8 @@ export default function PatientDossierPage() {
   const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string });
   const [noteContent, setNoteContent] = useState('');
   const [savingNote, setSavingNote] = useState(false);
+  const [diagnosticContent, setDiagnosticContent] = useState('');
+  const [savingDiag, setSavingDiag] = useState(false);
 
   useEffect(() => {
     if (!encounterId) return;
@@ -119,9 +121,9 @@ export default function PatientDossierPage() {
   if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   const age = calculateAge(patient.date_naissance);
-  const vitalKeys = ['fc', 'pa_systolique', 'spo2', 'temperature'];
-  const vitalLabels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA sys', spo2: 'SpO₂', temperature: 'T°' };
-  const vitalUnits: Record<string, string> = { fc: 'bpm', pa_systolique: 'mmHg', spo2: '%', temperature: '°C' };
+  const vitalKeys = ['fc', 'pa_systolique', 'spo2', 'temperature', 'frequence_respiratoire', 'gcs', 'eva_douleur'];
+  const vitalLabels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA sys', spo2: 'SpO₂', temperature: 'T°', frequence_respiratoire: 'FR', gcs: 'GCS', eva_douleur: 'EVA' };
+  const vitalUnits: Record<string, string> = { fc: 'bpm', pa_systolique: 'mmHg', spo2: '%', temperature: '°C', frequence_respiratoire: '/min', gcs: '/15', eva_douleur: '/10' };
 
   const bioNormalRanges: Record<string, { unit: string; min?: number; max?: number }> = {
     hemoglobine: { unit: 'g/dL', min: 12, max: 17 },
@@ -188,7 +190,7 @@ export default function PatientDossierPage() {
   return (
     <div className="min-h-screen bg-background">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} onBack={() => navigate(-1)} />
 
       <div className="max-w-7xl mx-auto p-4">
         {encounter.status !== 'finished' && (
@@ -214,6 +216,41 @@ export default function PatientDossierPage() {
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Diagnostic CIM-10 */}
+            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '25ms', animationFillMode: 'both' }}>
+              <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
+              <CardContent>
+                <div className="flex gap-2">
+                  <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)}
+                    placeholder="Diagnostic CIM-10 (ex: J18.9 — Pneumonie)" className="flex-1" />
+                  <Button onClick={async () => {
+                    if (!diagnosticContent.trim() || !patient || !user) return;
+                    setSavingDiag(true);
+                    await supabase.from('timeline_items').insert({
+                      patient_id: patient.id, item_type: 'diagnostic' as any,
+                      content: diagnosticContent.trim(), source_author: user.email,
+                      source_date: new Date().toISOString().split('T')[0],
+                    });
+                    toast.success('Diagnostic enregistré');
+                    setDiagnosticContent(''); setSavingDiag(false); fetchAll();
+                  }} disabled={!diagnosticContent.trim() || savingDiag}>
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+                {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
+                  <div className="mt-3 space-y-1.5">
+                    {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
+                      <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
+                        <Microscope className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-sm font-medium">{d.content}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -340,10 +377,42 @@ export default function PatientDossierPage() {
               </Card>
             )}
 
+            {/* Traitements en cours */}
+            {patient.traitements_actuels && (Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels.length > 0 : Object.keys(patient.traitements_actuels).length > 0) && (
+              <Card className="animate-in fade-in duration-300">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Pill className="h-4 w-4 text-medical-warning" />
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Traitements en cours</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels : Object.entries(patient.traitements_actuels).map(([k, v]) => `${k}: ${v}`)).map((t: any, i: number) => (
+                      <Badge key={i} variant="outline" className="text-xs border-medical-warning/30 text-medical-warning">
+                        {typeof t === 'object' ? JSON.stringify(t) : String(t)}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Médecin traitant */}
+            {patient.medecin_traitant && (
+              <Card className="animate-in fade-in duration-300">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <Stethoscope className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Médecin traitant</span>
+                  </div>
+                  <p className="text-sm font-medium mt-1">{patient.medecin_traitant}</p>
+                </CardContent>
+              </Card>
+            )}
+
             <Card className="animate-in fade-in duration-300" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
               <CardHeader className="pb-2"><CardTitle className="text-lg">Constantes</CardTitle></CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {vitalKeys.map(key => {
                     const data = vitals.map(v => ({ value: v[key] })).filter(d => d.value != null);
                     const lastVal = data.length > 0 ? data[data.length - 1].value : null;

@@ -25,6 +25,7 @@ export default function AccueilPage() {
   const [sexe, setSexe] = useState('M');
   const [telephone, setTelephone] = useState('');
   const [insNumero, setInsNumero] = useState('');
+  const [adresse, setAdresse] = useState('');
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
@@ -72,14 +73,14 @@ export default function AccueilPage() {
     let patientId: string;
     if (selectedExisting) { patientId = selectedExisting.id; }
     else {
-      const { data: patient, error } = await supabase.from('patients').insert({ nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null }).select().single();
+      const { data: patient, error } = await supabase.from('patients').insert({ nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null, adresse: adresse || null }).select().single();
       if (error || !patient) { toast.error('Erreur de création patient'); setSubmitting(false); return; }
       patientId = patient.id;
     }
     const { error } = await supabase.from('encounters').insert({ patient_id: patientId, status: 'arrived', motif_sfmu: motif || null });
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
     toast.success('Passage créé');
-    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero('');
+    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero(''); setAdresse('');
     setSelectedExisting(null); setSubmitting(false); fetchToday();
   };
 
@@ -166,6 +167,7 @@ export default function AccueilPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div><Label className="text-sm font-medium">N° Sécurité Sociale (optionnel)</Label><Input value={insNumero} onChange={e => setInsNumero(e.target.value)} placeholder="1 85 07 75 123 456 78" className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Adresse (optionnel)</Label><Input value={adresse} onChange={e => setAdresse(e.target.value)} placeholder="12 rue de la Paix, 75001 Paris" className="mt-1" /></div>
               </div>
               <div>
                 <Label className="text-sm font-medium">Motif (optionnel)</Label>

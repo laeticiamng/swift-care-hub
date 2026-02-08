@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
@@ -62,12 +62,14 @@ interface PatientCardProps {
   index: number;
   showZoneBadge?: boolean;
   showWaitingBadge?: boolean;
+  medecins?: { id: string; full_name: string }[];
   onMoveZone: (encounterId: string, zone: Zone) => void;
+  onAssignMedecin?: (encounterId: string, medecinId: string) => void;
   onClick: () => void;
   onTriage?: (patientId: string) => void;
 }
 
-export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, showWaitingBadge, onMoveZone, onClick, onTriage }: PatientCardProps) {
+export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, showWaitingBadge, medecins, onMoveZone, onAssignMedecin, onClick, onTriage }: PatientCardProps) {
   const p = encounter.patients;
   const age = calculateAge(p.date_naissance);
   const waitMin = getWaitTimeMinutes(encounter.arrival_time);
@@ -122,6 +124,19 @@ export function PatientCard({ encounter, resultCount, role, index, showZoneBadge
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             <Stethoscope className="h-3 w-3" /> {encounter.medecin_profile.full_name}
           </p>
+        )}
+        {!encounter.medecin_id && onAssignMedecin && medecins && medecins.length > 0 && (role === 'ioa' || role === 'medecin') && (
+          <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+            <UserPlus className="h-3 w-3 text-muted-foreground" />
+            <Select onValueChange={(v) => onAssignMedecin(encounter.id, v)}>
+              <SelectTrigger className="w-auto h-7 text-xs">
+                <SelectValue placeholder="Assigner médecin" />
+              </SelectTrigger>
+              <SelectContent>
+                {medecins.map(m => <SelectItem key={m.id} value={m.id}>{m.full_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         )}
         <div className="flex items-center justify-between text-sm">
           <span className={cn('font-medium', waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground')}>
