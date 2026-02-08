@@ -18,7 +18,7 @@ export default function PolitiqueConfidentialitePage() {
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <h1 className="text-3xl font-bold">Politique de confidentialité</h1>
-        <p className="text-muted-foreground">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="text-muted-foreground">Dernière mise à jour : 8 février 2026</p>
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-primary">Responsable du traitement</h2>
@@ -85,6 +85,24 @@ export default function PolitiqueConfidentialitePage() {
           <h2 className="text-xl font-semibold text-primary">Sécurité des données</h2>
           <p className="text-muted-foreground leading-relaxed">
             EmotionsCare SASU met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données : chiffrement des données en transit (TLS) et au repos, Row Level Security (RLS) native, hébergement en Union Européenne, journalisation des accès.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold text-primary">Cookies et traceurs</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            UrgenceOS utilise exclusivement des <strong className="text-foreground">cookies techniques</strong> strictement nécessaires au fonctionnement de la plateforme :
+          </p>
+          <ul className="list-disc list-inside text-muted-foreground leading-relaxed space-y-1">
+            <li>Cookie de session d'authentification (durée : session active)</li>
+            <li>Préférence de thème clair/sombre (durée : indéfinie, stockage local)</li>
+            <li>Consentement cookies (durée : 13 mois, stockage local)</li>
+          </ul>
+          <p className="text-muted-foreground leading-relaxed">
+            Aucun cookie publicitaire, analytique ou de suivi tiers n'est utilisé. Conformément à la délibération CNIL n°2020-091, les cookies strictement nécessaires ne requièrent pas de consentement préalable. Un bandeau d'information est néanmoins affiché par transparence.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Vous pouvez supprimer ces cookies à tout moment via les paramètres de votre navigateur. La suppression du cookie de session entraînera une déconnexion automatique.
           </p>
         </section>
 

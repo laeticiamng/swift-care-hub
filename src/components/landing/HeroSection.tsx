@@ -18,7 +18,7 @@ export function HeroSection() {
       <div className="max-w-4xl mx-auto text-center px-6 pt-28 pb-24 relative">
         <Badge variant="secondary" className="mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 gap-1.5 px-4 py-1.5 text-sm">
           <Shield className="h-3.5 w-3.5" />
-          Projet de recherche 2026
+          Workflow urgences 2026
         </Badge>
 
         <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.1] animate-in fade-in slide-in-from-bottom-4 duration-700">
