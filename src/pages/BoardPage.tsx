@@ -204,7 +204,7 @@ export default function BoardPage() {
           <Badge variant="outline" className="font-semibold">{byZone(zone.key).length}</Badge>
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {byZone(zone.key).map(renderPatientCard)}
         {byZone(zone.key).length === 0 && (
           <div className="text-center py-8 space-y-2">
@@ -267,7 +267,7 @@ export default function BoardPage() {
             ))}
           </Tabs>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {ZONES.map(renderZoneColumn)}
           </div>
         )}

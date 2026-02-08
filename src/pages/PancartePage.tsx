@@ -209,30 +209,65 @@ export default function PancartePage() {
         {/* Section 2 — Prescriptions */}
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-base">Prescriptions</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-4">
             {prescriptions.length === 0 && <p className="text-sm text-muted-foreground">Aucune prescription</p>}
-            {prescriptions.map(rx => {
-              const done = isAdministered(rx.id) || rx.status === 'completed';
-              return (
-                <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
-                  done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
-                  rx.priority === 'stat' && !done && 'border-medical-critical/30',
-                )}>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
-                    <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+            {(() => {
+              const soinsKeywords = ['pansement', 'soin', 'nursing', 'toilette', 'surveillance', 'scope', 'monitoring'];
+              const examBioKeywords = ['bilan', 'nfs', 'iono', 'crp', 'troponine', 'hémostase', 'gaz du sang', 'lactate', 'bhu', 'hémoglobine'];
+              const examImagerieKeywords = ['radio', 'scanner', 'irm', 'écho', 'imagerie', 'rx', 'tdm', 'radiographie'];
+              
+              const categorize = (rx: any) => {
+                const name = rx.medication_name.toLowerCase();
+                if (soinsKeywords.some(k => name.includes(k))) return 'soins';
+                if (examBioKeywords.some(k => name.includes(k))) return 'examens_bio';
+                if (examImagerieKeywords.some(k => name.includes(k))) return 'examens_imagerie';
+                return 'traitements';
+              };
+              
+              const groups = {
+                soins: prescriptions.filter(rx => categorize(rx) === 'soins'),
+                examens_bio: prescriptions.filter(rx => categorize(rx) === 'examens_bio'),
+                examens_imagerie: prescriptions.filter(rx => categorize(rx) === 'examens_imagerie'),
+                traitements: prescriptions.filter(rx => categorize(rx) === 'traitements'),
+              };
+
+              const renderRxItem = (rx: any) => {
+                const done = isAdministered(rx.id) || rx.status === 'completed';
+                return (
+                  <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
+                    done ? 'bg-medical-success/5 border-medical-success/20' : 'bg-card',
+                    rx.priority === 'stat' && !done && 'border-medical-critical/30',
+                  )}>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                      <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+                    </div>
+                    {done ? (
+                      <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                    ) : (
+                      <Button size="sm" onClick={() => handleAdminister(rx)}
+                        className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
+                        <Check className="h-4 w-4 mr-1" /> Administré
+                      </Button>
+                    )}
                   </div>
-                  {done ? (
-                    <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
-                  ) : (
-                    <Button size="sm" onClick={() => handleAdminister(rx)}
-                      className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
-                      <Check className="h-4 w-4 mr-1" /> Administré
-                    </Button>
-                  )}
+                );
+              };
+
+              const sections = [
+                { key: 'traitements', label: '💊 Traitements', items: groups.traitements },
+                { key: 'soins', label: '🩹 Soins', items: groups.soins },
+                { key: 'examens_bio', label: '🧪 Examens — Bilan biologique', items: groups.examens_bio },
+                { key: 'examens_imagerie', label: '📷 Examens — Imagerie', items: groups.examens_imagerie },
+              ];
+
+              return sections.filter(s => s.items.length > 0).map(s => (
+                <div key={s.key}>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">{s.label}</p>
+                  <div className="space-y-2">{s.items.map(renderRxItem)}</div>
                 </div>
-              );
-            })}
+              ));
+            })()}
           </CardContent>
         </Card>
 
