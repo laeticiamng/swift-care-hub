@@ -260,7 +260,13 @@ export default function PancartePage() {
         <Card className="animate-in fade-in duration-300" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2"><CardTitle className="text-base">Prescriptions</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            {prescriptions.length === 0 && <p className="text-sm text-muted-foreground">Aucune prescription</p>}
+            {prescriptions.length === 0 && (
+              <div className="text-center py-6 space-y-2">
+                <Pill className="h-8 w-8 mx-auto text-muted-foreground/40" />
+                <p className="text-sm font-medium text-muted-foreground">Aucune prescription pour le moment</p>
+                <p className="text-xs text-muted-foreground/70">Les prescriptions du m\u00e9decin appara\u00eetront ici en temps r\u00e9el</p>
+              </div>
+            )}
             {PRESCRIPTION_SECTIONS.filter(s => rxGroups[s.key as keyof typeof rxGroups].length > 0).map(s => (
               <div key={s.key}>
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">{s.icon} {s.label}</p>
@@ -300,24 +306,27 @@ export default function PancartePage() {
                         ) : isCancelled ? (
                           <Badge variant="outline" className="text-muted-foreground line-through">Annulée</Badge>
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <Input
-                              value={titrationDoses[rx.id] ?? rx.dosage}
-                              onChange={e => setTitrationDoses(prev => ({ ...prev, [rx.id]: e.target.value }))}
-                              className="w-20 h-8 text-xs text-center"
-                              title="Dose à administrer (titration)"
-                            />
-                            <Input
-                              value={lotNumbers[rx.id] ?? ''}
-                              onChange={e => setLotNumbers(prev => ({ ...prev, [rx.id]: e.target.value }))}
-                              className="w-20 h-8 text-xs text-center"
-                              placeholder="N° lot"
-                              title="Numéro de lot (traçabilité)"
-                            />
-                            <Button size="sm" onClick={() => handleAdminister(rx)}
-                              className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
-                              <Check className="h-4 w-4 mr-1" /> OK
+                          <div className="flex flex-col gap-2 items-end">
+                            <Button size="lg" onClick={() => handleAdminister(rx)}
+                              className="touch-target min-h-[48px] px-5 bg-medical-success hover:bg-medical-success/90 text-medical-success-foreground font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95">
+                              <Check className="h-5 w-5 mr-1.5" /> Administr\u00e9
                             </Button>
+                            <div className="flex items-center gap-1.5">
+                              <Input
+                                value={titrationDoses[rx.id] ?? rx.dosage}
+                                onChange={e => setTitrationDoses(prev => ({ ...prev, [rx.id]: e.target.value }))}
+                                className="w-20 h-7 text-xs text-center"
+                                title="Dose (titration)"
+                                placeholder="Dose"
+                              />
+                              <Input
+                                value={lotNumbers[rx.id] ?? ''}
+                                onChange={e => setLotNumbers(prev => ({ ...prev, [rx.id]: e.target.value }))}
+                                className="w-20 h-7 text-xs text-center"
+                                placeholder="N\u00b0 lot"
+                                title="Num\u00e9ro de lot (tra\u00e7abilit\u00e9)"
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
