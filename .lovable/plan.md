@@ -1,100 +1,110 @@
 
 
-# Dernier audit spec vs plateforme -- Ecarts restants
+# Ecarts restants -- Audit final spec vs plateforme (v9)
 
-Apres analyse complete du code actuel (post-3 rounds d'implementation), voici les ecarts fonctionnels restants dans le scope MVP/V1.
+Apres comparaison exhaustive du cahier des charges (50 pages) avec le code actuel (post-4 rounds d'implementation), voici les fonctionnalites encore manquantes dans le scope MVP/V1.
 
 ---
 
-## 1. AccueilPage -- Champs admission incomplets
+## 1. Prescription "Suspendre" manquante
 
-Le formulaire d'admission ne permet pas de saisir : medecin traitant, antecedents, allergies. Ces champs existent dans la table `patients` mais ne sont pas exposes dans le formulaire secretaire.
-
-Le spec dit : "Admission <90 sec, 0 double saisie" et le patient doit etre cree avec toutes les infos disponibles.
+Le plan precedent a ajoute "Annuler" mais le spec prevoit aussi la possibilite de **suspendre** une prescription active (statut `suspended` present dans l'enum DB `prescription_status`). Le bouton "Suspendre" n'existe pas dans le dossier medecin.
 
 **Ajouts :**
-- Champ "Medecin traitant" (optionnel)
-- Champ "Antecedents" (optionnel, texte libre separe par virgules -> array)
-- Champ "Allergies" (optionnel, texte libre separe par virgules -> array)
-- Passage de ces champs dans l'insert patient
-
-**Fichier** : `src/pages/AccueilPage.tsx`
-
----
-
-## 2. PancartePage -- donneesPreview incomplete dans DAR
-
-La section "D -- Donnees" du module DAR n'affiche que FC, PA, SpO2, T mais pas FR, GCS, EVA malgre leur ajout dans la saisie des constantes.
-
-**Correction :**
-- Enrichir `donneesPreview` (ligne 163-164) pour inclure FR, GCS, EVA si disponibles
-- Meme chose pour le champ `donneesAuto` dans `handleDAR` (ligne 131)
-
-**Fichier** : `src/pages/PancartePage.tsx`
-
----
-
-## 3. Board grille -- Opacite reduite quand filtre actif
-
-Le spec dit "Filtre Mes patients" doit mettre en evidence les patients du medecin. Le `isHighlighted` ajoute un ring mais les boxes non-concernees restent identiques. Il manque l'opacite reduite sur les boxes non-highlighted quand le filtre est actif.
-
-**Ajouts :**
-- Passer une prop `hasActiveFilter` a `ZoneGrid` et `BoxCell`
-- Si `hasActiveFilter && !isHighlighted` : ajouter `opacity-40` sur la BoxCell
-- Cela rend le filtre "Mes patients" visuellement impactant en mode grille
-
-**Fichiers** : `src/components/urgence/BoxCell.tsx`, `src/components/urgence/ZoneGrid.tsx`, `src/pages/BoardPage.tsx`
-
----
-
-## 4. Alertes prescriptions 3 niveaux (<5% visibles)
-
-Le spec prevoit : "Alertes 3 niveaux, <5% visibles vs 30-60% actuellement". Actuellement, seule l'allergie declenche un blocage total. Il manque les niveaux intermediaires.
-
-**Ajouts dans PatientDossierPage :**
-- Niveau 1 (info) : interactions mineures -> petite note discrete sous le champ medicament
-- Niveau 2 (warning) : interactions moderees (ex: AINS + anticoagulant) -> bandeau orange, prescription autorisee avec confirmation
-- Niveau 3 (blocage) : allergie -> blocage complet (deja implemente)
-- Enrichir `allergy-check.ts` avec une liste d'interactions medicamenteuses courantes aux urgences
-
-**Fichiers** : `src/lib/allergy-check.ts`, `src/pages/PatientDossierPage.tsx`
-
----
-
-## 5. Prescription statut "suspendu" / "annule"
-
-Le spec prevoit la gestion du cycle de vie des prescriptions. Actuellement seuls "active" et "completed" sont geres via le bouton Administre. Il manque la possibilite de suspendre ou annuler une prescription depuis le dossier medecin.
-
-**Ajouts :**
-- Boutons "Suspendre" et "Annuler" sur chaque prescription active dans le dossier medecin
-- Mise a jour du statut en DB (`suspended`, `cancelled` font partie de l'enum `prescription_status`)
-- Affichage visuel differencie (grise pour suspendu, barre pour annule)
+- Bouton "Suspendre" a cote du bouton "Annuler" sur chaque prescription active dans `PatientDossierPage.tsx`
+- Mise a jour du statut en DB vers `suspended`
+- Affichage visuel differencie : fond grise + badge "Suspendue" (distinct du style "annulee" qui est barre)
+- Bouton "Reactiver" sur les prescriptions suspendues pour revenir a `active`
+- Audit log pour chaque action
 
 **Fichier** : `src/pages/PatientDossierPage.tsx`
 
 ---
 
-## 6. Compteur temps reel d'attente sur la file IOA
+## 2. Titration inline sur pancarte IDE
 
-Le spec dit "Tri <2 min". La file IOA affiche le temps d'attente mais il ne se met a jour qu'au rechargement des donnees. Il devrait s'actualiser en temps reel (chaque minute).
+Le spec dit (page 14) : "Titration : champ dose modifiable inline". Actuellement, le bouton Administre valide la dose prescrite sans possibilite de la modifier.
 
-**Ajout :**
-- Un `useEffect` avec `setInterval` (60s) pour forcer le re-render des temps d'attente
-- Meme chose sur le board (`BoardPage.tsx`) pour les compteurs de temps
+**Ajouts :**
+- Sur chaque prescription active dans la pancarte, ajouter un petit champ texte editable a cote du bouton Administre
+- Pre-rempli avec `rx.dosage`, modifiable avant administration
+- La dose saisie est envoyee dans `dose_given` de la table `administrations`
 
-**Fichiers** : `src/pages/IOAQueuePage.tsx`, `src/pages/BoardPage.tsx`
+**Fichier** : `src/pages/PancartePage.tsx`
 
 ---
 
-## 7. Medecin traitant dans TriagePage
+## 3. Antecedents et allergies dans le formulaire de tri IOA (etape Identite)
 
-Le champ `medecin_traitant` existe dans la table `patients` et s'affiche dans le dossier, mais n'est pas saisissable lors du tri IOA.
+Les antecedents et allergies du patient existant sont affiches en lecture seule dans le tri, mais pour un **nouveau patient**, il n'y a aucun champ pour saisir les antecedents et allergies lors du tri. Le spec dit : "Patient inconnu = 5 champs max" mais les allergies sont une info critique a saisir des le tri.
 
-**Ajout :**
-- Champ optionnel "Medecin traitant" dans l'etape Identite (step 0) du tri
-- Sauvegarde dans la table `patients`
+**Ajouts :**
+- Champ "Allergies" (optionnel, texte libre separe par virgules) dans l'etape Identite du tri (visible uniquement si pas de patient existant selectionne)
+- Champ "Antecedents" (optionnel, idem)
+- Sauvegarde dans la table `patients` lors de la creation
 
 **Fichier** : `src/pages/TriagePage.tsx`
+
+---
+
+## 4. Homonymes : alerte visuelle
+
+Le spec dit (page 12, section 8.2) : "Detecte les homonymes : alerte visuelle quand 2 patients ont des traits similaires". Actuellement, la recherche patient affiche les resultats mais aucune alerte homonyme n'est presentee.
+
+**Ajouts :**
+- Dans `AccueilPage.tsx` et `TriagePage.tsx`, lors de la recherche patient : si 2+ resultats ont des noms/prenoms tres proches (distance de Levenshtein ou match partiel), afficher un bandeau d'alerte jaune "Attention : patients homonymes detectes"
+- Ajouter un badge visuel distinctif sur chaque resultat homonyme potentiel
+
+**Fichiers** : `src/pages/AccueilPage.tsx`, `src/pages/TriagePage.tsx`
+
+---
+
+## 5. Pancarte IDE -- Titre/dose modifiable dans le formulaire DAR "Cible"
+
+Le spec dit (page 13) : "Transmissions DAR : auto-alimentees depuis pancarte". La cible devrait pouvoir etre selectionnee parmi des cibles courantes au lieu d'etre uniquement du texte libre.
+
+**Ajout :**
+- Ajouter des suggestions de cibles courantes (boutons rapides) : "Douleur", "Respiratoire", "Hemodynamique", "Neurologique", "Digestif", "Plaie/Pansement", "Mobilite"
+- Cliquer sur un bouton pre-remplit le champ cible
+- Le champ texte libre reste disponible
+
+**Fichier** : `src/pages/PancartePage.tsx`
+
+---
+
+## 6. Stat cards -- Board manque le nombre total de patients par statut
+
+Le board affiche un compteur "En attente" mais pas de vue globale du nombre de patients par statut (Arrives, Tries, En cours, Termines). Le spec dit "Board panoramique" impliquant une vue d'ensemble.
+
+**Ajout :**
+- Ligne de stat cards en haut du board : Total patients, Arrives, En cours, Termines (aujourd'hui)
+- Coherent avec les stat cards deja utilisees ailleurs (AccueilPage, IOAQueuePage)
+
+**Fichier** : `src/pages/BoardPage.tsx`
+
+---
+
+## 7. GCS manquant dans la saisie constantes AS
+
+L'aide-soignant peut saisir FR (ajoute precedemment) mais pas GCS. Le spec dit que l'AS peut saisir les constantes de base. GCS est une constante de surveillance importante.
+
+**Ajout :**
+- Ajouter un champ GCS dans le formulaire constantes AS (apres FR)
+- Envoi dans l'insert vitals
+
+**Fichier** : `src/pages/AideSoignantPage.tsx`
+
+---
+
+## 8. Landing page -- sections spec manquantes
+
+La landing page existe mais ne mentionne pas certains elements cles du spec comme les "7 innovations" et les metriques de succes. Ce n'est pas bloquant mais renforce le positionnement produit.
+
+**Ajout :**
+- Section "Metriques cles" (Tri < 2 min, Administration 1 tap, Admission < 90s, 0 changement de page IDE, 3 clics/Rx)
+- Coherent avec les sections existantes
+
+**Fichier** : `src/pages/LandingPage.tsx`
 
 ---
 
@@ -102,13 +112,14 @@ Le champ `medecin_traitant` existe dans la table `patients` et s'affiche dans le
 
 | Changement | Type | Fichier(s) | Migration DB |
 |---|---|---|---|
-| Champs admission (MT, ATCD, allergies) | Feature | AccueilPage | Non |
-| DAR donneesPreview complete | Fix | PancartePage | Non |
-| Opacite filtre "Mes patients" grille | UX | BoxCell, ZoneGrid, BoardPage | Non |
-| Alertes Rx 3 niveaux | Feature | allergy-check.ts, PatientDossierPage | Non |
-| Suspendre/annuler prescription | Feature | PatientDossierPage | Non |
-| Compteur temps reel file IOA/board | UX | IOAQueuePage, BoardPage | Non |
-| Medecin traitant dans tri IOA | Feature | TriagePage | Non |
+| Suspendre/reactiver prescription | Feature | PatientDossierPage | Non |
+| Titration inline pancarte | Feature | PancartePage | Non |
+| Allergies/ATCD saisie tri (nouveau patient) | Feature | TriagePage | Non |
+| Alerte homonymes | Feature | AccueilPage, TriagePage | Non |
+| Cibles DAR rapides | UX | PancartePage | Non |
+| Stat cards board global | UX | BoardPage | Non |
+| GCS dans constantes AS | Fix | AideSoignantPage | Non |
+| Metriques landing page | UX | LandingPage | Non |
 
 Aucune migration DB necessaire -- toutes les colonnes, tables et enums existent deja.
 
