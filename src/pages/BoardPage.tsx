@@ -5,13 +5,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { StatCard } from '@/components/urgence/StatCard';
+import { NetworkStatus } from '@/components/urgence/NetworkStatus';
+import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { Users, LogOut, Filter, FlaskConical, Image, UserPlus } from 'lucide-react';
+import { Users, LogOut, Filter, FlaskConical, UserPlus, Stethoscope } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { NetworkStatus } from '@/components/urgence/NetworkStatus';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
 const ZONES: { key: Zone; label: string }[] = [
@@ -30,24 +34,16 @@ interface EncounterWithPatient {
   motif_sfmu: string | null;
   medecin_id: string | null;
   arrival_time: string;
-  patients: {
-    nom: string;
-    prenom: string;
-    date_naissance: string;
-    sexe: string;
-    allergies: string[] | null;
-  };
+  patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
+  medecin_profile?: { full_name: string } | null;
 }
 
-interface ResultCount {
-  encounter_id: string;
-  unread: number;
-  critical: number;
-}
+interface ResultCount { encounter_id: string; unread: number; critical: number; }
 
 export default function BoardPage() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [myOnly, setMyOnly] = useState(false);
@@ -55,13 +51,11 @@ export default function BoardPage() {
 
   useEffect(() => {
     fetchEncounters();
-
     const channel = supabase
       .channel('board-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchEncounters())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, () => fetchEncounters())
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, []);
 
@@ -72,38 +66,133 @@ export default function BoardPage() {
         .select('id, patient_id, status, zone, box_number, ccmu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
         .in('status', ['arrived', 'triaged', 'in-progress'])
         .order('arrival_time', { ascending: true }),
-      supabase
-        .from('results')
-        .select('encounter_id, is_read, is_critical'),
+      supabase.from('results').select('encounter_id, is_read, is_critical'),
     ]);
 
-    if (encRes.data) setEncounters(encRes.data as unknown as EncounterWithPatient[]);
+    let encountersData: EncounterWithPatient[] = [];
+    if (encRes.data) {
+      encountersData = encRes.data as unknown as EncounterWithPatient[];
+      // Fetch medecin profiles for encounters that have a medecin_id
+      const medecinIds = [...new Set(encountersData.filter(e => e.medecin_id).map(e => e.medecin_id!))];
+      if (medecinIds.length > 0) {
+        const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', medecinIds);
+        if (profiles) {
+          const profileMap = new Map(profiles.map(p => [p.id, p]));
+          encountersData = encountersData.map(e => ({
+            ...e,
+            medecin_profile: e.medecin_id ? profileMap.get(e.medecin_id) || null : null,
+          }));
+        }
+      }
+      setEncounters(encountersData);
+    }
 
-    // Compute result counts per encounter
     if (resRes.data) {
       const map = new Map<string, ResultCount>();
       for (const r of resRes.data) {
-        if (!map.has(r.encounter_id)) {
-          map.set(r.encounter_id, { encounter_id: r.encounter_id, unread: 0, critical: 0 });
-        }
+        if (!map.has(r.encounter_id)) map.set(r.encounter_id, { encounter_id: r.encounter_id, unread: 0, critical: 0 });
         const entry = map.get(r.encounter_id)!;
         if (!r.is_read) entry.unread++;
         if (r.is_critical) entry.critical++;
       }
       setResultCounts(Array.from(map.values()));
     }
-
     setLoading(false);
   };
 
   const handleMoveZone = async (encounterId: string, newZone: Zone) => {
     await supabase.from('encounters').update({ zone: newZone }).eq('id', encounterId);
+    // Audit log
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'zone_change', resource_type: 'encounter',
+        resource_id: encounterId, details: { new_zone: newZone },
+      });
+    }
     fetchEncounters();
   };
 
   const filtered = myOnly ? encounters.filter(e => e.medecin_id === user?.id) : encounters;
   const byZone = (zone: Zone) => filtered.filter(e => e.zone === zone);
   const getResultCount = (encId: string) => resultCounts.find(r => r.encounter_id === encId);
+
+  const renderPatientCard = (encounter: EncounterWithPatient) => {
+    const p = encounter.patients;
+    const age = calculateAge(p.date_naissance);
+    const waitMin = getWaitTimeMinutes(encounter.arrival_time);
+    const waitStr = formatWaitTime(waitMin);
+    const waitCritical = waitMin > 240;
+    const waitWarning = waitMin > 120;
+    const rc = getResultCount(encounter.id);
+
+    return (
+      <Card
+        key={encounter.id}
+        className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]"
+        onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
+      >
+        <CardContent className="p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
+              <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
+            </div>
+            {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
+          </div>
+          {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
+          {encounter.medecin_profile && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Stethoscope className="h-3 w-3" /> {encounter.medecin_profile.full_name}
+            </p>
+          )}
+          <div className="flex items-center justify-between text-sm">
+            <span className={cn('font-medium', waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground')}>
+              {waitStr}
+            </span>
+            <div className="flex items-center gap-1.5">
+              {rc && rc.critical > 0 && (
+                <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
+                  <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}
+                </Badge>
+              )}
+              {rc && rc.unread > 0 && rc.critical === 0 && (
+                <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                  <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.unread}
+                </Badge>
+              )}
+              {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
+            </div>
+            <Select value={encounter.zone || ''} onValueChange={(v) => handleMoveZone(encounter.id, v as Zone)}>
+              <SelectTrigger className="w-auto h-7 text-xs" onClick={e => e.stopPropagation()}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ZONES.map(z => <SelectItem key={z.key} value={z.key}>{z.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          {p.allergies && p.allergies.length > 0 && (
+            <p className="text-xs text-medical-critical font-medium">⚠ {p.allergies.join(', ')}</p>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderZoneColumn = (zone: { key: Zone; label: string }) => (
+    <div key={zone.key} className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">{zone.label}</h2>
+        <span className="text-sm text-muted-foreground">{byZone(zone.key).length} patients</span>
+      </div>
+      <div className="space-y-2">
+        {byZone(zone.key).map(renderPatientCard)}
+        {byZone(zone.key).length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-8">Aucun patient</p>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,22 +204,23 @@ export default function BoardPage() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <StatCard label="Total" value={filtered.length} icon={Users} className="py-1 px-3" />
-            {ZONES.map(z => (
+            {!isMobile && ZONES.map(z => (
               <StatCard key={z.key} label={z.label} value={byZone(z.key).length} icon={Users} className="py-1 px-3" />
             ))}
           </div>
           <div className="flex items-center gap-2">
             {(role === 'ioa' || role === 'medecin') && (
               <Button size="sm" onClick={() => navigate('/triage')}>
-                <UserPlus className="h-4 w-4 mr-1" /> Nouveau patient
+                <UserPlus className="h-4 w-4 mr-1" /> {!isMobile && 'Nouveau patient'}
               </Button>
             )}
             <Button variant={myOnly ? 'default' : 'outline'} size="sm" onClick={() => setMyOnly(!myOnly)}>
-              <Filter className="h-4 w-4 mr-1" /> Mes patients
+              <Filter className="h-4 w-4 mr-1" /> {!isMobile && 'Mes patients'}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>
-              Changer rôle
+              {!isMobile && 'Changer rôle'}
             </Button>
+            <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
@@ -138,85 +228,27 @@ export default function BoardPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {ZONES.map(zone => (
-          <div key={zone.key} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{zone.label}</h2>
-              <span className="text-sm text-muted-foreground">{byZone(zone.key).length} patients</span>
-            </div>
-            <div className="space-y-2">
-              {byZone(zone.key).map(encounter => {
-                const p = encounter.patients;
-                const age = calculateAge(p.date_naissance);
-                const waitMin = getWaitTimeMinutes(encounter.arrival_time);
-                const waitStr = formatWaitTime(waitMin);
-                const waitCritical = waitMin > 240;
-                const waitWarning = waitMin > 120;
-                const rc = getResultCount(encounter.id);
-
-                return (
-                  <Card
-                    key={encounter.id}
-                    className="cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99]"
-                    onClick={() => navigate(role === 'ide' ? `/pancarte/${encounter.id}` : `/patient/${encounter.id}`)}
-                  >
-                    <CardContent className="p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
-                          <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
-                        </div>
-                        {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
-                      </div>
-                      {encounter.motif_sfmu && (
-                        <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>
-                      )}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className={cn(
-                          'font-medium',
-                          waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground',
-                        )}>
-                          {waitStr}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          {rc && rc.critical > 0 && (
-                            <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
-                              <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}
-                            </Badge>
-                          )}
-                          {rc && rc.unread > 0 && rc.critical === 0 && (
-                            <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                              <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.unread}
-                            </Badge>
-                          )}
-                          {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
-                        </div>
-                        <Select
-                          value={encounter.zone || ''}
-                          onValueChange={(v) => { handleMoveZone(encounter.id, v as Zone); }}
-                        >
-                          <SelectTrigger className="w-auto h-7 text-xs" onClick={e => e.stopPropagation()}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ZONES.map(z => <SelectItem key={z.key} value={z.key}>{z.label}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {p.allergies && p.allergies.length > 0 && (
-                        <p className="text-xs text-medical-critical font-medium">⚠ {p.allergies.join(', ')}</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-              {byZone(zone.key).length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-8">Aucun patient</p>
-              )}
-            </div>
+      <div className="max-w-7xl mx-auto p-4">
+        {isMobile ? (
+          <Tabs defaultValue="sau">
+            <TabsList className="w-full">
+              {ZONES.map(z => (
+                <TabsTrigger key={z.key} value={z.key} className="flex-1">
+                  {z.label} ({byZone(z.key).length})
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {ZONES.map(z => (
+              <TabsContent key={z.key} value={z.key}>
+                {renderZoneColumn(z)}
+              </TabsContent>
+            ))}
+          </Tabs>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {ZONES.map(renderZoneColumn)}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

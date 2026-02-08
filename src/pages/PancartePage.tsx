@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 
@@ -27,28 +28,23 @@ export default function PancartePage() {
   const [administrations, setAdministrations] = useState<any[]>([]);
   const [procedures, setProcedures] = useState<any[]>([]);
   const [results, setResults] = useState<any[]>([]);
+  const [transmissions, setTransmissions] = useState<any[]>([]);
   const [resultsOpen, setResultsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  // Vitals input
   const [showVitalsInput, setShowVitalsInput] = useState(false);
   const [newVitals, setNewVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
-
-  // Procedures
   const [procType, setProcType] = useState('');
-
-  // DAR
   const [darResultats, setDarResultats] = useState('');
   const [darCible, setDarCible] = useState('');
 
   useEffect(() => {
     if (!encounterId) return;
     fetchAll();
-
     const channel = supabase.channel('pancarte-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [encounterId]);
 
@@ -56,35 +52,36 @@ export default function PancartePage() {
     const { data: enc } = await supabase.from('encounters').select('*').eq('id', encounterId!).single();
     if (!enc) return;
     setEncounter(enc);
-
-    const [patRes, vitRes, rxRes, admRes, procRes, resRes] = await Promise.all([
+    const [patRes, vitRes, rxRes, admRes, procRes, resRes, transRes] = await Promise.all([
       supabase.from('patients').select('*').eq('id', enc.patient_id).single(),
       supabase.from('vitals').select('*').eq('encounter_id', encounterId!).order('recorded_at', { ascending: true }),
       supabase.from('prescriptions').select('*').eq('encounter_id', encounterId!).order('created_at', { ascending: false }),
       supabase.from('administrations').select('*').eq('encounter_id', encounterId!).order('administered_at', { ascending: false }),
       supabase.from('procedures').select('*').eq('encounter_id', encounterId!).order('performed_at', { ascending: false }),
       supabase.from('results').select('*').eq('encounter_id', encounterId!).order('received_at', { ascending: false }),
+      supabase.from('transmissions').select('*').eq('encounter_id', encounterId!).order('created_at', { ascending: false }),
     ]);
-
     if (patRes.data) setPatient(patRes.data);
     if (vitRes.data) setVitals(vitRes.data);
     if (rxRes.data) setPrescriptions(rxRes.data);
     if (admRes.data) setAdministrations(admRes.data);
     if (procRes.data) setProcedures(procRes.data);
     if (resRes.data) setResults(resRes.data);
+    if (transRes.data) setTransmissions(transRes.data);
   };
 
   const handleAdminister = async (rx: any) => {
     if (!user || !encounter) return;
     await supabase.from('administrations').insert({
-      prescription_id: rx.id,
-      encounter_id: encounter.id,
-      patient_id: encounter.patient_id,
-      administered_by: user.id,
-      dose_given: rx.dosage,
-      route: rx.route,
+      prescription_id: rx.id, encounter_id: encounter.id, patient_id: encounter.patient_id,
+      administered_by: user.id, dose_given: rx.dosage, route: rx.route,
     });
     await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
+    // Audit log
+    await supabase.from('audit_logs').insert({
+      user_id: user.id, action: 'administration', resource_type: 'prescription',
+      resource_id: rx.id, details: { medication: rx.medication_name, dosage: rx.dosage },
+    });
     toast.success(`${rx.medication_name} administré ✓`);
     fetchAll();
   };
@@ -107,10 +104,8 @@ export default function PancartePage() {
   const handleProcedure = async () => {
     if (!user || !encounter || !procType) return;
     await supabase.from('procedures').insert({
-      encounter_id: encounter.id,
-      patient_id: encounter.patient_id,
-      performed_by: user.id,
-      procedure_type: procType as any,
+      encounter_id: encounter.id, patient_id: encounter.patient_id,
+      performed_by: user.id, procedure_type: procType as any,
     });
     const procLabels: Record<string, string> = { vvp: 'VVP', prelevement: 'Prélèvement', pansement: 'Pansement', sondage: 'Sondage', ecg: 'ECG', autre: 'Acte' };
     toast.success(`${procLabels[procType] || 'Acte'} tracé ✓`);
@@ -120,13 +115,10 @@ export default function PancartePage() {
 
   const handleDAR = async () => {
     if (!user || !encounter) return;
-
-    // Auto-populate D and A from real data
     const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
     const donneesAuto = lastVital
       ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
       : 'Pas de constantes récentes';
-
     const recentProcs = procedures.slice(0, 3);
     const recentAdmins = administrations.slice(0, 3);
     const actionsAuto = [
@@ -135,13 +127,8 @@ export default function PancartePage() {
     ].join(' | ') || 'Aucun acte récent';
 
     await supabase.from('transmissions').insert({
-      encounter_id: encounter.id,
-      patient_id: encounter.patient_id,
-      author_id: user.id,
-      donnees: donneesAuto,
-      actions: actionsAuto,
-      resultats: darResultats,
-      cible: darCible,
+      encounter_id: encounter.id, patient_id: encounter.patient_id, author_id: user.id,
+      donnees: donneesAuto, actions: actionsAuto, resultats: darResultats, cible: darCible,
     });
     toast.success('Transmission validée ✓');
     setDarResultats('');
@@ -160,12 +147,10 @@ export default function PancartePage() {
   const isAdministered = (rxId: string) => administrations.some(a => a.prescription_id === rxId);
   const newResults = results.filter(r => !r.is_read).length;
 
-  // Build auto-populated DAR preview
   const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
   const donneesPreview = lastVital
     ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
     : 'Aucune constante disponible';
-
   const recentProcs = procedures.slice(0, 3);
   const recentAdmins = administrations.slice(0, 3);
   const actionsPreview = [
@@ -176,8 +161,7 @@ export default function PancartePage() {
   return (
     <div className="min-h-screen bg-background pb-8">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []}
-        onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         {/* Section 1 — Constantes */}
@@ -221,7 +205,7 @@ export default function PancartePage() {
           </CardContent>
         </Card>
 
-        {/* Section 2 — Prescriptions with ✓ Administré */}
+        {/* Section 2 — Prescriptions */}
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-base">Prescriptions</CardTitle></CardHeader>
           <CardContent className="space-y-2">
@@ -304,6 +288,28 @@ export default function PancartePage() {
               <Textarea value={darResultats} onChange={e => setDarResultats(e.target.value)} placeholder="Évaluation clinique..." className="mt-1" rows={3} />
             </div>
             <Button onClick={handleDAR} disabled={!darResultats} className="w-full touch-target">Valider transmission</Button>
+
+            {/* Transmission history */}
+            <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-between">
+                  <span className="flex items-center gap-1"><History className="h-4 w-4" /> Historique ({transmissions.length})</span>
+                  {historyOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 mt-2">
+                {transmissions.length === 0 && <p className="text-sm text-muted-foreground">Aucune transmission précédente</p>}
+                {transmissions.map(t => (
+                  <div key={t.id} className="p-3 rounded-lg border space-y-1">
+                    <p className="text-xs text-muted-foreground">{new Date(t.created_at).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</p>
+                    {t.cible && <p className="text-sm"><span className="font-medium">Cible :</span> {t.cible}</p>}
+                    {t.donnees && <p className="text-xs text-muted-foreground">D: {t.donnees}</p>}
+                    {t.actions && <p className="text-xs text-muted-foreground">A: {t.actions}</p>}
+                    {t.resultats && <p className="text-sm">R: {t.resultats}</p>}
+                  </div>
+                ))}
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
 
