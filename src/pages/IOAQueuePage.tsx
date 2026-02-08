@@ -25,6 +25,7 @@ export default function IOAQueuePage() {
   const navigate = useNavigate();
   const [encounters, setEncounters] = useState<QueuePatient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [, setTick] = useState(0);
 
   useEffect(() => {
     fetchQueue();
@@ -32,7 +33,8 @@ export default function IOAQueuePage() {
       .channel('ioa-queue')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchQueue())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    const timer = setInterval(() => setTick(t => t + 1), 60000);
+    return () => { supabase.removeChannel(channel); clearInterval(timer); };
   }, []);
 
   const fetchQueue = async () => {

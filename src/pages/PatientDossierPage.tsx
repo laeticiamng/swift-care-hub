@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History, Stethoscope } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
-import { checkAllergyConflict } from '@/lib/allergy-check';
+import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
 import { categorizePrescription, PRESCRIPTION_SECTIONS, PRESCRIPTION_TEMPLATES, PrescriptionCategory } from '@/lib/prescription-utils';
 
@@ -32,6 +32,8 @@ export default function PatientDossierPage() {
   const [timeline, setTimeline] = useState<any[]>([]);
   const [prescribeOpen, setPrescribeOpen] = useState(false);
   const [allergyWarning, setAllergyWarning] = useState<string[]>([]);
+  const [drugInteractions, setDrugInteractions] = useState<DrugInteraction[]>([]);
+  const [interactionConfirmed, setInteractionConfirmed] = useState(false);
   const [dischargeOpen, setDischargeOpen] = useState(false);
   const [timelineEssential, setTimelineEssential] = useState(false);
   const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string, rx_type: 'traitements' as PrescriptionCategory });
@@ -77,12 +79,28 @@ export default function PatientDossierPage() {
   const handleMedNameChange = (name: string) => {
     setNewRx({ ...newRx, medication_name: name });
     if (patient?.allergies) setAllergyWarning(checkAllergyConflict(name, patient.allergies));
+    // Check drug interactions with current treatments
+    const currentMeds: string[] = [];
+    if (patient?.traitements_actuels) {
+      if (Array.isArray(patient.traitements_actuels)) {
+        currentMeds.push(...patient.traitements_actuels.map((t: any) => typeof t === 'string' ? t : JSON.stringify(t)));
+      }
+    }
+    // Also include active prescriptions
+    prescriptions.filter(rx => rx.status === 'active').forEach(rx => currentMeds.push(rx.medication_name));
+    setDrugInteractions(checkDrugInteractions(name, currentMeds));
+    setInteractionConfirmed(false);
   };
 
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
     if (allergyWarning.length > 0) {
       toast.error(`ALLERGIE DÉTECTÉE : ${allergyWarning.join(', ')} — Prescription bloquée`);
+      return;
+    }
+    const warnings = drugInteractions.filter(i => i.level === 'warning');
+    if (warnings.length > 0 && !interactionConfirmed) {
+      toast.warning('Interactions détectées — veuillez confirmer avant de prescrire');
       return;
     }
     const rxNotes = newRx.rx_type !== 'traitements' ? `[TYPE:${newRx.rx_type}]${newRx.frequency ? ' ' + newRx.frequency : ''}` : null;
@@ -100,7 +118,20 @@ export default function PatientDossierPage() {
     toast.success('Prescription validée');
     setNewRx({ medication_name: '', dosage: '', route: 'PO', frequency: '', priority: 'routine', rx_type: 'traitements' });
     setAllergyWarning([]);
+    setDrugInteractions([]);
+    setInteractionConfirmed(false);
     setPrescribeOpen(false);
+    fetchAll();
+  };
+
+  const handleCancelPrescription = async (rxId: string) => {
+    await supabase.from('prescriptions').update({ status: 'cancelled' as any }).eq('id', rxId);
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'prescription_cancelled', resource_type: 'prescription', resource_id: rxId,
+      });
+    }
+    toast.success('Prescription annulée');
     fetchAll();
   };
 
@@ -495,6 +526,26 @@ export default function PatientDossierPage() {
                           </div>
                         )}
                       </div>
+                      {/* Drug interactions */}
+                      {drugInteractions.length > 0 && (
+                        <div className="space-y-1.5">
+                          {drugInteractions.filter(i => i.level === 'warning').map((i, idx) => (
+                            <div key={idx} className="p-2 rounded bg-medical-warning/10 border border-medical-warning/30">
+                              <p className="text-xs font-semibold text-medical-warning flex items-center gap-1">
+                                <AlertTriangle className="h-3 w-3" /> {i.message}
+                              </p>
+                            </div>
+                          ))}
+                          {drugInteractions.filter(i => i.level === 'info').map((i, idx) => (
+                            <p key={idx} className="text-xs text-muted-foreground flex items-center gap-1">ℹ️ {i.message}</p>
+                          ))}
+                          {drugInteractions.some(i => i.level === 'warning') && !interactionConfirmed && (
+                            <Button variant="outline" size="sm" className="w-full border-medical-warning/50 text-medical-warning" onClick={() => setInteractionConfirmed(true)}>
+                              Confirmer malgré les interactions
+                            </Button>
+                          )}
+                        </div>
+                      )}
                       <div><Label>Posologie</Label><Input value={newRx.dosage} onChange={e => setNewRx({ ...newRx, dosage: e.target.value })} placeholder="1g" /></div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
@@ -517,7 +568,7 @@ export default function PatientDossierPage() {
                         </div>
                       </div>
                       <div><Label>Fréquence</Label><Input value={newRx.frequency} onChange={e => setNewRx({ ...newRx, frequency: e.target.value })} placeholder="Toutes les 6h" /></div>
-                      <Button onClick={handlePrescribe} className="w-full" disabled={!newRx.medication_name || !newRx.dosage || allergyWarning.length > 0}>
+                      <Button onClick={handlePrescribe} className="w-full" disabled={!newRx.medication_name || !newRx.dosage || allergyWarning.length > 0 || (drugInteractions.some(i => i.level === 'warning') && !interactionConfirmed)}>
                         Valider la prescription
                       </Button>
                     </div>
@@ -542,14 +593,24 @@ export default function PatientDossierPage() {
                     <div className="space-y-2">
                       {rxGroups[s.key as keyof typeof rxGroups].map((rx: any) => (
                         <div key={rx.id} className={cn('p-3 rounded-lg border flex items-center justify-between animate-in fade-in duration-200',
-                          rx.priority === 'stat' && 'border-medical-critical/30 animate-pulse',
-                          rx.priority === 'urgent' && 'border-medical-warning/30',
-                          rx.status === 'completed' && 'opacity-60')}>
+                          rx.priority === 'stat' && rx.status === 'active' && 'border-medical-critical/30 animate-pulse',
+                          rx.priority === 'urgent' && rx.status === 'active' && 'border-medical-warning/30',
+                          rx.status === 'completed' && 'opacity-60',
+                          rx.status === 'cancelled' && 'opacity-40 line-through')}>
                           <div>
-                            <p className="font-medium text-sm">{rx.medication_name} — {rx.dosage}</p>
+                            <p className={cn('font-medium text-sm', rx.status === 'cancelled' && 'line-through')}>{rx.medication_name} — {rx.dosage}</p>
                             <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
                           </div>
-                          <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>{rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status}</Badge>
+                          <div className="flex items-center gap-1.5">
+                            {rx.status === 'active' && (
+                              <Button variant="ghost" size="sm" className="h-7 text-xs text-medical-critical" onClick={() => handleCancelPrescription(rx.id)}>
+                                Annuler
+                              </Button>
+                            )}
+                            <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>
+                              {rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status === 'cancelled' ? 'Annulée' : rx.status}
+                            </Badge>
+                          </div>
                         </div>
                       ))}
                     </div>

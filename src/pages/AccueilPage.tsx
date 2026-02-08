@@ -27,6 +27,9 @@ export default function AccueilPage() {
   const [insNumero, setInsNumero] = useState('');
   const [adresse, setAdresse] = useState('');
   const [poids, setPoids] = useState('');
+  const [medecinTraitant, setMedecinTraitant] = useState('');
+  const [antecedents, setAntecedents] = useState('');
+  const [allergies, setAllergies] = useState('');
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
@@ -74,7 +77,7 @@ export default function AccueilPage() {
     let patientId: string;
     if (selectedExisting) { patientId = selectedExisting.id; }
     else {
-      const { data: patient, error } = await supabase.from('patients').insert({ nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null, adresse: adresse || null, poids: poids ? parseFloat(poids) : null }).select().single();
+      const { data: patient, error } = await supabase.from('patients').insert({ nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null, adresse: adresse || null, poids: poids ? parseFloat(poids) : null, medecin_traitant: medecinTraitant || null, antecedents: antecedents ? antecedents.split(',').map(s => s.trim()).filter(Boolean) : null, allergies: allergies ? allergies.split(',').map(s => s.trim()).filter(Boolean) : null }).select().single();
       if (error || !patient) { toast.error('Erreur de création patient'); setSubmitting(false); return; }
       patientId = patient.id;
     }
@@ -82,6 +85,7 @@ export default function AccueilPage() {
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
     toast.success('Passage créé');
     setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero(''); setAdresse(''); setPoids('');
+    setMedecinTraitant(''); setAntecedents(''); setAllergies('');
     setSelectedExisting(null); setSubmitting(false); fetchToday();
   };
 
@@ -170,6 +174,11 @@ export default function AccueilPage() {
                 <div><Label className="text-sm font-medium">N° Sécurité Sociale (optionnel)</Label><Input value={insNumero} onChange={e => setInsNumero(e.target.value)} placeholder="1 85 07 75 123 456 78" className="mt-1" /></div>
                 <div><Label className="text-sm font-medium">Adresse (optionnel)</Label><Input value={adresse} onChange={e => setAdresse(e.target.value)} placeholder="12 rue de la Paix, 75001 Paris" className="mt-1" /></div>
                 <div><Label className="text-sm font-medium">Poids (kg, optionnel)</Label><Input type="number" step="0.1" value={poids} onChange={e => setPoids(e.target.value)} placeholder="70" className="mt-1" /></div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div><Label className="text-sm font-medium">Médecin traitant (optionnel)</Label><Input value={medecinTraitant} onChange={e => setMedecinTraitant(e.target.value)} placeholder="Dr Martin" className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Antécédents (optionnel)</Label><Input value={antecedents} onChange={e => setAntecedents(e.target.value)} placeholder="HTA, diabète..." className="mt-1" /></div>
+                <div><Label className="text-sm font-medium">Allergies (optionnel)</Label><Input value={allergies} onChange={e => setAllergies(e.target.value)} placeholder="Pénicilline, iode..." className="mt-1" /></div>
               </div>
               <div>
                 <Label className="text-sm font-medium">Motif (optionnel)</Label>

@@ -43,6 +43,7 @@ export default function BoardPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
   const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem('urgenceos_selectedZone') as ZoneKey | 'all') || 'all');
   const [loading, setLoading] = useState(true);
+  const [, setTick] = useState(0);
 
   useEffect(() => { localStorage.setItem('urgenceos_myOnly', String(myOnly)); }, [myOnly]);
   useEffect(() => { localStorage.setItem('urgenceos_viewMode', viewMode); }, [viewMode]);
@@ -55,7 +56,8 @@ export default function BoardPage() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchEncounters())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, () => fetchEncounters())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    const timer = setInterval(() => setTick(t => t + 1), 60000);
+    return () => { supabase.removeChannel(channel); clearInterval(timer); };
   }, []);
 
   const fetchEncounters = async () => {
@@ -223,6 +225,7 @@ export default function BoardPage() {
                 encounters={byZone(z.key)}
                 resultCounts={resultCounts}
                 highlightedIds={highlightedIds}
+                hasActiveFilter={myOnly}
                 onClickEncounter={navigateToPatient}
               />
             ))}
