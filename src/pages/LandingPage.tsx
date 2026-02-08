@@ -7,7 +7,7 @@ import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { RolesSection } from '@/components/landing/RolesSection';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { ImpactSection } from '@/components/landing/ImpactSection';
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
+
 import { InnovationsSection } from '@/components/landing/InnovationsSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { FooterSection } from '@/components/landing/FooterSection';
@@ -74,7 +74,7 @@ export default function LandingPage() {
 
       <FeaturesSection />
       <ImpactSection />
-      <TestimonialsSection />
+      
       <InnovationsSection />
 
       {/* Manifesto */}

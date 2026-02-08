@@ -30,7 +30,7 @@ export function HeroSection() {
         </p>
 
         <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-          Le système d'exploitation des urgences hospitalières.
+          1 tap = 1 action. Zéro formation. Interfaces pensées pour des gardes de 12h.
         </p>
 
         <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
