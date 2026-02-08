@@ -1,4 +1,4 @@
-# 🏥 UrgenceOS
+# UrgenceOS
 
 **Le système d'exploitation des urgences hospitalières.**
 
@@ -8,7 +8,7 @@ De **6-8 clics à 1 seul tap** pour chaque administration médicamenteuse.
 
 ---
 
-## ✨ Fonctionnalités principales
+## Fonctionnalités principales
 
 | Module | Description |
 |---|---|
@@ -22,7 +22,7 @@ De **6-8 clics à 1 seul tap** pour chaque administration médicamenteuse.
 
 ---
 
-## 👥 Profils utilisateurs
+## Profils utilisateurs
 
 | Rôle | Accès principal | Route | Email de test |
 |---|---|---|---|
@@ -36,7 +36,7 @@ De **6-8 clics à 1 seul tap** pour chaque administration médicamenteuse.
 
 ---
 
-## 🛠 Stack technique
+## Stack technique
 
 - **Frontend** : React 18 · TypeScript · Vite
 - **UI** : Tailwind CSS · Shadcn/UI · Lucide React
@@ -48,7 +48,7 @@ De **6-8 clics à 1 seul tap** pour chaque administration médicamenteuse.
 
 ---
 
-## 🎨 Design System
+## Design System
 
 ### Couleurs sémantiques médicales
 
@@ -74,7 +74,7 @@ Favicon SVG personnalisé : cercle bleu `#2b7fc3` avec la lettre « U » blanche
 
 ---
 
-## 🗄 Base de données
+## Base de données
 
 ### Tables principales
 
@@ -95,7 +95,7 @@ Favicon SVG personnalisé : cercle bleu `#2b7fc3` avec la lettre « U » blanche
 
 ---
 
-## 🔒 Sécurité
+## Sécurité
 
 - **Row Level Security (RLS)** active sur toutes les tables
 - **Politiques par rôle** : chaque profil accède uniquement aux données nécessaires
@@ -104,7 +104,7 @@ Favicon SVG personnalisé : cercle bleu `#2b7fc3` avec la lettre « U » blanche
 
 ---
 
-## ⚡ Temps réel
+## Temps réel
 
 Les tables suivantes sont synchronisées en temps réel :
 
@@ -115,7 +115,7 @@ Les tables suivantes sont synchronisées en temps réel :
 
 ---
 
-## 🚀 Installation locale
+## Installation locale
 
 ```bash
 # Cloner le dépôt
@@ -133,6 +133,6 @@ L'application sera disponible sur `http://localhost:5173`.
 
 ---
 
-## 📄 Licence
+## Licence
 
 Projet interne — Usage hospitalier uniquement.
