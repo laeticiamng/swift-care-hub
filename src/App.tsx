@@ -8,6 +8,9 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
+import MentionsLegalesPage from "./pages/MentionsLegalesPage";
+import PolitiqueConfidentialitePage from "./pages/PolitiqueConfidentialitePage";
+import CGUPage from "./pages/CGUPage";
 import RoleSelector from "./pages/RoleSelector";
 import BoardPage from "./pages/BoardPage";
 import PatientDossierPage from "./pages/PatientDossierPage";
@@ -48,6 +51,9 @@ function AppRoutes() {
       <Route path="/as" element={<ProtectedRoute><RoleGuard><AideSoignantPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/accueil" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/ioa-queue" element={<ProtectedRoute><RoleGuard><IOAQueuePage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+      <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
+      <Route path="/cgu" element={<CGUPage />} />
       <Route path="/" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
