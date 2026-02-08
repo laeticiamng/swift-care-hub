@@ -79,18 +79,22 @@ export default function PancartePage() {
     }
   };
 
+  const [titrationDoses, setTitrationDoses] = useState<Record<string, string>>({});
+
   const handleAdminister = async (rx: any) => {
     if (!user || !encounter) return;
+    const doseGiven = titrationDoses[rx.id] || rx.dosage;
     await supabase.from('administrations').insert({
       prescription_id: rx.id, encounter_id: encounter.id, patient_id: encounter.patient_id,
-      administered_by: user.id, dose_given: rx.dosage, route: rx.route,
+      administered_by: user.id, dose_given: doseGiven, route: rx.route,
     });
     await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
     await supabase.from('audit_logs').insert({
       user_id: user.id, action: 'administration', resource_type: 'prescription',
-      resource_id: rx.id, details: { medication: rx.medication_name, dosage: rx.dosage },
+      resource_id: rx.id, details: { medication: rx.medication_name, dosage: doseGiven },
     });
-    toast.success(`${rx.medication_name} administré`);
+    toast.success(`${rx.medication_name} administré — ${doseGiven}`);
+    setTitrationDoses(prev => { const n = { ...prev }; delete n[rx.id]; return n; });
     fetchAll();
   };
 
@@ -260,10 +264,18 @@ export default function PancartePage() {
                         {done ? (
                           <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
                         ) : (
-                          <Button size="sm" onClick={() => handleAdminister(rx)}
-                            className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
-                            <Check className="h-4 w-4 mr-1" /> Administré
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={titrationDoses[rx.id] ?? rx.dosage}
+                              onChange={e => setTitrationDoses(prev => ({ ...prev, [rx.id]: e.target.value }))}
+                              className="w-24 h-8 text-xs text-center"
+                              title="Dose à administrer (titration)"
+                            />
+                            <Button size="sm" onClick={() => handleAdminister(rx)}
+                              className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">
+                              <Check className="h-4 w-4 mr-1" /> OK
+                            </Button>
+                          </div>
                         )}
                       </div>
                     );
@@ -325,7 +337,16 @@ export default function PancartePage() {
             </div>
             <div>
               <Label>Cible</Label>
-              <Input value={darCible} onChange={e => setDarCible(e.target.value)} placeholder="Douleur, respiratoire..." className="mt-1" />
+              <div className="flex flex-wrap gap-1.5 mt-1 mb-1.5">
+                {['Douleur', 'Respiratoire', 'Hémodynamique', 'Neurologique', 'Digestif', 'Plaie/Pansement', 'Mobilité'].map(c => (
+                  <button key={c} type="button" onClick={() => setDarCible(c)}
+                    className={cn('px-2.5 py-1 rounded-full border text-xs transition-colors',
+                      darCible === c ? 'bg-primary text-primary-foreground border-primary' : 'hover:bg-accent')}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+              <Input value={darCible} onChange={e => setDarCible(e.target.value)} placeholder="Ou saisie libre..." />
             </div>
             <div>
               <Label>R — Résultats</Label>

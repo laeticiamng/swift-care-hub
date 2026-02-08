@@ -72,6 +72,9 @@ export default function TriagePage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
+  const [newAllergies, setNewAllergies] = useState('');
+  const [newAntecedents, setNewAntecedents] = useState('');
+
   // Step 2 — Motif
   const [motif, setMotif] = useState('');
   const [motifSearch, setMotifSearch] = useState('');
@@ -148,14 +151,28 @@ export default function TriagePage() {
 
   const filteredMotifs = SFMU_MOTIFS.filter(m => m.toLowerCase().includes(motifSearch.toLowerCase()));
 
+  const [homonymAlert, setHomonymAlert] = useState(false);
+
+  const detectHomonyms = (patients: any[]) => {
+    if (patients.length < 2) { setHomonymAlert(false); return; }
+    for (let i = 0; i < patients.length; i++) {
+      for (let j = i + 1; j < patients.length; j++) {
+        if (patients[i].nom.toLowerCase() === patients[j].nom.toLowerCase() && patients[i].prenom.toLowerCase() === patients[j].prenom.toLowerCase()) {
+          setHomonymAlert(true); return;
+        }
+      }
+    }
+    setHomonymAlert(false);
+  };
+
   const searchPatients = useCallback(async (searchNom: string) => {
-    if (searchNom.length < 2) { setSearchResults([]); return; }
+    if (searchNom.length < 2) { setSearchResults([]); setHomonymAlert(false); return; }
     const { data } = await supabase
       .from('patients')
       .select('id, nom, prenom, date_naissance, sexe, allergies, antecedents')
       .ilike('nom', `%${searchNom}%`)
-      .limit(5);
-    if (data) setSearchResults(data);
+      .limit(10);
+    if (data) { setSearchResults(data); detectHomonyms(data); }
   }, []);
 
   const handleNomChange = (value: string) => {
@@ -207,9 +224,10 @@ export default function TriagePage() {
     if (selectedExisting) {
       patientId = selectedExisting.id;
     } else {
-      const { data: patient, error: patErr } = await supabase.from('patients').insert({
-        nom, prenom, date_naissance: dateNaissance, sexe,
-      }).select().single();
+      const insertData: any = { nom, prenom, date_naissance: dateNaissance, sexe };
+      if (newAllergies.trim()) insertData.allergies = newAllergies.split(',').map(s => s.trim()).filter(Boolean);
+      if (newAntecedents.trim()) insertData.antecedents = newAntecedents.split(',').map(s => s.trim()).filter(Boolean);
+      const { data: patient, error: patErr } = await supabase.from('patients').insert(insertData).select().single();
       if (!patient || patErr) { toast.error('Erreur création patient'); setSubmitting(false); return; }
       patientId = patient.id;
     }
@@ -346,6 +364,12 @@ export default function TriagePage() {
                     <Input value={nom} onChange={e => handleNomChange(e.target.value)} placeholder="DUPONT" className="mt-1" disabled={!!prefilled} />
                     {searchResults.length > 0 && !prefilled && (
                       <div className="absolute z-10 top-full left-0 right-0 bg-card border rounded-lg shadow-lg mt-1 overflow-hidden">
+                        {homonymAlert && (
+                          <div className="px-3 py-2 bg-medical-warning/10 border-b border-medical-warning/30 flex items-center gap-1.5">
+                            <AlertTriangle className="h-3.5 w-3.5 text-medical-warning" />
+                            <span className="text-xs font-semibold text-medical-warning">Attention : patients homonymes détectés</span>
+                          </div>
+                        )}
                         <p className="text-xs text-muted-foreground px-3 py-1.5 border-b"><Search className="h-3 w-3 inline mr-1" />Patients existants :</p>
                         {searchResults.map(p => (
                           <button key={p.id} type="button" onClick={() => selectExistingPatient(p)}
@@ -395,6 +419,18 @@ export default function TriagePage() {
                   <div className="p-3 rounded-lg bg-medical-critical/5 border border-medical-critical/30">
                     <p className="text-xs font-medium text-medical-critical mb-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Allergies</p>
                     <p className="text-sm text-medical-critical">{selectedExisting.allergies.join(', ')}</p>
+                  </div>
+                )}
+                {!selectedExisting && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Allergies (optionnel)</Label>
+                      <Input value={newAllergies} onChange={e => setNewAllergies(e.target.value)} placeholder="Pénicilline, iode..." className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Antécédents (optionnel)</Label>
+                      <Input value={newAntecedents} onChange={e => setNewAntecedents(e.target.value)} placeholder="HTA, diabète..." className="mt-1" />
+                    </div>
                   </div>
                 )}
               </div>

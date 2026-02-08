@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/urgence/StatCard';
-import { LogOut, UserPlus, Check, Users, Clock, Activity } from 'lucide-react';
+import { LogOut, UserPlus, Check, Users, Clock, Activity, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateAge } from '@/lib/vitals-utils';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -54,10 +54,25 @@ export default function AccueilPage() {
     if (data) setTodayEncounters(data as any[]);
   };
 
+  const [homonymAlert, setHomonymAlert] = useState(false);
+
+  const detectHomonyms = (patients: any[]) => {
+    if (patients.length < 2) { setHomonymAlert(false); return; }
+    for (let i = 0; i < patients.length; i++) {
+      for (let j = i + 1; j < patients.length; j++) {
+        const a = patients[i], b = patients[j];
+        if (a.nom.toLowerCase() === b.nom.toLowerCase() && a.prenom.toLowerCase() === b.prenom.toLowerCase()) {
+          setHomonymAlert(true); return;
+        }
+      }
+    }
+    setHomonymAlert(false);
+  };
+
   const searchPatients = useCallback(async (searchNom: string) => {
-    if (searchNom.length < 2) { setSearchResults([]); return; }
-    const { data } = await supabase.from('patients').select('id, nom, prenom, date_naissance, sexe, telephone').ilike('nom', `%${searchNom}%`).limit(5);
-    if (data) setSearchResults(data);
+    if (searchNom.length < 2) { setSearchResults([]); setHomonymAlert(false); return; }
+    const { data } = await supabase.from('patients').select('id, nom, prenom, date_naissance, sexe, telephone').ilike('nom', `%${searchNom}%`).limit(10);
+    if (data) { setSearchResults(data); detectHomonyms(data); }
   }, []);
 
   const handleNomChange = (value: string) => { setNom(value); setSelectedExisting(null); searchPatients(value); };
@@ -143,6 +158,12 @@ export default function AccueilPage() {
                   <Input value={nom} onChange={e => handleNomChange(e.target.value)} placeholder="DUPONT" required className="mt-1" />
                   {searchResults.length > 0 && (
                     <div className="absolute z-10 top-full left-0 right-0 bg-card border rounded-lg shadow-lg mt-1 overflow-hidden">
+                      {homonymAlert && (
+                        <div className="px-3 py-2 bg-medical-warning/10 border-b border-medical-warning/30 flex items-center gap-1.5">
+                          <AlertTriangle className="h-3.5 w-3.5 text-medical-warning" />
+                          <span className="text-xs font-semibold text-medical-warning">Attention : patients homonymes détectés</span>
+                        </div>
+                      )}
                       <p className="text-xs text-muted-foreground px-3 py-1.5 border-b">Patients existants :</p>
                       {searchResults.map(p => (
                         <button key={p.id} type="button" onClick={() => selectExistingPatient(p)}

@@ -61,7 +61,29 @@ export default function LandingPage() {
       <RolesSection />
       <FeaturesSection />
       <ImpactSection />
-      
+
+      {/* Métriques clés spec */}
+      <section className="py-16 px-6 bg-background">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3 text-center">Métriques vérifiables</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">Chaque interaction optimisée</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            {[
+              { metric: '< 2 min', label: 'Tri IOA complet' },
+              { metric: '1 tap', label: 'Administration médicament' },
+              { metric: '< 90s', label: 'Admission patient' },
+              { metric: '0', label: 'Changement de page IDE' },
+              { metric: '3 clics', label: 'Prescription complète' },
+            ].map(m => (
+              <div key={m.label} className="text-center p-4 rounded-xl border bg-card">
+                <p className="text-2xl font-extrabold text-primary">{m.metric}</p>
+                <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <CTASection />
       <FooterSection />
     </div>
