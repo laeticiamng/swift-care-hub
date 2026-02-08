@@ -13,7 +13,7 @@ import { BoxSelector } from '@/components/urgence/BoxSelector';
 import { ZoneKey } from '@/lib/box-config';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
-import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle, Pill } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SFMU_MOTIFS = [
@@ -427,7 +427,7 @@ export default function TriagePage() {
                     : Object.entries(selectedExisting.traitements_actuels).map(([k, v]) => `${k}: ${v}`);
                   return traitements.length > 0 ? (
                     <div className="p-3 rounded-lg bg-accent/50 border">
-                      <p className="text-xs font-medium text-muted-foreground mb-1">💊 Traitements en cours</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1"><Pill className="h-3 w-3" /> Traitements en cours</p>
                       <div className="flex flex-wrap gap-1.5">
                         {traitements.map((t: any, i: number) => (
                           <Badge key={i} variant="outline" className="text-xs">

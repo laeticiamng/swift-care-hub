@@ -257,7 +257,7 @@ export default function PatientDossierPage() {
       <div className="max-w-7xl mx-auto p-4">
         {isReadOnly && (
           <div className="mb-4">
-            <Badge variant="secondary" className="text-sm px-3 py-1">👁️ Consultation seule</Badge>
+            <Badge variant="secondary" className="text-sm px-3 py-1 flex items-center gap-1.5 w-fit"><Eye className="h-4 w-4" /> Consultation seule</Badge>
           </div>
         )}
         {!isReadOnly && encounter.status !== 'finished' && (
