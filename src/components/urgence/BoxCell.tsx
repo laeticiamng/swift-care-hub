@@ -15,6 +15,7 @@ interface BoxCellPatient {
   patient_id: string;
   ccmu: number | null;
   arrival_time: string;
+  motif_sfmu?: string | null;
   patients: { nom: string; prenom: string; date_naissance: string; sexe: string };
   medecin_id: string | null;
 }
@@ -72,6 +73,9 @@ export function BoxCell({ boxNumber, encounter, resultCount, isHighlighted, onCl
           {p.nom.toUpperCase().slice(0, 8)}
         </p>
         <p className="text-[10px] text-muted-foreground">{age}a · {p.sexe}</p>
+        {encounter.motif_sfmu && (
+          <p className="text-[10px] text-muted-foreground/70 truncate leading-tight">{encounter.motif_sfmu}</p>
+        )}
       </div>
       <p className={cn(
         'text-xs font-medium mt-1',

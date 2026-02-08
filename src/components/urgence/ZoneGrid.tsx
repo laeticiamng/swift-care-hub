@@ -13,6 +13,7 @@ interface Encounter {
   box_number: number | null;
   ccmu: number | null;
   arrival_time: string;
+  motif_sfmu?: string | null;
   medecin_id: string | null;
   patients: { nom: string; prenom: string; date_naissance: string; sexe: string };
 }
