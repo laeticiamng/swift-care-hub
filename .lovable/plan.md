@@ -1,151 +1,188 @@
 
 
-# Audit Beta-Testeur UrgenceOS + Plan de Corrections
+# Audit Multi-Perspective UrgenceOS + Plan de Corrections
 
 ---
 
-## 1) Test "3 secondes"
+## AUDIT 1 : Directeur Marketing / Branding
 
-- **En 3 secondes, je crois que cette plateforme sert a** : Gerer les urgences d'un hopital (c'est clair grace au nom "UrgenceOS" et au sous-titre).
-- **Public cible imagine** : Personnel hospitalier des urgences (medecins, infirmiers).
-- **2 confusions possibles** :
-  1. Un logiciel de formation/simulation medicale (le footer dit "Reflexion academique")
-  2. Un SaaS commercial qui vend un produit (le CTA "Acces au systeme" fait penser qu'il faut payer)
-- **Note clarte immediate : 7/10** -- Le nom est bon, le sous-titre clair, mais le footer "Reflexion academique" cree du doute sur la nature reelle du produit.
+### Positif
+- Hero clair, sous-titre impactant, CTA bien place
+- Code couleur semantique coherent et differenciant
+- Sections de la landing bien structurees (probleme -> solution -> roles -> features -> CTA)
+- Footer reformule correctement
 
----
+### Problemes identifies
 
-## 2) Parcours utilisateur
-
-| Etape | Ce que j'ai essaye | Ce qui s'est passe | Ce que j'ai ressenti | Blocage | Attendu |
-|---|---|---|---|---|---|
-| Decouverte | Regarder le hero | Titre + sous-titre clairs, 2 boutons | Correct, pro | Rien | OK |
-| Premier clic | "Acces au systeme" | Redirige vers /login | Fluide | Rien | OK |
-| Connexion | Login avec martin@urgenceos.fr | Connexion OK, redirige vers board | Rapide, bien | Rien | OK |
-| Board | Regarder les patients | 3 colonnes, cartes patients avec CCMU | Impressionnant, pro | Le header est charge sur desktop (beaucoup de petits boutons) | Un peu plus d'espace |
-| Clic patient | Clic sur une carte | Dossier patient s'ouvre | Bien structure | Le bouton retour est petit | OK globalement |
-| Retour | Bouton retour board | Retour au board | OK | Rien | OK |
-| Page 404 | URL invalide | Page 404 en anglais "Oops! Page not found" | Rupture -- tout est en francais, la 404 est en anglais | Incoherence | 404 en francais |
-| Title navigateur | Regarder l'onglet | "Lovable App" | Pas professionnel | Oubli | "UrgenceOS" |
+| # | Probleme | Gravite |
+|---|----------|---------|
+| M1 | Pas de favicon personnalise (favicon par defaut du template) | Moyen |
+| M2 | Pas d'image OG pour le partage social (og:image manquant) | Moyen |
+| M3 | Le bloc "Compte demo" sur la page login n'affiche qu'un seul compte alors qu'il y en a 5 | Moyen |
+| M4 | La page de selection de role pour un nouvel utilisateur montre TOUS les roles sans garde-fou (un visiteur peut se mettre medecin) | Majeur |
+| M5 | Emojis `⚠` utilises dans le code au lieu d'icones Lucide (spec dit "zero emoji") | Moyen |
 
 ---
 
-## 3) Audit confiance
+## AUDIT 2 : CEO / Strategie
 
-- **Liens morts / 404** : La page 404 existe mais est en anglais (incoherent).
-- **Boutons qui ne font rien** : Aucun detecte.
-- **Textes coupes** : RAS.
-- **Lenteurs** : Aucune lenteur notable.
-- **Erreurs visibles** : Aucune erreur console critique.
-- **Design cheap** : Le footer "Reflexion academique -- Fevrier 2026" fait amateur.
-- **Manque de preuves** : Pas de page "A propos", pas de contact, pas de mentions legales. Normal pour un projet academique.
-- **Title HTML** : "Lovable App" au lieu de "UrgenceOS" -- tue la credibilite immediatement.
-- **Meta descriptions** : "Lovable Generated Project" -- idem.
+### Positif
+- Le product-market fit est clair : 1 systeme, 5 roles, isolation des donnees
+- La landing page communique bien la valeur
+- Le board est fonctionnel et impressionnant visuellement
 
-**Note confiance : 6.5/10** -- L'app est fonctionnelle et belle, mais le title HTML "Lovable App" et les meta generiques cassent l'image pro instantanement.
+### Problemes identifies
 
----
-
-## 4) Audit comprehension et guidance
-
-- **Premier clic evident ?** OUI -- "Acces au systeme" est clair.
-- **Apres le premier clic ?** OUI -- Le formulaire de login est simple.
-- **Ou je me sens perdu(e) ?**
-  - Sur la page 404 (anglais alors que tout est en francais)
-  - Le bouton "Decouvrir" scroll vers le bas mais l'animation fade-in peut etre lente
-- **Phrases floues/inutiles** :
-  - "La revolution des urgences hospitalieres" -- un peu grandiloquent pour un projet academique
-  - "Zero friction" -- jargon tech
+| # | Probleme | Gravite |
+|---|----------|---------|
+| S1 | Les donnees de demo sont vides (tables vides quand on se connecte pour la premiere fois — le board est vide) | Bloquant |
+| S2 | Pas de mecanisme pour re-seeder les donnees facilement depuis l'interface | Moyen |
+| S3 | Nouveau utilisateur peut choisir n'importe quel role — pas de validation admin | Majeur |
 
 ---
 
-## 5) Audit visuel non technique
+## AUDIT 3 : CISO / Securite
 
-- **Ce qui fait premium** : Le hero gradient, les cards bien espacees, le code couleur CCMU, les icones Lucide coherentes, le board 3 colonnes
-- **Ce qui fait cheap** : Le footer "Reflexion academique", le title "Lovable App", les meta OG par defaut
-- **Ce qui est trop charge** : Le header du board sur desktop (6+ boutons alignes)
-- **Ce qui manque** : Un favicon personnalise (actuellement le defaut Vite/Lovable), une animation de chargement initiale
-- **Lisibilite mobile** : OK -- le board passe en tabs, les boutons AS sont gros. La landing page scrolle bien.
+### Positif
+- RLS active sur toutes les 12 tables
+- Roles stockes dans une table separee `user_roles` (bonne pratique)
+- Fonction `has_role()` en SECURITY DEFINER pour eviter la recursion RLS
+- Audit trail via `audit_logs`
+- Allergies check cote client avant prescription
 
----
+### Problemes identifies
 
-## 6) Tableau des problemes
-
-| Probleme | Ou | Gravite | Impact utilisateur | Suggestion |
-|---|---|---|---|---|
-| Title HTML "Lovable App" | index.html | Bloquant | Onglet navigateur non brande | Changer en "UrgenceOS" |
-| Meta OG "Lovable Generated Project" | index.html | Bloquant | Partage social non brande | Mettre description UrgenceOS |
-| Page 404 en anglais | NotFound.tsx | Majeur | Rupture linguistique | Traduire en francais |
-| Footer "Reflexion academique" vague | LandingPage.tsx | Moyen | Doute sur la nature du produit | Reformuler ou supprimer |
-| App.css contient du CSS inutile de template Vite | App.css | Moyen | Poids mort, confusion | Nettoyer le fichier |
-| Pas de lien retour vers la landing depuis login | LoginPage.tsx | Moyen | Utilisateur coince sur login | Ajouter un lien retour |
+| # | Probleme | Gravite |
+|---|----------|---------|
+| C1 | **Protection mots de passe faibles desactivee** (linter Supabase : "Leaked Password Protection Disabled") | Majeur |
+| C2 | **Nouveau utilisateur peut s'auto-attribuer N'IMPORTE QUEL role** y compris medecin — la politique RLS `user_roles` INSERT permet si aucun role n'existe | Critique |
+| C3 | Le mot de passe demo `urgenceos2026` est affiche en clair dans le code source (LoginPage.tsx et seed-data) | Moyen |
+| C4 | Pas de rate limiting visible sur l'authentification | Moyen |
 
 ---
 
-## 7) Top 15 ameliorations
+## AUDIT 4 : DPO / RGPD
 
-### P0 (bloquants avant publication)
+### Positif
+- Donnees de sante stockees avec RLS par role
+- Separation stricte : AS ne voit pas les prescriptions, secretaire ne voit pas les donnees cliniques
+- Audit trail present
 
-1. **Corriger le title HTML** : "Lovable App" -> "UrgenceOS -- Urgences Hospitalieres"
-2. **Corriger les meta OG/Twitter** : description, titre, et supprimer les references Lovable
-3. **Traduire la page 404 en francais** : titre, message, lien retour
-4. **Nettoyer App.css** : supprimer le CSS template Vite (logo-spin, .card, etc.)
-5. **Ajouter un lien retour landing depuis la page login** : fleche ou logo cliquable
-
-### P1 (ameliore fortement l'experience)
-
-6. **Reformuler le footer landing** : retirer "Reflexion academique" ou le rendre plus pro
-7. **Ajouter un favicon UrgenceOS** : meme un simple cercle bleu avec "U" serait mieux que le defaut
-8. **Ajouter lang="fr" sur le HTML** : actuellement `lang="en"` alors que tout est en francais
-9. **Ameliorer le sous-titre hero** : remplacer "zero friction" par quelque chose de plus parlant pour un soignant
-10. **Ajouter un etat vide plus accueillant sur le board** : quand il n'y a pas de patients dans une zone, le message "Aucun patient" est un peu sec
-
-### P2 (polish premium)
-
-11. **Ajouter une animation de hero plus marquee** : un subtil scale-in du titre au chargement
-12. **Ajouter un smooth scroll entre sections de la landing** : pour le bouton "Decouvrir" (deja present mais verifier)
-13. **Ajouter un lien "Essayer avec un compte demo"** sur la page login pour faciliter le test
-14. **Rendre le logo "UrgenceOS" dans la navbar un lien vers la racine**
-15. **Ajouter une animation de transition** entre la selection de role et le board
+### Observations
+- Pas de page mentions legales / politique de confidentialite (acceptable pour projet de recherche)
+- Pas de mecanisme de suppression de compte ou d'export de donnees (mineur pour un prototype)
 
 ---
 
-## 8) Verdict final
+## AUDIT 5 : CDO / Data
 
-- **Publiable aujourd'hui ?** : **NON**
-- **5 raisons bloquantes** :
-  1. Le title HTML dit "Lovable App" -- pas professionnel
-  2. Les meta OG/Twitter disent "Lovable Generated Project" -- partage social casse
-  3. La page 404 est en anglais -- rupture avec le reste en francais
-  4. Le `lang="en"` dans le HTML alors que tout est en francais -- mauvais pour l'accessibilite et le SEO
-  5. Le fichier App.css contient du CSS mort du template Vite
+### Positif
+- Schema de donnees bien structure, conforme aux standards FHIR
+- Realtime active sur encounters, prescriptions, results
+- Timeline patient avec source et date
 
-- **Phrase hero ideale** : "Le systeme d'exploitation des urgences hospitalieres"
-- **CTA ideal** : "Acceder a UrgenceOS"
+### Problemes identifies
+
+| # | Probleme | Gravite |
+|---|----------|---------|
+| D1 | Les tables sont VIDES en production (aucun seed data) — le board est vide a la premiere connexion | Bloquant |
 
 ---
 
-## Plan de corrections techniques
+## AUDIT 6 : COO / Operations
 
-### Fichier 1 : `index.html`
-- Changer `lang="en"` en `lang="fr"`
-- Changer `<title>` en "UrgenceOS -- Urgences Hospitalieres"
-- Changer les meta `og:title`, `og:description`, `twitter:card` avec les infos UrgenceOS
-- Supprimer les references Lovable dans les meta
+### Positif
+- Workflow IOA en 5 etapes bien structure
+- Administration 1-tap fonctionnelle
+- Transmissions DAR auto-alimentees
 
-### Fichier 2 : `src/pages/NotFound.tsx`
-- Traduire entierement en francais : "Page introuvable", "Retour a l'accueil", etc.
+### Observations
+- Le loading state est un simple texte "Chargement..." sans spinner — pourrait etre ameliore
 
-### Fichier 3 : `src/App.css`
-- Supprimer tout le contenu (CSS template Vite inutilise) ou ne garder qu'un fichier vide
+---
 
-### Fichier 4 : `src/pages/LandingPage.tsx`
-- Footer : reformuler "Reflexion academique" en quelque chose de plus propre
-- Sous-titre hero : remplacer "zero friction" par "zero perte de temps"
-- Rendre le logo navbar cliquable (scroll to top)
-- CTA : "Acceder a UrgenceOS" au lieu de "Acces au systeme"
+## AUDIT 7 : Head of Design
+
+### Positif
+- Hierarchie visuelle claire sur la landing
+- Code couleur semantique coherent
+- Touch targets de 44px respectes
+- Mode sombre complet
+
+### Problemes identifies
+
+| # | Probleme | Gravite |
+|---|----------|---------|
+| U1 | Emojis `⚠` au lieu d'icones Lucide `AlertTriangle` dans les allergies (board, triage, queue IOA) — violation du spec | Moyen |
+| U2 | Le message "Aucun patient" dans les zones vides du board est sec | Moyen |
+| U3 | Le loading initial ("Chargement...") n'a pas de spinner/animation | Moyen |
+
+---
+
+## AUDIT 8 : Beta Testeur
+
+### Test 3 secondes : 8/10
+- Titre clair, sous-titre impactant, CTA visible
+- Le footer "Projet de recherche" est honnete
+
+### Parcours utilisateur
+1. Landing -> Login : fluide (lien retour present)
+2. Demo account : fonctionne, pre-remplit les champs
+3. Login -> Role selector : OK
+4. Board : **VIDE** si les donnees n'ont pas ete seedees — c'est le probleme principal
+5. 404 : en francais, OK
+
+### Verdict : **Quasi publiable** mais le board vide est un dealbreaker pour la demo
+
+---
+
+## SYNTHESE DES CORRECTIONS
+
+### P0 - Bloquants avant publication
+
+1. **Remplacer les emojis `⚠` par des icones Lucide `AlertTriangle`** dans BoardPage, TriagePage, IOAQueuePage, PatientDossierPage (violation spec "zero emoji")
+2. **Restreindre l'auto-attribution de role** : un nouvel utilisateur devrait avoir un role par defaut (`secretaire`) ou ne pas pouvoir choisir `medecin`/`ioa`/`ide` sans validation — au minimum, afficher un avertissement
+3. **Supprimer le fichier `App.css`** ou le vider (il est inutilise, aucun import)
+4. **Ajouter un loading spinner** au lieu du texte brut "Chargement..." dans les composants ProtectedRoute et RoleGuard
+
+### P1 - Ameliore fortement l'experience
+
+5. **Ameliorer le bloc "Compte demo"** sur la page login : montrer les 5 comptes (pas juste Dr. Martin)
+6. **Ameliorer le message "Aucun patient"** dans les zones vides du board avec une icone et un sous-texte plus accueillant
+7. **Ajouter un spinner de chargement anime** pour les etats de loading (ProtectedRoute, RoleGuard, pages patients)
+
+### P2 - Polish premium
+
+8. **Ajouter une meta og:image** dans index.html (meme une couleur unie branded serait mieux que rien)
+9. **Renforcer le `signUpSuccess` screen** avec un lien vers la landing pour les nouveaux utilisateurs
+
+---
+
+## DETAILS TECHNIQUES DES CORRECTIONS
+
+### Fichier 1 : `src/pages/BoardPage.tsx`
+- Ligne 175 : remplacer `⚠ {p.allergies.join(', ')}` par `<AlertTriangle className="h-3 w-3 inline mr-0.5" /> {p.allergies.join(', ')}`
+- Import `AlertTriangle` depuis lucide-react
+- Ligne 190-191 : ameliorer le message "Aucun patient" avec une icone Users et un texte plus accueillant
+
+### Fichier 2 : `src/pages/TriagePage.tsx`
+- Lignes 308, 317, 345 : remplacer `⚠` par l'icone `AlertTriangle`
+
+### Fichier 3 : `src/pages/IOAQueuePage.tsx`
+- Ligne 95 : remplacer `⚠` par l'icone `AlertTriangle`
+
+### Fichier 4 : `src/pages/PatientDossierPage.tsx`
+- Ligne 78 : remplacer le `⚠` dans le toast par le texte sans emoji
 
 ### Fichier 5 : `src/pages/LoginPage.tsx`
-- Ajouter un lien retour vers la landing page (fleche ou logo cliquable en haut)
-- Ajouter un bloc "Compte demo" avec les identifiants de test pour faciliter la decouverte
+- Agrandir le bloc "Compte demo" pour lister les 5 comptes de test avec leur role respectif
+
+### Fichier 6 : `src/App.tsx`
+- Remplacer le texte "Chargement..." dans ProtectedRoute et RoleGuard par un spinner anime (Loader2 de Lucide avec `animate-spin`)
+
+### Fichier 7 : `src/pages/RoleSelector.tsx`
+- Ajouter un avertissement pour les nouveaux utilisateurs : "Ce role sera permanent. Contactez un administrateur pour le modifier."
+
+### Fichier 8 : `src/App.css`
+- Le fichier n'est importe nulle part — peut etre supprime ou garde vide (deja fait dans la derniere correction)
 
