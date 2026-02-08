@@ -30,9 +30,8 @@ export function HeroSection() {
           1 clic = 1 action. Zéro formation. Interfaces pensées pour les gardes    
         </p>
 
-        <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          Un point d'entrée urgences · Une timeline patient sourcée · Une pancarte IDE en un écran
-        </p>
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">Un point d'entrée urgences · Une timeline patient sourcée ·
+Une pancarte IDE en un écran</p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Button size="lg" onClick={() => navigate('/login')} className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
