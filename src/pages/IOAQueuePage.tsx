@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { LogOut, ClipboardList, ArrowRight } from 'lucide-react';
+import { LogOut, ClipboardList, ArrowRight, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
@@ -92,7 +92,7 @@ export default function IOAQueuePage() {
                     Attente : {waitStr}
                   </p>
                   {p.allergies && p.allergies.length > 0 && (
-                    <p className="text-xs text-medical-critical font-medium">⚠ {p.allergies.join(', ')}</p>
+                    <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>
                   )}
                 </div>
                 <Button onClick={() => navigate('/triage', { state: { patientId: enc.patient_id, encounterId: enc.id } })}>

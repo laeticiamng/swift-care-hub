@@ -75,7 +75,7 @@ export default function PatientDossierPage() {
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
     if (allergyWarning.length > 0) {
-      toast.error(`⚠ ALLERGIE DÉTECTÉE: ${allergyWarning.join(', ')} — Prescription bloquée`);
+      toast.error(`ALLERGIE DÉTECTÉE : ${allergyWarning.join(', ')} — Prescription bloquée`);
       return;
     }
     const { error } = await supabase.from('prescriptions').insert({
@@ -118,7 +118,7 @@ export default function PatientDossierPage() {
     fetchAll();
   };
 
-  if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground">Chargement...</div>;
+  if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><svg className="h-6 w-6 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg></div>;
 
   const age = calculateAge(patient.date_naissance);
   const vitalKeys = ['fc', 'pa_systolique', 'spo2', 'temperature'];

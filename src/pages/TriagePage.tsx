@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
-import { ArrowLeft, ArrowRight, Check, Search, Lightbulb } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SFMU_MOTIFS = [
@@ -305,7 +305,7 @@ export default function TriagePage() {
                             className="w-full text-left px-3 py-2 hover:bg-accent transition-colors text-sm">
                             <span className="font-medium">{p.nom} {p.prenom}</span>
                             <span className="text-muted-foreground ml-2">{p.date_naissance} · {p.sexe}</span>
-                            {p.allergies?.length > 0 && <span className="text-medical-critical ml-2 text-xs">⚠ {p.allergies.join(', ')}</span>}
+                            {p.allergies?.length > 0 && <span className="text-medical-critical ml-2 text-xs inline-flex items-center gap-0.5"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</span>}
                           </button>
                         ))}
                       </div>
@@ -314,7 +314,7 @@ export default function TriagePage() {
                       <Badge variant="secondary" className="mt-1 text-xs">
                         <Check className="h-3 w-3 mr-1" /> Patient connu
                         {selectedExisting.allergies?.length > 0 && (
-                          <span className="text-medical-critical ml-1">⚠ Allergies: {selectedExisting.allergies.join(', ')}</span>
+                          <span className="text-medical-critical ml-1 inline-flex items-center gap-0.5"><AlertTriangle className="h-3 w-3" /> Allergies: {selectedExisting.allergies.join(', ')}</span>
                         )}
                       </Badge>
                     )}
@@ -342,7 +342,7 @@ export default function TriagePage() {
                 )}
                 {selectedExisting?.allergies?.length > 0 && (
                   <div className="p-3 rounded-lg bg-medical-critical/5 border border-medical-critical/30">
-                    <p className="text-xs font-medium text-medical-critical mb-1">⚠ Allergies</p>
+                    <p className="text-xs font-medium text-medical-critical mb-1 flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> Allergies</p>
                     <p className="text-sm text-medical-critical">{selectedExisting.allergies.join(', ')}</p>
                   </div>
                 )}

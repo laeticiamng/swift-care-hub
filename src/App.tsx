@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import RoleSelector from "./pages/RoleSelector";
@@ -21,14 +22,14 @@ const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground">Chargement...</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
 function RoleGuard({ children }: { children: React.ReactNode }) {
   const { role, loading } = useAuth();
-  if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground">Chargement...</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!role) return <Navigate to="/select-role" replace />;
   return <>{children}</>;
 }

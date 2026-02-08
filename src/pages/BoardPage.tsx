@@ -11,7 +11,7 @@ import { StatCard } from '@/components/urgence/StatCard';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { Users, LogOut, Filter, FlaskConical, UserPlus, Stethoscope } from 'lucide-react';
+import { Users, LogOut, Filter, FlaskConical, UserPlus, Stethoscope, AlertTriangle, Inbox } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -172,7 +172,7 @@ export default function BoardPage() {
             </Select>
           </div>
           {p.allergies && p.allergies.length > 0 && (
-            <p className="text-xs text-medical-critical font-medium">⚠ {p.allergies.join(', ')}</p>
+            <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>
           )}
         </CardContent>
       </Card>
@@ -188,7 +188,10 @@ export default function BoardPage() {
       <div className="space-y-2">
         {byZone(zone.key).map(renderPatientCard)}
         {byZone(zone.key).length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">Aucun patient</p>
+          <div className="text-center py-8 space-y-2">
+            <Inbox className="h-8 w-8 text-muted-foreground/40 mx-auto" />
+            <p className="text-sm text-muted-foreground">Aucun patient dans cette zone</p>
+          </div>
         )}
       </div>
     </div>
