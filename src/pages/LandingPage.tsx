@@ -58,12 +58,42 @@ export default function LandingPage() {
 
       <HeroSection />
       <ProblemSection />
+
+      {/* Slogan separator */}
+      <div className="py-8 px-6 text-center">
+        <p className="text-xl sm:text-2xl font-bold text-primary italic">"Un logiciel pensé PAR des soignants, POUR des soignants."</p>
+      </div>
+
       <HowItWorksSection />
       <RolesSection />
+
+      {/* Slogan separator */}
+      <div className="py-8 px-6 text-center">
+        <p className="text-xl sm:text-2xl font-bold text-primary italic">"L'urgence n'attend pas. Votre logiciel non plus."</p>
+      </div>
+
       <FeaturesSection />
       <ImpactSection />
       <TestimonialsSection />
       <InnovationsSection />
+
+      {/* Manifesto */}
+      <section className="py-16 px-6 bg-card border-y">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Manifesto</p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Nous croyons que la technologie doit servir le soin.</h2>
+          <div className="space-y-4 text-muted-foreground leading-relaxed text-left sm:text-center">
+            <p>Chaque clic inutile est un regard détourné du patient. Chaque écran mal conçu est une source de fatigue cognitive qui s'accumule au fil d'une garde de 12 heures.</p>
+            <p>UrgenceOS est né d'un constat simple : <span className="text-foreground font-medium">les soignants méritent des outils à la hauteur de leur engagement</span>. Pas des logiciels pensés par des informaticiens dans des bureaux, mais une solution forgée dans le bruit des urgences, entre deux patients.</p>
+            <p>Notre promesse : <span className="text-foreground font-semibold">zéro formation, zéro friction, zéro perte de données</span>. Un logiciel qui s'adapte au soignant — jamais l'inverse.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Slogan separator */}
+      <div className="py-8 px-6 text-center">
+        <p className="text-xl sm:text-2xl font-bold text-primary italic">"8 clics hier. 1 tap aujourd'hui."</p>
+      </div>
 
       {/* Métriques clés spec */}
       <section className="py-16 px-6 bg-background">

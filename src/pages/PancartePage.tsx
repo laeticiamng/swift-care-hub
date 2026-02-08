@@ -81,21 +81,25 @@ export default function PancartePage() {
   };
 
   const [titrationDoses, setTitrationDoses] = useState<Record<string, string>>({});
+  const [lotNumbers, setLotNumbers] = useState<Record<string, string>>({});
 
   const handleAdminister = async (rx: any) => {
     if (!user || !encounter) return;
     const doseGiven = titrationDoses[rx.id] || rx.dosage;
+    const lot = lotNumbers[rx.id] || '';
+    const notes = lot ? `lot:${lot}` : null;
     await supabase.from('administrations').insert({
       prescription_id: rx.id, encounter_id: encounter.id, patient_id: encounter.patient_id,
-      administered_by: user.id, dose_given: doseGiven, route: rx.route,
+      administered_by: user.id, dose_given: doseGiven, route: rx.route, notes,
     });
     await supabase.from('prescriptions').update({ status: 'completed' }).eq('id', rx.id);
     await supabase.from('audit_logs').insert({
       user_id: user.id, action: 'administration', resource_type: 'prescription',
       resource_id: rx.id, details: { medication: rx.medication_name, dosage: doseGiven },
     });
-    toast.success(`${rx.medication_name} administré — ${doseGiven}`);
+    toast.success(`${rx.medication_name} administré — ${doseGiven}${lot ? ` (lot: ${lot})` : ''}`);
     setTitrationDoses(prev => { const n = { ...prev }; delete n[rx.id]; return n; });
+    setLotNumbers(prev => { const n = { ...prev }; delete n[rx.id]; return n; });
     fetchAll();
   };
 
@@ -277,7 +281,20 @@ export default function PancartePage() {
                           <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
                         </div>
                         {done ? (
-                          <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                          <div className="flex flex-col items-end gap-1">
+                            <Badge className="bg-medical-success text-medical-success-foreground"><Check className="h-3 w-3 mr-1" /> Administré</Badge>
+                            {(() => {
+                              const admin = administrations.find(a => a.prescription_id === rx.id);
+                              if (!admin) return null;
+                              const lot = admin.notes?.startsWith('lot:') ? admin.notes.replace('lot:', '') : null;
+                              return (
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(admin.administered_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} — {admin.dose_given} {admin.route}
+                                  {lot && <span className="ml-1 font-medium">(lot: {lot})</span>}
+                                </span>
+                              );
+                            })()}
+                          </div>
                         ) : isSuspended ? (
                           <Badge variant="secondary" className="bg-muted text-muted-foreground">Suspendue</Badge>
                         ) : isCancelled ? (
@@ -287,8 +304,15 @@ export default function PancartePage() {
                             <Input
                               value={titrationDoses[rx.id] ?? rx.dosage}
                               onChange={e => setTitrationDoses(prev => ({ ...prev, [rx.id]: e.target.value }))}
-                              className="w-24 h-8 text-xs text-center"
+                              className="w-20 h-8 text-xs text-center"
                               title="Dose à administrer (titration)"
+                            />
+                            <Input
+                              value={lotNumbers[rx.id] ?? ''}
+                              onChange={e => setLotNumbers(prev => ({ ...prev, [rx.id]: e.target.value }))}
+                              className="w-20 h-8 text-xs text-center"
+                              placeholder="N° lot"
+                              title="Numéro de lot (traçabilité)"
                             />
                             <Button size="sm" onClick={() => handleAdminister(rx)}
                               className="touch-target bg-medical-info hover:bg-medical-info/90 text-medical-info-foreground font-medium">

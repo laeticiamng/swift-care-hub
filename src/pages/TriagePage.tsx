@@ -169,7 +169,7 @@ export default function TriagePage() {
     if (searchNom.length < 2) { setSearchResults([]); setHomonymAlert(false); return; }
     const { data } = await supabase
       .from('patients')
-      .select('id, nom, prenom, date_naissance, sexe, allergies, antecedents')
+      .select('id, nom, prenom, date_naissance, sexe, allergies, antecedents, traitements_actuels')
       .ilike('nom', `%${searchNom}%`)
       .limit(10);
     if (data) { setSearchResults(data); detectHomonyms(data); }
@@ -421,6 +421,23 @@ export default function TriagePage() {
                     <p className="text-sm text-medical-critical">{selectedExisting.allergies.join(', ')}</p>
                   </div>
                 )}
+                {selectedExisting?.traitements_actuels && (() => {
+                  const traitements = Array.isArray(selectedExisting.traitements_actuels)
+                    ? selectedExisting.traitements_actuels
+                    : Object.entries(selectedExisting.traitements_actuels).map(([k, v]) => `${k}: ${v}`);
+                  return traitements.length > 0 ? (
+                    <div className="p-3 rounded-lg bg-accent/50 border">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">💊 Traitements en cours</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {traitements.map((t: any, i: number) => (
+                          <Badge key={i} variant="outline" className="text-xs">
+                            {typeof t === 'object' ? JSON.stringify(t) : String(t)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
                 {!selectedExisting && (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
