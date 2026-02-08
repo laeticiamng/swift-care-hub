@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import { Building2, Zap, Scale } from 'lucide-react';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
@@ -97,12 +98,14 @@ export default function LandingPage() {
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">Pourquoi maintenant ?</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { icon: '🏥', title: 'Tension hospitalière maximale', desc: "Les urgences françaises font face à une crise sans précédent. Le statu quo logiciel n'est plus tenable : chaque minute perdue en clics est une minute volée au patient." },
-              { icon: '⚡', title: 'Technologie mature', desc: "Temps réel, PWA offline, RLS natif, déploiement cloud en un clic. Les briques techniques pour un logiciel médical moderne existent enfin — sans compromis sur la sécurité." },
-              { icon: '📋', title: 'Cadre réglementaire stabilisé', desc: "RPU normalisé, identité INS, FHIR R4 : les standards sont posés. UrgenceOS s'y conforme nativement, sans couche d'adaptation coûteuse." },
+              { icon: Building2, title: 'Tension hospitalière maximale', desc: "Les urgences françaises font face à une crise sans précédent. Le statu quo logiciel n'est plus tenable : chaque minute perdue en clics est une minute volée au patient." },
+              { icon: Zap, title: 'Technologie mature', desc: "Temps réel, PWA offline, RLS natif, déploiement cloud en un clic. Les briques techniques pour un logiciel médical moderne existent enfin — sans compromis sur la sécurité." },
+              { icon: Scale, title: 'Cadre réglementaire stabilisé', desc: "RPU normalisé, identité INS, FHIR R4 : les standards sont posés. UrgenceOS s'y conforme nativement, sans couche d'adaptation coûteuse." },
             ].map(item => (
               <div key={item.title} className="p-6 rounded-xl border bg-card text-center space-y-3">
-                <span className="text-3xl">{item.icon}</span>
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <item.icon className="h-6 w-6 text-primary" />
+                </div>
                 <h3 className="font-bold text-lg">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
