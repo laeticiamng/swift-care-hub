@@ -1,145 +1,70 @@
 
 
-# Audit complet et amelioration ergonomique de toutes les pages
+# Ajouter les patients en attente au Board (avant et apres IOA)
 
-## Objectif
-Ameliorer l'ergonomie de chaque page non technique avec un design premium et minimaliste. Le board permettra de selectionner une seule zone (SAU, UHCD, Dechocage) au lieu d'afficher les 3 colonnes simultanement. Les prescriptions respecteront les 4 categories : Soins, Examens complementaires (Bilan), Imagerie, Traitements.
+## Probleme
 
----
+Le board filtre les patients par zone (SAU, UHCD, Dechocage) mais les patients qui n'ont pas encore de zone assignee sont invisibles :
+- **Avant IOA** : status `arrived`, zone = null (patient enregistre par la secretaire, pas encore trie)
+- **Apres IOA sans box** : status `triaged`, zone assignee mais box_number = null (trie mais pas encore installe)
+- **Sans zone** : status `triaged` ou `in-progress` mais zone = null (cas marginal)
 
-## 1. BoardPage — Selection de zone unique (priorite haute)
+Ces patients disparaissent du radar de l'equipe.
 
-**Probleme actuel** : Sur desktop, les 3 zones sont affichees en colonnes simultanement. L'utilisateur souhaite pouvoir selectionner une seule zone a la fois, comme sur mobile avec les onglets.
+## Solution
 
-**Solution** :
-- Remplacer la grille 3 colonnes desktop par un systeme d'onglets universel (mobile + desktop)
-- Ajouter une option "Tous" pour voir l'ensemble si besoin
-- Chaque onglet affiche le compteur de patients
-- Les StatCards en header affichent les compteurs de chaque zone pour garder la vue d'ensemble
-- Ajouter des animations d'entree staggerees sur les cards patients
-- Ajouter un indicateur visuel du filtre actif avec effet glassmorphism sur le header
+### 1. Nouvelle section "En attente" sur le BoardPage
 
-**Fichier** : `src/pages/BoardPage.tsx`
+Ajouter un 5e onglet/section visible en permanence dans les tabs :
 
----
+```text
+[ Tous (30) ] [ SAU (17) ] [ UHCD (8) ] [ Dechocage (5) ] [ En attente (4) ]
+```
 
-## 2. PatientDossierPage — Ergonomie prescription + antecedents
+Le compteur "En attente" combine :
+- Patients `arrived` (pre-IOA) : pastille orange "A trier"
+- Patients avec zone assignee mais sans box : pastille bleue "A installer"
+- Patients sans zone (triaged/in-progress) : pastille jaune "A orienter"
 
-**Probleme actuel** : Les categories de prescriptions sont presentes mais les antecedents pourraient etre mieux integres dans le layout global.
+### 2. Contenu de l'onglet "En attente"
 
-**Ameliorations** :
-- Deplacer le bloc antecedents/allergies groupes en haut de la colonne droite (au-dessus des constantes) pour une visibilite immediate
-- Ajouter un compteur par categorie de prescription dans un mini-resume en haut de la section prescriptions
-- Uniformiser les bordures laterales colorees sur les resultats critiques
-- Ajouter une animation d'entree sur les cartes de resultats
-- Confirmer les 4 categories : Traitements (Pill), Soins (HeartPulse), Examens Bio (FlaskConical), Imagerie (ScanLine)
+Deux sous-sections visuellement distinctes :
 
-**Fichier** : `src/pages/PatientDossierPage.tsx`
+**Pre-IOA** (status = `arrived`, zone = null)
+- Header avec icone `ClipboardList` et fond orange leger
+- Chaque card affiche : nom, age, sexe, heure d'arrivee, temps d'attente (colore si > 30min)
+- Bouton "Trier" qui redirige vers `/triage` avec le patientId pre-rempli (comme IOAQueuePage)
 
----
+**Post-IOA sans box** (status = `triaged` ou `in-progress`, box_number = null)
+- Header avec icone `MapPin` et fond bleu leger
+- Chaque card affiche : nom, age, sexe, CCMU, motif, zone assignee, temps d'attente
+- Dropdown pour assigner un box directement
 
-## 3. PancartePage — Ergonomie IDE amelioree
+### 3. Statistique "En attente" dans le header
 
-**Ameliorations** :
-- Ajouter un resume rapide en haut : nombre de prescriptions actives, actes effectues, resultats non lus
-- Confirmer les 4 categories de prescriptions coherentes avec le dossier medecin
-- Ameliorer la section transmissions DAR avec un layout plus clair (cards separees D/A/R)
-- Ajouter des animations d'entree staggerees
+Ajouter un StatCard supplementaire dans le header du board :
+- Icone `Clock` ou `Hourglass`
+- Valeur = nombre total de patients en attente
+- Variante `warning` si > 5, `critical` si > 10
 
-**Fichier** : `src/pages/PancartePage.tsx`
+### 4. Indicateur visuel dans l'onglet "Tous"
 
----
+Dans la vue "Tous", les patients en attente (sans zone) apparaissent aussi, avec un badge distinctif :
+- "A trier" (orange) pour les `arrived`
+- "A installer" (bleu) pour ceux avec zone mais sans box
 
-## 4. LoginPage — Finitions premium
+### 5. Modification de la requete de donnees
 
-**Ameliorations** :
-- Ajouter un effet d'animation subtil sur l'icone du panneau gauche (pulse lent)
-- Ameliorer l'espacement et le padding de la zone de comptes demo
-- Ajouter une transition douce entre les modes connexion/inscription
-
-**Fichier** : `src/pages/LoginPage.tsx`
+La requete `fetchEncounters` reste inchangee (elle recupere deja les status `arrived`, `triaged`, `in-progress`). Seul le filtrage cote client change pour inclure les patients sans zone dans la nouvelle section.
 
 ---
 
-## 5. RoleSelector — Finitions
+## Fichiers modifies
 
-**Etat actuel** : Deja bien construit avec animations staggerees, gradient background, et design premium.
+| Fichier | Modification |
+|---------|-------------|
+| `src/pages/BoardPage.tsx` | Ajout onglet "En attente", StatCard attente dans header, logique de filtrage pour patients sans zone/box |
+| `src/components/urgence/BoardPatientCard.tsx` | Ajout props pour afficher badges "A trier" / "A installer", bouton Trier conditionnel |
 
-**Ameliorations mineures** :
-- Ajouter un effet hover plus prononce avec scale et shadow
-- Ameliorer l'espacement sur mobile
-
-**Fichier** : `src/pages/RoleSelector.tsx`
-
----
-
-## 6. TriagePage — Coherence visuelle
-
-**Etat actuel** : Fonctionnel avec stepper et progress bar.
-
-**Ameliorations** :
-- Ajouter un indicateur visuel plus clair du step actif (point colore au lieu de texte seul)
-- Ameliorer les zones tactiles des boutons de motif SFMU
-- Ajouter des animations de transition entre les etapes
-
-**Fichier** : `src/pages/TriagePage.tsx`
-
----
-
-## 7. IOAQueuePage — Amelioration de la lisibilite
-
-**Ameliorations** :
-- Ajouter une heure d'arrivee visible sur chaque card
-- Animation d'entree staggeree sur les cards
-- Ameliorer le contraste des indicateurs d'attente
-
-**Fichier** : `src/pages/IOAQueuePage.tsx`
-
----
-
-## 8. AccueilPage — Coherence design
-
-**Ameliorations** :
-- Ajouter des animations d'entree staggerees sur la liste des admissions du jour
-- Ameliorer le formulaire avec des labels plus visibles
-- Ajouter un gradient de fond subtil coherent avec les autres pages
-
-**Fichier** : `src/pages/AccueilPage.tsx`
-
----
-
-## 9. AideSoignantPage — Ergonomie tactile
-
-**Etat actuel** : Bien adapte au mobile avec BigButtons.
-
-**Ameliorations** :
-- Ajouter un gradient de fond coherent
-- Ameliorer le retour visuel sur la selection de patient (animation)
-- Animations de transition entre les vues
-
-**Fichier** : `src/pages/AideSoignantPage.tsx`
-
----
-
-## 10. LandingPage — Pas de changement majeur
-
-La landing est deja bien structuree avec ses sections componentisees. Pas de modification prevue.
-
----
-
-## Resume technique
-
-| Page | Changement principal | Impact |
-|------|---------------------|--------|
-| BoardPage | Onglets au lieu de 3 colonnes, option "Tous" | Ergonomie majeure |
-| PatientDossierPage | Antecedents en haut, resume prescriptions | Lisibilite |
-| PancartePage | Resume rapide en haut, DAR ameliore | Workflow IDE |
-| LoginPage | Animations subtiles, finitions | Polish |
-| RoleSelector | Hover ameliore | Polish |
-| TriagePage | Steps visuels, transitions | UX |
-| IOAQueuePage | Heure arrivee, animations | Lisibilite |
-| AccueilPage | Animations, gradient | Coherence |
-| AideSoignantPage | Gradient, animations | Coherence |
-
-Tous les changements respectent : icones Lucide uniquement (pas d'emoji), zones tactiles 44px minimum, code couleur semantique medical, animations staggerees, et les 4 categories de prescriptions (Soins, Examens Bio, Imagerie, Traitements).
+Aucun nouveau fichier necessaire. Aucune modification base de donnees.
 
