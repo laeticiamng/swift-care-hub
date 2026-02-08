@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -82,8 +82,28 @@ export default function TriagePage() {
   // Step 5 — Orientation
   const [zone, setZone] = useState<string>('sau');
   const [boxNumber, setBoxNumber] = useState('');
+  const [selectedMedecin, setSelectedMedecin] = useState('');
+  const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
 
   const [submitting, setSubmitting] = useState(false);
+
+  // Fetch medecins for step 5
+  useEffect(() => {
+    const fetchMedecins = async () => {
+      const { data } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'medecin');
+      if (data && data.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', data.map(d => d.user_id));
+        if (profiles) setMedecins(profiles);
+      }
+    };
+    fetchMedecins();
+  }, []);
 
   const filteredMotifs = SFMU_MOTIFS.filter(m => m.toLowerCase().includes(motifSearch.toLowerCase()));
 
@@ -155,6 +175,7 @@ export default function TriagePage() {
       ccmu: cimu, cimu,
       motif_sfmu: motif,
       triage_time: new Date().toISOString(),
+      medecin_id: selectedMedecin || null,
     }).select().single();
 
     if (encErr || !encounter) { toast.error('Erreur création passage'); setSubmitting(false); return; }
@@ -348,6 +369,17 @@ export default function TriagePage() {
                       <SelectItem value="sau">SAU</SelectItem>
                       <SelectItem value="uhcd">UHCD</SelectItem>
                       <SelectItem value="dechocage">Déchocage</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Médecin référent</Label>
+                  <Select value={selectedMedecin} onValueChange={setSelectedMedecin}>
+                    <SelectTrigger className="mt-1"><SelectValue placeholder="Sélectionner un médecin" /></SelectTrigger>
+                    <SelectContent>
+                      {medecins.map(m => (
+                        <SelectItem key={m.id} value={m.id}>{m.full_name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

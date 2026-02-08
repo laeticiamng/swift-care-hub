@@ -8,9 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { StatCard } from '@/components/urgence/StatCard';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { Users, LogOut, Filter, FlaskConical, Image } from 'lucide-react';
+import { Users, LogOut, Filter, FlaskConical, Image, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { NetworkStatus } from '@/components/urgence/NetworkStatus';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
 const ZONES: { key: Zone; label: string }[] = [
@@ -108,13 +109,22 @@ export default function BoardPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-20 bg-card border-b shadow-sm px-4 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <h1 className="text-xl font-bold">UrgenceOS</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold">UrgenceOS</h1>
+            <NetworkStatus />
+          </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <StatCard label="Total" value={filtered.length} icon={Users} className="py-1 px-3" />
             {ZONES.map(z => (
               <StatCard key={z.key} label={z.label} value={byZone(z.key).length} icon={Users} className="py-1 px-3" />
             ))}
           </div>
           <div className="flex items-center gap-2">
+            {(role === 'ioa' || role === 'medecin') && (
+              <Button size="sm" onClick={() => navigate('/triage')}>
+                <UserPlus className="h-4 w-4 mr-1" /> Nouveau patient
+              </Button>
+            )}
             <Button variant={myOnly ? 'default' : 'outline'} size="sm" onClick={() => setMyOnly(!myOnly)}>
               <Filter className="h-4 w-4 mr-1" /> Mes patients
             </Button>
