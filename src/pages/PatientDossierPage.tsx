@@ -135,6 +135,28 @@ export default function PatientDossierPage() {
     fetchAll();
   };
 
+  const handleSuspendPrescription = async (rxId: string) => {
+    await supabase.from('prescriptions').update({ status: 'suspended' as any }).eq('id', rxId);
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'prescription_suspended', resource_type: 'prescription', resource_id: rxId,
+      });
+    }
+    toast.success('Prescription suspendue');
+    fetchAll();
+  };
+
+  const handleReactivatePrescription = async (rxId: string) => {
+    await supabase.from('prescriptions').update({ status: 'active' as any }).eq('id', rxId);
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'prescription_reactivated', resource_type: 'prescription', resource_id: rxId,
+      });
+    }
+    toast.success('Prescription réactivée');
+    fetchAll();
+  };
+
   const handleMarkRead = async (resultId: string) => {
     await supabase.from('results').update({ is_read: true }).eq('id', resultId);
     fetchAll();
@@ -596,19 +618,31 @@ export default function PatientDossierPage() {
                           rx.priority === 'stat' && rx.status === 'active' && 'border-medical-critical/30 animate-pulse',
                           rx.priority === 'urgent' && rx.status === 'active' && 'border-medical-warning/30',
                           rx.status === 'completed' && 'opacity-60',
-                          rx.status === 'cancelled' && 'opacity-40 line-through')}>
+                          rx.status === 'cancelled' && 'opacity-40 line-through',
+                          rx.status === 'suspended' && 'opacity-50 bg-muted/30')}>
                           <div>
                             <p className={cn('font-medium text-sm', rx.status === 'cancelled' && 'line-through')}>{rx.medication_name} — {rx.dosage}</p>
                             <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
                           </div>
                           <div className="flex items-center gap-1.5">
                             {rx.status === 'active' && (
-                              <Button variant="ghost" size="sm" className="h-7 text-xs text-medical-critical" onClick={() => handleCancelPrescription(rx.id)}>
-                                Annuler
+                              <>
+                                <Button variant="ghost" size="sm" className="h-7 text-xs text-medical-warning" onClick={() => handleSuspendPrescription(rx.id)}>
+                                  Suspendre
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-7 text-xs text-medical-critical" onClick={() => handleCancelPrescription(rx.id)}>
+                                  Annuler
+                                </Button>
+                              </>
+                            )}
+                            {rx.status === 'suspended' && (
+                              <Button variant="ghost" size="sm" className="h-7 text-xs text-medical-success" onClick={() => handleReactivatePrescription(rx.id)}>
+                                Réactiver
                               </Button>
                             )}
-                            <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}>
-                              {rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status === 'cancelled' ? 'Annulée' : rx.status}
+                            <Badge variant={rx.status === 'active' ? 'default' : 'secondary'}
+                              className={cn(rx.status === 'suspended' && 'bg-medical-warning/10 text-medical-warning border-medical-warning/30')}>
+                              {rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Administré' : rx.status === 'cancelled' ? 'Annulée' : rx.status === 'suspended' ? 'Suspendue' : rx.status}
                             </Badge>
                           </div>
                         </div>

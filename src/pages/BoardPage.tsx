@@ -11,7 +11,7 @@ import { PatientCard } from '@/components/urgence/BoardPatientCard';
 import { ZoneGrid } from '@/components/urgence/ZoneGrid';
 import { WaitingBanner } from '@/components/urgence/WaitingBanner';
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
-import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List } from 'lucide-react';
+import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -207,6 +207,14 @@ export default function BoardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto p-4 space-y-4">
+        {/* Global stat cards */}
+        <div className="grid grid-cols-4 gap-3">
+          <StatCard label="Total" value={filtered.length} icon={Users} />
+          <StatCard label="Arrivés" value={filtered.filter(e => e.status === 'arrived').length} icon={Hourglass} variant="warning" />
+          <StatCard label="En cours" value={filtered.filter(e => e.status === 'in-progress' || e.status === 'triaged').length} icon={Activity} variant="default" />
+          <StatCard label="Terminés (24h)" value={0} icon={CheckCircle} variant="success" />
+        </div>
+
         <WaitingBanner
           preIOA={preIOA}
           noZone={noZone}
