@@ -24,6 +24,7 @@ export default function AccueilPage() {
   const [dateNaissance, setDateNaissance] = useState('');
   const [sexe, setSexe] = useState('M');
   const [telephone, setTelephone] = useState('');
+  const [insNumero, setInsNumero] = useState('');
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
@@ -92,7 +93,7 @@ export default function AccueilPage() {
       patientId = selectedExisting.id;
     } else {
       const { data: patient, error } = await supabase.from('patients').insert({
-        nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null,
+        nom, prenom, date_naissance: dateNaissance, sexe, telephone: telephone || null, ins_numero: insNumero || null,
       }).select().single();
       if (error || !patient) { toast.error('Erreur de création patient'); setSubmitting(false); return; }
       patientId = patient.id;
@@ -107,7 +108,7 @@ export default function AccueilPage() {
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
 
     toast.success('Passage créé');
-    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone('');
+    setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero('');
     setSelectedExisting(null);
     setSubmitting(false);
     fetchToday();
@@ -137,7 +138,7 @@ export default function AccueilPage() {
       <header className="sticky top-0 z-20 bg-card border-b px-4 py-3">
         <div className="flex items-center justify-between max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">UrgenceOS — Accueil</h1>
+            <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span> — Accueil</h1>
             <NetworkStatus />
           </div>
           <div className="flex items-center gap-2">
@@ -201,6 +202,9 @@ export default function AccueilPage() {
                   </Select>
                 </div>
                 <div><Label>Téléphone</Label><Input value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06..." className="mt-1" /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label>N° Sécurité Sociale (optionnel)</Label><Input value={insNumero} onChange={e => setInsNumero(e.target.value)} placeholder="1 85 07 75 123 456 78" className="mt-1" /></div>
               </div>
               <div>
                 <Label>Motif (optionnel)</Label>

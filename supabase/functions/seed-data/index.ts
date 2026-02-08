@@ -159,20 +159,25 @@ Deno.serve(async (req) => {
     await supabaseAdmin.from('vitals').insert(vitalsInserts)
     console.log(`Inserted ${vitalsInserts.length} vitals`)
 
-    // Prescriptions
+    // Prescriptions — enriched with more meds and priorities
     const meds = [
-      { name: 'Paracétamol', dosage: '1g', route: 'PO', freq: 'Toutes les 6h' },
-      { name: 'Morphine', dosage: '5mg', route: 'IV', freq: 'Si EVA > 6' },
-      { name: 'NaCl 0.9%', dosage: '500ml', route: 'IV', freq: 'En 2h' },
-      { name: 'Ceftriaxone', dosage: '1g', route: 'IV', freq: '1x/jour' },
-      { name: 'Kétoprofène', dosage: '100mg', route: 'IV', freq: 'Toutes les 8h' },
-      { name: 'Oméprazole', dosage: '40mg', route: 'IV', freq: '1x/jour' },
-      { name: 'Métoclopramide', dosage: '10mg', route: 'IV', freq: 'Si nausées' },
+      { name: 'Paracétamol', dosage: '1g', route: 'PO', freq: 'Toutes les 6h', priority: 'routine' },
+      { name: 'Morphine', dosage: '5mg', route: 'IV', freq: 'Si EVA > 6', priority: 'urgent' },
+      { name: 'NaCl 0.9%', dosage: '500ml', route: 'IV', freq: 'En 2h', priority: 'routine' },
+      { name: 'Ceftriaxone', dosage: '2g', route: 'IV', freq: '1x/jour', priority: 'urgent' },
+      { name: 'Kétoprofène', dosage: '100mg', route: 'IV', freq: 'Toutes les 8h', priority: 'routine' },
+      { name: 'Oméprazole', dosage: '40mg', route: 'IV', freq: '1x/jour', priority: 'routine' },
+      { name: 'Métoclopramide', dosage: '10mg', route: 'IV', freq: 'Si nausées', priority: 'routine' },
+      { name: 'Amoxicilline', dosage: '1g', route: 'PO', freq: 'Toutes les 8h', priority: 'routine' },
+      { name: 'Enoxaparine', dosage: '4000UI', route: 'SC', freq: '1x/jour', priority: 'routine' },
+      { name: 'Salbutamol', dosage: '5mg', route: 'INH', freq: 'Toutes les 4h', priority: 'urgent' },
+      { name: 'Morphine', dosage: '10mg', route: 'IV', freq: 'Titration', priority: 'stat' },
+      { name: 'Adrénaline', dosage: '1mg', route: 'IV', freq: 'Si ACR', priority: 'stat' },
     ]
 
     const rxInserts: any[] = []
-    for (let i = 0; i < Math.min(encounters.length, 10); i++) {
-      const numRx = 1 + Math.floor(Math.random() * 3)
+    for (let i = 0; i < encounters.length; i++) {
+      const numRx = 2 + Math.floor(Math.random() * 3)
       for (let r = 0; r < numRx; r++) {
         const med = meds[Math.floor(Math.random() * meds.length)]
         rxInserts.push({
@@ -184,42 +189,84 @@ Deno.serve(async (req) => {
           route: med.route,
           frequency: med.freq,
           status: Math.random() > 0.7 ? 'completed' : 'active',
-          priority: Math.random() > 0.8 ? 'urgent' : 'routine',
+          priority: med.priority,
         })
       }
     }
+    let insertedRx: any[] = []
     if (medecinId) {
-      await supabaseAdmin.from('prescriptions').insert(rxInserts)
-      console.log(`Inserted ${rxInserts.length} prescriptions`)
+      const { data: rxData } = await supabaseAdmin.from('prescriptions').insert(rxInserts).select()
+      insertedRx = rxData || []
+      console.log(`Inserted ${insertedRx.length} prescriptions`)
     }
 
-    // Results
+    // Administrations — mark some prescriptions as administered
+    const adminInserts: any[] = []
+    if (ideId && insertedRx.length > 0) {
+      const completedRx = insertedRx.filter((rx: any) => rx.status === 'completed')
+      const activeRx = insertedRx.filter((rx: any) => rx.status === 'active')
+      // All completed + some active
+      for (const rx of completedRx) {
+        adminInserts.push({
+          prescription_id: rx.id, encounter_id: rx.encounter_id, patient_id: rx.patient_id,
+          administered_by: ideId, dose_given: rx.dosage, route: rx.route,
+          administered_at: new Date(Date.now() - Math.random() * 3 * 60 * 60 * 1000).toISOString(),
+        })
+      }
+      for (let i = 0; i < Math.min(5, activeRx.length); i++) {
+        adminInserts.push({
+          prescription_id: activeRx[i].id, encounter_id: activeRx[i].encounter_id, patient_id: activeRx[i].patient_id,
+          administered_by: ideId, dose_given: activeRx[i].dosage, route: activeRx[i].route,
+          administered_at: new Date(Date.now() - Math.random() * 2 * 60 * 60 * 1000).toISOString(),
+        })
+      }
+      await supabaseAdmin.from('administrations').insert(adminInserts)
+      console.log(`Inserted ${adminInserts.length} administrations`)
+    }
+
+    // Procedures
+    const procTypes: ('vvp' | 'prelevement' | 'ecg' | 'pansement' | 'sondage')[] = ['vvp', 'prelevement', 'ecg', 'pansement', 'vvp', 'prelevement', 'ecg', 'prelevement', 'vvp', 'ecg']
+    const procInserts: any[] = []
+    if (ideId) {
+      for (let i = 0; i < Math.min(10, encounters.length); i++) {
+        procInserts.push({
+          encounter_id: encounters[i].id, patient_id: encounters[i].patient_id,
+          performed_by: ideId, procedure_type: procTypes[i],
+          notes: procTypes[i] === 'vvp' ? 'VVP 18G bras gauche' : procTypes[i] === 'ecg' ? 'ECG 12 dérivations, rythme sinusal' : null,
+          performed_at: new Date(Date.now() - Math.random() * 4 * 60 * 60 * 1000).toISOString(),
+        })
+      }
+      await supabaseAdmin.from('procedures').insert(procInserts)
+      console.log(`Inserted ${procInserts.length} procedures`)
+    }
+
+    // Results — bio + imagerie
     const resultInserts: any[] = []
-    for (let i = 0; i < Math.min(encounters.length, 8); i++) {
+    for (let i = 0; i < Math.min(encounters.length, 10); i++) {
       resultInserts.push({
-        encounter_id: encounters[i].id,
-        patient_id: encounters[i].patient_id,
-        category: 'bio',
-        title: 'NFS + Ionogramme',
+        encounter_id: encounters[i].id, patient_id: encounters[i].patient_id,
+        category: 'bio', title: 'NFS + Ionogramme',
         content: { hemoglobine: (10 + Math.random() * 6).toFixed(1), leucocytes: (4 + Math.random() * 12).toFixed(1), creatinine: (60 + Math.random() * 80).toFixed(0), potassium: (3.2 + Math.random() * 2).toFixed(1) },
-        is_critical: Math.random() > 0.7,
-        is_read: Math.random() > 0.5,
+        is_critical: Math.random() > 0.7, is_read: Math.random() > 0.5,
       })
     }
-    // Add troponin for chest pain patients
-    resultInserts.push({
-      encounter_id: encounters[0].id,
-      patient_id: encounters[0].patient_id,
-      category: 'bio',
-      title: 'Troponine',
-      content: { troponine_us: '45', seuil: '14', unite: 'ng/L' },
-      is_critical: true,
-      is_read: false,
-    })
+    // Troponin for chest pain
+    resultInserts.push({ encounter_id: encounters[0].id, patient_id: encounters[0].patient_id, category: 'bio', title: 'Troponine', content: { troponine_us: '45', seuil: '14', unite: 'ng/L' }, is_critical: true, is_read: false })
+    // CRP/Lactates
+    resultInserts.push({ encounter_id: encounters[3].id, patient_id: encounters[3].patient_id, category: 'bio', title: 'CRP + Lactates', content: { CRP: '85 mg/L', lactates: '1.2 mmol/L', procalcitonine: '0.8 ng/mL' }, is_critical: false, is_read: false })
+    resultInserts.push({ encounter_id: encounters[7].id, patient_id: encounters[7].patient_id, category: 'bio', title: 'BNP', content: { BNP: '1200 pg/mL', seuil: '100', interpretation: 'Très élevé — insuffisance cardiaque probable' }, is_critical: true, is_read: false })
+    // Imagerie
+    resultInserts.push({ encounter_id: encounters[2].id, patient_id: encounters[2].patient_id, category: 'imagerie', title: 'Radio thorax', content: { conclusion: 'Syndrome interstitiel bilatéral. Cardiomégalie modérée.', technique: 'Face debout' }, is_critical: true, is_read: false })
+    resultInserts.push({ encounter_id: encounters[5].id, patient_id: encounters[5].patient_id, category: 'imagerie', title: 'Scanner cérébral', content: { conclusion: 'Pas de lésion hémorragique. Pas d\'effet de masse.', injection: 'Sans injection' }, is_critical: false, is_read: false })
+    resultInserts.push({ encounter_id: encounters[9].id, patient_id: encounters[9].patient_id, category: 'imagerie', title: 'Radio poignet G', content: { conclusion: 'Fracture distale du radius sans déplacement.', technique: 'Face + profil' }, is_critical: false, is_read: true })
+    resultInserts.push({ encounter_id: encounters[13].id, patient_id: encounters[13].patient_id, category: 'imagerie', title: 'Radio cheville D', content: { conclusion: 'Fracture malléole externe. Pas de luxation.', technique: 'Face + profil + mortaise' }, is_critical: false, is_read: false })
+    // ECG
+    resultInserts.push({ encounter_id: encounters[1].id, patient_id: encounters[1].patient_id, category: 'ecg', title: 'ECG 12 dérivations', content: { rythme: 'FA rapide à 130/min', axe: 'Normal', ST: 'Pas de sus-décalage', conclusion: 'Fibrillation auriculaire rapide' }, is_critical: true, is_read: false })
+
     await supabaseAdmin.from('results').insert(resultInserts)
     console.log(`Inserted ${resultInserts.length} results`)
 
-    // Timeline items
+    // Timeline items — enriched
     const timelineInserts: any[] = []
     for (const p of patients) {
       if (p.antecedents && p.antecedents.length > 0) {
@@ -232,10 +279,17 @@ Deno.serve(async (req) => {
           timelineInserts.push({ patient_id: p.id, item_type: 'allergie', content: `Allergie : ${al}`, source_document: 'DMP', source_date: '2024-06-01', source_author: 'Pharmacie' })
         }
       }
-      // Add a CRH for older patients
       const age = new Date().getFullYear() - new Date(p.date_naissance).getFullYear()
       if (age > 60) {
         timelineInserts.push({ patient_id: p.id, item_type: 'crh', content: 'Hospitalisation pour décompensation cardiaque. Traitement adapté. Sortie à J5.', source_document: 'CRH CHU', source_date: '2025-09-20', source_author: 'Dr. Cardiologue' })
+      }
+      // Add traitement items for patients with medecin_traitant
+      if (p.medecin_traitant) {
+        timelineInserts.push({ patient_id: p.id, item_type: 'traitement', content: 'Traitement habituel en cours — voir ordonnance', source_document: 'Ordonnance', source_date: '2025-11-01', source_author: p.medecin_traitant })
+      }
+      // Add diagnostic for some patients
+      if (age > 50 && p.antecedents?.length > 0) {
+        timelineInserts.push({ patient_id: p.id, item_type: 'diagnostic', content: `Suivi ${p.antecedents[0]} — dernier bilan stable`, source_document: 'Compte-rendu consultation', source_date: '2025-12-15', source_author: 'Spécialiste' })
       }
     }
     await supabaseAdmin.from('timeline_items').insert(timelineInserts)
@@ -247,7 +301,9 @@ Deno.serve(async (req) => {
       patients: patients.length,
       encounters: encounters.length,
       vitals: vitalsInserts.length,
-      prescriptions: rxInserts.length,
+      prescriptions: insertedRx.length,
+      administrations: adminInserts.length,
+      procedures: procInserts.length,
       results: resultInserts.length,
       timeline: timelineInserts.length,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
