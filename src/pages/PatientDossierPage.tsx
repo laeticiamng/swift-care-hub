@@ -152,7 +152,7 @@ export default function PatientDossierPage() {
             </Button>
           </div>
         )}
-        <DischargeDialog open={dischargeOpen} onOpenChange={setDischargeOpen} encounterId={encounter.id} onDone={() => { fetchAll(); navigate('/board'); }} />
+        <DischargeDialog open={dischargeOpen} onOpenChange={setDischargeOpen} encounterId={encounter.id} patientId={encounter.patient_id} userId={user?.id || ''} onDone={() => { fetchAll(); navigate('/board'); }} />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Timeline — 3 cols */}
