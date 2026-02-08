@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity } from 'lucide-react';
+import { Activity, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +37,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName || email);
+        if (!fullName.trim()) {
+          setError('Le nom complet est requis');
+          return;
+        }
+        const { error } = await signUp(email, password, fullName);
         if (error) {
           if (error.message.includes('already registered')) {
             setError('Cet email est déjà enregistré. Connectez-vous.');
@@ -44,7 +49,7 @@ export default function LoginPage() {
             setError(error.message);
           }
         } else {
-          navigate('/select-role');
+          setSignUpSuccess(true);
         }
       } else {
         const { error } = await signIn(email, password);
@@ -58,6 +63,30 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (signUpSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-8 pb-6 text-center space-y-4">
+            <CheckCircle className="h-12 w-12 text-medical-success mx-auto" />
+            <h2 className="text-xl font-semibold">Compte créé avec succès !</h2>
+            <p className="text-muted-foreground">Vous pouvez maintenant vous connecter.</p>
+            <Button
+              className="w-full touch-target"
+              onClick={() => {
+                setSignUpSuccess(false);
+                setIsSignUp(false);
+                setPassword('');
+              }}
+            >
+              Se connecter
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -78,7 +107,7 @@ export default function LoginPage() {
             {isSignUp && (
               <div className="space-y-2">
                 <Label htmlFor="fullName">Nom complet</Label>
-                <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Dr. Martin Dupont" />
+                <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Dr. Martin Dupont" required />
               </div>
             )}
             <div className="space-y-2">
