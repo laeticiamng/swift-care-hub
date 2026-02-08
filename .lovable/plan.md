@@ -1,128 +1,131 @@
 
-# Completions manquantes pour UrgenceOS
 
-## Analyse des lacunes
+# Completions restantes pour UrgenceOS
 
-Apres audit complet du code et de la base de donnees, voici ce qui manque par rapport au plan initial :
-
----
-
-## 1. RLS : AS ne peut pas inserer procedures/vitals pour brancardage/surveillance/confort
-
-**Probleme** : L'interface AS utilise `procedures.insert()` pour surveillance, brancardage et confort, mais la policy RLS `IDE can insert procedures` n'autorise que le role IDE. L'AS est bloque en ecriture.
-
-**Correction** : Ajouter le role AS dans la policy INSERT sur `procedures`.
+Apres audit complet du code, de la base de donnees et des policies RLS, voici les elements encore manquants par rapport au plan initial.
 
 ---
 
-## 2. Pas de medecin selectable dans le Triage etape 5 (Orientation)
+## 1. RLS : AS ne peut pas lire les procedures
 
-**Probleme** : Le plan prevoit un dropdown de selection du medecin a l'etape 5 du triage. Actuellement seuls la zone et le numero de box sont proposes.
+**Probleme** : La policy SELECT sur `procedures` n'autorise que `medecin` et `ide`. L'AS qui insere des procedures (surveillance, brancardage, confort) ne peut meme pas relire ses propres actes.
 
-**Correction** : Ajouter un `Select` qui affiche les profils avec role `medecin`, et assigner `medecin_id` sur le `encounters.insert`.
-
----
-
-## 3. Dossier Patient : pas de workflow "Preparer sortie"
-
-**Probleme** : Le plan mentionne un bouton "Preparer sortie" dans le dossier patient medecin, avec un workflow (CRH + ordonnance + orientation). Non implemente.
-
-**Correction** : Ajouter un bouton "Preparer sortie" qui :
-- Ouvre une modale avec champs : orientation (domicile/hospitalisation/transfert), resume de sortie (textarea), ordonnances de sortie
-- Met a jour `encounters.status = 'finished'`, `discharge_time = now()`, `orientation = valeur choisie`
+**Correction** : Ajouter `as` dans la policy SELECT de `procedures`.
 
 ---
 
-## 4. Dossier Patient : pas de toggle "Essentiel / Voir tout" sur la timeline
+## 2. RLS : AS ne peut pas mettre a jour les encounters (update zone)
 
-**Probleme** : Le plan mentionne un filtre "Essentiel" vs "Voir tout" pour la timeline. Absent actuellement.
-
-**Correction** : Ajouter un toggle qui filtre les items : mode "Essentiel" ne montre que `allergie`, `crh`, et items critiques.
+**Probleme** : La policy UPDATE sur `encounters` autorise `medecin`, `ioa`, `ide` mais pas `as`. L'AS ne devrait peut-etre pas deplacer un patient, mais le plan ne l'exige pas non plus. Pas de changement necessaire ici.
 
 ---
 
-## 5. Prescriptions : pas de verification d'allergie avant prescription
+## 3. Pas de mode sombre fonctionnel (toggle manquant)
 
-**Probleme** : Le plan exige une alerte bloquante rouge si un medicament prescrit est de la meme famille qu'une allergie connue. Non implemente.
+**Probleme** : Les variables CSS dark sont definies dans index.css, mais il n'y a aucun toggle pour activer le mode sombre, et `next-themes` est installe mais pas utilise. Le header ne propose pas de switch clair/sombre.
 
-**Correction** : Ajouter une table de mapping medicament-famille d'allergie (cote client, constante). Avant validation, verifier si le medicament contient un mot-cle d'allergie. Si oui, afficher une alerte rouge bloquante dans la modale de prescription.
-
----
-
-## 6. Board : pas de lien "Nouveau patient" pour IOA
-
-**Probleme** : Le header du board devrait avoir un bouton "Nouveau patient" qui lance le workflow IOA (lien vers /triage). Absent.
-
-**Correction** : Ajouter un bouton dans le header du board, visible pour les roles IOA et medecin, qui navigue vers `/triage`.
+**Correction** : Ajouter un `ThemeProvider` avec `next-themes` dans App.tsx et un bouton toggle (Sun/Moon) dans les headers du Board et des autres pages.
 
 ---
 
-## 7. Pancarte IDE : temperature manquante dans la saisie inline
+## 4. Dossier Patient : pas de notes/observations medicales
 
-**Probleme** : Le formulaire de saisie inline des constantes dans la pancarte affiche FC, PA sys, PA dia, SpO2 mais pas la temperature.
+**Probleme** : Le medecin ne peut pas ajouter de notes cliniques / observations dans le dossier patient. Il n'y a pas de textarea pour ecrire un examen clinique, une hypothese diagnostique, ou un compte-rendu.
 
-**Correction** : Ajouter un input T degrees dans la grille de saisie (5 champs + bouton OK = 6 colonnes, ou reorganiser).
-
----
-
-## 8. Realtime : pas de realtime sur la page Accueil
-
-**Probleme** : Quand un nouveau patient est admis par la secretaire, l'IOA ne voit pas le patient apparaitre en temps reel dans le triage/board.
-
-**Correction** : La liste Accueil devrait aussi se rafraichir en realtime (channel sur encounters).
+**Correction** : Ajouter une section "Notes medicales" dans PatientDossierPage avec un textarea et un bouton d'enregistrement. Stocker dans `timeline_items` avec `item_type = 'crh'` ou ajouter un nouveau type `observation`.
 
 ---
 
-## 9. Board : pas de compteur total dans le header
+## 5. Timeline : pas d'insertion possible (timeline en lecture seule)
 
-**Probleme** : Le header affiche SAU/UHCD/Dechocage mais pas le total global de patients.
+**Probleme** : La table `timeline_items` n'a aucune policy INSERT. Les medecins ne peuvent pas ajouter de CRH, notes, ou diagnostics dans la timeline du patient.
 
-**Correction** : Ajouter un `StatCard` "Total" avec le nombre total de patients filtres.
+**Correction** : Ajouter une policy INSERT pour le role `medecin` (et eventuellement `ioa`) sur `timeline_items`.
 
 ---
 
-## 10. Composant NetworkStatus manquant
+## 6. Board : pas d'indication du medecin referent sur les cartes
 
-**Probleme** : Le plan prevoit un composant `NetworkStatus` (pastille vert/orange/rouge indiquant la connexion). Non implemente.
+**Probleme** : Le plan mentionne que les cartes patient sur le board doivent afficher le medecin referent. Actuellement seuls nom, age, motif, CCMU, et temps d'attente sont affiches.
 
-**Correction** : Creer un composant leger qui ecoute `navigator.onLine` et les evenements `online`/`offline`, affiche une pastille dans le header.
+**Correction** : Joindre `profiles` via `medecin_id` dans la requete du board et afficher le nom du medecin sur la carte.
+
+---
+
+## 7. Board : pas de filtre par zone (tous les filtres d'un coup)
+
+**Probleme** : Le board affiche les 3 colonnes simultanement. Sur mobile, c'est difficilement lisible. Il n'y a pas de navigation par onglets pour mobile.
+
+**Correction** : Ajouter des onglets (Tabs) sur mobile pour naviguer entre SAU/UHCD/Dechocage, tout en gardant les 3 colonnes sur desktop.
+
+---
+
+## 8. Pas d'audit log sur les actions critiques
+
+**Probleme** : La table `audit_logs` existe mais n'est jamais alimentee. Aucune action (prescription, administration, sortie) n'est tracee dans l'audit.
+
+**Correction** : Ajouter des inserts dans `audit_logs` lors des actions critiques : prescription, administration, sortie patient, modification de zone.
+
+---
+
+## 9. Pancarte : pas de section transmissions historique
+
+**Probleme** : La pancarte IDE affiche le formulaire DAR mais ne montre pas l'historique des transmissions precedentes.
+
+**Correction** : Ajouter un collapsible sous le formulaire DAR qui affiche les transmissions passees pour ce passage.
+
+---
+
+## 10. IOA : pas de route dediee pour la file d'attente IOA
+
+**Probleme** : L'IOA est redirige vers `/triage` (creation) mais n'a pas de vue de la file d'attente des patients en statut `arrived` (admis par la secretaire, non encore tries).
+
+**Correction** : Ajouter une page `/ioa-queue` ou un onglet dans le board qui filtre les patients `arrived` pour que l'IOA puisse les voir et lancer le tri.
 
 ---
 
 ## Plan d'implementation technique
 
 ### Migration SQL
-- Modifier la policy RLS `IDE can insert procedures` pour inclure le role `as`
+1. Ajouter `as` dans la policy SELECT de `procedures`
+2. Ajouter une policy INSERT sur `timeline_items` pour `medecin` et `ioa`
 
 ### Fichiers a modifier
 
-1. **`src/pages/BoardPage.tsx`**
-   - Ajouter bouton "Nouveau patient" (visible IOA/medecin) dans le header
-   - Ajouter StatCard "Total" dans le header
+1. **`src/App.tsx`**
+   - Ajouter `ThemeProvider` de next-themes
+   - Ajouter route `/ioa-queue`
 
-2. **`src/pages/PatientDossierPage.tsx`**
-   - Ajouter toggle "Essentiel / Voir tout" sur la timeline
-   - Ajouter bouton "Preparer sortie" avec modale (orientation, resume, ordonnances)
-   - Ajouter verification d'allergie dans la modale de prescription (mapping medicament -> famille)
+2. **`src/pages/BoardPage.tsx`**
+   - Joindre profiles via medecin_id, afficher nom medecin sur les cartes
+   - Ajouter Tabs responsive (onglets sur mobile, colonnes sur desktop)
+   - Ajouter toggle mode sombre dans le header
+   - Ajouter inserts audit_logs lors de changements de zone
 
-3. **`src/pages/TriagePage.tsx`**
-   - Ajouter dropdown selection medecin a l'etape 5 (fetch profiles avec role medecin)
-   - Assigner `medecin_id` au `encounters.insert`
+3. **`src/pages/PatientDossierPage.tsx`**
+   - Ajouter section "Notes medicales" (textarea + bouton)
+   - Ajouter insert dans timeline_items pour les notes
+   - Ajouter insert audit_logs sur les prescriptions et sorties
 
 4. **`src/pages/PancartePage.tsx`**
-   - Ajouter champ temperature dans la saisie inline des constantes
+   - Ajouter historique des transmissions DAR (collapsible)
+   - Ajouter insert audit_logs sur les administrations
 
-5. **`src/pages/AccueilPage.tsx`**
-   - Ajouter channel realtime sur encounters pour rafraichir la liste automatiquement
+5. **`src/pages/IOAQueuePage.tsx`** (nouveau)
+   - Liste des patients en statut `arrived`, non tries
+   - Bouton "Trier ce patient" qui passe en /triage avec pre-remplissage
+   - Realtime sur encounters
 
-6. **`src/components/urgence/NetworkStatus.tsx`** (nouveau)
-   - Composant pastille qui ecoute `navigator.onLine`
-   - Integrer dans le header commun ou dans chaque page
+6. **`src/pages/RoleSelector.tsx`**
+   - Mettre a jour le redirect IOA vers `/ioa-queue`
 
 ### Ordre de priorite
-1. Fix RLS AS (bloquant)
-2. Verification allergie prescription (securite patient)
-3. Selection medecin au triage
-4. Workflow sortie patient
-5. Toggle timeline + bouton nouveau patient + total board
-6. Temperature pancarte + realtime accueil + NetworkStatus
+1. Fix RLS (procedures SELECT pour AS + timeline INSERT pour medecin)
+2. Notes medicales dans le dossier patient
+3. File d'attente IOA
+4. Historique transmissions dans la pancarte
+5. Medecin referent sur les cartes board
+6. Onglets mobile board
+7. Toggle mode sombre
+8. Audit logs
+
