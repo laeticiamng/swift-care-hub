@@ -136,15 +136,27 @@ export default function LoginPage() {
             <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                 <Info className="h-3.5 w-3.5" />
-                Compte démo
+                Comptes démo
               </div>
-              <button
-                type="button"
-                onClick={() => { setEmail('martin@urgenceos.fr'); setPassword('urgenceos2026'); }}
-                className="text-xs text-primary hover:underline"
-              >
-                Utiliser le compte Dr. Martin (médecin)
-              </button>
+              <div className="space-y-1">
+                {[
+                  { email: 'martin@urgenceos.fr', label: 'Dr. Martin', role: 'Médecin' },
+                  { email: 'ioa@urgenceos.fr', label: 'IOA Dupont', role: 'IOA' },
+                  { email: 'ide@urgenceos.fr', label: 'IDE Leroy', role: 'IDE' },
+                  { email: 'as@urgenceos.fr', label: 'AS Bernard', role: 'Aide-soignant' },
+                  { email: 'sec@urgenceos.fr', label: 'Sec. Moreau', role: 'Secrétaire' },
+                ].map(account => (
+                  <button
+                    key={account.email}
+                    type="button"
+                    onClick={() => { setEmail(account.email); setPassword('urgenceos2026'); }}
+                    className="flex items-center justify-between w-full text-xs text-primary hover:underline py-0.5"
+                  >
+                    <span>{account.label}</span>
+                    <span className="text-muted-foreground">{account.role}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>

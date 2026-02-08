@@ -68,9 +68,14 @@ export default function RoleSelector() {
         </h1>
         <p className="text-muted-foreground mt-1">
           {isNewUser
-            ? 'Ce rôle sera attribué à votre compte pour cette application'
+            ? 'Ce rôle sera attribué de façon permanente à votre compte'
             : 'Choisissez votre profil pour cette session'}
         </p>
+        {isNewUser && (
+          <p className="text-xs text-medical-warning mt-2 font-medium">
+            ⚠ Ce choix est définitif. Contactez un administrateur pour le modifier ultérieurement.
+          </p>
+        )}
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
 
