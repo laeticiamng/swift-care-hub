@@ -1,5 +1,7 @@
 import { AlertTriangle, ArrowLeft } from 'lucide-react';
 import { CCMUBadge } from './CCMUBadge';
+import { ThemeToggle } from './ThemeToggle';
+import { NetworkStatus } from './NetworkStatus';
 import { cn } from '@/lib/utils';
 
 interface PatientBannerProps {
@@ -35,16 +37,20 @@ export function PatientBanner({
         </div>
         {motif && <span className="text-sm text-muted-foreground">— {motif}</span>}
         {hasAllergies && (
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-1">
             <AlertTriangle className="h-4 w-4 text-medical-critical" />
             <span className="text-sm font-medium text-medical-critical">
               {allergies.join(', ')}
             </span>
           </div>
         )}
-        {medecinName && (
-          <span className="text-sm text-muted-foreground ml-auto">Dr. {medecinName}</span>
-        )}
+        <div className="flex items-center gap-1 ml-auto">
+          {medecinName && (
+            <span className="text-sm text-muted-foreground mr-2">Dr. {medecinName}</span>
+          )}
+          <NetworkStatus />
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
 import RoleSelector from "./pages/RoleSelector";
 import BoardPage from "./pages/BoardPage";
 import PatientDossierPage from "./pages/PatientDossierPage";
@@ -46,7 +47,7 @@ function AppRoutes() {
       <Route path="/as" element={<ProtectedRoute><RoleGuard><AideSoignantPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/accueil" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/ioa-queue" element={<ProtectedRoute><RoleGuard><IOAQueuePage /></RoleGuard></ProtectedRoute>} />
-      <Route path="/" element={<Navigate to={user ? "/select-role" : "/login"} replace />} />
+      <Route path="/" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
