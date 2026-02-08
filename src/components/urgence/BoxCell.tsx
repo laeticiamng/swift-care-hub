@@ -25,10 +25,11 @@ interface BoxCellProps {
   encounter?: BoxCellPatient;
   resultCount?: { unread: number; critical: number };
   isHighlighted?: boolean;
+  hasActiveFilter?: boolean;
   onClick?: () => void;
 }
 
-export function BoxCell({ boxNumber, encounter, resultCount, isHighlighted, onClick }: BoxCellProps) {
+export function BoxCell({ boxNumber, encounter, resultCount, isHighlighted, hasActiveFilter, onClick }: BoxCellProps) {
   if (!encounter) {
     return (
       <div className={cn(
@@ -57,6 +58,7 @@ export function BoxCell({ boxNumber, encounter, resultCount, isHighlighted, onCl
         'bg-card',
         borderColor && `border-l-4 ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
+        hasActiveFilter && !isHighlighted && 'opacity-40',
       )}
     >
       <div>

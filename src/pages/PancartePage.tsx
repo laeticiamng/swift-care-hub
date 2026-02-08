@@ -128,7 +128,7 @@ export default function PancartePage() {
     if (!user || !encounter) return;
     const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
     const donneesAuto = lastVital
-      ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
+      ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
       : 'Pas de constantes récentes';
     const recentProcs = procedures.slice(0, 3);
     const recentAdmins = administrations.slice(0, 3);
@@ -161,7 +161,7 @@ export default function PancartePage() {
 
   const lastVital = vitals.length > 0 ? vitals[vitals.length - 1] : null;
   const donneesPreview = lastVital
-    ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C`
+    ? `FC ${lastVital.fc || '—'} | PA ${lastVital.pa_systolique || '—'}/${lastVital.pa_diastolique || '—'} | SpO₂ ${lastVital.spo2 || '—'}% | T° ${lastVital.temperature || '—'}°C${lastVital.frequence_respiratoire ? ` | FR ${lastVital.frequence_respiratoire}` : ''}${lastVital.gcs ? ` | GCS ${lastVital.gcs}` : ''}${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
     : 'Aucune constante disponible';
   const recentProcs = procedures.slice(0, 3);
   const recentAdmins = administrations.slice(0, 3);

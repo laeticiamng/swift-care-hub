@@ -79,6 +79,7 @@ export default function TriagePage() {
   // Step 3 — Vitals + Poids
   const [vitalsData, setVitalsData] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
   const [poids, setPoids] = useState('');
+  const [medecinTraitant, setMedecinTraitant] = useState('');
 
   // Step 4 — CIMU
   const [cimu, setCimu] = useState<number | null>(null);
@@ -227,9 +228,12 @@ export default function TriagePage() {
 
       if (encErr) { toast.error('Erreur mise à jour passage'); setSubmitting(false); return; }
 
-      // Update patient weight if provided
-      if (poids) {
-        await supabase.from('patients').update({ poids: parseFloat(poids) }).eq('id', patientId);
+      // Update patient weight and medecin traitant if provided
+      if (poids || medecinTraitant) {
+        const updates: any = {};
+        if (poids) updates.poids = parseFloat(poids);
+        if (medecinTraitant) updates.medecin_traitant = medecinTraitant;
+        await supabase.from('patients').update(updates).eq('id', patientId);
       }
 
       // Insert vitals
@@ -267,9 +271,12 @@ export default function TriagePage() {
 
     if (encErr || !encounter) { toast.error('Erreur création passage'); setSubmitting(false); return; }
 
-    // Update patient weight if provided
-    if (poids) {
-      await supabase.from('patients').update({ poids: parseFloat(poids) }).eq('id', patientId);
+    // Update patient weight and medecin traitant if provided
+    if (poids || medecinTraitant) {
+      const updates: any = {};
+      if (poids) updates.poids = parseFloat(poids);
+      if (medecinTraitant) updates.medecin_traitant = medecinTraitant;
+      await supabase.from('patients').update(updates).eq('id', patientId);
     }
 
     const hasVitals = Object.values(vitalsData).some(v => v !== '');
@@ -373,6 +380,10 @@ export default function TriagePage() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+                <div>
+                  <Label>Médecin traitant (optionnel)</Label>
+                  <Input value={medecinTraitant} onChange={e => setMedecinTraitant(e.target.value)} placeholder="Dr Martin" className="mt-1" />
                 </div>
                 {selectedExisting?.antecedents?.length > 0 && (
                   <div className="p-3 rounded-lg bg-accent/50 border">

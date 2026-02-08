@@ -29,10 +29,11 @@ interface ZoneGridProps {
   encounters: Encounter[];
   resultCounts: ResultCount[];
   highlightedIds?: Set<string>;
+  hasActiveFilter?: boolean;
   onClickEncounter: (encounter: Encounter) => void;
 }
 
-export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, onClickEncounter }: ZoneGridProps) {
+export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasActiveFilter, onClickEncounter }: ZoneGridProps) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(true);
   const occupiedCount = encounters.filter(e => e.box_number).length;
@@ -55,6 +56,7 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, onCli
             encounter={enc}
             resultCount={enc ? getResultCount(enc.id) : undefined}
             isHighlighted={enc ? highlightedIds?.has(enc.id) : false}
+            hasActiveFilter={hasActiveFilter}
             onClick={enc ? () => onClickEncounter(enc) : undefined}
           />
         );
