@@ -1,97 +1,124 @@
 
 
-# Completions Premium Finales -- Polish et Coherence
+# Audit UrgenceOS -- Resultats et Actions Restantes
 
-## Constat
+## Etat des lieux : 90% deja implemente
 
-Apres audit exhaustif de chaque page et composant, la plateforme est deja a 9/10 en moyenne. Les upgrades precedents (StatCards, bordures colorees, gradients, animations, temoignages) sont tous en place.
+Apres revue complete du code et des donnees en base, voici le constat :
 
-Il reste des ajustements mineurs de coherence et de polish pour atteindre le 9.5/10 uniforme.
+### Deja fait (ne rien casser)
+
+| # Ticket | Feature | Statut |
+|----------|---------|--------|
+| 1 | Route /triage | OK -- route `/triage` existe, navigation par state depuis IOA |
+| 2 | Landing page a `/` | OK -- LandingPage affichee pour visiteurs non connectes |
+| 3 | Prescriptions seed | OK -- 17 prescriptions en base |
+| 4 | Resultats seed | OK -- 9 resultats dont 5 critiques, 1 troponine |
+| 5 | Bouton Administre pancarte | OK -- `handleAdminister()` complet avec audit log |
+| 6 | Workflow tri IOA 5 etapes | OK -- wizard complet avec progress bar, SFMU, CIMU auto |
+| 7 | Sparklines constantes | OK -- Recharts LineChart sur dossier ET pancarte |
+| 8 | Modal prescription | OK -- Dialog 3 champs + allergie check + audit log |
+| 9 | Resultats avec alertes | OK -- badge critique, badge "Nouveau", contenu depliable |
+| 10 | Timeline enrichie | OK -- icones par type, source/date/auteur, toggle Essentiel |
+| 11 | Interface AS actions | OK -- 4 vues fonctionnelles avec insert DB |
+| 12 | Accueil recherche patient | OK -- autocomplete + pre-remplissage |
+| 13 | Landing marketing | OK -- Hero, Probleme, Roles, Impact, CTA |
+| 14 | Board temps attente | OK -- rouge > 4h, orange > 2h (seuils corrects) |
+| 16 | PrescriptionLine | OK -- integre directement dans PancartePage |
+| 17 | Audit trail | OK -- administration, prescription, zone_change |
+| 18 | Realtime prescriptions | OK -- subscription Supabase sur PancartePage |
+
+### Ce qui reste a faire (5 items)
 
 ---
 
-## Corrections restantes
+## Plan d'implementation
 
-### 1. PatientDossierPage -- Ajouter le branding header "UrgenceOS"
+### 1. Toggle "Mes patients" persistant (localStorage)
 
-La page Dossier Patient (`/patient/:id`) n'a pas de branding UrgenceOS dans le `PatientBanner`. Toutes les autres pages ont le branding dans le header. Le `PatientBanner` est partage avec `PancartePage`, donc la correction s'appliquera aux deux.
+Le bouton "Mes patients" sur le Board perd son etat au rechargement. Ajouter la persistance via localStorage.
 
-**Fichier** : `src/components/urgence/PatientBanner.tsx`
-- Ajouter le texte "UrgenceOS" discret a gauche du nom patient dans le banner
+**Fichier** : `src/pages/BoardPage.tsx`
+- Remplacer `useState(false)` par un state initialise depuis `localStorage.getItem('urgenceos_myOnly')`
+- Ajouter un `useEffect` qui sauvegarde dans localStorage a chaque changement
 
-### 2. AideSoignantPage -- Ajouter des StatCards en haut
+### 2. Enrichir le seed data
 
-La page Aide-Soignant est la seule page operationnelle sans StatCards en haut. Ajouter 3 metriques : patients en charge, dernier acte, total actes du jour.
+Les donnees existent mais sont insuffisantes pour une demo convaincante :
+- Seulement 17 prescriptions (cible : 30+)
+- 0 administrations (cible : 15+)
+- 0 procedures (cible : 10+)
+- 9 resultats tous "bio" (manque imagerie)
+- 33 timeline items (suffisant mais manque diversite)
 
-**Fichier** : `src/pages/AideSoignantPage.tsx`
-- Importer `StatCard`
-- Ajouter une grille de 3 StatCards au-dessus du selecteur patient
-- Icones : `Users` (patients charges), `Activity` (actes du jour), `Clock` (dernier acte)
+**Fichier** : `supabase/functions/seed-data/index.ts`
+- Ajouter plus de prescriptions avec mix de priorites (routine/urgent/stat)
+- Ajouter des administrations pour certaines prescriptions (pour montrer le statut vert)
+- Ajouter des procedures (VVP, prelevement, ECG, pansement)
+- Ajouter des resultats imagerie (radio thorax, scanner cerebral) avec `category: 'imagerie'`
+- Enrichir les timeline items avec types varies (traitement, diagnostic)
 
-### 3. IOAQueuePage -- Ajouter le branding header "UrgenceOS"
+### 3. Bouton "Ouvrir original" sur timeline items
 
-Le header IOA affiche "File d'attente IOA" mais pas le branding "UrgenceOS". Harmoniser avec le Board qui affiche deja "UrgenceOS".
+Le ticket demande un bouton "Ouvrir original" sur chaque item de la timeline patient, meme en mode mock.
 
-**Fichier** : `src/pages/IOAQueuePage.tsx`
-- Modifier le titre en `Urgence<span class="text-primary">OS</span> -- IOA`
+**Fichier** : `src/pages/PatientDossierPage.tsx`
+- Ajouter un petit bouton "Ouvrir" avec icone `ExternalLink` sur chaque timeline item qui a un `source_document`
+- Au clic : toast "Document source non disponible en demo"
 
-### 4. AccueilPage -- Ajouter le branding header "UrgenceOS"
+### 4. Champ N. Securite Sociale sur Accueil
 
-Le header Accueil affiche "UrgenceOS -- Accueil" sans le span colore. Harmoniser.
+Le formulaire d'admission n'a pas de champ pour le numero de securite sociale.
 
 **Fichier** : `src/pages/AccueilPage.tsx`
-- Modifier pour utiliser le meme formatage que le Board : `Urgence<span>OS</span>`
-- Deja fait dans le code actuel, rien a changer ici
+- Ajouter un champ "N. SS" optionnel dans le formulaire
+- Mapper au champ `ins_numero` de la table `patients` (deja present dans le schema)
 
-### 5. Landing Page -- Ajouter l'ancre `id="impact"` sur ImpactSection
+### 5. Branding coherent AccueilPage
 
-Les liens de navigation incluent "Impact" qui scrolle vers `#impact`, mais il faut verifier que la section a bien l'attribut `id="impact"`.
+Le header Accueil affiche "UrgenceOS -- Accueil" sans le span colore sur "OS".
 
-**Fichier** : `src/components/landing/ImpactSection.tsx`
-- Verifier/ajouter `id="impact"` sur le wrapper
-
-### 6. Etat vide premium sur Board -- Zone vide
-
-Les zones vides du Board ont deja une icone `Inbox` et un message. Verifier que les autres pages (Pancarte, Dossier) ont aussi des etats vides premium si applicable.
-
-### 7. Footer Landing -- Ajouter annee dynamique
-
-**Fichier** : `src/components/landing/FooterSection.tsx`
-- Utiliser `new Date().getFullYear()` au lieu d'un texte statique si ce n'est pas deja fait
+**Fichier** : `src/pages/AccueilPage.tsx`
+- Modifier en `Urgence<span className="text-primary">OS</span> -- Accueil`
 
 ---
 
 ## Details techniques
 
-### PatientBanner.tsx
-- Ligne du titre : ajouter avant le `<h2>` un petit texte "UrgenceOS" en `text-xs text-muted-foreground` ou integrer subtilement dans le flow existant sans casser le layout
+### BoardPage.tsx -- localStorage persistence
+```text
+// Remplacement du useState
+const [myOnly, setMyOnly] = useState(() => {
+  return localStorage.getItem('urgenceos_myOnly') === 'true';
+});
 
-### AideSoignantPage.tsx
-- Ajouter apres le header, avant le selecteur patient :
+useEffect(() => {
+  localStorage.setItem('urgenceos_myOnly', String(myOnly));
+}, [myOnly]);
 ```
-<div className="grid grid-cols-3 gap-3">
-  <StatCard label="Patients" value={encounters.length} icon={Users} />
-  <StatCard label="Selectionne" value={selectedPatient ? 1 : 0} icon={User} />
-  <StatCard label="En charge" value={encounters.length} icon={Activity} />
-</div>
-```
 
-### IOAQueuePage.tsx
-- Ligne du `<h1>` : remplacer par `Urgence<span className="text-primary">OS</span> <span className="text-muted-foreground font-normal">— IOA</span>`
+### seed-data/index.ts -- Ajouts
+- 15 administrations liees aux prescriptions existantes
+- 10 procedures (vvp, prelevement, ecg, pansement)
+- 5 resultats imagerie supplementaires
+- Morphine en priorite "stat" pour certains patients
 
-### ImpactSection.tsx
-- Wrapper du Section : ajouter `id="impact"` si absent (le composant `Section` passe les props au div, verifier)
+### PatientDossierPage.tsx -- Bouton Ouvrir
+- Icone `ExternalLink` de lucide-react
+- Positionne a droite de chaque timeline item ayant `source_document`
+- Toast informatif au clic
 
-### FooterSection.tsx
-- Annee dynamique : `{new Date().getFullYear()}`
+### AccueilPage.tsx -- Champ SS
+- Input optionnel place dans la grille existante (3 colonnes)
+- Envoye comme `ins_numero` lors de l'insert patient
 
 ---
 
-## Resultat attendu
+## Ordre d'execution
 
-Apres ces corrections mineures :
-- Branding "UrgenceOS" coherent sur 100% des pages
-- StatCards presentes sur toutes les pages operationnelles
-- Navigation par ancrage fonctionnelle a 100%
-- Note globale : 9.5/10 uniforme
+1. Branding AccueilPage (10 sec)
+2. Toggle persistant Board (30 sec)
+3. Champ SS Accueil (1 min)
+4. Bouton "Ouvrir" timeline (1 min)
+5. Enrichir seed data (5 min)
 
