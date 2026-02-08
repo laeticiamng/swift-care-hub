@@ -26,9 +26,7 @@ export function HeroSection() {
           Moins de clics. Plus de soin.
         </p>
 
-        <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-          1 clic = 1 action. Zéro formation. Interfaces pensées pour les gardes    
-        </p>
+        <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">1 clic. Un action. Zéro formation. Interfaces pensées pour les gardes</p>
 
         <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">Un point d'entrée urgences · Une timeline patient sourcée ·
 Une pancarte IDE en un écran</p>
