@@ -1,39 +1,63 @@
 
 
-# Corrections Finales de Polish -- UrgenceOS
+# Completions Finales + Mise a jour README
 
-La plateforme est desormais **publiable**. Les audits precedents ont corrige tous les bloquants. Il ne reste que du polish premium pour maximiser la credibilite.
+## Problemes restants identifies
 
----
-
-## Corrections a appliquer
-
-### 1. Favicon SVG personnalise
-
-Ajouter un favicon SVG inline directement dans `index.html` : un cercle bleu avec la lettre "U" blanche. Cela remplace le favicon par defaut et renforce le branding dans l'onglet du navigateur.
-
-**Fichier** : `index.html`
-- Ajouter une balise `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,...">` avec un SVG inline representant un cercle bleu (#2b7fc3) et la lettre "U" blanche au centre.
-
-### 2. Differencier les 2 CTA du bloc final
-
-Actuellement, les boutons "Acceder a UrgenceOS" et "Decouvrir la demo" redirigent tous les deux vers `/login`. Le second devrait scroller vers la section "Comment ca marche" pour offrir un parcours alternatif au visiteur hesitant.
-
-**Fichier** : `src/pages/LandingPage.tsx`
-- Ligne 222 : changer `onClick={() => navigate('/login')}` en `onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}` pour le bouton "Decouvrir la demo".
-
-### 3. Simplifier le footer
-
-Le footer a un lien "Connexion" qui fait doublon avec la navbar. Le remplacer par un lien vers le haut de la page (ancre) pour une navigation plus propre.
-
-**Fichier** : `src/pages/LandingPage.tsx`
-- Ligne 234 : changer le lien "Connexion" en un scroll vers le haut ou le garder tel quel (changement optionnel).
+| # | Probleme | Fichier | Gravite |
+|---|----------|---------|---------|
+| 1 | **Emails demo INCORRECTS** dans LoginPage : `ioa@urgenceos.fr`, `ide@urgenceos.fr`, `as@urgenceos.fr`, `sec@urgenceos.fr` alors que le seed cree `sophie@urgenceos.fr`, `julie@urgenceos.fr`, `marc@urgenceos.fr`, `nathalie@urgenceos.fr` | LoginPage.tsx L142-147 | Bloquant |
+| 2 | **Favicon en double** dans index.html (ligne 5 ajoutee alors qu'une ligne identique existait deja a la ligne 6) | index.html | Moyen |
+| 3 | **"Chargement..." sans spinner** dans PancartePage (L145), IOAQueuePage (L68), Index.tsx (L6) | Plusieurs fichiers | Moyen |
+| 4 | **Caractere unicode `✓` dans les toasts** — pas un emoji classique mais viole l'esprit "zero emoji" ; remplacer par rien ou par un texte simple | 5 fichiers (toast.success) | Mineur |
+| 5 | **Caractere `✓` dans les boutons** AS (lignes 224, 240, 253) — visible a l'ecran, a supprimer | AideSoignantPage.tsx | Mineur |
+| 6 | **README.md obsolete** — ne reflete pas les corrections (favicon, landing marketing, comptes demo, etc.) | README.md | Moyen |
 
 ---
 
-## Resultat attendu
+## Plan de corrections
 
-- Favicon bleu "U" visible dans l'onglet du navigateur
-- 2 CTA distincts : un pour l'action directe (login), un pour la decouverte (scroll)
-- Plateforme 100% prete a la publication
+### 1. LoginPage.tsx — Corriger les emails demo
+
+Remplacer les 5 comptes demo pour correspondre exactement au seed-data :
+
+```
+{ email: 'martin@urgenceos.fr', label: 'Dr. Martin Dupont', role: 'Medecin' }
+{ email: 'sophie@urgenceos.fr', label: 'Sophie Lefevre', role: 'IOA' }
+{ email: 'julie@urgenceos.fr', label: 'Julie Bernard', role: 'IDE' }
+{ email: 'marc@urgenceos.fr', label: 'Marc Petit', role: 'Aide-soignant' }
+{ email: 'nathalie@urgenceos.fr', label: 'Nathalie Moreau', role: 'Secretaire' }
+```
+
+### 2. index.html — Supprimer le favicon en double
+
+L'ancienne balise `<link rel="icon">` (ligne 6) doit etre supprimee car une identique a ete ajoutee en ligne 5.
+
+### 3. Spinners de chargement manquants
+
+- **PancartePage.tsx L145** : remplacer `Chargement...` par un spinner `Loader2` anime
+- **IOAQueuePage.tsx L68** : idem
+- **Index.tsx L6** : idem
+
+### 4. Supprimer les `✓` des toasts
+
+Dans les fichiers suivants, retirer le caractere `✓` des messages toast.success (le toast vert suffit a indiquer le succes) :
+- PancartePage.tsx (4 occurrences)
+- AccueilPage.tsx (1 occurrence)
+- AideSoignantPage.tsx (4 occurrences)
+- TriagePage.tsx (2 occurrences)
+- DischargeDialog.tsx (1 occurrence)
+
+### 5. Supprimer les `✓` des boutons AS
+
+- AideSoignantPage.tsx lignes 224, 240, 253 : retirer ` ✓` du texte des boutons
+
+### 6. README.md — Mise a jour complete
+
+Mettre a jour le README pour refleter l'etat actuel :
+- Comptes demo avec les bons emails
+- Mention du favicon SVG personnalise
+- Description de la landing page marketing (sections : Hero, Probleme, Comment ca marche, Roles, Features, Impact, CTA)
+- Mention du mode sombre
+- Stack technique a jour (Lovable Cloud)
 
