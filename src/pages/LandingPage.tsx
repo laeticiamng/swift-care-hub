@@ -4,9 +4,11 @@ import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import {
   Stethoscope, Shield, ClipboardList, Heart, UserCheck,
   MonitorDot, Zap, Clock, ShieldAlert, ArrowRight,
-  Activity, Users, MousePointerClick
+  Activity, Users, MousePointerClick, LogIn, LayoutDashboard,
+  Timer, AppWindow, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 /* ── Fade-in on scroll ── */
@@ -56,12 +58,17 @@ const features = [
   { icon: ShieldAlert, title: 'Sécurité clinique', desc: 'Détection allergies croisées et constantes anormales en temps réel.' },
 ];
 
-const semanticColors = [
-  { color: 'bg-medical-critical', label: 'Critique', css: 'text-medical-critical' },
-  { color: 'bg-medical-warning', label: 'Attention', css: 'text-medical-warning' },
-  { color: 'bg-medical-success', label: 'Normal', css: 'text-medical-success' },
-  { color: 'bg-medical-info', label: 'Informatif', css: 'text-medical-info' },
-  { color: 'bg-medical-inactive', label: 'Historique', css: 'text-medical-inactive' },
+const steps = [
+  { icon: LogIn, step: '01', title: 'Connexion', desc: 'Identifiez-vous avec votre profil hospitalier' },
+  { icon: LayoutDashboard, step: '02', title: 'Interface adaptée', desc: 'Votre rôle détermine votre vue — uniquement l\'essentiel' },
+  { icon: MousePointerClick, step: '03', title: 'Action en 1 tap', desc: 'Chaque geste clinique se fait en un minimum de clics' },
+];
+
+const impacts = [
+  { value: '1 tap', label: 'au lieu de 6-8 clics pour administrer', icon: Zap },
+  { value: '< 2 min', label: 'pour un tri IOA complet', icon: Timer },
+  { value: '< 90 sec', label: 'pour une admission patient', icon: Clock },
+  { value: '0', label: 'logiciel supplémentaire à ouvrir', icon: AppWindow },
 ];
 
 /* ── Page ── */
@@ -85,11 +92,17 @@ export default function LandingPage() {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5 pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center px-6 pt-24 pb-20 relative">
+          <Badge variant="secondary" className="mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            Projet de recherche 2026
+          </Badge>
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
             Urgence<span className="text-primary">OS</span>
           </h1>
           <p className="mt-4 text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
             Le système d'exploitation des urgences hospitalières.<br className="hidden sm:block" />
+            De <strong className="text-foreground">6-8 clics à 1 seul tap</strong> pour chaque administration.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             Un point d'entrée unique, cinq profils, zéro perte de temps.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -104,7 +117,7 @@ export default function LandingPage() {
       </header>
 
       {/* Problem */}
-      <Section className="bg-secondary/30 py-20 px-6" >
+      <Section className="bg-secondary/30 py-20 px-6">
         <div id="problem" className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-2">Le problème</h2>
           <p className="text-muted-foreground mb-10 max-w-xl mx-auto">Les urgences croulent sous les outils fragmentés. L'information est éparpillée, le soignant perd du temps.</p>
@@ -120,8 +133,31 @@ export default function LandingPage() {
         </div>
       </Section>
 
-      {/* Roles */}
+      {/* Comment ça marche — 3 étapes */}
       <Section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-2">Comment ça marche</h2>
+          <p className="text-muted-foreground mb-12 max-w-xl mx-auto">Trois étapes pour passer de la connexion à l'action clinique.</p>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {steps.map((s, i) => (
+              <div key={s.step} className="relative flex flex-col items-center gap-4">
+                {i < steps.length - 1 && (
+                  <div className="hidden sm:block absolute top-10 left-[60%] w-[80%] border-t-2 border-dashed border-muted-foreground/20" />
+                )}
+                <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center relative">
+                  <s.icon className="h-9 w-9 text-primary" />
+                  <span className="absolute -top-2 -right-2 text-xs font-bold bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center">{s.step}</span>
+                </div>
+                <h3 className="font-semibold text-lg">{s.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-[220px]">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* Roles */}
+      <Section className="bg-secondary/30 py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-2">5 profils, 1 système</h2>
           <p className="text-muted-foreground mb-10 max-w-xl mx-auto">Même patient, même donnée, cinq interfaces radicalement différentes — chacune montre uniquement l'essentiel.</p>
@@ -138,7 +174,7 @@ export default function LandingPage() {
       </Section>
 
       {/* Features */}
-      <Section className="bg-secondary/30 py-20 px-6">
+      <Section className="py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-2">Fonctionnalités clés</h2>
           <p className="text-muted-foreground mb-10 max-w-xl mx-auto">Conçu pour le geste clinique, pas pour l'informatique.</p>
@@ -154,16 +190,19 @@ export default function LandingPage() {
         </div>
       </Section>
 
-      {/* Semantic colors */}
-      <Section className="py-20 px-6">
+      {/* Résultats attendus — Impact metrics */}
+      <Section className="bg-secondary/30 py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-2">Code couleur sémantique</h2>
-          <p className="text-muted-foreground mb-10 max-w-xl mx-auto">Chaque couleur a un sens clinique précis — partout dans l'application.</p>
-          <div className="flex flex-wrap justify-center gap-6">
-            {semanticColors.map(c => (
-              <div key={c.label} className="flex flex-col items-center gap-2">
-                <div className={cn('h-14 w-14 rounded-full shadow-md', c.color)} />
-                <span className={cn('text-sm font-medium', c.css)}>{c.label}</span>
+          <h2 className="text-3xl font-bold mb-2">Résultats attendus</h2>
+          <p className="text-muted-foreground mb-10 max-w-xl mx-auto">Des gains mesurables dès la première utilisation.</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {impacts.map(m => (
+              <div key={m.label} className="bg-card rounded-xl border p-6 shadow-sm flex flex-col items-center gap-3">
+                <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <m.icon className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-3xl font-extrabold text-primary">{m.value}</p>
+                <p className="text-sm text-muted-foreground leading-snug">{m.label}</p>
               </div>
             ))}
           </div>
@@ -171,22 +210,31 @@ export default function LandingPage() {
       </Section>
 
       {/* CTA */}
-      <Section className="bg-primary/5 py-16 px-6">
+      <Section className="bg-primary/5 py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Prêt à transformer les urgences ?</h2>
-          <Button size="lg" onClick={() => navigate('/login')} className="gap-2">
-            Accéder à UrgenceOS <ArrowRight className="h-4 w-4" />
-          </Button>
+          <CheckCircle2 className="h-10 w-10 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">Prêt à transformer les urgences ?</h2>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">5 profils préconfigurés pour tester immédiatement. Aucune installation requise.</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button size="lg" onClick={() => navigate('/login')} className="gap-2">
+              Accéder à UrgenceOS <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
+              Découvrir la démo
+            </Button>
+          </div>
         </div>
       </Section>
 
       {/* Footer */}
-      <footer className="border-t py-8 px-6 text-center text-sm text-muted-foreground">
-        <p>UrgenceOS — Projet de recherche en systèmes d'information de santé — 2026</p>
-        <div className="mt-2 flex justify-center gap-4">
-          <button onClick={() => navigate('/login')} className="text-primary hover:underline text-sm">
-            Connexion
-          </button>
+      <footer className="border-t py-10 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <p className="font-medium">Urgence<span className="text-primary">OS</span> — Projet de recherche en systèmes d'information de santé — 2026</p>
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate('/login')} className="text-primary hover:underline">Connexion</button>
+            <span className="text-muted-foreground/40">|</span>
+            <span className="text-xs">React · TypeScript · Temps réel</span>
+          </div>
         </div>
       </footer>
     </div>
