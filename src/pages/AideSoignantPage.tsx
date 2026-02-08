@@ -34,7 +34,7 @@ export default function AideSoignantPage() {
   const [view, setView] = useState<ASView>('menu');
   const [encounters, setEncounters] = useState<EncounterItem[]>([]);
   const [selectedEncounter, setSelectedEncounter] = useState<string>('');
-  const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+  const [vitals, setVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '' });
   const [survNotes, setSurvNotes] = useState('');
   const [brancDestination, setBrancDestination] = useState('');
   const [confortNotes, setConfortNotes] = useState('');
@@ -58,10 +58,11 @@ export default function AideSoignantPage() {
     if (vitals.pa_diastolique) obj.pa_diastolique = parseInt(vitals.pa_diastolique);
     if (vitals.spo2) obj.spo2 = parseInt(vitals.spo2);
     if (vitals.temperature) obj.temperature = parseFloat(vitals.temperature);
+    if (vitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(vitals.frequence_respiratoire);
     const { error } = await supabase.from('vitals').insert(obj);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constantes enregistrées');
-    setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '' });
+    setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '' });
     setView('menu');
   };
 
@@ -177,6 +178,7 @@ export default function AideSoignantPage() {
                     { key: 'pa_diastolique', label: 'PA diastolique', placeholder: '80' },
                     { key: 'spo2', label: 'SpO₂ (%)', placeholder: '98' },
                     { key: 'temperature', label: 'Température (°C)', placeholder: '37.0' },
+                    { key: 'frequence_respiratoire', label: 'FR (/min)', placeholder: '16' },
                   ].map(v => {
                     const val = vitals[v.key as keyof typeof vitals];
                     const abnormal = val ? isVitalAbnormal(v.key, parseFloat(val)) : false;

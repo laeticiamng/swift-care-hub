@@ -11,6 +11,7 @@ export const VITAL_THRESHOLDS: Record<string, VitalThresholds> = {
   temperature: { min: 35, max: 38.5 },
   frequence_respiratoire: { min: 10, max: 25 },
   gcs: { min: 15, max: 15 },
+  eva_douleur: { max: 6 },
 };
 
 export function isVitalAbnormal(key: string, value: number | null | undefined): boolean {

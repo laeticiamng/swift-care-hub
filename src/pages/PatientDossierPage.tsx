@@ -18,7 +18,7 @@ import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
-import { categorizePrescription, PRESCRIPTION_SECTIONS } from '@/lib/prescription-utils';
+import { categorizePrescription, PRESCRIPTION_SECTIONS, PRESCRIPTION_TEMPLATES, PrescriptionCategory } from '@/lib/prescription-utils';
 
 export default function PatientDossierPage() {
   const { encounterId } = useParams();
@@ -34,11 +34,12 @@ export default function PatientDossierPage() {
   const [allergyWarning, setAllergyWarning] = useState<string[]>([]);
   const [dischargeOpen, setDischargeOpen] = useState(false);
   const [timelineEssential, setTimelineEssential] = useState(false);
-  const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string });
+  const [newRx, setNewRx] = useState({ medication_name: '', dosage: '', route: 'PO' as string, frequency: '', priority: 'routine' as string, rx_type: 'traitements' as PrescriptionCategory });
   const [noteContent, setNoteContent] = useState('');
   const [savingNote, setSavingNote] = useState(false);
   const [diagnosticContent, setDiagnosticContent] = useState('');
   const [savingDiag, setSavingDiag] = useState(false);
+  const [medecinName, setMedecinName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!encounterId) return;
@@ -66,6 +67,11 @@ export default function PatientDossierPage() {
     if (rxRes.data) setPrescriptions(rxRes.data);
     if (resRes.data) setResults(resRes.data);
     if (tlRes.data) setTimeline(tlRes.data);
+    // Fetch medecin name
+    if (enc.medecin_id) {
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', enc.medecin_id).single();
+      if (profile) setMedecinName(profile.full_name);
+    }
   };
 
   const handleMedNameChange = (name: string) => {
@@ -79,10 +85,12 @@ export default function PatientDossierPage() {
       toast.error(`ALLERGIE DÉTECTÉE : ${allergyWarning.join(', ')} — Prescription bloquée`);
       return;
     }
+    const rxNotes = newRx.rx_type !== 'traitements' ? `[TYPE:${newRx.rx_type}]${newRx.frequency ? ' ' + newRx.frequency : ''}` : null;
     const { error } = await supabase.from('prescriptions').insert({
       encounter_id: encounter.id, patient_id: encounter.patient_id, prescriber_id: user.id,
       medication_name: newRx.medication_name, dosage: newRx.dosage,
-      route: newRx.route as any, frequency: newRx.frequency, priority: newRx.priority as any,
+      route: newRx.route as any, frequency: newRx.frequency || null, priority: newRx.priority as any,
+      notes: rxNotes,
     });
     if (error) { toast.error('Erreur de prescription'); return; }
     await supabase.from('audit_logs').insert({
@@ -90,7 +98,7 @@ export default function PatientDossierPage() {
       resource_id: encounter.id, details: { medication: newRx.medication_name, dosage: newRx.dosage },
     });
     toast.success('Prescription validée');
-    setNewRx({ medication_name: '', dosage: '', route: 'PO', frequency: '', priority: 'routine' });
+    setNewRx({ medication_name: '', dosage: '', route: 'PO', frequency: '', priority: 'routine', rx_type: 'traitements' });
     setAllergyWarning([]);
     setPrescribeOpen(false);
     fetchAll();
@@ -190,7 +198,7 @@ export default function PatientDossierPage() {
   return (
     <div className="min-h-screen bg-background">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} onBack={() => navigate(-1)} />
 
       <div className="max-w-7xl mx-auto p-4">
         {encounter.status !== 'finished' && (
@@ -449,8 +457,34 @@ export default function PatientDossierPage() {
                   <DialogContent>
                     <DialogHeader><DialogTitle>Nouvelle prescription</DialogTitle></DialogHeader>
                     <div className="space-y-3">
+                      {/* Quick templates based on motif */}
+                      {encounter.motif_sfmu && PRESCRIPTION_TEMPLATES[encounter.motif_sfmu] && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Prescriptions rapides — {encounter.motif_sfmu}</Label>
+                          <div className="flex flex-wrap gap-1.5 mt-1">
+                            {PRESCRIPTION_TEMPLATES[encounter.motif_sfmu].map((t, i) => (
+                              <button key={i} type="button" onClick={() => setNewRx({ ...newRx, medication_name: t.name, dosage: t.dosage, route: t.route, rx_type: t.type })}
+                                className="px-2.5 py-1 rounded-full border text-xs hover:bg-accent transition-colors">
+                                {t.name} {t.dosage}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Type selector */}
                       <div>
-                        <Label>Médicament</Label>
+                        <Label>Type</Label>
+                        <Select value={newRx.rx_type} onValueChange={v => setNewRx({ ...newRx, rx_type: v as PrescriptionCategory })}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {PRESCRIPTION_SECTIONS.map(s => (
+                              <SelectItem key={s.key} value={s.key}>{s.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Médicament / Examen</Label>
                         <Input value={newRx.medication_name} onChange={e => handleMedNameChange(e.target.value)} placeholder="Paracétamol" />
                         {allergyWarning.length > 0 && (
                           <div className="mt-1 p-2 rounded bg-medical-critical/10 border border-medical-critical/30">

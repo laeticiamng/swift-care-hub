@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
@@ -58,6 +58,7 @@ interface PatientCardProps {
     medecin_profile?: { full_name: string } | null;
   };
   resultCount?: { unread: number; critical: number };
+  rxCount?: number;
   role: string | null;
   index: number;
   showZoneBadge?: boolean;
@@ -69,7 +70,7 @@ interface PatientCardProps {
   onTriage?: (patientId: string) => void;
 }
 
-export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, showWaitingBadge, medecins, onMoveZone, onAssignMedecin, onClick, onTriage }: PatientCardProps) {
+export function PatientCard({ encounter, resultCount, rxCount, role, index, showZoneBadge, showWaitingBadge, medecins, onMoveZone, onAssignMedecin, onClick, onTriage }: PatientCardProps) {
   const p = encounter.patients;
   const age = calculateAge(p.date_naissance);
   const waitMin = getWaitTimeMinutes(encounter.arrival_time);
@@ -143,6 +144,16 @@ export function PatientCard({ encounter, resultCount, role, index, showZoneBadge
             {waitStr}
           </span>
           <div className="flex items-center gap-1.5">
+            {(role === 'medecin' || role === 'ide') && rxCount !== undefined && rxCount > 0 && (
+              <Badge variant="outline" className="text-xs px-1.5 py-0 gap-0.5 border-medical-warning/30 text-medical-warning">
+                <Pill className="h-3 w-3" /> {rxCount} Rx
+              </Badge>
+            )}
+            {role === 'secretaire' && (
+              <Badge variant="outline" className="text-xs px-1.5 py-0">
+                {encounter.status === 'arrived' ? 'Admis' : encounter.status === 'triaged' ? 'Trié' : 'En cours'}
+              </Badge>
+            )}
             {rc && rc.critical > 0 && (
               <Badge className="bg-medical-critical text-medical-critical-foreground text-xs px-1.5 py-0">
                 <FlaskConical className="h-3 w-3 mr-0.5" /> {rc.critical}

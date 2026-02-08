@@ -30,13 +30,14 @@ interface EncounterWithPatient {
 }
 
 interface ResultCount { encounter_id: string; unread: number; critical: number; }
-
+interface RxCount { encounter_id: string; count: number; }
 export default function BoardPage() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
+  const [rxCounts, setRxCounts] = useState<RxCount[]>([]);
   const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
   const [myOnly, setMyOnly] = useState(() => localStorage.getItem('urgenceos_myOnly') === 'true');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem('urgenceos_viewMode') as 'grid' | 'list') || 'grid');
@@ -66,13 +67,14 @@ export default function BoardPage() {
         if (profiles) setMedecins(profiles);
       }
     }
-    const [encRes, resRes] = await Promise.all([
+    const [encRes, resRes, rxRes] = await Promise.all([
       supabase
         .from('encounters')
         .select('id, patient_id, status, zone, box_number, ccmu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
         .in('status', ['arrived', 'triaged', 'in-progress'])
         .order('arrival_time', { ascending: true }),
       supabase.from('results').select('encounter_id, is_read, is_critical'),
+      supabase.from('prescriptions').select('encounter_id').eq('status', 'active'),
     ]);
 
     let encountersData: EncounterWithPatient[] = [];
@@ -101,6 +103,14 @@ export default function BoardPage() {
         if (r.is_critical) entry.critical++;
       }
       setResultCounts(Array.from(map.values()));
+    }
+
+    if (rxRes.data) {
+      const rxMap = new Map<string, number>();
+      for (const r of rxRes.data) {
+        rxMap.set(r.encounter_id, (rxMap.get(r.encounter_id) || 0) + 1);
+      }
+      setRxCounts(Array.from(rxMap.entries()).map(([encounter_id, count]) => ({ encounter_id, count })));
     }
     setLoading(false);
   };
@@ -138,6 +148,7 @@ export default function BoardPage() {
   const filtered = myOnly ? encounters.filter(e => e.medecin_id === user?.id) : encounters;
   const byZone = (zone: ZoneKey) => filtered.filter(e => e.zone === zone);
   const getResultCount = (encId: string) => resultCounts.find(r => r.encounter_id === encId);
+  const getRxCount = (encId: string) => rxCounts.find(r => r.encounter_id === encId)?.count;
 
   const preIOA = filtered.filter(e => e.status === 'arrived' && !e.zone);
   const noZone = filtered.filter(e => (e.status === 'triaged' || e.status === 'in-progress') && !e.zone);
@@ -228,6 +239,7 @@ export default function BoardPage() {
                 key={enc.id}
                 encounter={enc}
                 resultCount={getResultCount(enc.id)}
+                rxCount={getRxCount(enc.id)}
                 role={role}
                 index={i}
                 showZoneBadge

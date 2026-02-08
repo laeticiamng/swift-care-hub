@@ -33,6 +33,7 @@ export default function PancartePage() {
   const [transmissions, setTransmissions] = useState<any[]>([]);
   const [resultsOpen, setResultsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [medecinName, setMedecinName] = useState<string | undefined>(undefined);
 
   const [showVitalsInput, setShowVitalsInput] = useState(false);
   const [newVitals, setNewVitals] = useState({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
@@ -71,6 +72,11 @@ export default function PancartePage() {
     if (procRes.data) setProcedures(procRes.data);
     if (resRes.data) setResults(resRes.data);
     if (transRes.data) setTransmissions(transRes.data);
+    // Fetch medecin name
+    if (enc.medecin_id) {
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', enc.medecin_id).single();
+      if (profile) setMedecinName(profile.full_name);
+    }
   };
 
   const handleAdminister = async (rx: any) => {
@@ -175,7 +181,7 @@ export default function PancartePage() {
   return (
     <div className="min-h-screen bg-background pb-8">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
         {/* Résumé rapide */}
