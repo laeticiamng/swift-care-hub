@@ -65,14 +65,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!error && data) {
       const roles = data.map(r => r.role as AppRole);
       setAvailableRoles(roles);
-      // Auto-select if only one role
-      if (roles.length === 1) {
-        setRole(roles[0]);
-      }
-      // Restore from sessionStorage
+      // Restore from sessionStorage first
       const savedRole = sessionStorage.getItem('urgenceos_role') as AppRole | null;
       if (savedRole && roles.includes(savedRole)) {
         setRole(savedRole);
+      } else if (roles.length === 1) {
+        // Auto-select if only one role
+        setRole(roles[0]);
+        sessionStorage.setItem('urgenceos_role', roles[0]);
       }
     }
     setLoading(false);
