@@ -8,11 +8,9 @@ const examImagerieKeywords = ['radio', 'scanner', 'irm', 'écho', 'imagerie', 'r
 export type PrescriptionCategory = 'soins' | 'examens_bio' | 'examens_imagerie' | 'traitements';
 
 export function categorizePrescription(rx: { medication_name: string; notes?: string | null }): PrescriptionCategory {
-  // Check for explicit type prefix in notes first
   const notes = (rx.notes || '').toLowerCase();
   const typeMatch = notes.match(/\[type:(soins|examens_bio|examens_imagerie|traitements)\]/);
   if (typeMatch) return typeMatch[1] as PrescriptionCategory;
-  // Fallback to keyword-based detection
   const name = rx.medication_name.toLowerCase();
   if (soinsKeywords.some(k => name.includes(k))) return 'soins';
   if (examBioKeywords.some(k => name.includes(k))) return 'examens_bio';
@@ -54,6 +52,31 @@ export const PRESCRIPTION_TEMPLATES: Record<string, { name: string; dosage: stri
     { name: 'NFS + Glycémie + Iono + Troponine', dosage: 'Bilan standard', route: 'IV', type: 'examens_bio' },
     { name: 'ECG 12 dérivations', dosage: 'Standard', route: 'IV', type: 'soins' },
     { name: 'Scope monitoring', dosage: 'Continu', route: 'IV', type: 'soins' },
+  ],
+  'Chute personne âgée': [
+    { name: 'Paracétamol', dosage: '1g', route: 'IV', type: 'traitements' },
+    { name: 'NFS + Iono + Créatinine + INR', dosage: 'Bilan standard', route: 'IV', type: 'examens_bio' },
+    { name: 'Scanner cérébral', dosage: 'Sans injection', route: 'IV', type: 'examens_imagerie' },
+    { name: 'Radio bassin + rachis', dosage: 'Face', route: 'IV', type: 'examens_imagerie' },
+    { name: 'ECG 12 dérivations', dosage: 'Standard', route: 'IV', type: 'soins' },
+  ],
+  'Intoxication': [
+    { name: 'Charbon activé', dosage: '50g', route: 'PO', type: 'traitements' },
+    { name: 'NFS + Iono + BHC + Paracétamolémie', dosage: 'Bilan toxicologique', route: 'IV', type: 'examens_bio' },
+    { name: 'ECG 12 dérivations', dosage: 'Standard', route: 'IV', type: 'soins' },
+    { name: 'Scope monitoring', dosage: 'Continu', route: 'IV', type: 'soins' },
+  ],
+  'AEG / Fièvre': [
+    { name: 'Paracétamol', dosage: '1g', route: 'IV', type: 'traitements' },
+    { name: 'NaCl 0.9%', dosage: '500mL', route: 'IV', type: 'traitements' },
+    { name: 'NFS + CRP + Hémocultures + ECBU + Lactates', dosage: 'Bilan infectieux', route: 'IV', type: 'examens_bio' },
+    { name: 'Radio thorax', dosage: 'Face', route: 'IV', type: 'examens_imagerie' },
+  ],
+  'Plaie / Brûlure': [
+    { name: 'Paracétamol', dosage: '1g', route: 'PO', type: 'traitements' },
+    { name: 'Lidocaïne injectable', dosage: '1%', route: 'SC', type: 'traitements' },
+    { name: 'Pansement / Suture', dosage: 'Selon localisation', route: 'IV', type: 'soins' },
+    { name: 'SAT-VAT', dosage: 'Vérifier statut vaccinal', route: 'IM', type: 'traitements' },
   ],
 };
 

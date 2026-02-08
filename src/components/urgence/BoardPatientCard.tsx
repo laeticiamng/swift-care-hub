@@ -56,6 +56,7 @@ interface PatientCardProps {
     arrival_time: string;
     patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
     medecin_profile?: { full_name: string } | null;
+    diagnostic?: string | null;
   };
   resultCount?: { unread: number; critical: number };
   rxCount?: number;
@@ -121,6 +122,9 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
           </div>
         </div>
         {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
+        {encounter.diagnostic && role === 'medecin' && (
+          <p className="text-xs text-primary font-medium truncate">Dx: {encounter.diagnostic}</p>
+        )}
         {encounter.medecin_profile && (
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             <Stethoscope className="h-3 w-3" /> {encounter.medecin_profile.full_name}
@@ -166,14 +170,22 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
             )}
             {encounter.box_number && <span className="text-muted-foreground">Box {encounter.box_number}</span>}
           </div>
-          <Select value={encounter.zone || ''} onValueChange={(v) => onMoveZone(encounter.id, v as Zone)}>
-            <SelectTrigger className="w-auto h-7 text-xs" onClick={e => e.stopPropagation()}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ZONES.map(z => <SelectItem key={z.key} value={z.key}>{z.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+            {ZONES.map(z => (
+              <button
+                key={z.key}
+                onClick={() => onMoveZone(encounter.id, z.key)}
+                className={cn(
+                  'px-2 py-0.5 rounded text-[10px] font-semibold border transition-all',
+                  encounter.zone === z.key
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-card hover:bg-accent border-border text-muted-foreground',
+                )}
+              >
+                {z.label}
+              </button>
+            ))}
+          </div>
         </div>
         {p.allergies && p.allergies.length > 0 && (
           <p className="text-xs text-medical-critical font-medium flex items-center gap-1"><AlertTriangle className="h-3 w-3" /> {p.allergies.join(', ')}</p>

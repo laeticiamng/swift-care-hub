@@ -54,8 +54,8 @@ export function BoxCell({ boxNumber, encounter, resultCount, isHighlighted, hasA
     <div
       onClick={onClick}
       className={cn(
-        'rounded-lg border p-2 min-h-[90px] flex flex-col justify-between cursor-pointer transition-all hover:shadow-md active:scale-[0.97]',
-        'bg-card',
+        'rounded-lg border p-2 min-h-[90px] flex flex-col justify-between cursor-pointer transition-all duration-200',
+        'bg-card hover:shadow-lg hover:scale-[1.02] active:scale-[0.97]',
         borderColor && `border-l-4 ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
         hasActiveFilter && !isHighlighted && 'opacity-40',

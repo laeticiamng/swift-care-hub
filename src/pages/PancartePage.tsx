@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { PatientBanner } from '@/components/urgence/PatientBanner';
+import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { calculateAge, isVitalAbnormal } from '@/lib/vitals-utils';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -190,6 +191,7 @@ export default function PancartePage() {
         ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} onBack={() => navigate(-1)} />
 
       <div className="max-w-3xl mx-auto p-4 space-y-4">
+        <OnboardingBanner role="ide" />
         {/* Résumé rapide */}
         <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="Rx actives" value={activeRx} icon={ClipboardList} variant={activeRx > 0 ? 'warning' : 'default'} />
@@ -201,7 +203,15 @@ export default function PancartePage() {
         {/* Section 1 — Constantes */}
         <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Constantes</CardTitle>
+            <div>
+              <CardTitle className="text-base">Constantes</CardTitle>
+              {lastVital && (() => {
+                const lastTime = new Date(lastVital.recorded_at).getTime();
+                const minAgo = Math.round((Date.now() - lastTime) / 60000);
+                const color = minAgo > 60 ? 'text-medical-critical' : minAgo > 30 ? 'text-medical-warning' : 'text-medical-success';
+                return <p className={cn('text-xs font-medium mt-0.5', color)}>Dernières il y a {minAgo} min</p>;
+              })()}
+            </div>
             <Button size="sm" variant="outline" onClick={() => setShowVitalsInput(!showVitalsInput)}>
               <Plus className="h-4 w-4 mr-1" /> Saisir
             </Button>

@@ -13,8 +13,10 @@ import { useNavigate } from 'react-router-dom';
 import { calculateAge } from '@/lib/vitals-utils';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { NetworkStatus } from '@/components/urgence/NetworkStatus';
+import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
 
 export default function AccueilPage() {
   const { signOut } = useAuth();
@@ -36,12 +38,15 @@ export default function AccueilPage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedExisting, setSelectedExisting] = useState<any>(null);
 
+  const [, setTick] = useState(0);
+
   useEffect(() => {
     fetchToday();
     const channel = supabase.channel('accueil-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchToday())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    const timer = setInterval(() => setTick(t => t + 1), 60000);
+    return () => { supabase.removeChannel(channel); clearInterval(timer); };
   }, []);
 
   const fetchToday = async () => {
@@ -138,6 +143,7 @@ export default function AccueilPage() {
       </header>
 
       <div className="max-w-3xl mx-auto p-4 space-y-6 relative z-10">
+        <OnboardingBanner role="secretaire" />
         <div className="grid grid-cols-3 gap-3 animate-in fade-in duration-300">
           <StatCard label="Admissions" value={todayEncounters.length} icon={Users} />
           <StatCard label="En attente" value={waitingCount} icon={Clock} variant={waitingCount > 5 ? 'warning' : 'default'} />
@@ -234,6 +240,10 @@ export default function AccueilPage() {
                       <p className="font-medium text-sm">{p?.nom?.toUpperCase()} {p?.prenom}</p>
                       <p className="text-xs text-muted-foreground">
                         {enc.motif_sfmu || 'Pas de motif'} · {new Date(enc.arrival_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        {enc.status !== 'finished' && (() => {
+                          const waitMin = getWaitTimeMinutes(enc.arrival_time);
+                          return <span className={cn('ml-2', waitMin > 60 ? 'text-medical-critical font-medium' : waitMin > 30 ? 'text-medical-warning' : '')}> · {formatWaitTime(waitMin)}</span>;
+                        })()}
                       </p>
                     </div>
                     <Badge className={statusColors[enc.status] || ''} variant="outline">
