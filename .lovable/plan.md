@@ -1,139 +1,154 @@
 
 
-# Vue grille des boxes -- tout le service d'un coup d'oeil
+# Audit complet et amelioration ergonomique de toutes les pages
 
-## Concept
-
-Remplacer la vue liste/onglets actuelle par une **vue grille** ou chaque box physique du service est represente par une cellule. L'ensemble des 3 zones + la file d'attente sont affiches **simultanement sur la meme page**, sans onglets.
-
-```text
-+-----------------------------------------------------------------+
-| Header (stats globaux + filtres)                                |
-+-----------------------------------------------------------------+
-| EN ATTENTE (bandeau horizontal)                                 |
-| [Pre-IOA: DUPONT] [A orienter: MARTIN] [A installer: LEROY]    |
-+-----------------------------------------------------------------+
-| SAU (17 boxes)                              7/17 occupes        |
-| +----+ +----+ +----+ +----+ +----+ +----+                      |
-| | 1  | | 2  | | 3  | | 4  | | 5  | | 6  |                     |
-| |DUP.| |    | |MAR.| |LER.| |    | |PET.|                      |
-| |C3  | |    | |C2  | |C4  | |    | |C1  |                      |
-| +----+ +----+ +----+ +----+ +----+ +----+                      |
-| +----+ +----+ +----+ +----+ +----+ +----+                      |
-| | 7  | | 8  | | 9  | |10  | |11  | |12  |                     |
-| +----+ +----+ +----+ +----+ +----+ +----+                      |
-| +----+ +----+ +----+ +----+ +----+                              |
-| |13  | |14  | |15  | |16  | |17  |                             |
-| +----+ +----+ +----+ +----+ +----+                              |
-+-----------------------------------------------------------------+
-| UHCD (8 boxes)                              3/8 occupes         |
-| +----+ +----+ +----+ +----+ +----+ +----+ +----+ +----+        |
-| | 1  | | 2  | | 3  | | 4  | | 5  | | 6  | | 7  | | 8  |      |
-| +----+ +----+ +----+ +----+ +----+ +----+ +----+ +----+        |
-+-----------------------------------------------------------------+
-| DECHOCAGE (5 boxes)                         1/5 occupes         |
-| +----+ +----+ +----+ +----+ +----+                              |
-| | 1  | | 2  | | 3  | | 4  | | 5  |                             |
-| +----+ +----+ +----+ +----+ +----+                              |
-+-----------------------------------------------------------------+
-```
-
-Pas d'onglets, pas de changement de vue : tout est visible simultanement.
+## Objectif
+Ameliorer l'ergonomie de chaque page non technique avec un design premium et minimaliste. Le board permettra de selectionner une seule zone (SAU, UHCD, Dechocage) au lieu d'afficher les 3 colonnes simultanement. Les prescriptions respecteront les 4 categories : Soins, Examens complementaires (Bilan), Imagerie, Traitements.
 
 ---
 
-## Fichiers a creer
+## 1. BoardPage -- Selection de zone unique (priorite haute)
 
-### 1. `src/lib/box-config.ts` -- Configuration du service
+**Probleme actuel** : En mode grille, les 3 zones sont affichees empilees verticalement, ce qui oblige a scroller. L'utilisateur veut pouvoir selectionner une zone specifique tout en gardant la vue d'ensemble.
 
-Nombre de boxes par zone, configurable en un seul endroit :
-- SAU : 17 boxes
-- UHCD : 8 boxes
-- Dechocage : 5 boxes
+**Solution** :
+- Ajouter des boutons de filtre de zone cliquables dans le header (SAU, UHCD, Dechocage, Tous)
+- Par defaut : "Tous" affiche les 3 zones empilees (comportement actuel)
+- Cliquer sur une zone filtre la grille pour n'afficher que cette zone
+- Chaque bouton de zone affiche son compteur (ex: "SAU 7/17")
+- Le bouton actif a un style `bg-primary text-primary-foreground`
+- Etat persiste dans localStorage (`urgenceos_selectedZone`)
+- Le WaitingBanner reste toujours visible quel que soit le filtre
+- Ajout d'animations staggerees sur les BoxCells a l'entree
 
-### 2. `src/components/urgence/BoxCell.tsx` -- Cellule d'un box
-
-Composant compact (environ 120x100px) representant un box physique :
-
-**Box occupe :**
-- Bordure gauche coloree selon le CCMU (meme code couleur existant)
-- Nom patient en gras (tronque si necessaire)
-- Age, sexe en petit
-- Temps d'attente (colore si > 2h / > 4h)
-- Icone resultat critique (pulse si critique)
-- Clic = ouvre le dossier patient
-
-**Box vide :**
-- Fond attenue, numero du box centre
-- Texte "Libre" discret
-- Bordure en pointilles
-
-### 3. `src/components/urgence/ZoneGrid.tsx` -- Grille d'une zone
-
-Affiche une zone complete :
-- Header : pastille coloree + nom zone + compteur "occupes/total"
-- Grille responsive : 6 colonnes desktop, 3 colonnes tablette, 2 colonnes mobile
-- Genere les cellules de 1 a N en mappant les encounters par box_number
-
-### 4. `src/components/urgence/WaitingBanner.tsx` -- Bandeau patients en attente
-
-Bandeau horizontal en haut du board, sous le header, affichant :
-- **Pre-IOA** (pastille orange) : patients `arrived` sans zone
-- **A orienter** (pastille jaune) : patients tries mais sans zone
-- **A installer** (pastille bleue) : patients avec zone mais sans box
-
-Chaque patient est un petit chip cliquable (nom + temps attente). Bouton "Trier" pour les pre-IOA si role IOA/medecin.
+**Fichier** : `src/pages/BoardPage.tsx`
 
 ---
 
-## Fichiers a modifier
+## 2. PatientDossierPage -- Ergonomie prescription + antecedents
 
-### 5. `src/pages/BoardPage.tsx` -- Refonte complete du layout
+**Etat actuel** : Les 4 categories de prescriptions sont presentes (Traitements, Soins, Examens Bio, Imagerie) via `prescription-utils.tsx`. Les antecedents sont en haut de la colonne droite. Le dialog de prescription (visible dans le screenshot utilisateur) fonctionne.
 
-- Supprimer le systeme d'onglets (Tabs/TabsList/TabsTrigger/TabsContent)
-- Elargir le container a `max-w-7xl` pour exploiter la largeur
-- Afficher les 3 zones empilees verticalement avec ZoneGrid
-- Afficher le WaitingBanner entre le header et les grilles
-- Toggle Grille/Liste persiste dans localStorage (`urgenceos_viewMode`)
-- Le mode liste reste disponible (vue actuelle avec PatientCard) comme fallback
-- Le filtre "Mes patients" met en surbrillance les boxes concernes dans la grille
-- StatCards du header : afficher le taux d'occupation (ex: "SAU 7/17")
+**Ameliorations** :
+- Ajouter un compteur par categorie dans un mini-resume en haut de la section prescriptions (deja present mais peut etre ameliore visuellement)
+- Uniformiser les bordures laterales colorees sur les resultats critiques (border-l-4)
+- Ajouter une animation d'entree staggeree sur les cartes de resultats
+- Confirmer les 4 categories dans le code : Traitements (Pill), Soins (HeartPulse), Examens Bio (FlaskConical), Imagerie (ScanLine)
+- Ameliorer le contraste du dialog de prescription (fond opaque, z-index)
 
-### 6. `src/pages/TriagePage.tsx` -- Selecteur visuel de box
-
-A l'etape Orientation (step 4), remplacer l'input numero par un selecteur visuel :
-- Afficher les boxes disponibles de la zone selectionnee en grille de badges cliquables
-- Boxes occupes = grise et non cliquable
-- Boxes libres = cliquable, le clic remplit le champ box_number
-- Necessite de passer les encounters en cours au composant (ou fetch les boxes occupes)
-
-### 7. `src/components/urgence/PatientBanner.tsx` -- Afficher le box
-
-Ajouter une prop optionnelle `boxNumber` :
-- Si present, afficher "Box X" a cote du nom du patient dans la banniere
-- Style discret mais visible (badge outline)
-
-### 8. `src/pages/PatientDossierPage.tsx` -- Passer boxNumber au banner
-
-Transmettre `encounter.box_number` au composant PatientBanner.
-
-### 9. `src/pages/PancartePage.tsx` -- Passer boxNumber au banner
-
-Meme chose : transmettre `encounter.box_number` au PatientBanner.
+**Fichier** : `src/pages/PatientDossierPage.tsx`
 
 ---
 
-## Details techniques
+## 3. PancartePage -- Ergonomie IDE amelioree
 
-**Responsive :**
-- Desktop (>1280px) : 6 colonnes par zone, toutes zones visibles
-- Tablette (768-1280px) : 4 colonnes
-- Mobile (<768px) : 2 colonnes, zones collapsibles pour economiser l'espace vertical
+**Etat actuel** : Resume rapide en haut (Rx actives, Actes, Resultats). 4 categories de prescriptions presentes. DAR avec cards separees D/A/R.
 
-**Performance :**
-- Meme requete Supabase existante, pas de requete supplementaire
-- Realtime deja en place sur `encounters` et `results`
-- Les boxes vides sont generes cote client a partir de box-config.ts
+**Ameliorations** :
+- Renforcer visuellement le resume rapide avec des couleurs plus distinctes
+- Ameliorer les animations staggerees (actuellement presentes mais timing a affiner)
+- Ajouter un indicateur visuel quand une prescription est urgente/STAT (pulse subtil)
 
-**Aucune modification base de donnees requise.**
+**Fichier** : `src/pages/PancartePage.tsx`
+
+---
+
+## 4. LoginPage -- Finitions premium
+
+**Etat actuel** : Split layout desktop, animation pulse sur icone, comptes demo, gradient background.
+
+**Ameliorations** :
+- Ameliorer l'espacement de la zone de comptes demo (padding plus genereux)
+- Ajouter une transition douce entre les modes connexion/inscription (slide animation)
+- Renforcer le hover des boutons de comptes demo
+
+**Fichier** : `src/pages/LoginPage.tsx`
+
+---
+
+## 5. RoleSelector -- Finitions
+
+**Etat actuel** : Bien construit avec animations staggerees, gradient background, design premium.
+
+**Ameliorations mineures** :
+- Ajouter un effet hover plus prononce avec scale et shadow (actuellement `hover:scale-[1.03]`, passer a `hover:scale-[1.05] hover:shadow-xl`)
+- Ameliorer l'espacement sur mobile (gap plus grand)
+
+**Fichier** : `src/pages/RoleSelector.tsx`
+
+---
+
+## 6. TriagePage -- Coherence visuelle
+
+**Etat actuel** : Stepper avec progress bar et points colores, BoxSelector visuel pour l'orientation.
+
+**Ameliorations** :
+- Ameliorer les zones tactiles des boutons de motif SFMU (deja `touch-target`, verifier taille minimum 44px)
+- Ajouter des animations de transition entre les etapes (slide-in)
+- Ameliorer le stepper header avec un meilleur contraste
+
+**Fichier** : `src/pages/TriagePage.tsx`
+
+---
+
+## 7. IOAQueuePage -- Amelioration de la lisibilite
+
+**Etat actuel** : StatCards en haut, cards avec bordure coloree par temps d'attente, heure d'arrivee visible.
+
+**Ameliorations** :
+- Renforcer le contraste des indicateurs d'attente (couleurs plus saturees)
+- Ajouter un fond gradient coherent avec les autres pages
+- Ameliorer l'animation vide (file d'attente vide)
+
+**Fichier** : `src/pages/IOAQueuePage.tsx`
+
+---
+
+## 8. AccueilPage -- Coherence design
+
+**Etat actuel** : Gradient de fond subtil, StatCards, animations staggerees sur la liste.
+
+**Ameliorations** :
+- Ameliorer le formulaire avec des labels plus visibles et un espacement coherent
+- Renforcer les animations staggerees sur les admissions du jour
+- Ajouter un hover sur les cards d'admission pour un retour visuel
+
+**Fichier** : `src/pages/AccueilPage.tsx`
+
+---
+
+## 9. AideSoignantPage -- Ergonomie tactile
+
+**Etat actuel** : Bien adapte au mobile avec BigButtons, gradient de fond, animations.
+
+**Ameliorations** :
+- Ameliorer le retour visuel sur la selection de patient (animation plus visible)
+- Ajouter une transition entre les vues plus fluide
+- Renforcer la taille des zones de saisie de constantes
+
+**Fichier** : `src/pages/AideSoignantPage.tsx`
+
+---
+
+## 10. LandingPage -- Pas de changement
+
+La landing est bien structuree. Aucune modification prevue.
+
+---
+
+## Resume technique
+
+| Page | Changement principal | Impact |
+|------|---------------------|--------|
+| BoardPage | Filtres de zone cliquables (SAU/UHCD/Dechocage/Tous) | Ergonomie majeure |
+| PatientDossierPage | Polish prescriptions + resultats | Lisibilite |
+| PancartePage | Polish resume + STAT pulse | Workflow IDE |
+| LoginPage | Espacement demo, transitions | Polish |
+| RoleSelector | Hover ameliore | Polish |
+| TriagePage | Transitions etapes | UX |
+| IOAQueuePage | Gradient, contraste | Coherence |
+| AccueilPage | Labels, hover admissions | Coherence |
+| AideSoignantPage | Transitions, taille saisie | Coherence |
+
+Tous les changements respectent : icones Lucide uniquement (pas d'emoji), zones tactiles 44px minimum, code couleur semantique medical, animations staggerees, et les 4 categories de prescriptions (Soins, Examens Bio, Imagerie, Traitements).
 
