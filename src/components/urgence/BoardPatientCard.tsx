@@ -1,9 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
@@ -27,9 +28,26 @@ const zoneBadgeColors: Record<string, string> = {
   dechocage: 'bg-medical-critical/10 text-medical-critical',
 };
 
+export type WaitingStatus = 'a-trier' | 'a-installer' | 'a-orienter' | null;
+
+export function getWaitingStatus(encounter: { status: string; zone: Zone | null; box_number: number | null }): WaitingStatus {
+  if (encounter.status === 'arrived' && !encounter.zone) return 'a-trier';
+  if ((encounter.status === 'triaged' || encounter.status === 'in-progress') && !encounter.zone) return 'a-orienter';
+  if (encounter.zone && !encounter.box_number) return 'a-installer';
+  return null;
+}
+
+const waitingBadgeConfig: Record<string, { label: string; className: string }> = {
+  'a-trier': { label: 'À trier', className: 'bg-orange-500/15 text-orange-600 border-orange-500/30' },
+  'a-installer': { label: 'À installer', className: 'bg-blue-500/15 text-blue-600 border-blue-500/30' },
+  'a-orienter': { label: 'À orienter', className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' },
+};
+
 interface PatientCardProps {
   encounter: {
     id: string;
+    patient_id: string;
+    status: string;
     zone: Zone | null;
     box_number: number | null;
     ccmu: number | null;
@@ -43,11 +61,13 @@ interface PatientCardProps {
   role: string | null;
   index: number;
   showZoneBadge?: boolean;
+  showWaitingBadge?: boolean;
   onMoveZone: (encounterId: string, zone: Zone) => void;
   onClick: () => void;
+  onTriage?: (patientId: string) => void;
 }
 
-export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, onMoveZone, onClick }: PatientCardProps) {
+export function PatientCard({ encounter, resultCount, role, index, showZoneBadge, showWaitingBadge, onMoveZone, onClick, onTriage }: PatientCardProps) {
   const p = encounter.patients;
   const age = calculateAge(p.date_naissance);
   const waitMin = getWaitTimeMinutes(encounter.arrival_time);
@@ -56,6 +76,7 @@ export function PatientCard({ encounter, resultCount, role, index, showZoneBadge
   const waitWarning = waitMin > 120;
   const rc = resultCount;
   const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
+  const ws = showWaitingBadge ? getWaitingStatus(encounter) : null;
 
   return (
     <Card
@@ -68,7 +89,7 @@ export function PatientCard({ encounter, resultCount, role, index, showZoneBadge
     >
       <CardContent className="p-4 space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
             <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
             {showZoneBadge && encounter.zone && (
@@ -76,8 +97,25 @@ export function PatientCard({ encounter, resultCount, role, index, showZoneBadge
                 {encounter.zone.toUpperCase()}
               </Badge>
             )}
+            {ws && waitingBadgeConfig[ws] && (
+              <Badge variant="outline" className={cn('text-xs', waitingBadgeConfig[ws].className)}>
+                {waitingBadgeConfig[ws].label}
+              </Badge>
+            )}
           </div>
-          {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
+          <div className="flex items-center gap-2">
+            {encounter.ccmu && <CCMUBadge level={encounter.ccmu} size="sm" />}
+            {ws === 'a-trier' && onTriage && (role === 'ioa' || role === 'medecin') && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs border-orange-500/30 text-orange-600 hover:bg-orange-500/10"
+                onClick={(e) => { e.stopPropagation(); onTriage(encounter.patient_id); }}
+              >
+                <ClipboardList className="h-3 w-3 mr-1" /> Trier
+              </Button>
+            )}
+          </div>
         </div>
         {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
         {encounter.medecin_profile && (
