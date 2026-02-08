@@ -1,107 +1,87 @@
 
 
-# Corrections finales -- UrgenceOS
+# Plan complet -- Corrections finales + Page d'accueil premium
 
-Apres audit complet de chaque page, composant, policy RLS et schema de base de donnees, toutes les 20 fonctionnalites du plan sont implementees. Cependant, 7 bugs/lacunes subsistent qui empechent certaines fonctionnalites de fonctionner correctement.
+## Audit des lacunes restantes
 
----
-
-## 1. Le pre-remplissage depuis la file IOA ne fonctionne pas
-
-**Probleme** : La page IOA Queue passe `{ patientId, encounterId }` via `navigate('/triage', { state: ... })` mais TriagePage ne lit jamais `location.state`. Le patient existant n'est pas pre-rempli, et un nouveau passage est cree au lieu de mettre a jour le passage existant (statut `arrived` -> `triaged`).
-
-**Correction** :
-- Importer `useLocation` dans TriagePage
-- Lire `location.state.patientId` et `location.state.encounterId`
-- Si `patientId` est present, pre-remplir le patient et verrouiller l'etape Identite
-- Si `encounterId` est present, faire un `UPDATE` au lieu d'un `INSERT` sur encounters lors de la validation
+Apres audit exhaustif de chaque fichier, composant, page, policy RLS, et schema de base, voici les problemes identifies et les ajouts demandes.
 
 ---
 
-## 2. Le resume de sortie n'est pas sauvegarde
+## PARTIE A -- Corrections et lacunes existantes
 
-**Probleme** : Dans `DischargeDialog`, le champ `summary` (textarea) est saisi mais jamais envoye a la base. La query `encounters.update()` n'inclut pas le resume.
+### 1. ThemeToggle en conflit avec next-themes
 
-**Correction** : Sauvegarder le resume dans `timeline_items` comme un CRH de sortie, puisque la table `encounters` n'a pas de colonne `summary`.
+**Probleme** : `App.tsx` utilise `<ThemeProvider attribute="class">` de `next-themes`, mais `ThemeToggle.tsx` manipule manuellement `document.documentElement.classList` et `localStorage`. Les deux systemes interferent.
 
----
+**Correction** : Refactorer `ThemeToggle` pour utiliser le hook `useTheme()` de `next-themes` (3 lignes de code, suppression des `useEffect` manuels).
 
-## 3. Pas d'audit log sur la sortie patient
+### 2. PatientBanner manque ThemeToggle et NetworkStatus
 
-**Probleme** : `DischargeDialog` ne trace pas l'action dans `audit_logs`. Toutes les autres actions critiques (prescriptions, administrations, changements de zone) sont tracees, mais pas la sortie.
+**Probleme** : Les pages `PancartePage` et `PatientDossierPage` utilisent `PatientBanner` comme seul header. Elles n'ont pas de `ThemeToggle` ni `NetworkStatus`.
 
-**Correction** : Ajouter un insert dans `audit_logs` avec `action: 'patient_discharge'` dans `DischargeDialog`.
+**Correction** : Ajouter ces deux composants dans `PatientBanner`, aligne a droite du banner.
 
----
+### 3. Warning console "Function components cannot be given refs"
 
-## 4. Le triage redirige toujours vers /board au lieu de /ioa-queue pour l'IOA
+**Probleme** : React Router emet un warning sur `Navigate` et `LoginPage` car ils ne sont pas enveloppes dans `forwardRef`. C'est un warning mineur mais visible en console.
 
-**Probleme** : Apres validation du tri, `handleSubmit` navigue vers `/board`. Pour un IOA, ce devrait etre `/ioa-queue`.
-
-**Correction** : Utiliser le role de l'utilisateur pour rediriger vers la bonne page apres validation.
+**Correction** : Ce warning est lie a React Router v6 et n'affecte pas le fonctionnement. Pas de correction necessaire -- c'est cosmique.
 
 ---
 
-## 5. ThemeToggle et NetworkStatus absents de certaines pages
+## PARTIE B -- Page d'accueil premium (avant login)
 
-**Probleme** : Les composants `ThemeToggle` et `NetworkStatus` ne sont presents que sur BoardPage et IOAQueuePage. Ils manquent dans les headers de AccueilPage, AideSoignantPage, PancartePage et PatientDossierPage.
+Le prompt demande "AJOUTE LA PAGE D'ACCUEIL PREMIUM". Il s'agit d'une landing page publique de presentation d'UrgenceOS, visible AVANT le login, style Apple-like avec une esthetique premium.
 
-**Correction** : Ajouter ces composants dans les headers de toutes les pages.
+### Contenu de la page d'accueil
 
----
+1. **Hero section** : grand titre "UrgenceOS", sous-titre "La revolution des urgences hospitalieres", bouton CTA "Acces au systeme" (redirige vers /login)
 
-## 6. L'AS ne peut pas lire les transmissions
+2. **Section "Le probleme"** : 3 StatCards avec des chiffres percutants :
+   - "40-60%" de burnout urgentistes
+   - "15+" logiciels differents par SAU
+   - "6-8 clics" pour une administration medicamenteuse
 
-**Probleme** : La policy SELECT sur `transmissions` n'autorise que `medecin` et `ide`. L'AS qui effectue des soins n'a pas acces aux transmissions IDE, ce qui l'empeche de voir le contexte clinique.
+3. **Section "5 profils, 1 systeme"** : cards visuelles pour chaque role (Medecin, IOA, IDE, AS, Secretaire) avec icone, titre et description courte
 
-**Correction** : Ajouter `as` dans la policy SELECT de `transmissions`.
+4. **Section "Fonctionnalites cles"** : 4 blocs illustres :
+   - Board panoramique temps reel
+   - Pancarte unifiee IDE (1 tap administration)
+   - Tri IOA en moins de 2 minutes
+   - Securite clinique automatisee (allergies, constantes anormales)
 
----
+5. **Section "Design Apple-like"** : mise en avant du code couleur semantique (rouge/orange/vert/bleu/gris) avec exemples visuels
 
-## 7. Pas de realtime sur les vitals dans la pancarte
+6. **Footer** : "UrgenceOS -- Reflexion academique -- Fevrier 2026" + lien vers login
 
-**Probleme** : La pancarte IDE ecoute le realtime sur `prescriptions` et `results` mais pas sur `vitals`. Si l'AS saisit des constantes, l'IDE ne les voit pas en temps reel.
-
-**Correction** : Ajouter `vitals` a la publication realtime et au channel de la pancarte.
+### Style
+- Fond gradient subtil, sections alternees fond blanc/fond gris clair
+- Animations d'entree douces (fade-in au scroll)
+- Espaces blancs genereux, typographie Inter
+- Responsive mobile-first
+- Support dark mode natif
 
 ---
 
 ## Plan technique
 
-### Migration SQL
-- Ajouter `as` dans la policy SELECT de `transmissions`
-- Ajouter `vitals` a la publication supabase_realtime
-
 ### Fichiers a modifier
 
-1. **`src/pages/TriagePage.tsx`**
-   - Importer `useLocation` et lire `location.state`
-   - Pre-remplir le patient si `patientId` est fourni (fetch patient et auto-select)
-   - Si `encounterId` fourni, UPDATE au lieu d'INSERT
-   - Rediriger vers `/ioa-queue` si role IOA apres validation
+1. **`src/components/urgence/ThemeToggle.tsx`** -- Refactorer pour utiliser `useTheme()` de `next-themes`
 
-2. **`src/components/urgence/DischargeDialog.tsx`**
-   - Sauvegarder le resume dans `timeline_items` (type `crh`, contenu = resume)
-   - Ajouter un insert dans `audit_logs` pour la sortie
-   - Passer `patientId` et `userId` en props
+2. **`src/components/urgence/PatientBanner.tsx`** -- Ajouter `ThemeToggle` et `NetworkStatus` a droite
 
-3. **`src/pages/AccueilPage.tsx`**
-   - Ajouter `ThemeToggle` et `NetworkStatus` dans le header
+3. **`src/pages/LandingPage.tsx`** (NOUVEAU) -- Page d'accueil premium avec hero, stats, roles, fonctionnalites, design system
 
-4. **`src/pages/AideSoignantPage.tsx`**
-   - Ajouter `ThemeToggle` et `NetworkStatus` dans le header
+4. **`src/App.tsx`** -- Ajouter la route `/` vers `LandingPage` (route publique), ajuster la redirection existante
 
-5. **`src/pages/PancartePage.tsx`**
-   - Ajouter `ThemeToggle` et `NetworkStatus` dans le header (PatientBanner)
-   - Ajouter `vitals` au channel realtime
-
-6. **`src/pages/PatientDossierPage.tsx`**
-   - Passer `patientId` et `userId` a `DischargeDialog`
+### Fichiers inchanges
+Toutes les autres pages (Board, Dossier, Pancarte, Triage, IOA Queue, AS, Accueil, Login, RoleSelector) restent inchangees.
 
 ### Ordre d'implementation
-1. Fix IOA -> Triage pre-remplissage + UPDATE encounter (fonctionnalite cassee)
-2. Fix DischargeDialog (resume + audit log)
-3. Migration RLS transmissions + realtime vitals
-4. ThemeToggle/NetworkStatus sur toutes les pages
-5. Redirection triage IOA -> /ioa-queue
+1. Refactorer ThemeToggle (useTheme)
+2. Mettre a jour PatientBanner (ajout ThemeToggle + NetworkStatus)
+3. Creer LandingPage
+4. Mettre a jour App.tsx (route /)
 
