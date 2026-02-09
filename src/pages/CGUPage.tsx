@@ -18,7 +18,7 @@ export default function CGUPage() {
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <h1 className="text-3xl font-bold">Conditions Générales d'Utilisation</h1>
-        <p className="text-muted-foreground">Dernière mise à jour : 8 février 2026</p>
+        <p className="text-muted-foreground">Dernière mise à jour : 1er février 2026</p>
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-primary">1. Objet</h2>

@@ -49,24 +49,51 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
   };
 
   const generateCRH = () => {
-    const parts: string[] = [];
-    if (motif) parts.push(`Motif : ${motif}`);
-    if (diagnostics.length > 0) parts.push(`Diagnostic : ${diagnostics.map(d => d.content).join(', ')}`);
-    if (prescriptions.length > 0) {
-      const rxList = prescriptions.filter(rx => rx.status === 'active' || rx.status === 'completed').map(rx => `${rx.medication_name} ${rx.dosage} ${rx.route}`);
-      if (rxList.length > 0) parts.push(`Traitements : ${rxList.join(' ; ')}`);
+    const sections: string[] = [];
+    sections.push('=== COMPTE-RENDU DE PASSAGE AUX URGENCES ===');
+    sections.push('');
+    if (motif) {
+      sections.push(`MOTIF DE CONSULTATION : ${motif}`);
+      sections.push('');
+    }
+    if (diagnostics.length > 0) {
+      sections.push('DIAGNOSTIC :');
+      diagnostics.forEach(d => sections.push(`  - ${d.content}`));
+      sections.push('');
     }
     if (vitals.length > 0) {
+      const first = vitals[0];
       const last = vitals[vitals.length - 1];
-      const vParts = [];
-      if (last.fc) vParts.push(`FC ${last.fc}`);
-      if (last.pa_systolique) vParts.push(`PA ${last.pa_systolique}/${last.pa_diastolique || '?'}`);
-      if (last.spo2) vParts.push(`SpO₂ ${last.spo2}%`);
-      if (last.temperature) vParts.push(`T° ${last.temperature}°C`);
-      if (vParts.length > 0) parts.push(`Dernières constantes : ${vParts.join(', ')}`);
+      const fmt = (v: any) => {
+        const p = [];
+        if (v.fc) p.push(`FC ${v.fc} bpm`);
+        if (v.pa_systolique) p.push(`PA ${v.pa_systolique}/${v.pa_diastolique || '?'} mmHg`);
+        if (v.spo2) p.push(`SpO2 ${v.spo2}%`);
+        if (v.temperature) p.push(`T ${v.temperature}\u00b0C`);
+        if (v.frequence_respiratoire) p.push(`FR ${v.frequence_respiratoire}/min`);
+        if (v.gcs) p.push(`GCS ${v.gcs}/15`);
+        if (v.eva_douleur != null) p.push(`EVA ${v.eva_douleur}/10`);
+        return p.join(', ');
+      };
+      sections.push('CONSTANTES :');
+      if (vitals.length > 1) {
+        sections.push(`  Initiales : ${fmt(first)}`);
+        sections.push(`  Sortie    : ${fmt(last)}`);
+      } else {
+        sections.push(`  ${fmt(last)}`);
+      }
+      sections.push('');
     }
-    parts.push(`Orientation : ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`);
-    setSummary(parts.join('\n'));
+    const activeRx = prescriptions.filter(rx => rx.status === 'active' || rx.status === 'completed');
+    if (activeRx.length > 0) {
+      sections.push('TRAITEMENTS ADMINISTRES :');
+      activeRx.forEach(rx => sections.push(`  - ${rx.medication_name} ${rx.dosage} ${rx.route}${rx.frequency ? ` (${rx.frequency})` : ''}`));
+      sections.push('');
+    }
+    sections.push(`ORIENTATION : ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`);
+    if (ccmuSortie) sections.push(`CCMU de sortie : ${ccmuSortie}`);
+    if (gemsa) sections.push(`GEMSA : ${gemsa}`);
+    setSummary(sections.join('\n'));
   };
   const [summary, setSummary] = useState('');
   const [ordonnance, setOrdonnance] = useState('');
@@ -180,8 +207,19 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
             <Textarea value={summary} onChange={e => setSummary(e.target.value)} placeholder="Synthèse clinique, consignes de sortie..." className="mt-1" rows={4} />
           </div>
           <div>
-            <Label>Ordonnance de sortie (optionnel)</Label>
-            <Textarea value={ordonnance} onChange={e => setOrdonnance(e.target.value)} placeholder="Paracétamol 1g x3/j pendant 5 jours..." className="mt-1" rows={3} />
+            <div className="flex items-center justify-between mb-1">
+              <Label>Ordonnance de sortie (optionnel)</Label>
+              {prescriptions.filter(rx => rx.status === 'active').length > 0 && (
+                <Button type="button" variant="outline" size="sm" className="text-xs h-7" onClick={() => {
+                  const activeRx = prescriptions.filter(rx => rx.status === 'active');
+                  const lines = activeRx.map(rx => `${rx.medication_name} ${rx.dosage} ${rx.route}${rx.frequency ? ` — ${rx.frequency}` : ''}`);
+                  setOrdonnance(lines.join('\n'));
+                }}>
+                  Pre-remplir
+                </Button>
+              )}
+            </div>
+            <Textarea value={ordonnance} onChange={e => setOrdonnance(e.target.value)} placeholder="Paracetamol 1g x3/j pendant 5 jours..." className="mt-1" rows={3} />
           </div>
         </div>
         <DialogFooter>
