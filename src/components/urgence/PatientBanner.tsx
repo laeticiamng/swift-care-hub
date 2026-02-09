@@ -1,8 +1,10 @@
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft, FileText } from 'lucide-react';
 import { CCMUBadge } from './CCMUBadge';
 import { ThemeToggle } from './ThemeToggle';
 import { NetworkStatus } from './NetworkStatus';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface PatientBannerProps {
@@ -16,14 +18,18 @@ interface PatientBannerProps {
   medecinName?: string;
   boxNumber?: number | null;
   poids?: number | null;
+  encounterId?: string;
   onBack?: () => void;
   className?: string;
 }
 
 export function PatientBanner({
-  nom, prenom, age, sexe, ccmu, motif, allergies = [], medecinName, boxNumber, poids, onBack, className,
+  nom, prenom, age, sexe, ccmu, motif, allergies = [], medecinName, boxNumber, poids, encounterId, onBack, className,
 }: PatientBannerProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const hasAllergies = allergies.length > 0;
+  const isOnRecapPage = location.pathname.startsWith('/recap/');
 
   return (
     <div className={cn(
@@ -65,6 +71,16 @@ export function PatientBanner({
         <div className="flex items-center gap-1.5 ml-auto">
           {medecinName && (
             <span className="text-sm text-muted-foreground mr-2">Dr. {medecinName}</span>
+          )}
+          {encounterId && !isOnRecapPage && (
+            <Button
+              size="sm"
+              onClick={() => navigate(`/recap/${encounterId}`)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+            >
+              <FileText className="w-4 h-4" />
+              RECAP
+            </Button>
           )}
           <NetworkStatus />
           <ThemeToggle />

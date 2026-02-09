@@ -252,7 +252,7 @@ export default function PatientDossierPage() {
   return (
     <div className="min-h-screen bg-background">
       <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} onBack={() => navigate(-1)} />
+        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} encounterId={encounterId} onBack={() => navigate(-1)} />
 
       <div className="max-w-7xl mx-auto p-4">
         {isReadOnly && (
