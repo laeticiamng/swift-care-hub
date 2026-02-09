@@ -13,12 +13,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History, Stethoscope } from 'lucide-react';
+import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History, Stethoscope, Share2, PenLine, FileDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { FHIRViewer } from '@/components/urgence/interop/FHIRViewer';
+import { CRHPreview } from '@/components/urgence/documents/CRHPreview';
+import { encounterBundleToFHIR, type FHIRBundle } from '@/lib/interop/fhir-adapter';
+import { generateCRHHTML, generateOrdonnanceHTML } from '@/lib/interop/mssante-adapter';
+import type { FullEncounterData, DocumentStatus, CanonicalAllergy, CanonicalCondition } from '@/lib/interop/canonical-model';
+import { parsePrescriptionMeta as parseRxMetaForInterop } from '@/lib/prescription-types';
 import { categorizePrescription, PRESCRIPTION_SECTIONS, PRESCRIPTION_TEMPLATES, PrescriptionCategory } from '@/lib/prescription-utils';
 import {
   parsePrescriptionMeta,
@@ -64,6 +71,14 @@ export default function PatientDossierPage() {
   const [diagnosticContent, setDiagnosticContent] = useState('');
   const [savingDiag, setSavingDiag] = useState(false);
   const [medecinName, setMedecinName] = useState<string | undefined>(undefined);
+  // Interop state
+  const [fhirDrawerOpen, setFhirDrawerOpen] = useState(false);
+  const [fhirBundle, setFhirBundle] = useState<FHIRBundle | null>(null);
+  const [crhDrawerOpen, setCrhDrawerOpen] = useState(false);
+  const [crhHTML, setCrhHTML] = useState('');
+  const [crhStatus, setCrhStatus] = useState<DocumentStatus>('draft');
+  const [ordonnanceDrawerOpen, setOrdonnanceDrawerOpen] = useState(false);
+  const [ordonnanceHTML, setOrdonnanceHTML] = useState('');
 
   useEffect(() => {
     if (!encounterId) return;
@@ -247,6 +262,185 @@ export default function PatientDossierPage() {
     fetchAll();
   };
 
+  // ── Build FullEncounterData for interop adapters ──
+  const buildFullEncounterData = (): FullEncounterData => {
+    // Convert patient allergies array to CanonicalAllergy[]
+    const allergies: CanonicalAllergy[] = (patient?.allergies || []).map((a: string) => ({
+      patient_id: patient.id,
+      substance: a,
+      status: 'active' as const,
+    }));
+
+    // Convert timeline diagnostics to CanonicalCondition[]
+    const conditions: CanonicalCondition[] = [];
+    // Add antecedents from timeline
+    timeline.filter(t => t.item_type === 'antecedent').forEach(t => {
+      conditions.push({
+        patient_id: patient.id,
+        encounter_id: encounter.id,
+        code_display: t.content,
+        category: 'antecedent',
+        clinical_status: 'active',
+      });
+    });
+    // Add diagnostics from timeline
+    timeline.filter(t => t.item_type === 'diagnostic').forEach(t => {
+      const match = t.content.match(/^([A-Z]\d+\.?\d*)\s*[—-]\s*(.+)$/);
+      conditions.push({
+        patient_id: patient.id,
+        encounter_id: encounter.id,
+        code_cim10: match?.[1] || undefined,
+        code_display: match?.[2] || t.content,
+        category: 'diagnostic_actuel',
+        verification_status: 'confirmed',
+        clinical_status: 'active',
+      });
+    });
+
+    // Convert prescriptions with their metadata
+    const canonicalRx = prescriptions.map((rx: any) => {
+      const meta = parseRxMetaForInterop(rx);
+      return {
+        id: rx.id,
+        encounter_id: rx.encounter_id,
+        patient_id: rx.patient_id,
+        prescriber_id: rx.prescriber_id,
+        prescription_type: meta.type,
+        medication_name: rx.medication_name,
+        dosage: rx.dosage,
+        route: rx.route,
+        frequency: rx.frequency,
+        status: rx.status,
+        priority: rx.priority,
+        when_event: rx.created_at,
+        notes: rx.notes,
+        ...meta,
+      };
+    });
+
+    return {
+      patient: {
+        id: patient.id,
+        nom: patient.nom,
+        prenom: patient.prenom,
+        date_naissance: patient.date_naissance,
+        sexe: patient.sexe,
+        ins_numero: patient.ins_numero,
+        poids: patient.poids,
+        telephone: patient.telephone,
+        adresse: patient.adresse,
+        medecin_traitant: patient.medecin_traitant,
+        allergies: patient.allergies,
+        antecedents: patient.antecedents,
+        traitements_actuels: patient.traitements_actuels,
+      },
+      encounter: {
+        id: encounter.id,
+        patient_id: encounter.patient_id,
+        status: encounter.status,
+        arrival_time: encounter.arrival_time,
+        when_event: encounter.arrival_time,
+        triage_time: encounter.triage_time,
+        discharge_time: encounter.discharge_time,
+        motif_sfmu: encounter.motif_sfmu,
+        ccmu: encounter.ccmu,
+        cimu: encounter.cimu,
+        gemsa: encounter.gemsa,
+        zone: encounter.zone,
+        box_number: encounter.box_number,
+        location: encounter.zone ? `${encounter.zone.toUpperCase()} Box ${encounter.box_number || ''}` : undefined,
+        assigned_doctor_name: medecinName,
+        medecin_id: encounter.medecin_id,
+        orientation: encounter.orientation,
+      },
+      vitals: vitals.map((v: any) => ({
+        id: v.id,
+        patient_id: v.patient_id,
+        encounter_id: v.encounter_id,
+        recorded_at: v.recorded_at,
+        when_event: v.recorded_at,
+        fc: v.fc,
+        pa_systolique: v.pa_systolique,
+        pa_diastolique: v.pa_diastolique,
+        spo2: v.spo2,
+        temperature: v.temperature,
+        frequence_respiratoire: v.frequence_respiratoire,
+        gcs: v.gcs,
+        eva_douleur: v.eva_douleur,
+        recorded_by: v.recorded_by,
+      })),
+      prescriptions: canonicalRx,
+      administrations: [],
+      procedures: [],
+      results: results.map((r: any) => ({
+        id: r.id,
+        encounter_id: r.encounter_id,
+        patient_id: r.patient_id,
+        title: r.title,
+        category: r.category,
+        result_type: r.category as 'bio' | 'imagerie' | 'ecg',
+        is_critical: r.is_critical,
+        is_read: r.is_read,
+        content: r.content,
+        when_event: r.received_at,
+        value_text: typeof r.content === 'object' ? JSON.stringify(r.content) : String(r.content),
+      })),
+      allergies,
+      conditions,
+      transmissions: [],
+      documents: [],
+    };
+  };
+
+  const handleExportFHIR = () => {
+    const data = buildFullEncounterData();
+    const bundle = encounterBundleToFHIR(data);
+    setFhirBundle(bundle);
+    setFhirDrawerOpen(true);
+    if (user) {
+      supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'fhir_export', resource_type: 'encounter',
+        resource_id: encounter.id, details: { resources: bundle.entry.length },
+      });
+    }
+  };
+
+  const handleGenerateCRH = () => {
+    const data = buildFullEncounterData();
+    const html = generateCRHHTML(data);
+    setCrhHTML(html);
+    setCrhStatus('draft');
+    setCrhDrawerOpen(true);
+  };
+
+  const handleSignCRH = () => {
+    setCrhStatus('signed');
+    toast.success('CRH signe');
+    if (user) {
+      supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'crh_signed', resource_type: 'document',
+        resource_id: encounter.id,
+      });
+    }
+  };
+
+  const handleSendMSSante = () => {
+    setCrhStatus('sent');
+    if (user) {
+      supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'mssante_sent', resource_type: 'document',
+        resource_id: encounter.id, details: { type: 'crh', recipient: patient?.medecin_traitant || 'MT' },
+      });
+    }
+  };
+
+  const handleGenerateOrdonnance = () => {
+    const data = buildFullEncounterData();
+    const html = generateOrdonnanceHTML(data);
+    setOrdonnanceHTML(html);
+    setOrdonnanceDrawerOpen(true);
+  };
+
   if (!patient || !encounter) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
 
   const age = calculateAge(patient.date_naissance);
@@ -327,11 +521,22 @@ export default function PatientDossierPage() {
             <Badge variant="secondary" className="text-sm px-3 py-1 flex items-center gap-1.5 w-fit"><Eye className="h-4 w-4" /> Consultation seule</Badge>
           </div>
         )}
-        {!isReadOnly && encounter.status !== 'finished' && (
-          <div className="flex justify-end mb-4">
-            <Button variant="outline" onClick={() => setDischargeOpen(true)}>
-              <DoorOpen className="h-4 w-4 mr-1" /> Préparer sortie
+        {!isReadOnly && (
+          <div className="flex flex-wrap justify-end gap-2 mb-4">
+            <Button variant="outline" size="sm" onClick={handleExportFHIR}>
+              <Share2 className="h-4 w-4 mr-1" /> Export FHIR
             </Button>
+            <Button variant="outline" size="sm" onClick={handleGenerateCRH}>
+              <FileText className="h-4 w-4 mr-1" /> Generer CRH
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleGenerateOrdonnance}>
+              <FileDown className="h-4 w-4 mr-1" /> Ordonnance
+            </Button>
+            {encounter.status !== 'finished' && (
+              <Button variant="outline" size="sm" onClick={() => setDischargeOpen(true)}>
+                <DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie
+              </Button>
+            )}
           </div>
         )}
         {!isReadOnly && (
@@ -1001,6 +1206,49 @@ export default function PatientDossierPage() {
 
       {/* Floating Recap FAB */}
       {encounterId && <RecapDrawer encounterId={encounterId} />}
+
+      {/* FHIR Export Drawer */}
+      <Sheet open={fhirDrawerOpen} onOpenChange={setFhirDrawerOpen}>
+        <SheetContent side="right" className="w-[600px] sm:w-[700px] p-0">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Export FHIR R4</SheetTitle>
+          </SheetHeader>
+          {fhirBundle && <FHIRViewer bundle={fhirBundle} title={`Bundle FHIR — ${patient.nom} ${patient.prenom}`} />}
+        </SheetContent>
+      </Sheet>
+
+      {/* CRH Preview Drawer */}
+      <Sheet open={crhDrawerOpen} onOpenChange={setCrhDrawerOpen}>
+        <SheetContent side="right" className="w-[600px] sm:w-[700px] p-0">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Compte-rendu de passage</SheetTitle>
+          </SheetHeader>
+          {crhHTML && (
+            <CRHPreview
+              htmlContent={crhHTML}
+              status={crhStatus}
+              onSign={handleSignCRH}
+              onSendMSSante={handleSendMSSante}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Ordonnance Preview Drawer */}
+      <Sheet open={ordonnanceDrawerOpen} onOpenChange={setOrdonnanceDrawerOpen}>
+        <SheetContent side="right" className="w-[600px] sm:w-[700px] p-0">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Ordonnance de sortie</SheetTitle>
+          </SheetHeader>
+          {ordonnanceHTML && (
+            <CRHPreview
+              htmlContent={ordonnanceHTML}
+              status="draft"
+              onSign={() => toast.success('Ordonnance signee')}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

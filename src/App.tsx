@@ -20,6 +20,7 @@ import AideSoignantPage from "./pages/AideSoignantPage";
 import AccueilPage from "./pages/AccueilPage";
 import IOAQueuePage from "./pages/IOAQueuePage";
 import RecapPage from "./pages/RecapPage";
+import InteropPage from "./pages/InteropPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 
@@ -55,6 +56,7 @@ function AppRoutes() {
       <Route path="/accueil" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/ioa-queue" element={<ProtectedRoute><RoleGuard><IOAQueuePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/recap/:encounterId" element={<ProtectedRoute><RoleGuard><RecapPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/interop" element={<ProtectedRoute><RoleGuard><InteropPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
       <Route path="/cgu" element={<CGUPage />} />
