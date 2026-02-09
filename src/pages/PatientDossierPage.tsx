@@ -449,6 +449,48 @@ export default function PatientDossierPage() {
   const vitalLabels: Record<string, string> = { fc: 'FC', pa_systolique: 'PA sys', spo2: 'SpO₂', temperature: 'T°', frequence_respiratoire: 'FR', gcs: 'GCS', eva_douleur: 'EVA' };
   const vitalUnits: Record<string, string> = { fc: 'bpm', pa_systolique: 'mmHg', spo2: '%', temperature: '°C', frequence_respiratoire: '/min', gcs: '/15', eva_douleur: '/10' };
 
+  // ── Adaptive section ordering based on motif SFMU and encounter status ──
+  type DossierContext = 'cardio' | 'trauma' | 'respiratoire' | 'infectieux' | 'sortie' | 'default';
+  const detectContext = (): DossierContext => {
+    if (encounter.status === 'ready_for_discharge' || encounter.status === 'finished') return 'sortie';
+    const motif = (encounter.motif_sfmu || '').toLowerCase();
+    if (['douleur thoracique', 'dt', 'precordialgie', 'angor', 'infarctus', 'cardio'].some(k => motif.includes(k))) return 'cardio';
+    if (['traumatisme', 'trauma', 'fracture', 'entorse', 'luxation', 'chute', 'plaie'].some(k => motif.includes(k))) return 'trauma';
+    if (['dyspnee', 'asthme', 'detresse respiratoire', 'insuffisance respiratoire', 'bronchospasme'].some(k => motif.includes(k))) return 'respiratoire';
+    if (['fievre', 'aeg', 'sepsis', 'infection'].some(k => motif.includes(k))) return 'infectieux';
+    return 'default';
+  };
+  const dossierContext = detectContext();
+
+  // Priority vital keys per context (shown first / highlighted)
+  const priorityVitalKeys: Record<DossierContext, string[]> = {
+    cardio: ['fc', 'pa_systolique', 'spo2', 'eva_douleur'],
+    trauma: ['eva_douleur', 'fc', 'pa_systolique', 'gcs'],
+    respiratoire: ['spo2', 'frequence_respiratoire', 'fc'],
+    infectieux: ['temperature', 'fc', 'pa_systolique', 'frequence_respiratoire'],
+    sortie: [],
+    default: [],
+  };
+
+  // Reorder vital keys: priority first, then the rest
+  const contextPriorityVitals = priorityVitalKeys[dossierContext];
+  const orderedVitalKeys = contextPriorityVitals.length > 0
+    ? [...contextPriorityVitals, ...vitalKeys.filter(k => !contextPriorityVitals.includes(k))]
+    : vitalKeys;
+
+  // For cardio/respiratoire/infectieux contexts, show results before prescriptions
+  const showResultsFirst = ['cardio', 'respiratoire', 'infectieux'].includes(dossierContext);
+
+  // Context label for the adaptive indicator
+  const contextLabels: Record<DossierContext, string> = {
+    cardio: 'Contexte cardiologique',
+    trauma: 'Contexte traumatologique',
+    respiratoire: 'Contexte respiratoire',
+    infectieux: 'Contexte infectieux',
+    sortie: 'Preparation sortie',
+    default: '',
+  };
+
   const bioNormalRanges: Record<string, { unit: string; min?: number; max?: number }> = {
     hemoglobine: { unit: 'g/dL', min: 12, max: 17 },
     leucocytes: { unit: 'G/L', min: 4, max: 10 },
@@ -502,6 +544,43 @@ export default function PatientDossierPage() {
       </div>
     );
   };
+
+  // Render the Results section (reused in different positions based on context)
+  const renderResultsSection = () => (
+    <Card className="animate-in fade-in duration-300" style={{ animationDelay: showResultsFirst ? '100ms' : '200ms', animationFillMode: 'both' }}>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg flex items-center gap-2">
+          Resultats
+          {results.filter(r => !r.is_read).length > 0 && (
+            <Badge className="bg-medical-critical text-medical-critical-foreground">{results.filter(r => !r.is_read).length} nouveau(x)</Badge>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun resultat</p>}
+        {results.map((r, idx) => (
+          <div key={r.id} className={cn('p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}
+            style={{ animationDelay: `${idx * 40}ms`, animationFillMode: 'both' }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
+                <span className="font-medium text-sm">{r.title}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
+                {!r.is_read && (
+                  <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleMarkRead(r.id)}>
+                    <Eye className="h-3 w-3 mr-1" /> Lu
+                  </Button>
+                )}
+              </div>
+            </div>
+            {renderResultContent(r.content, r.category)}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
 
   // Prescription category counts
   const rxGroups = {
@@ -662,6 +741,40 @@ export default function PatientDossierPage() {
 
           {/* Actions — 2 cols */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Context indicator */}
+            {dossierContext !== 'default' && (
+              <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium',
+                dossierContext === 'sortie' ? 'border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400' : 'border-primary/30 bg-primary/5 text-primary')}>
+                <ScanLine className="h-3.5 w-3.5" />
+                {contextLabels[dossierContext]} — sections adaptees
+              </div>
+            )}
+
+            {/* Sortie quick actions — shown first when patient ready for discharge */}
+            {dossierContext === 'sortie' && !isReadOnly && (
+              <Card className="animate-in fade-in duration-300 border-green-500/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <DoorOpen className="h-4 w-4 text-green-600" />
+                    <span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Actions de sortie</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" onClick={handleGenerateCRH} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10">
+                      <FileText className="h-4 w-4 mr-1" /> Generer CRH
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={handleGenerateOrdonnance} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10">
+                      <FileDown className="h-4 w-4 mr-1" /> Ordonnance
+                    </Button>
+                    {encounter.status !== 'finished' && (
+                      <Button size="sm" onClick={() => setDischargeOpen(true)} className="bg-green-600 hover:bg-green-700 text-white">
+                        <DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Antécédents + Allergies summary at TOP of right column */}
             {(patient.antecedents?.length > 0 || patient.allergies?.length > 0) && (
               <Card className="animate-in fade-in duration-300">
@@ -732,12 +845,13 @@ export default function PatientDossierPage() {
               <CardHeader className="pb-2"><CardTitle className="text-lg">Constantes</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {vitalKeys.map(key => {
+                  {orderedVitalKeys.map(key => {
                     const data = vitals.map(v => ({ value: v[key] })).filter(d => d.value != null);
                     const lastVal = data.length > 0 ? data[data.length - 1].value : null;
                     const abnormal = isVitalAbnormal(key, lastVal);
+                    const isPriorityVital = contextPriorityVitals.includes(key);
                     return (
-                      <div key={key} className={cn('p-3 rounded-lg border', abnormal && 'border-medical-critical bg-medical-critical/5')}>
+                      <div key={key} className={cn('p-3 rounded-lg border', abnormal && 'border-medical-critical bg-medical-critical/5', isPriorityVital && !abnormal && 'border-primary/30 bg-primary/5')}>
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-xs text-muted-foreground">{vitalLabels[key]}</span>
                           <span className={cn('text-lg font-bold', abnormal && 'text-medical-critical')}>
@@ -757,6 +871,9 @@ export default function PatientDossierPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Results shown FIRST for cardio/respiratoire/infectieux contexts */}
+            {showResultsFirst && !isReadOnly && renderResultsSection()}
 
             {!isReadOnly && (
             <Card className="animate-in fade-in duration-300" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
@@ -816,6 +933,76 @@ export default function PatientDossierPage() {
                                 </div>
                               );
                             })}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Smart suggestions based on latest vitals */}
+                      {vitals.length > 0 && (() => {
+                        const lastVitals = vitals[vitals.length - 1];
+                        const motifLower = (encounter.motif_sfmu || '').toLowerCase();
+                        const suggestions: Array<{ label: string; reason: string; action: () => void }> = [];
+
+                        // SpO2 < 92% → suggest O2
+                        if (lastVitals.spo2 != null && lastVitals.spo2 < 92) {
+                          suggestions.push({
+                            label: 'Oxygenotherapie',
+                            reason: `SpO2 ${lastVitals.spo2}% < 92%`,
+                            action: () => { setRxType('oxygene'); setRxMeta({ o2_device: 'Masque HC', o2_debit: '6L/min', o2_target: 'SpO2 > 94%' }); },
+                          });
+                        }
+
+                        // EVA > 6 → suggest analgesic
+                        if (lastVitals.eva_douleur != null && lastVitals.eva_douleur > 6) {
+                          suggestions.push({
+                            label: 'Antalgique (EVA elevee)',
+                            reason: `EVA ${lastVitals.eva_douleur}/10`,
+                            action: () => { setRxType('titration'); setNewRx(prev => ({ ...prev, medication_name: 'Morphine', route: 'IV' })); setRxMeta({ titration_dose_init: 2, titration_step: 2, titration_dose_max: 10, titration_interval: '5 min', titration_target: 'EVA < 4' }); },
+                          });
+                        }
+
+                        // FC > 120 + motif DT → suggest troponine urgente + ECG
+                        if (lastVitals.fc != null && lastVitals.fc > 120 && ['douleur thoracique', 'dt', 'precordialgie', 'angor'].some(k => motifLower.includes(k))) {
+                          suggestions.push({
+                            label: 'Troponine urgente + ECG',
+                            reason: `FC ${lastVitals.fc} bpm + contexte DT`,
+                            action: () => { setRxType('exam_bio'); setSelectedExams(['Troponine', 'CPK']); setRxMeta({ exam_urgency: 'urgent' }); setNewRx(prev => ({ ...prev, priority: 'stat' })); },
+                          });
+                        }
+
+                        // Temperature > 38.5 → suggest bilan infectieux
+                        if (lastVitals.temperature != null && lastVitals.temperature > 38.5) {
+                          suggestions.push({
+                            label: 'Bilan infectieux',
+                            reason: `T° ${lastVitals.temperature}°C`,
+                            action: () => { setRxType('exam_bio'); setSelectedExams(['NFS', 'CRP', 'Hemocultures', 'ECBU', 'Lactates']); setRxMeta({ exam_urgency: 'urgent' }); },
+                          });
+                        }
+
+                        // PA systolique < 90 → suggest remplissage
+                        if (lastVitals.pa_systolique != null && lastVitals.pa_systolique < 90) {
+                          suggestions.push({
+                            label: 'Remplissage vasculaire',
+                            reason: `PAS ${lastVitals.pa_systolique} mmHg`,
+                            action: () => { setRxType('perfusion'); setNewRx(prev => ({ ...prev, medication_name: 'NaCl 0.9%', dosage: '500mL' })); setRxMeta({ debit: '500 mL/h', duration: 'Bolus' }); setNewRx(prev => ({ ...prev, priority: 'stat' })); },
+                          });
+                        }
+
+                        if (suggestions.length === 0) return null;
+                        return (
+                          <div className="p-3 rounded-lg border border-orange-400/30 bg-orange-50 dark:bg-orange-950/20">
+                            <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 mb-2 flex items-center gap-1.5">
+                              <AlertTriangle className="h-3.5 w-3.5" /> Suggestions basees sur les constantes
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {suggestions.map((s, i) => (
+                                <button key={i} type="button" onClick={s.action}
+                                  className="px-2 py-1 rounded border border-orange-300 dark:border-orange-600 text-xs hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors text-left">
+                                  <span className="font-medium">{s.label}</span>
+                                  <span className="text-orange-500 dark:text-orange-400 ml-1">({s.reason})</span>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         );
                       })()}
@@ -1170,41 +1357,8 @@ export default function PatientDossierPage() {
             </Card>
             )}
 
-            {!isReadOnly && (
-            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  Résultats
-                  {results.filter(r => !r.is_read).length > 0 && (
-                    <Badge className="bg-medical-critical text-medical-critical-foreground">{results.filter(r => !r.is_read).length} nouveau(x)</Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {results.length === 0 && <p className="text-sm text-muted-foreground">Aucun résultat</p>}
-                {results.map((r, idx) => (
-                  <div key={r.id} className={cn('p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', r.is_critical && 'border-l-4 border-l-medical-critical', !r.is_read && 'bg-primary/5')}
-                    style={{ animationDelay: `${idx * 40}ms`, animationFillMode: 'both' }}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {r.category === 'bio' ? <FlaskConical className="h-4 w-4" /> : <Image className="h-4 w-4" />}
-                        <span className="font-medium text-sm">{r.title}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        {r.is_critical && <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">Critique</Badge>}
-                        {!r.is_read && (
-                          <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => handleMarkRead(r.id)}>
-                            <Eye className="h-3 w-3 mr-1" /> Lu
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    {renderResultContent(r.content, r.category)}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-            )}
+            {/* Results shown AFTER prescriptions for default/trauma/sortie contexts */}
+            {!showResultsFirst && !isReadOnly && renderResultsSection()}
           </div>
         </div>
       </div>
