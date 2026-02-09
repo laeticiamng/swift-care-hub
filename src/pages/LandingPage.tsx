@@ -7,14 +7,13 @@ import { ProblemSection } from '@/components/landing/ProblemSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { RolesSection } from '@/components/landing/RolesSection';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
-import { ImpactSection } from '@/components/landing/ImpactSection';
-import { InnovationsSection } from '@/components/landing/InnovationsSection';
+import { ImpactArchitectureSection } from '@/components/landing/ImpactArchitectureSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { FooterSection } from '@/components/landing/FooterSection';
 
 const navLinks = [
-  { label: 'Problème', target: 'problem' },
-  { label: 'Rôles', target: 'roles' },
+  { label: 'Probleme', target: 'problem' },
+  { label: 'Roles', target: 'roles' },
   { label: 'Impact', target: 'impact' },
 ];
 
@@ -61,38 +60,28 @@ export default function LandingPage() {
       <HowItWorksSection />
       <RolesSection />
       <FeaturesSection />
-      <ImpactSection />
-      <InnovationsSection />
+      <ImpactArchitectureSection />
 
-      {/* Manifesto */}
+      {/* Pourquoi UrgenceOS — condensed manifesto + timing */}
       <section className="py-16 px-6 bg-card border-y">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Manifesto</p>
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Nous croyons que la technologie doit servir le soin.</h2>
-          <div className="space-y-4 text-muted-foreground leading-relaxed text-left sm:text-center">
-            <p>Chaque clic inutile est un regard détourné du patient. Chaque écran mal conçu est une source de fatigue cognitive qui s'accumule au fil d'une garde de 12 heures.</p>
-            <p>UrgenceOS est né d'un constat simple : <span className="text-foreground font-medium">les soignants méritent des outils à la hauteur de leur engagement</span>. Pas des logiciels pensés par des informaticiens dans des bureaux, mais une solution forgée dans le bruit des urgences, entre deux patients.</p>
-            <p>Notre promesse : <span className="text-foreground font-semibold">zéro formation, zéro friction, zéro perte de données</span>. Un logiciel qui s'adapte au soignant — jamais l'inverse.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Pourquoi maintenant ? */}
-      <section className="py-16 px-6 bg-background">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3 text-center">Timing</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10">Pourquoi maintenant ?</h2>
-          <div className="grid sm:grid-cols-3 gap-6">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4 text-center">Pourquoi UrgenceOS</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">La technologie doit servir le soin — pas l'inverse.</h2>
+          <p className="text-muted-foreground leading-relaxed text-center max-w-2xl mx-auto mb-10">
+            Chaque clic inutile est un regard detourne du patient. Les soignants meritent des outils a la hauteur de leur engagement.
+            Notre promesse : <span className="text-foreground font-semibold">zero formation, zero friction, zero perte de donnees</span>.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-5">
             {[
-              { icon: Building2, title: 'Tension hospitalière maximale', desc: "Les urgences françaises font face à une crise sans précédent. Le statu quo logiciel n'est plus tenable : chaque minute perdue en clics est une minute volée au patient." },
-              { icon: Zap, title: 'Technologie mature', desc: "Temps réel, PWA offline, RLS natif, déploiement cloud en un clic. Les briques techniques pour un logiciel médical moderne existent enfin — sans compromis sur la sécurité." },
-              { icon: Scale, title: 'Cadre réglementaire stabilisé', desc: "RPU normalisé, identité INS, FHIR R4 : les standards sont posés. UrgenceOS s'y conforme nativement, sans couche d'adaptation coûteuse." },
+              { icon: Building2, title: 'Tension hospitaliere maximale', desc: "Chaque minute perdue en clics est une minute volee au patient. Le statu quo logiciel n'est plus tenable." },
+              { icon: Zap, title: 'Technologie mature', desc: "Temps reel, PWA offline, RLS natif. Les briques pour un logiciel medical moderne existent enfin." },
+              { icon: Scale, title: 'Standards poses', desc: "RPU normalise, identite INS, FHIR R4 : UrgenceOS s'y conforme nativement, sans surcout." },
             ].map(item => (
-              <div key={item.title} className="p-6 rounded-xl border bg-card text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <item.icon className="h-6 w-6 text-primary" />
+              <div key={item.title} className="p-5 rounded-xl border bg-background text-center space-y-2.5">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <item.icon className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-bold text-lg">{item.title}</h3>
+                <h3 className="font-bold">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             ))}
