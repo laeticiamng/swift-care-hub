@@ -21,6 +21,8 @@ import AccueilPage from "./pages/AccueilPage";
 import IOAQueuePage from "./pages/IOAQueuePage";
 import RecapPage from "./pages/RecapPage";
 import InteropPage from "./pages/InteropPage";
+import DemoPage from "./pages/DemoPage";
+import FeaturesPage from "./pages/FeaturesPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 
@@ -57,6 +59,8 @@ function AppRoutes() {
       <Route path="/ioa-queue" element={<ProtectedRoute><RoleGuard><IOAQueuePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/recap/:encounterId" element={<ProtectedRoute><RoleGuard><RecapPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/interop" element={<ProtectedRoute><RoleGuard><InteropPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/demo" element={<DemoPage />} />
+      <Route path="/features" element={<FeaturesPage />} />
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
       <Route path="/cgu" element={<CGUPage />} />

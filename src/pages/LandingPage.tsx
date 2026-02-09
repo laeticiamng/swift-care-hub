@@ -15,6 +15,8 @@ const navLinks = [
   { label: 'Probleme', target: 'problem' },
   { label: 'Roles', target: 'roles' },
   { label: 'Impact', target: 'impact' },
+  { label: 'Fonctionnalites', target: '/features', isRoute: true },
+  { label: 'Demo', target: '/demo', isRoute: true },
 ];
 
 export default function LandingPage() {
@@ -39,7 +41,7 @@ export default function LandingPage() {
             {navLinks.map((link) => (
               <button
                 key={link.target}
-                onClick={() => scrollTo(link.target)}
+                onClick={() => 'isRoute' in link && link.isRoute ? navigate(link.target) : scrollTo(link.target)}
                 className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
               >
                 {link.label}

@@ -26,12 +26,19 @@ export function FooterSection() {
           </div>
         </div>
         <div className="flex flex-wrap justify-center gap-4 text-xs border-t pt-4">
+          <Link to="/features" className="hover:text-foreground transition-colors">Fonctionnalites</Link>
+          <span className="text-muted-foreground/40">·</span>
+          <Link to="/demo" className="hover:text-foreground transition-colors">Demo</Link>
+          <span className="text-muted-foreground/40">·</span>
           <Link to="/mentions-legales" className="hover:text-foreground transition-colors">Mentions légales</Link>
           <span className="text-muted-foreground/40">·</span>
           <Link to="/politique-confidentialite" className="hover:text-foreground transition-colors">Politique de confidentialité</Link>
           <span className="text-muted-foreground/40">·</span>
           <Link to="/cgu" className="hover:text-foreground transition-colors">CGU</Link>
         </div>
+        <p className="text-center text-[11px] text-muted-foreground/60 mt-3">
+          UrgenceOS est un outil d'aide a la gestion des urgences hospitalieres. Il ne constitue pas un dispositif medical certifie.
+        </p>
       </div>
     </footer>
   );
