@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { supabase } from '@/integrations/supabase/client';
+import { DEMO_ENCOUNTERS } from '@/lib/demo-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/urgence/StatCard';
@@ -38,6 +40,8 @@ interface ResultCount { encounter_id: string; unread: number; critical: number; 
 interface RxCount { encounter_id: string; count: number; }
 export default function BoardPage() {
   const { user, role, signOut } = useAuth();
+  const { isDemoMode, demoRole } = useDemo();
+  const effectiveRole = isDemoMode ? demoRole : role;
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
@@ -68,11 +72,33 @@ export default function BoardPage() {
   }, []);
 
   useEffect(() => {
-    if (role === 'as') { navigate('/as', { replace: true }); return; }
-    if (role === 'secretaire') { navigate('/accueil', { replace: true }); return; }
-  }, [role, navigate]);
+    if (effectiveRole === 'as') { navigate('/as', { replace: true }); return; }
+    if (effectiveRole === 'secretaire') { navigate('/accueil', { replace: true }); return; }
+  }, [effectiveRole, navigate]);
 
   const fetchEncounters = async () => {
+    if (isDemoMode) {
+      const demoData = DEMO_ENCOUNTERS.map(e => ({
+        id: e.id,
+        patient_id: e.patient_id,
+        status: e.status,
+        zone: e.zone as ZoneKey | null,
+        box_number: e.box_number,
+        ccmu: e.ccmu,
+        cimu: e.cimu,
+        motif_sfmu: e.motif_sfmu,
+        medecin_id: e.medecin_id,
+        arrival_time: e.arrival_time,
+        patients: { nom: e.patients.nom, prenom: e.patients.prenom, date_naissance: e.patients.date_naissance, sexe: e.patients.sexe, allergies: e.patients.allergies },
+        medecin_profile: e.medecin_id ? { full_name: 'Dr. Martin Dupont' } : null,
+        diagnostic: null,
+        last_admin_at: null,
+        active_rx_count: 0,
+      }));
+      setEncounters(demoData as EncounterWithPatient[]);
+      setLoading(false);
+      return;
+    }
     // Fetch finished encounters in last 24h
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { count } = await supabase
@@ -220,8 +246,9 @@ export default function BoardPage() {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
+            {isDemoMode && <Badge variant="secondary" className="text-[10px]">Demo</Badge>}
             <Badge variant="secondary" className="text-xs">
-              {role === 'medecin' ? 'Medecin' : role === 'ioa' ? 'IOA' : role === 'ide' ? 'IDE' : role || ''}
+              {effectiveRole === 'medecin' ? 'Medecin' : effectiveRole === 'ioa' ? 'IOA' : effectiveRole === 'ide' ? 'IDE' : effectiveRole || ''}
             </Badge>
             <NetworkStatus />
           </div>

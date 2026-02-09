@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { DemoProvider, useDemo } from "@/contexts/DemoContext";
 import { Loader2 } from "lucide-react";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
@@ -22,14 +23,18 @@ import IOAQueuePage from "./pages/IOAQueuePage";
 import RecapPage from "./pages/RecapPage";
 import InteropPage from "./pages/InteropPage";
 import DemoPage from "./pages/DemoPage";
+import DemoLivePage from "./pages/DemoLivePage";
 import FeaturesPage from "./pages/FeaturesPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
+import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
 
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
+  if (isDemoMode) return <>{children}</>;
   if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
@@ -37,13 +42,16 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function RoleGuard({ children }: { children: React.ReactNode }) {
   const { role, loading } = useAuth();
+  const { isDemoMode, demoRole } = useDemo();
+  if (isDemoMode && demoRole) return <>{children}</>;
   if (loading) return <div className="flex items-center justify-center min-h-screen text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!role) return <Navigate to="/select-role" replace />;
   return <>{children}</>;
 }
 
 function AppRoutes() {
-  const { user, role } = useAuth();
+  const { user } = useAuth();
+  const { isDemoMode } = useDemo();
 
   return (
     <Routes>
@@ -55,17 +63,21 @@ function AppRoutes() {
       <Route path="/triage/:encounterId" element={<ProtectedRoute><RoleGuard><TriagePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/pancarte/:encounterId" element={<ProtectedRoute><RoleGuard><PancartePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/as" element={<ProtectedRoute><RoleGuard><AideSoignantPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/constantes" element={<ProtectedRoute><RoleGuard><AideSoignantPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/accueil" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/admission" element={<ProtectedRoute><RoleGuard><AccueilPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/ioa-queue" element={<ProtectedRoute><RoleGuard><IOAQueuePage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/prescriptions" element={<ProtectedRoute><RoleGuard><BoardPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/recap/:encounterId" element={<ProtectedRoute><RoleGuard><RecapPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/interop" element={<ProtectedRoute><RoleGuard><InteropPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/demo" element={<DemoPage />} />
+      <Route path="/demo/live" element={<DemoLivePage />} />
       <Route path="/features" element={<FeaturesPage />} />
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
       <Route path="/cgu" element={<CGUPage />} />
       <Route path="/landing" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
-      <Route path="/" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
+      <Route path="/" element={user && !isDemoMode ? <Navigate to="/select-role" replace /> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -78,10 +90,13 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthProvider>
-            <AppRoutes />
-            <CookieConsent />
-          </AuthProvider>
+          <DemoProvider>
+            <AuthProvider>
+              <AppRoutes />
+              <MedicalDisclaimer />
+              <CookieConsent />
+            </AuthProvider>
+          </DemoProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

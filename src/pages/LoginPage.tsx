@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, CheckCircle, ArrowLeft, Info } from 'lucide-react';
+import { Activity, CheckCircle, ArrowLeft, Info, Play } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -146,10 +146,14 @@ export default function LoginPage() {
               </button>
             </form>
             {!isSignUp && (
-              <div className="mt-6 p-5 rounded-xl bg-muted/50 border border-border space-y-4">
+              <div className="mt-6 space-y-4">
+                <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
+                  <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
+                </Button>
+              <div className="p-5 rounded-xl bg-muted/50 border border-border space-y-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Info className="h-3.5 w-3.5" />
-                  Comptes de démonstration
+                  Comptes de demonstration
                 </div>
                 <div className="space-y-1">
                   {[
@@ -167,6 +171,7 @@ export default function LoginPage() {
                     </button>
                   ))}
                 </div>
+              </div>
               </div>
             )}
           </CardContent>

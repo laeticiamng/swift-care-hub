@@ -341,10 +341,13 @@ export default function DemoPage() {
                   Suivant <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               ) : (
-                <Button onClick={() => navigate('/login')} className="bg-medical-success hover:bg-medical-success/90">
-                  <Play className="h-4 w-4 mr-1" /> Essayer gratuitement
+                <Button onClick={() => navigate('/demo/live')} className="bg-medical-success hover:bg-medical-success/90">
+                  <Play className="h-4 w-4 mr-1" /> Essayer en live
                 </Button>
               )}
+              <Button variant="ghost" size="sm" onClick={() => navigate('/demo/live')} className="text-xs text-primary">
+                Demo interactive
+              </Button>
             </div>
           </div>
 
