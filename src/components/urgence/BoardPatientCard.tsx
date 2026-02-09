@@ -90,6 +90,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
       className={cn(
         'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2',
         borderColor && `border-l-4 ${borderColor}`,
+        waitCritical && 'ring-2 ring-medical-critical/40',
       )}
       style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both' }}
       onClick={onClick}
@@ -99,6 +100,11 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
             <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
+            {waitCritical && (
+              <Badge variant="destructive" className="text-[10px] py-0 px-1.5 animate-pulse gap-0.5">
+                <Clock className="h-2.5 w-2.5" /> &gt; 4h
+              </Badge>
+            )}
             {showZoneBadge && encounter.zone && (
               <Badge variant="outline" className={cn('text-xs', zoneBadgeColors[encounter.zone])}>
                 {encounter.zone.toUpperCase()}
