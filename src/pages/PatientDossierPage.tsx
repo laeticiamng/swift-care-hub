@@ -18,6 +18,7 @@ import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
+import { RecapDrawer } from '@/components/urgence/RecapDrawer';
 import { categorizePrescription, PRESCRIPTION_SECTIONS, PRESCRIPTION_TEMPLATES, PrescriptionCategory } from '@/lib/prescription-utils';
 
 export default function PatientDossierPage() {
@@ -707,6 +708,9 @@ export default function PatientDossierPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Recap FAB */}
+      {encounterId && <RecapDrawer encounterId={encounterId} />}
     </div>
   );
 }

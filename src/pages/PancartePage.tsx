@@ -19,6 +19,7 @@ import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History,
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { categorizePrescription, PRESCRIPTION_SECTIONS } from '@/lib/prescription-utils';
+import { RecapDrawer } from '@/components/urgence/RecapDrawer';
 
 export default function PancartePage() {
   const { encounterId } = useParams();
@@ -276,15 +277,23 @@ export default function PancartePage() {
                     const isSuspended = rx.status === 'suspended';
                     const isCancelled = rx.status === 'cancelled';
                     const isInactive = isSuspended || isCancelled;
+                    const minSinceCreated = !done && !isInactive && rx.created_at ? Math.round((Date.now() - new Date(rx.created_at).getTime()) / 60000) : 0;
+                    const isRetard = minSinceCreated > 30;
                     return (
                       <div key={rx.id} className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
                         done ? 'bg-medical-success/5 border-medical-success/20' : isInactive ? 'bg-muted/50 opacity-70' : 'bg-card',
                         rx.priority === 'stat' && !done && !isInactive && 'border-medical-critical/30 animate-pulse',
                         rx.priority === 'urgent' && !done && !isInactive && 'border-medical-warning/30',
+                        isRetard && !done && !isInactive && 'border-medical-warning/50 bg-medical-warning/5',
                       )}>
                         <div className="flex-1">
-                          <p className={cn('font-medium text-sm', isCancelled && 'line-through text-muted-foreground')}>{rx.medication_name} — {rx.dosage}</p>
-                          <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}</p>
+                          <div className="flex items-center gap-2">
+                            <p className={cn('font-medium text-sm', isCancelled && 'line-through text-muted-foreground')}>{rx.medication_name} — {rx.dosage}</p>
+                            {isRetard && !done && !isInactive && (
+                              <Badge className="bg-medical-warning text-medical-warning-foreground text-[10px] px-1.5 py-0">Retard</Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">{rx.route} · {rx.frequency || 'Ponctuel'}{isRetard && !done && !isInactive ? ` · prescrit il y a ${minSinceCreated} min` : ''}</p>
                         </div>
                         {done ? (
                           <div className="flex flex-col items-end gap-1">
@@ -511,6 +520,9 @@ export default function PancartePage() {
           )}
         </Card>
       </div>
+
+      {/* Floating Recap FAB */}
+      {encounterId && <RecapDrawer encounterId={encounterId} />}
     </div>
   );
 }

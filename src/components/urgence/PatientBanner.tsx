@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowLeft, FileText } from 'lucide-react';
 import { CCMUBadge } from './CCMUBadge';
 import { ThemeToggle } from './ThemeToggle';
 import { NetworkStatus } from './NetworkStatus';
+import { RecapDrawer } from './RecapDrawer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -73,14 +74,18 @@ export function PatientBanner({
             <span className="text-sm text-muted-foreground mr-2">Dr. {medecinName}</span>
           )}
           {encounterId && !isOnRecapPage && (
-            <Button
-              size="sm"
-              onClick={() => navigate(`/recap/${encounterId}`)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-            >
-              <FileText className="w-4 h-4" />
-              RECAP
-            </Button>
+            <RecapDrawer
+              encounterId={encounterId}
+              trigger={
+                <Button
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
+                >
+                  <FileText className="w-4 h-4" />
+                  RECAP
+                </Button>
+              }
+            />
           )}
           <NetworkStatus />
           <ThemeToggle />
