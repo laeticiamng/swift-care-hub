@@ -775,9 +775,31 @@ export default function PancartePage() {
                 ))}
               </div>
             </div>
+
+            {/* D — Donnees (pre-remplies avec constantes) */}
+            <div className="p-2.5 rounded-lg bg-muted/40 border border-dashed space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground">D — Donnees (auto)</p>
+              <p className="text-xs text-foreground">
+                {lastVital
+                  ? `FC ${lastVital.fc || '\u2014'} | PA ${lastVital.pa_systolique || '\u2014'}/${lastVital.pa_diastolique || '\u2014'} | SpO2 ${lastVital.spo2 || '\u2014'}% | T ${lastVital.temperature || '\u2014'}\u00b0C${lastVital.eva_douleur != null ? ` | EVA ${lastVital.eva_douleur}` : ''}`
+                  : 'Pas de constantes'}
+              </p>
+            </div>
+
+            {/* A — Actions (pre-remplies avec derniers actes) */}
+            <div className="p-2.5 rounded-lg bg-muted/40 border border-dashed space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground">A — Actions (auto)</p>
+              <p className="text-xs text-foreground">
+                {[
+                  ...administrations.slice(0, 3).map(a => `${a.dose_given} ${a.route}`),
+                  ...procedures.slice(0, 3).map(p => p.procedure_type.toUpperCase()),
+                ].join(' | ') || 'Aucun acte'}
+              </p>
+            </div>
+
             <div>
-              <Label>R \u2014 Resultats</Label>
-              <Textarea value={darResultats} onChange={e => setDarResultats(e.target.value)} placeholder="Evaluation clinique..." className="mt-1" rows={3} />
+              <Label>R — Resultats</Label>
+              <Textarea value={darResultats} onChange={e => setDarResultats(e.target.value)} placeholder="Evaluation clinique, evolution du patient..." className="mt-1" rows={3} />
             </div>
             <Button onClick={handleDAR} disabled={!darResultats} className="w-full touch-target">Valider transmission</Button>
             <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>

@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
+import { PatientTimeline } from '@/components/urgence/PatientTimeline';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { FHIRViewer } from '@/components/urgence/interop/FHIRViewer';
 import { CRHPreview } from '@/components/urgence/documents/CRHPreview';
@@ -545,6 +546,50 @@ export default function PatientDossierPage() {
             onDone={() => { fetchAll(); navigate('/board'); }} />
         )}
 
+        {/* Contextual priority banner — progressive disclosure */}
+        {!isReadOnly && (() => {
+          const criticalResults = results.filter(r => r.is_critical && !r.is_read);
+          const unreadResults = results.filter(r => !r.is_read);
+          const abnormalVitals = vitals.length > 0 ? (() => {
+            const last = vitals[vitals.length - 1];
+            const abnormals: string[] = [];
+            if (isVitalAbnormal('fc', last.fc)) abnormals.push(`FC ${last.fc}`);
+            if (isVitalAbnormal('pa_systolique', last.pa_systolique)) abnormals.push(`PA ${last.pa_systolique}/${last.pa_diastolique || '?'}`);
+            if (isVitalAbnormal('spo2', last.spo2)) abnormals.push(`SpO2 ${last.spo2}%`);
+            if (isVitalAbnormal('temperature', last.temperature)) abnormals.push(`T ${last.temperature}`);
+            return abnormals;
+          })() : [];
+          const isCritical = (encounter.ccmu && encounter.ccmu >= 4) || criticalResults.length > 0;
+          const hasAlerts = abnormalVitals.length > 0 || unreadResults.length > 0;
+
+          if (!isCritical && !hasAlerts) return null;
+
+          return (
+            <div className={cn('mb-4 p-3 rounded-lg border flex flex-wrap items-center gap-3',
+              isCritical ? 'border-medical-critical/40 bg-medical-critical/5' : 'border-medical-warning/40 bg-medical-warning/5')}>
+              <AlertTriangle className={cn('h-4 w-4 shrink-0', isCritical ? 'text-medical-critical' : 'text-medical-warning')} />
+              <span className={cn('text-sm font-semibold', isCritical ? 'text-medical-critical' : 'text-medical-warning')}>
+                {isCritical ? 'Patient critique' : 'Points d\'attention'}
+              </span>
+              {criticalResults.length > 0 && (
+                <Badge className="bg-medical-critical text-medical-critical-foreground text-xs">
+                  {criticalResults.length} resultat(s) critique(s) non lu(s)
+                </Badge>
+              )}
+              {abnormalVitals.length > 0 && (
+                <Badge variant="outline" className="text-xs border-medical-warning/30 text-medical-warning">
+                  Constantes anormales : {abnormalVitals.join(', ')}
+                </Badge>
+              )}
+              {unreadResults.length > 0 && criticalResults.length === 0 && (
+                <Badge variant="outline" className="text-xs">
+                  {unreadResults.length} resultat(s) non lu(s)
+                </Badge>
+              )}
+            </div>
+          );
+        })()}
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Timeline — 3 cols */}
           <div className="lg:col-span-3 space-y-4">
@@ -609,81 +654,8 @@ export default function PatientDossierPage() {
                   {timelineEssential ? 'Essentiel' : 'Voir tout'}
                 </Button>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {timeline.length === 0 && <p className="text-sm text-muted-foreground">Aucun élément</p>}
-                {(() => {
-                  const filteredItems = timeline.filter(item => !timelineEssential || ['allergie', 'crh', 'diagnostic'].includes(item.item_type));
-                  const antecedents = filteredItems.filter(item => item.item_type === 'antecedent');
-                  const allergies = filteredItems.filter(item => item.item_type === 'allergie');
-                  const otherItems = filteredItems.filter(item => item.item_type !== 'antecedent' && item.item_type !== 'allergie');
-                  
-                  const iconMap: Record<string, React.ReactNode> = {
-                    allergie: <AlertTriangle className="h-4 w-4 text-medical-critical" />,
-                    crh: <FileText className="h-4 w-4 text-primary" />,
-                    resultat: <FlaskConical className="h-4 w-4 text-medical-info" />,
-                    diagnostic: <Microscope className="h-4 w-4 text-primary" />,
-                    traitement: <Pill className="h-4 w-4 text-medical-warning" />,
-                  };
-
-                  const renderSingleItem = (item: any, idx: number) => (
-                    <div key={item.id} className={cn('flex gap-3 p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2', item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5')}
-                      style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}>
-                      <div className="mt-0.5">{iconMap[item.item_type] || <Clock className="h-4 w-4 text-muted-foreground" />}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs">{item.item_type}</Badge>
-                          {item.source_date && <span className="text-xs text-muted-foreground">{item.source_date}</span>}
-                        </div>
-                        <p className="text-sm mt-1">{item.content}</p>
-                        {item.source_document && (
-                          <div className="flex items-center justify-between mt-1">
-                            <p className="text-xs text-muted-foreground">Source : {item.source_document} {item.source_author && `— ${item.source_author}`}</p>
-                            <Button variant="ghost" size="sm" className="h-6 text-xs px-2 opacity-40 cursor-not-allowed" disabled title="Fonctionnalité démo">
-                              <ExternalLink className="h-3 w-3 mr-1" /> Source
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-
-                  return (
-                    <>
-                      {allergies.length > 0 && (
-                        <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
-                          <div className="flex items-center gap-2 mb-2">
-                            <AlertTriangle className="h-4 w-4 text-medical-critical" />
-                            <span className="text-sm font-semibold text-medical-critical">Allergies ({allergies.length})</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {allergies.map(a => (
-                              <Badge key={a.id} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">
-                                {a.content.replace('Allergie : ', '')}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {antecedents.length > 0 && (
-                        <div className="p-3 rounded-lg border bg-muted/30">
-                          <div className="flex items-center gap-2 mb-2">
-                            <History className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm font-semibold">Antécédents ({antecedents.length})</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {antecedents.map(a => (
-                              <Badge key={a.id} variant="secondary" className="text-xs">{a.content}</Badge>
-                            ))}
-                          </div>
-                          {antecedents[0]?.source_document && (
-                            <p className="text-xs text-muted-foreground mt-2">Source : {antecedents[0].source_document} {antecedents[0].source_author && `— ${antecedents[0].source_author}`}</p>
-                          )}
-                        </div>
-                      )}
-                      {otherItems.map((item, idx) => renderSingleItem(item, idx))}
-                    </>
-                  );
-                })()}
+              <CardContent>
+                <PatientTimeline items={timeline} showEssentialOnly={timelineEssential} />
               </CardContent>
             </Card>
           </div>
@@ -797,23 +769,56 @@ export default function PatientDossierPage() {
                   <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
                     <DialogHeader><DialogTitle>Nouvelle prescription</DialogTitle></DialogHeader>
                     <div className="space-y-3">
-                      {/* Pack suggestions based on motif */}
-                      {encounter.motif_sfmu && PRESCRIPTION_PACKS[encounter.motif_sfmu] && (
-                        <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
-                          <p className="text-xs font-semibold text-primary mb-2">Pack suggere — {encounter.motif_sfmu}</p>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">{PRESCRIPTION_PACKS[encounter.motif_sfmu].items.length} items</Badge>
-                            <Button size="sm" className="h-7 text-xs" onClick={() => handleApplyPack(encounter.motif_sfmu)}>
-                              Prescrire le pack "{PRESCRIPTION_PACKS[encounter.motif_sfmu].label}"
-                            </Button>
+                      {/* Intelligent pack suggestions based on motif */}
+                      {encounter.motif_sfmu && (() => {
+                        const motifLower = (encounter.motif_sfmu || '').toLowerCase();
+                        const MOTIF_KEYWORDS: Record<string, string[]> = {
+                          'Douleur thoracique': ['douleur thoracique', 'dt', 'precordialgie', 'thorax', 'cardio', 'angor', 'infarctus'],
+                          'Traumatisme membre': ['traumatisme', 'trauma', 'fracture', 'entorse', 'luxation', 'chute'],
+                          'Dyspnee': ['dyspnee', 'asthme', 'bronchospasme', 'detresse respiratoire', 'insuffisance respiratoire'],
+                          'Douleur abdominale': ['douleur abdominale', 'abdo', 'colique', 'nephretique', 'ventre'],
+                          'Intoxication': ['intoxication', 'intox', 'surdosage', 'ingestion'],
+                          'AEG / Fievre': ['fievre', 'aeg', 'sepsis', 'infection', 'alteration etat general'],
+                          'Malaise / syncope': ['malaise', 'syncope', 'perte connaissance', 'lipothymie'],
+                        };
+                        const matchedPacks: string[] = [];
+                        // Exact match first
+                        if (PRESCRIPTION_PACKS[encounter.motif_sfmu]) {
+                          matchedPacks.push(encounter.motif_sfmu);
+                        }
+                        // Keyword matching
+                        for (const [packKey, keywords] of Object.entries(MOTIF_KEYWORDS)) {
+                          if (matchedPacks.includes(packKey)) continue;
+                          if (keywords.some(kw => motifLower.includes(kw))) {
+                            matchedPacks.push(packKey);
+                          }
+                        }
+                        if (matchedPacks.length === 0) return null;
+                        return (
+                          <div className="space-y-2">
+                            {matchedPacks.map(packKey => {
+                              const pack = PRESCRIPTION_PACKS[packKey];
+                              if (!pack) return null;
+                              return (
+                                <div key={packKey} className="p-3 rounded-lg border border-primary/30 bg-primary/5">
+                                  <p className="text-xs font-semibold text-primary mb-2">Pack suggere — {packKey}</p>
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="text-xs">{pack.items.length} items</Badge>
+                                    <Button size="sm" className="h-7 text-xs" onClick={() => handleApplyPack(packKey)}>
+                                      Prescrire "{pack.label}"
+                                    </Button>
+                                  </div>
+                                  <div className="mt-2 flex flex-wrap gap-1">
+                                    {pack.items.map((item, i) => (
+                                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-accent">{PRESCRIPTION_TYPE_ICONS[item.type]} {item.medication_name}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {PRESCRIPTION_PACKS[encounter.motif_sfmu].items.map((item, i) => (
-                              <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-accent">{PRESCRIPTION_TYPE_ICONS[item.type]} {item.medication_name}</span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                        );
+                      })()}
 
                       {/* Type selector */}
                       <div>

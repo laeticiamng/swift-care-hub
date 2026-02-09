@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill, Clock, Syringe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
@@ -51,12 +51,15 @@ interface PatientCardProps {
     zone: Zone | null;
     box_number: number | null;
     ccmu: number | null;
+    cimu: number | null;
     motif_sfmu: string | null;
     medecin_id: string | null;
     arrival_time: string;
     patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
     medecin_profile?: { full_name: string } | null;
     diagnostic?: string | null;
+    last_admin_at?: string | null;
+    active_rx_count?: number;
   };
   resultCount?: { unread: number; critical: number };
   rxCount?: number;
@@ -122,8 +125,41 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
           </div>
         </div>
         {encounter.motif_sfmu && <p className="text-sm text-muted-foreground">{encounter.motif_sfmu}</p>}
-        {encounter.diagnostic && role === 'medecin' && (
+
+        {/* Role-adaptive info */}
+        {role === 'medecin' && encounter.diagnostic && (
           <p className="text-xs text-primary font-medium truncate">Dx: {encounter.diagnostic}</p>
+        )}
+        {role === 'ioa' && encounter.cimu && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className={cn('text-xs',
+              encounter.cimu <= 2 ? 'border-medical-critical/30 text-medical-critical' :
+              encounter.cimu === 3 ? 'border-medical-warning/30 text-medical-warning' :
+              'border-muted-foreground/30 text-muted-foreground'
+            )}>
+              CIMU {encounter.cimu}
+            </Badge>
+            {!encounter.zone && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3 w-3" /> En attente d'orientation
+              </span>
+            )}
+          </div>
+        )}
+        {role === 'ide' && (
+          <div className="flex items-center gap-2 text-xs">
+            {encounter.active_rx_count !== undefined && encounter.active_rx_count > 0 && (
+              <Badge variant="outline" className="text-xs gap-0.5 border-medical-warning/30 text-medical-warning">
+                <Syringe className="h-3 w-3" /> {encounter.active_rx_count} Rx actives
+              </Badge>
+            )}
+            {encounter.last_admin_at && (
+              <span className="text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Dern. admin {new Date(encounter.last_admin_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+          </div>
         )}
         {encounter.medecin_profile && (
           <p className="text-xs text-muted-foreground flex items-center gap-1">

@@ -12,7 +12,7 @@ import { ZoneGrid } from '@/components/urgence/ZoneGrid';
 import { WaitingBanner } from '@/components/urgence/WaitingBanner';
 import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
-import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle } from 'lucide-react';
+import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -23,12 +23,15 @@ interface EncounterWithPatient {
   zone: ZoneKey | null;
   box_number: number | null;
   ccmu: number | null;
+  cimu: number | null;
   motif_sfmu: string | null;
   medecin_id: string | null;
   arrival_time: string;
   patients: { nom: string; prenom: string; date_naissance: string; sexe: string; allergies: string[] | null };
   medecin_profile?: { full_name: string } | null;
   diagnostic?: string | null;
+  last_admin_at?: string | null;
+  active_rx_count?: number;
 }
 
 interface ResultCount { encounter_id: string; unread: number; critical: number; }
@@ -87,14 +90,15 @@ export default function BoardPage() {
         if (profiles) setMedecins(profiles);
       }
     }
-    const [encRes, resRes, rxRes] = await Promise.all([
+    const [encRes, resRes, rxRes, admRes] = await Promise.all([
       supabase
         .from('encounters')
-        .select('id, patient_id, status, zone, box_number, ccmu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
+        .select('id, patient_id, status, zone, box_number, ccmu, cimu, motif_sfmu, medecin_id, arrival_time, patients(nom, prenom, date_naissance, sexe, allergies)')
         .in('status', ['arrived', 'triaged', 'in-progress'])
         .order('arrival_time', { ascending: true }),
       supabase.from('results').select('encounter_id, is_read, is_critical'),
-      supabase.from('prescriptions').select('encounter_id').eq('status', 'active'),
+      supabase.from('prescriptions').select('encounter_id, status'),
+      supabase.from('administrations').select('encounter_id, administered_at').order('administered_at', { ascending: false }),
     ]);
 
     let encountersData: EncounterWithPatient[] = [];
@@ -129,6 +133,18 @@ export default function BoardPage() {
           }));
         }
       }
+      // Add last admin time per encounter (for IDE view)
+      if (admRes.data) {
+        const adminMap = new Map<string, string>();
+        for (const a of admRes.data) {
+          if (!adminMap.has(a.encounter_id)) adminMap.set(a.encounter_id, a.administered_at);
+        }
+        encountersData = encountersData.map(e => ({
+          ...e,
+          last_admin_at: adminMap.get(e.id) || null,
+        }));
+      }
+
       setEncounters(encountersData);
     }
 
@@ -146,7 +162,9 @@ export default function BoardPage() {
     if (rxRes.data) {
       const rxMap = new Map<string, number>();
       for (const r of rxRes.data) {
-        rxMap.set(r.encounter_id, (rxMap.get(r.encounter_id) || 0) + 1);
+        if (r.status === 'active') {
+          rxMap.set(r.encounter_id, (rxMap.get(r.encounter_id) || 0) + 1);
+        }
       }
       setRxCounts(Array.from(rxMap.entries()).map(([encounter_id, count]) => ({ encounter_id, count })));
     }
@@ -202,6 +220,9 @@ export default function BoardPage() {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
+            <Badge variant="secondary" className="text-xs">
+              {role === 'medecin' ? 'Medecin' : role === 'ioa' ? 'IOA' : role === 'ide' ? 'IDE' : role || ''}
+            </Badge>
             <NetworkStatus />
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -244,12 +265,26 @@ export default function BoardPage() {
 
       <div className="max-w-7xl mx-auto p-4 space-y-4">
         {role && <OnboardingBanner role={role} />}
-        {/* Global stat cards */}
+        {/* Role-adaptive stat cards */}
         <div className="grid grid-cols-4 gap-3">
           <StatCard label="Total" value={filtered.length} icon={Users} />
-          <StatCard label="Arrivés" value={filtered.filter(e => e.status === 'arrived').length} icon={Hourglass} variant="warning" />
-          <StatCard label="En cours" value={filtered.filter(e => e.status === 'in-progress' || e.status === 'triaged').length} icon={Activity} variant="default" />
-          <StatCard label="Terminés (24h)" value={finishedCount} icon={CheckCircle} variant="success" />
+          {role === 'ioa' ? (
+            <>
+              <StatCard label="A trier" value={preIOA.length} icon={ClipboardList} variant={preIOA.length > 0 ? 'critical' : 'default'} />
+              <StatCard label="A orienter" value={noZone.length} icon={Hourglass} variant={noZone.length > 0 ? 'warning' : 'default'} />
+            </>
+          ) : role === 'ide' ? (
+            <>
+              <StatCard label="Rx actives" value={rxCounts.reduce((sum, r) => sum + r.count, 0)} icon={Syringe} variant="warning" />
+              <StatCard label="En cours" value={filtered.filter(e => e.status === 'in-progress' || e.status === 'triaged').length} icon={Activity} variant="default" />
+            </>
+          ) : (
+            <>
+              <StatCard label="Arrives" value={filtered.filter(e => e.status === 'arrived').length} icon={Hourglass} variant="warning" />
+              <StatCard label="En cours" value={filtered.filter(e => e.status === 'in-progress' || e.status === 'triaged').length} icon={Activity} variant="default" />
+            </>
+          )}
+          <StatCard label="Termines (24h)" value={finishedCount} icon={CheckCircle} variant="success" />
         </div>
 
         <WaitingBanner
