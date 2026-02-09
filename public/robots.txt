@@ -1,14 +1,22 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+Allow: /landing
+Allow: /features
+Allow: /demo
+Allow: /mentions-legales
+Allow: /politique-confidentialite
+Allow: /cgu
+
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+Disallow: /as
+Disallow: /accueil
+Disallow: /ioa-queue
+Disallow: /recap/
+Disallow: /interop
+
+Sitemap: https://urgenceos.fr/sitemap.xml
