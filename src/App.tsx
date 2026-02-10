@@ -27,6 +27,7 @@ import DemoLivePage from "./pages/DemoLivePage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GardePage from "./pages/GardePage";
 import AuditPage from "./pages/AuditPage";
+import SIHValidationPage from "./pages/SIHValidationPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
@@ -78,6 +79,7 @@ function AppRoutes() {
       <Route path="/audit" element={<ProtectedRoute><RoleGuard><AuditPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/demo" element={<DemoPage />} />
       <Route path="/demo/live" element={<DemoLivePage />} />
+      <Route path="/sih-validation" element={<SIHValidationPage />} />
       <Route path="/features" element={<FeaturesPage />} />
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />

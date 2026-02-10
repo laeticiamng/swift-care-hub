@@ -8,7 +8,7 @@ import type { AppRole } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
   Activity, ArrowLeft, ClipboardList, Heart, LogOut,
-  Stethoscope, Timer, UserPlus, Users,
+  Stethoscope, Timer, UserPlus, Users, Shield, FileText,
 } from 'lucide-react';
 
 const ROLES: { role: AppRole; label: string; desc: string; icon: React.ReactNode; color: string; route: string }[] = [
@@ -112,7 +112,43 @@ export default function DemoLivePage() {
           ))}
         </div>
 
-        <div className="mt-8 text-center">
+        {/* SIH Validation Scenarios + Other modules */}
+        <div className="mt-8 grid sm:grid-cols-2 gap-4">
+          <button
+            onClick={() => navigate('/sih-validation')}
+            className="p-6 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-left transition-all hover:shadow-md"
+          >
+            <div className="mb-3"><Shield className="h-8 w-8 text-red-600" /></div>
+            <h3 className="font-bold text-lg mb-1">Scenarios CDC SIH</h3>
+            <p className="text-sm text-muted-foreground">TV-01 a TV-08 — 8 scenarios de validation issus du Cahier des Charges</p>
+          </button>
+          <button
+            onClick={() => { enterDemo('medecin'); navigate('/garde'); }}
+            className="p-6 rounded-xl border-2 border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-950/50 text-left transition-all hover:shadow-md"
+          >
+            <div className="mb-3"><Users className="h-8 w-8 text-indigo-600" /></div>
+            <h3 className="font-bold text-lg mb-1">Mode Garde</h3>
+            <p className="text-sm text-muted-foreground">Vue multi-services SAU + UHCD + Dechocage avec alertes et transmissions</p>
+          </button>
+          <button
+            onClick={() => { enterDemo('medecin'); navigate('/audit'); }}
+            className="p-6 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 text-left transition-all hover:shadow-md"
+          >
+            <div className="mb-3"><FileText className="h-8 w-8 text-emerald-600" /></div>
+            <h3 className="font-bold text-lg mb-1">Audit & Qualite</h3>
+            <p className="text-sm text-muted-foreground">Tableau de bord qualite, indicateurs automatises, export RMM/CREX</p>
+          </button>
+          <button
+            onClick={() => { enterDemo('medecin'); navigate('/interop'); }}
+            className="p-6 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-950/30 hover:bg-cyan-100 dark:hover:bg-cyan-950/50 text-left transition-all hover:shadow-md"
+          >
+            <div className="mb-3"><Activity className="h-8 w-8 text-cyan-600" /></div>
+            <h3 className="font-bold text-lg mb-1">Interoperabilite</h3>
+            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSante — CRH et ordonnance export</p>
+          </button>
+        </div>
+
+        <div className="mt-6 text-center">
           <Button variant="outline" onClick={() => navigate('/demo')}>
             <ArrowLeft className="h-4 w-4 mr-1" /> Retour a la demo guidee
           </Button>

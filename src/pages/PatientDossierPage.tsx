@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { PatientBanner } from '@/components/urgence/PatientBanner';
+import { IdentityBanner } from '@/components/urgence/IdentityBanner';
+import { SIHTimeline } from '@/components/urgence/SIHTimeline';
+import { CommunicationEntryButton } from '@/components/urgence/CommunicationEntry';
+import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
+import { SIH_PATIENTS, SIH_TIMELINE_ENTRIES, SIH_LAB_ALERTS, SIH_COMMUNICATIONS } from '@/lib/sih-demo-data';
+import { generateIPP } from '@/lib/homonymy-detection';
+import type { TimelineEntry, Communication } from '@/lib/sih-types';
 import { calculateAge, isVitalAbnormal } from '@/lib/vitals-utils';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -80,6 +86,10 @@ export default function PatientDossierPage() {
   const [crhStatus, setCrhStatus] = useState<DocumentStatus>('draft');
   const [ordonnanceDrawerOpen, setOrdonnanceDrawerOpen] = useState(false);
   const [ordonnanceHTML, setOrdonnanceHTML] = useState('');
+  // SIH CDC state
+  const [sihTimelineEntries, setSihTimelineEntries] = useState<TimelineEntry[]>([]);
+  const [sihLabAlerts, setSihLabAlerts] = useState(SIH_LAB_ALERTS);
+  const [sihCommunications, setSihCommunications] = useState(SIH_COMMUNICATIONS);
 
   useEffect(() => {
     if (!encounterId) return;
@@ -107,6 +117,32 @@ export default function PatientDossierPage() {
     if (rxRes.data) setPrescriptions(rxRes.data);
     if (resRes.data) setResults(resRes.data);
     if (tlRes.data) setTimeline(tlRes.data);
+    // Load SIH timeline entries for this encounter (demo data fallback)
+    const matchingEntries = SIH_TIMELINE_ENTRIES.filter(e => e.patient_id === enc.patient_id || e.encounter_id === encounterId);
+    if (matchingEntries.length > 0) {
+      setSihTimelineEntries(matchingEntries);
+    } else {
+      // Build SIH timeline from existing data
+      const autoEntries: TimelineEntry[] = [];
+      const patientIpp = generateIPP(enc.patient_id);
+      if (enc.arrival_time) {
+        autoEntries.push({ id: `auto-arr-${enc.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'arrivee', content: `Arrivee aux urgences${enc.motif_sfmu ? ` — ${enc.motif_sfmu}` : ''}`, author_id: 'system', author_name: 'Systeme', validation_status: 'valide', created_at: enc.arrival_time });
+      }
+      if (enc.triage_time) {
+        autoEntries.push({ id: `auto-tri-${enc.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'triage', content: `Triage IOA${enc.cimu ? ` — CIMU ${enc.cimu}` : ''}${enc.ccmu ? ` — CCMU ${enc.ccmu}` : ''}`, author_id: 'system', author_name: 'IOA', validation_status: 'valide', created_at: enc.triage_time });
+      }
+      if (rxRes.data) {
+        rxRes.data.forEach((rx: any) => {
+          autoEntries.push({ id: `auto-rx-${rx.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'prescription_ecrite', content: `${rx.medication_name} ${rx.dosage} ${rx.route}`, author_id: rx.prescriber_id || 'system', author_name: 'Prescripteur', validation_status: 'valide', created_at: rx.created_at });
+        });
+      }
+      if (resRes.data) {
+        resRes.data.forEach((r: any) => {
+          autoEntries.push({ id: `auto-res-${r.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'resultat_bio', content: `${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`, author_id: 'system', author_name: 'Automate', validation_status: r.is_critical ? 'critique' : 'valide', created_at: r.received_at || r.created_at });
+        });
+      }
+      setSihTimelineEntries(autoEntries);
+    }
     // Fetch medecin name
     if (enc.medecin_id) {
       const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', enc.medecin_id).single();
@@ -592,8 +628,37 @@ export default function PatientDossierPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <PatientBanner nom={patient.nom} prenom={patient.prenom} age={age} sexe={patient.sexe}
-        ccmu={encounter.ccmu} motif={encounter.motif_sfmu} allergies={patient.allergies || []} boxNumber={encounter.box_number} poids={patient.poids} medecinName={medecinName} encounterId={encounterId} onBack={() => navigate(-1)} />
+      {/* M1-01: Bandeau identitaire permanent — M1-02: Detection homonymie */}
+      <IdentityBanner
+        nom={patient.nom}
+        prenom={patient.prenom}
+        dateNaissance={patient.date_naissance}
+        sexe={patient.sexe}
+        patientId={patient.id}
+        encounterId={encounterId}
+        service={encounter.zone === 'uhcd' ? 'UHCD' : encounter.zone === 'dechocage' ? 'Dechocage' : 'SAU'}
+        ccmu={encounter.ccmu}
+        cimu={encounter.cimu}
+        motif={encounter.motif_sfmu}
+        allergies={patient.allergies || []}
+        boxNumber={encounter.box_number}
+        poids={patient.poids}
+        photoUrl={patient.photo_url}
+        allPatients={SIH_PATIENTS}
+        medecinName={medecinName}
+        onBack={() => navigate(-1)}
+      />
+
+      {/* M3-02: Lab alert notifications */}
+      <LabAlertNotification
+        alerts={sihLabAlerts.filter(a => a.patient_id === patient.id)}
+        onAcknowledge={(alertId, note) => {
+          setSihLabAlerts(prev => prev.map(a =>
+            a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
+          ));
+          toast.success('Alerte acquittee — Vu et pris en compte');
+        }}
+      />
 
       <div className="max-w-7xl mx-auto p-4">
         {isReadOnly && (
@@ -721,6 +786,63 @@ export default function PatientDossierPage() {
                       ))}
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* M2-01: SIH Unified Timeline with color coding */}
+            {sihTimelineEntries.length > 0 && (
+              <Card className="animate-in fade-in duration-300" style={{ animationDelay: '40ms', animationFillMode: 'both' }}>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-primary" />
+                    Fil chronologique SIH
+                  </CardTitle>
+                  {/* M6-02: Quick communication entry */}
+                  {!isReadOnly && patient && (
+                    <CommunicationEntryButton
+                      patientId={patient.id}
+                      patientIpp={generateIPP(patient.id)}
+                      encounterId={encounterId!}
+                      authorId={user?.id || 'demo'}
+                      authorName={medecinName || user?.email || 'Clinicien'}
+                      onSubmit={(comm) => {
+                        const newEntry: TimelineEntry = {
+                          id: `comm-${Date.now()}`,
+                          encounter_id: encounterId!,
+                          patient_id: patient.id,
+                          patient_ipp: generateIPP(patient.id),
+                          entry_type: comm.type === 'prescription_orale' ? 'prescription_orale' : comm.type === 'appel_labo' ? 'alerte_labo' : 'communication',
+                          content: comm.content,
+                          author_id: comm.author_id,
+                          author_name: comm.author_name,
+                          validation_status: comm.type === 'appel_labo' ? 'critique' : 'en_attente',
+                          created_at: new Date().toISOString(),
+                          lab_result_value: comm.lab_result_value,
+                          lab_interlocutor: comm.lab_interlocutor,
+                        };
+                        setSihTimelineEntries(prev => [newEntry, ...prev]);
+                        toast.success('Communication enregistree dans le fil');
+                      }}
+                    />
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <SIHTimeline
+                    entries={sihTimelineEntries}
+                    onValidateOralPrescription={(entryId) => {
+                      setSihTimelineEntries(prev => prev.map(e =>
+                        e.id === entryId ? { ...e, validation_status: 'valide' as const, validated_at: new Date().toISOString() } : e
+                      ));
+                      toast.success('Prescription orale validee');
+                    }}
+                    onAcknowledgeLabAlert={(entryId) => {
+                      setSihTimelineEntries(prev => prev.map(e =>
+                        e.id === entryId ? { ...e, validation_status: 'valide' as const } : e
+                      ));
+                      toast.success('Alerte labo acquittee');
+                    }}
+                  />
                 </CardContent>
               </Card>
             )}

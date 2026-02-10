@@ -14,6 +14,8 @@ import { ZoneGrid } from '@/components/urgence/ZoneGrid';
 import { WaitingBanner } from '@/components/urgence/WaitingBanner';
 import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
+import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
+import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -55,6 +57,7 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
+  const [labAlerts, setLabAlerts] = useState(SIH_LAB_ALERTS);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
   useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
@@ -242,6 +245,16 @@ export default function BoardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* M3-02: Lab alert notifications — visible on all board views */}
+      <LabAlertNotification
+        alerts={labAlerts}
+        onAcknowledge={(alertId, note) => {
+          setLabAlerts(prev => prev.map(a =>
+            a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
+          ));
+        }}
+      />
+
       <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
