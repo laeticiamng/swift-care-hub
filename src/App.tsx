@@ -25,6 +25,8 @@ import InteropPage from "./pages/InteropPage";
 import DemoPage from "./pages/DemoPage";
 import DemoLivePage from "./pages/DemoLivePage";
 import FeaturesPage from "./pages/FeaturesPage";
+import GardePage from "./pages/GardePage";
+import AuditPage from "./pages/AuditPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
@@ -70,6 +72,8 @@ function AppRoutes() {
       <Route path="/prescriptions" element={<ProtectedRoute><RoleGuard><BoardPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/recap/:encounterId" element={<ProtectedRoute><RoleGuard><RecapPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/interop" element={<ProtectedRoute><RoleGuard><InteropPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/garde" element={<ProtectedRoute><RoleGuard><GardePage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/audit" element={<ProtectedRoute><RoleGuard><AuditPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/demo" element={<DemoPage />} />
       <Route path="/demo/live" element={<DemoLivePage />} />
       <Route path="/features" element={<FeaturesPage />} />

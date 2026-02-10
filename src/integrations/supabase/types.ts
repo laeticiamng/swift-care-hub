@@ -102,6 +102,207 @@ export type Database = {
         }
         Relationships: []
       }
+      communications: {
+        Row: {
+          id: string
+          encounter_id: string
+          patient_id: string
+          patient_ipp: string | null
+          type: string
+          content: string
+          source: string
+          author_id: string
+          author_name: string
+          status: string
+          seen_by: string | null
+          seen_at: string | null
+          treated_by: string | null
+          treated_at: string | null
+          lab_result_value: string | null
+          lab_interlocutor: string | null
+          target_service: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          encounter_id: string
+          patient_id: string
+          patient_ipp?: string | null
+          type: string
+          content: string
+          source: string
+          author_id: string
+          author_name: string
+          status?: string
+          seen_by?: string | null
+          seen_at?: string | null
+          treated_by?: string | null
+          treated_at?: string | null
+          lab_result_value?: string | null
+          lab_interlocutor?: string | null
+          target_service?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          encounter_id?: string
+          patient_id?: string
+          patient_ipp?: string | null
+          type?: string
+          content?: string
+          source?: string
+          author_id?: string
+          author_name?: string
+          status?: string
+          seen_by?: string | null
+          seen_at?: string | null
+          treated_by?: string | null
+          treated_at?: string | null
+          lab_result_value?: string | null
+          lab_interlocutor?: string | null
+          target_service?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communications_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guard_schedule: {
+        Row: {
+          id: string
+          user_id: string
+          user_name: string
+          role: string
+          services: string[]
+          start_time: string
+          end_time: string
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          user_name: string
+          role: string
+          services: string[]
+          start_time: string
+          end_time: string
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          user_name?: string
+          role?: string
+          services?: string[]
+          start_time?: string
+          end_time?: string
+          is_active?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      lab_alerts: {
+        Row: {
+          id: string
+          encounter_id: string
+          patient_id: string
+          patient_ipp: string | null
+          result_id: string | null
+          analyte: string
+          value: number
+          unit: string
+          is_critical: boolean
+          threshold_exceeded: string
+          acknowledged: boolean
+          acknowledged_by: string | null
+          acknowledged_at: string | null
+          acknowledgment_note: string | null
+          escalation_level: number
+          escalation_history: Json
+          ipp_verified: boolean
+          lab_caller: string | null
+          lab_call_time: string | null
+          lab_interlocutor: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          encounter_id: string
+          patient_id: string
+          patient_ipp?: string | null
+          result_id?: string | null
+          analyte: string
+          value: number
+          unit: string
+          is_critical?: boolean
+          threshold_exceeded: string
+          acknowledged?: boolean
+          acknowledged_by?: string | null
+          acknowledged_at?: string | null
+          acknowledgment_note?: string | null
+          escalation_level?: number
+          escalation_history?: Json
+          ipp_verified?: boolean
+          lab_caller?: string | null
+          lab_call_time?: string | null
+          lab_interlocutor?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          encounter_id?: string
+          patient_id?: string
+          patient_ipp?: string | null
+          result_id?: string | null
+          analyte?: string
+          value?: number
+          unit?: string
+          is_critical?: boolean
+          threshold_exceeded?: string
+          acknowledged?: boolean
+          acknowledged_by?: string | null
+          acknowledged_at?: string | null
+          acknowledgment_note?: string | null
+          escalation_level?: number
+          escalation_history?: Json
+          ipp_verified?: boolean
+          lab_caller?: string | null
+          lab_call_time?: string | null
+          lab_interlocutor?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_alerts_encounter_id_fkey"
+            columns: ["encounter_id"]
+            isOneToOne: false
+            referencedRelation: "encounters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_alerts_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       encounters: {
         Row: {
           arrival_time: string
@@ -176,8 +377,10 @@ export type Database = {
           date_naissance: string
           id: string
           ins_numero: string | null
+          ipp: string | null
           medecin_traitant: string | null
           nom: string
+          photo_url: string | null
           poids: number | null
           prenom: string
           sexe: string
@@ -192,8 +395,10 @@ export type Database = {
           date_naissance: string
           id?: string
           ins_numero?: string | null
+          ipp?: string | null
           medecin_traitant?: string | null
           nom: string
+          photo_url?: string | null
           poids?: number | null
           prenom: string
           sexe: string
@@ -208,8 +413,10 @@ export type Database = {
           date_naissance?: string
           id?: string
           ins_numero?: string | null
+          ipp?: string | null
           medecin_traitant?: string | null
           nom?: string
+          photo_url?: string | null
           poids?: number | null
           prenom?: string
           sexe?: string
