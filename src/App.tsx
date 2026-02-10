@@ -60,6 +60,8 @@ function AppRoutes() {
       <Route path="/login" element={user ? <Navigate to="/select-role" replace /> : <LoginPage />} />
       <Route path="/select-role" element={<ProtectedRoute><RoleSelector /></ProtectedRoute>} />
       <Route path="/board" element={<ProtectedRoute><RoleGuard><BoardPage /></RoleGuard></ProtectedRoute>} />
+      <Route path="/dashboard" element={<Navigate to="/board" replace />} />
+      <Route path="/app" element={<Navigate to="/board" replace />} />
       <Route path="/patient/:encounterId" element={<ProtectedRoute><RoleGuard><PatientDossierPage /></RoleGuard></ProtectedRoute>} />
       <Route path="/triage" element={<ProtectedRoute><RoleGuard><TriagePage /></RoleGuard></ProtectedRoute>} />
       <Route path="/triage/:encounterId" element={<ProtectedRoute><RoleGuard><TriagePage /></RoleGuard></ProtectedRoute>} />
