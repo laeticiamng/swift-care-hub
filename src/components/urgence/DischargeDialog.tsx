@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 
 interface DischargeDialogProps {
@@ -15,9 +16,9 @@ interface DischargeDialogProps {
   userId: string;
   onDone: () => void;
   motif?: string | null;
-  prescriptions?: any[];
-  diagnostics?: any[];
-  vitals?: any[];
+  prescriptions?: Array<Pick<Tables<'prescriptions'>, 'status' | 'medication_name' | 'dosage' | 'route' | 'frequency'>>;
+  diagnostics?: Array<Pick<Tables<'timeline_items'>, 'content'>>;
+  vitals?: Array<Pick<Tables<'vitals'>, 'fc' | 'pa_systolique' | 'pa_diastolique' | 'spo2' | 'temperature' | 'frequence_respiratoire' | 'gcs' | 'eva_douleur'>>;
 }
 
 const GEMSA_MAP: Record<string, string> = {
@@ -41,7 +42,10 @@ const ORIENTATIONS = [
 export function DischargeDialog({ open, onOpenChange, encounterId, patientId, userId, onDone, motif, prescriptions = [], diagnostics = [], vitals = [] }: DischargeDialogProps) {
   const [orientation, setOrientation] = useState('domicile');
   const [ccmuSortie, setCcmuSortie] = useState('');
-  const [gemsa, setGemsa] = useState(GEMSA_MAP['domicile'] || '');
+  const [gemsa, setGemsa] = useState(GEMSA_MAP.domicile);
+  const [summary, setSummary] = useState('');
+  const [ordonnance, setOrdonnance] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleOrientationChange = (value: string) => {
     setOrientation(value);
@@ -52,102 +56,112 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
     const sections: string[] = [];
     sections.push('=== COMPTE-RENDU DE PASSAGE AUX URGENCES ===');
     sections.push('');
+
     if (motif) {
       sections.push(`MOTIF DE CONSULTATION : ${motif}`);
       sections.push('');
     }
+
     if (diagnostics.length > 0) {
       sections.push('DIAGNOSTIC :');
-      diagnostics.forEach(d => sections.push(`  - ${d.content}`));
+      diagnostics.forEach((diagnostic) => sections.push(`  - ${diagnostic.content}`));
       sections.push('');
     }
+
     if (vitals.length > 0) {
       const first = vitals[0];
       const last = vitals[vitals.length - 1];
-      const fmt = (v: any) => {
-        const p = [];
-        if (v.fc) p.push(`FC ${v.fc} bpm`);
-        if (v.pa_systolique) p.push(`PA ${v.pa_systolique}/${v.pa_diastolique || '?'} mmHg`);
-        if (v.spo2) p.push(`SpO2 ${v.spo2}%`);
-        if (v.temperature) p.push(`T ${v.temperature}\u00b0C`);
-        if (v.frequence_respiratoire) p.push(`FR ${v.frequence_respiratoire}/min`);
-        if (v.gcs) p.push(`GCS ${v.gcs}/15`);
-        if (v.eva_douleur != null) p.push(`EVA ${v.eva_douleur}/10`);
-        return p.join(', ');
+      const formatVitals = (vital: DischargeDialogProps['vitals'][number]) => {
+        const values: string[] = [];
+
+        if (vital.fc) values.push(`FC ${vital.fc} bpm`);
+        if (vital.pa_systolique) values.push(`PA ${vital.pa_systolique}/${vital.pa_diastolique || '?'} mmHg`);
+        if (vital.spo2) values.push(`SpO2 ${vital.spo2}%`);
+        if (vital.temperature) values.push(`T ${vital.temperature}°C`);
+        if (vital.frequence_respiratoire) values.push(`FR ${vital.frequence_respiratoire}/min`);
+        if (vital.gcs) values.push(`GCS ${vital.gcs}/15`);
+        if (vital.eva_douleur != null) values.push(`EVA ${vital.eva_douleur}/10`);
+
+        return values.join(', ');
       };
+
       sections.push('CONSTANTES :');
       if (vitals.length > 1) {
-        sections.push(`  Initiales : ${fmt(first)}`);
-        sections.push(`  Sortie    : ${fmt(last)}`);
+        sections.push(`  Initiales : ${formatVitals(first)}`);
+        sections.push(`  Sortie    : ${formatVitals(last)}`);
       } else {
-        sections.push(`  ${fmt(last)}`);
+        sections.push(`  ${formatVitals(last)}`);
       }
       sections.push('');
     }
-    const activeRx = prescriptions.filter(rx => rx.status === 'active' || rx.status === 'completed');
-    if (activeRx.length > 0) {
+
+    const activeOrCompletedPrescriptions = prescriptions.filter((rx) => rx.status === 'active' || rx.status === 'completed');
+    if (activeOrCompletedPrescriptions.length > 0) {
       sections.push('TRAITEMENTS ADMINISTRES :');
-      activeRx.forEach(rx => sections.push(`  - ${rx.medication_name} ${rx.dosage} ${rx.route}${rx.frequency ? ` (${rx.frequency})` : ''}`));
+      activeOrCompletedPrescriptions.forEach((rx) => {
+        sections.push(`  - ${rx.medication_name} ${rx.dosage} ${rx.route}${rx.frequency ? ` (${rx.frequency})` : ''}`);
+      });
       sections.push('');
     }
-    sections.push(`ORIENTATION : ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`);
+
+    sections.push(`ORIENTATION : ${ORIENTATIONS.find((o) => o.value === orientation)?.label || orientation}`);
     if (ccmuSortie) sections.push(`CCMU de sortie : ${ccmuSortie}`);
     if (gemsa) sections.push(`GEMSA : ${gemsa}`);
+
     setSummary(sections.join('\n'));
   };
-  const [summary, setSummary] = useState('');
-  const [ordonnance, setOrdonnance] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const updateData: any = {
-      status: 'finished' as any,
+
+    const updateData: TablesUpdate<'encounters'> = {
+      status: 'finished',
       discharge_time: new Date().toISOString(),
       orientation,
     };
-    if (ccmuSortie) updateData.ccmu = parseInt(ccmuSortie);
-    if (gemsa) updateData.gemsa = parseInt(gemsa);
-    const { error } = await supabase.from('encounters').update(updateData).eq('id', encounterId);
 
+    if (ccmuSortie) updateData.ccmu = Number.parseInt(ccmuSortie, 10);
+    if (gemsa) updateData.gemsa = Number.parseInt(gemsa, 10);
+
+    const { error } = await supabase.from('encounters').update(updateData).eq('id', encounterId);
     if (error) {
       toast.error('Erreur lors de la sortie');
       setSubmitting(false);
       return;
     }
 
-    // Save summary as CRH in timeline_items
     if (summary.trim()) {
-      await supabase.from('timeline_items').insert({
+      const summaryTimelineItem: TablesInsert<'timeline_items'> = {
         patient_id: patientId,
-        item_type: 'crh' as any,
+        item_type: 'crh',
         content: summary.trim(),
         source_author: userId,
         source_date: new Date().toISOString().split('T')[0],
-        source_document: `Sortie — ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`,
-      });
+        source_document: `Sortie — ${ORIENTATIONS.find((o) => o.value === orientation)?.label || orientation}`,
+      };
+      await supabase.from('timeline_items').insert(summaryTimelineItem);
     }
 
-    // Save ordonnance in timeline_items
     if (ordonnance.trim()) {
-      await supabase.from('timeline_items').insert({
+      const ordonnanceTimelineItem: TablesInsert<'timeline_items'> = {
         patient_id: patientId,
-        item_type: 'crh' as any,
+        item_type: 'crh',
         content: `Ordonnance de sortie :\n${ordonnance.trim()}`,
         source_author: userId,
         source_date: new Date().toISOString().split('T')[0],
-        source_document: `Ordonnance — ${ORIENTATIONS.find(o => o.value === orientation)?.label || orientation}`,
-      });
+        source_document: `Ordonnance — ${ORIENTATIONS.find((o) => o.value === orientation)?.label || orientation}`,
+      };
+      await supabase.from('timeline_items').insert(ordonnanceTimelineItem);
     }
 
-    // Audit log
-    await supabase.from('audit_logs').insert({
+    const auditLogEntry: TablesInsert<'audit_logs'> = {
       user_id: userId,
       action: 'patient_discharge',
       resource_type: 'encounter',
       resource_id: encounterId,
       details: { orientation, has_summary: !!summary.trim(), has_ordonnance: !!ordonnance.trim() },
-    });
+    };
+    await supabase.from('audit_logs').insert(auditLogEntry);
 
     toast.success('Patient sorti');
     onDone();
