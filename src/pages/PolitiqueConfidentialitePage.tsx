@@ -1,23 +1,14 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { SiteHeader } from '@/components/landing/SiteHeader';
+import { FooterSection } from '@/components/landing/FooterSection';
 
 export default function PolitiqueConfidentialitePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b">
-        <div className="max-w-4xl mx-auto flex items-center gap-4 px-6 py-3">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/"><ArrowLeft className="h-4 w-4 mr-1" /> Retour</Link>
-          </Button>
-          <span className="text-lg font-bold tracking-tight">
-            Urgence<span className="text-primary">OS</span>
-          </span>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
-        <h1 className="text-3xl font-bold">Politique de confidentialite</h1>
+        <h1 className="text-3xl font-bold">Politique de confidentialité</h1>
         <p className="text-muted-foreground">Derniere mise a jour : 1er fevrier 2026</p>
 
         <section className="space-y-3">
@@ -194,6 +185,8 @@ export default function PolitiqueConfidentialitePage() {
           <Link to="/cgu" className="text-primary hover:underline">CGU</Link>
         </div>
       </main>
+
+      <FooterSection />
     </div>
   );
 }

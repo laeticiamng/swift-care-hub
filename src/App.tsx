@@ -37,8 +37,20 @@ import SecurityPage from "./pages/SecurityPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -106,23 +118,25 @@ function AppRoutes() {
 }
 
 const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <DemoProvider>
-            <AuthProvider>
-              <AppRoutes />
-              <MedicalDisclaimer />
-              <CookieConsent />
-            </AuthProvider>
-          </DemoProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+  <ErrorBoundary>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <DemoProvider>
+              <AuthProvider>
+                <AppRoutes />
+                <MedicalDisclaimer />
+                <CookieConsent />
+              </AuthProvider>
+            </DemoProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
+  </ErrorBoundary>
 );
 
 export default App;
