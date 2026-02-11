@@ -27,6 +27,8 @@ import {
   mapExamCategoryToFHIR,
 } from './coding-systems';
 
+import { validateFHIRBundle, type ValidationResult } from '@/lib/fhir-validator';
+
 // ── FHIR Type Definitions (simplified for MVP) ──
 
 export interface FHIRResource {
@@ -587,4 +589,9 @@ export function countBundleResources(bundle: FHIRBundle): Record<string, number>
     counts[type] = (counts[type] || 0) + 1;
   }
   return counts;
+}
+
+// ── Utility: Validate a generated FHIR bundle ──
+export function validateGeneratedBundle(bundle: FHIRBundle): ValidationResult {
+  return validateFHIRBundle(bundle as unknown as Record<string, unknown>);
 }

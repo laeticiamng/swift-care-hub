@@ -1,12 +1,31 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import { syncOfflineQueue, getQueueSize, trackOnlineStatus } from '@/lib/offline-db';
+import { supabase } from '@/integrations/supabase/client';
 
 type NetworkState = 'online' | 'degraded' | 'offline';
 
 export function NetworkStatus() {
   const [state, setState] = useState<NetworkState>(navigator.onLine ? 'online' : 'offline');
   const [showBanner, setShowBanner] = useState(false);
+  const [queueCount, setQueueCount] = useState(0);
+
+  // Track online/offline status for offline-db module
+  useEffect(() => {
+    const cleanup = trackOnlineStatus();
+    return cleanup;
+  }, []);
+
+  // Sync offline queue when coming back online
+  useEffect(() => {
+    if (state === 'online') {
+      syncOfflineQueue(supabase).then(({ synced }) => {
+        if (synced > 0) console.log(`[OfflineSync] Synced ${synced} queued action(s)`);
+      }).catch(() => {});
+      getQueueSize().then(setQueueCount).catch(() => {});
+    }
+  }, [state]);
 
   useEffect(() => {
     let degradedTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -15,6 +34,7 @@ export function NetworkStatus() {
       if (!navigator.onLine) {
         setState('offline');
         setShowBanner(true);
+        getQueueSize().then(setQueueCount).catch(() => {});
         return;
       }
       // Quick latency check by fetching a tiny resource
@@ -94,7 +114,7 @@ export function NetworkStatus() {
           <div className="flex items-center justify-center gap-2">
             <AlertTriangle className="h-3.5 w-3.5" />
             {state === 'offline'
-              ? 'Mode hors ligne — donnees non synchronisees'
+              ? `Mode hors ligne${queueCount > 0 ? ` — ${queueCount} action(s) en attente` : ' — donnees non synchronisees'}`
               : 'Connexion instable — donnees potentiellement non synchronisees'}
           </div>
         </div>

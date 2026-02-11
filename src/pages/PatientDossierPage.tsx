@@ -29,7 +29,7 @@ import { PatientTimeline } from '@/components/urgence/PatientTimeline';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { FHIRViewer } from '@/components/urgence/interop/FHIRViewer';
 import { CRHPreview } from '@/components/urgence/documents/CRHPreview';
-import { encounterBundleToFHIR, type FHIRBundle } from '@/lib/interop/fhir-adapter';
+import { encounterBundleToFHIR, validateGeneratedBundle, type FHIRBundle } from '@/lib/interop/fhir-adapter';
 import { generateCRHHTML, generateOrdonnanceHTML } from '@/lib/interop/mssante-adapter';
 import type { FullEncounterData, DocumentStatus, CanonicalAllergy, CanonicalCondition } from '@/lib/interop/canonical-model';
 import { parsePrescriptionMeta as parseRxMetaForInterop } from '@/lib/prescription-types';
@@ -432,12 +432,17 @@ export default function PatientDossierPage() {
   const handleExportFHIR = () => {
     const data = buildFullEncounterData();
     const bundle = encounterBundleToFHIR(data);
+    const validation = validateGeneratedBundle(bundle);
+    if (!validation.valid) {
+      const errorCount = validation.issues.filter(i => i.severity === 'error').length;
+      console.warn(`[FHIR] Bundle has ${errorCount} validation error(s)`, validation.issues);
+    }
     setFhirBundle(bundle);
     setFhirDrawerOpen(true);
     if (user) {
       supabase.from('audit_logs').insert({
         user_id: user.id, action: 'fhir_export', resource_type: 'encounter',
-        resource_id: encounter.id, details: { resources: bundle.entry.length },
+        resource_id: encounter.id, details: { resources: bundle.entry.length, fhir_valid: validation.valid },
       });
     }
   };

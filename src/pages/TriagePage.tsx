@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
 import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle, Pill } from 'lucide-react';
 import { toast } from 'sonner';
+import { startTriageTimer, stopTriageTimer } from '@/lib/kpi-tracker';
 
 const SFMU_MOTIFS = [
   'Douleur thoracique', 'Dyspnée', 'Douleur abdominale', 'Traumatisme membre',
@@ -59,6 +60,12 @@ export default function TriagePage() {
   const params = useParams();
   const { user, role } = useAuth();
   const [step, setStep] = useState(0);
+  const [triageTimerId] = useState(() => `triage_${Date.now()}`);
+
+  // Start triage KPI timer on mount
+  useEffect(() => {
+    startTriageTimer(triageTimerId);
+  }, [triageTimerId]);
 
   // Pre-fill from IOA queue (supports location.state, URL params, and query params)
   const prefillPatientId = (location.state as any)?.patientId as string | undefined;
@@ -275,7 +282,8 @@ export default function TriagePage() {
         await supabase.from('vitals').insert(vObj);
       }
 
-      toast.success('Tri validé — patient orienté');
+      const triageSecs = stopTriageTimer(triageTimerId);
+      toast.success(`Tri validé — patient orienté${triageSecs > 0 ? ` (${triageSecs}s)` : ''}`);
       setSubmitting(false);
       navigate(role === 'ioa' ? '/ioa-queue' : '/board');
       return;
@@ -317,7 +325,8 @@ export default function TriagePage() {
       await supabase.from('vitals').insert(vObj);
     }
 
-    toast.success('Tri validé — patient orienté');
+    const triageSecs = stopTriageTimer(triageTimerId);
+    toast.success(`Tri validé — patient orienté${triageSecs > 0 ? ` (${triageSecs}s)` : ''}`);
     setSubmitting(false);
     navigate(role === 'ioa' ? '/ioa-queue' : '/board');
   };

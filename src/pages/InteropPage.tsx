@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowLeft, Activity, CheckCircle2, XCircle, Clock,
   ArrowUpRight, ArrowDownLeft, RefreshCw, Server, FileJson,
-  Mail, Shield, Database,
+  Mail, Shield, Database, FileDown,
 } from 'lucide-react';
 import {
   generateDemoHL7Logs,
@@ -17,6 +17,8 @@ import {
 } from '@/lib/interop/hl7v2-adapter';
 import { generateDemoMSSanteLogs, type MSSanteLog } from '@/lib/interop/mssante-adapter';
 import { ESTABLISHMENT } from '@/lib/interop/coding-systems';
+import { rpuToXML, rpuToCSV, validateRPU, type RPURecord } from '@/lib/rpu-export';
+import { toast } from 'sonner';
 
 // Connection status for demo
 interface SystemConnection {
@@ -105,6 +107,31 @@ export default function InteropPage() {
     { id: '2', timestamp: new Date(Date.now() - 45 * 60000).toISOString(), patient: 'MARTIN Marie', resources: 18, size: '8.7 Ko' },
     { id: '3', timestamp: new Date(Date.now() - 90 * 60000).toISOString(), patient: 'BERNARD Pierre', resources: 31, size: '15.2 Ko' },
   ];
+
+  // Demo RPU records for export
+  const demoRPUs: RPURecord[] = [
+    { finess: ESTABLISHMENT.finess, date_entree: new Date(Date.now() - 3 * 3600000).toISOString(), mode_entree: '6', provenance: '5', motif_recours: 'Douleur thoracique', gravite: '2', dp: 'I20.0', date_naissance: '1955-03-15', sexe: 'M', age: 70, cimu: 2, numero_passage: 'P-2026-001' },
+    { finess: ESTABLISHMENT.finess, date_entree: new Date(Date.now() - 5 * 3600000).toISOString(), mode_entree: '6', provenance: '5', motif_recours: 'Traumatisme membre', gravite: '4', dp: 'S52.5', date_sortie: new Date(Date.now() - 2 * 3600000).toISOString(), mode_sortie: '6', destination: '7', date_naissance: '1990-07-22', sexe: 'F', age: 35, cimu: 4, numero_passage: 'P-2026-002' },
+    { finess: ESTABLISHMENT.finess, date_entree: new Date(Date.now() - 1 * 3600000).toISOString(), mode_entree: '6', provenance: '5', motif_recours: 'Dyspnee', gravite: '3', date_naissance: '1948-11-30', sexe: 'M', age: 77, cimu: 3, numero_passage: 'P-2026-003' },
+  ];
+
+  const handleExportRPUXML = () => {
+    const xml = rpuToXML(demoRPUs[0]);
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `rpu_${demoRPUs[0].numero_passage}.xml`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    toast.success('RPU XML exporté');
+  };
+
+  const handleExportRPUCSV = () => {
+    const csv = rpuToCSV(demoRPUs);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `rpu_batch_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    toast.success('RPU CSV exporté');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -222,6 +249,9 @@ export default function InteropPage() {
             </TabsTrigger>
             <TabsTrigger value="mssante" className="gap-1.5">
               <Mail className="h-3.5 w-3.5" /> MSSante
+            </TabsTrigger>
+            <TabsTrigger value="rpu" className="gap-1.5">
+              <FileDown className="h-3.5 w-3.5" /> RPU ATIH
             </TabsTrigger>
             <TabsTrigger value="security" className="gap-1.5">
               <Shield className="h-3.5 w-3.5" /> Securite
@@ -351,6 +381,70 @@ export default function InteropPage() {
                     <p>Courrier specialiste → PDF → Specialiste</p>
                     <p>Format: PDF + CDA R2 (CI-SIS)</p>
                     <p>Identification patient: INS qualifie</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* RPU ATIH */}
+          <TabsContent value="rpu">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Export RPU — Format ATIH</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Le RPU (Resume de Passage aux Urgences) est un jeu de donnees obligatoire transmis a l'ATIH
+                  pour la surveillance epidemiologique et le reporting d'activite.
+                </p>
+
+                <div className="space-y-2">
+                  {demoRPUs.map(rpu => {
+                    const validation = validateRPU(rpu);
+                    return (
+                      <div key={rpu.numero_passage} className="flex items-center gap-3 p-3 rounded-lg border hover:bg-accent/30 transition-colors">
+                        <FileDown className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{rpu.numero_passage}</span>
+                            <Badge variant="outline" className="text-[10px]">{rpu.motif_recours}</Badge>
+                            <Badge variant="outline" className="text-[10px]">CIMU {rpu.cimu}</Badge>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {rpu.sexe} {rpu.age}ans — {new Date(rpu.date_entree).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        {validation.valid ? (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                        )}
+                        {validation.warnings.length > 0 && (
+                          <Badge variant="outline" className="text-[10px] text-amber-600">{validation.warnings.length} avert.</Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleExportRPUXML}>
+                    <FileDown className="h-3.5 w-3.5 mr-1" /> Export XML
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleExportRPUCSV}>
+                    <FileDown className="h-3.5 w-3.5 mr-1" /> Export CSV (lot)
+                  </Button>
+                </div>
+
+                <div className="p-4 rounded-lg border bg-blue-50 dark:bg-blue-950/20">
+                  <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-2">Format RPU ATIH</h4>
+                  <div className="text-xs text-blue-600 dark:text-blue-300 space-y-1">
+                    <p>FINESS + DATE_ENTREE + MODE_ENTREE + PROVENANCE + TRANSPORT</p>
+                    <p>DATE_NAISSANCE + SEXE + CP + MOTIF_RECOURS + GRAVITE (CCMU)</p>
+                    <p>CIMU + GEMSA + DP (CIM-10) + DA + ACTES (CCAM)</p>
+                    <p>DATE_SORTIE + MODE_SORTIE + DESTINATION + ORIENTATION</p>
+                    <p>Formats: XML (unitaire) et CSV (lot, separateur point-virgule)</p>
                   </div>
                 </div>
               </CardContent>
