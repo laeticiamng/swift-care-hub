@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { SiteHeader } from '@/components/landing/SiteHeader';
+import { FooterSection } from '@/components/landing/FooterSection';
 import { cn } from '@/lib/utils';
 import {
-  Activity, ArrowLeft, ArrowRight, CheckCircle, ClipboardList,
-  Clock, Database, FileText, Heart, LayoutGrid, Lock, LogIn,
+  Activity, ArrowRight, CheckCircle, ClipboardList,
+  Database, FileText, Heart, LayoutGrid, Lock, LogIn,
   Monitor, RefreshCcw, Server, Shield, Smartphone, Stethoscope,
-  Timer, UserPlus, Users, Wifi, WifiOff, Zap,
+  UserPlus, Users, Wifi, WifiOff, Zap,
 } from 'lucide-react';
 
 interface Feature {
@@ -21,26 +22,26 @@ interface Feature {
 const PILLARS: Feature[] = [
   {
     icon: <ClipboardList className="h-6 w-6" />,
-    title: 'Pancarte unifiee',
-    description: 'Fiche patient unique pour les infirmiers. Tout le dossier sur un seul ecran — zero changement de page.',
+    title: 'Pancarte unifiée',
+    description: 'Fiche patient unique pour les infirmiers. Tout le dossier sur un seul écran — zéro changement de page.',
     details: [
-      'Prescriptions groupees par section (medicaments, perfusions, titrations, examens, avis)',
-      'Constantes avec mini-graphiques Recharts en temps reel',
-      'Transmissions DAR auto-remplies avec les dernieres constantes et actes',
-      'Resultats biologiques avec normes et alertes critiques',
-      'Recap patient synthetise en un drawer',
+      'Prescriptions groupées par section (médicaments, perfusions, titrations, examens, avis)',
+      'Constantes avec mini-graphiques Recharts en temps réel',
+      'Transmissions DAR auto-remplies avec les dernières constantes et actes',
+      'Résultats biologiques avec normes et alertes critiques',
+      'Récap patient synthétisé en un drawer',
     ],
     status: 'done',
   },
   {
     icon: <FileText className="h-6 w-6" />,
     title: 'Transmissions DAR',
-    description: 'Format Donnees-Actions-Resultats. Les D et A sont pre-remplis automatiquement.',
+    description: 'Format Données-Actions-Résultats. Les D et A sont pré-remplis automatiquement.',
     details: [
       'D — Constantes du patient remplies automatiquement',
-      'A — Derniers actes et administrations injectes',
-      'R — Libre pour l\'evaluation clinique IDE',
-      'Cible : Douleur, Respiratoire, Hemodynamique, Neurologique...',
+      'A — Derniers actes et administrations injectés',
+      'R — Libre pour l\'évaluation clinique IDE',
+      'Cible : Douleur, Respiratoire, Hémodynamique, Neurologique...',
       'Historique complet avec horodatage',
     ],
     status: 'done',
@@ -48,24 +49,24 @@ const PILLARS: Feature[] = [
   {
     icon: <Users className="h-6 w-6" />,
     title: 'Interface adaptative',
-    description: 'Meme donnees, 5 UIs differentes. Chaque role voit exactement ce dont il a besoin.',
+    description: 'Mêmes données, 5 UIs différentes. Chaque rôle voit exactement ce dont il a besoin.',
     details: [
-      'Medecin : board panoramique avec zones, prescriptions, resultats',
-      'IOA : workflow triage 5 etapes avec timer < 2 min',
-      'IDE : pancarte unifiee avec admin medicaments en 1 tap',
+      'Médecin : board panoramique avec zones, prescriptions, résultats',
+      'IOA : workflow triage 5 étapes avec timer < 2 min',
+      'IDE : pancarte unifiée avec admin médicaments en 1 tap',
       'Aide-soignant : 4 gros boutons tactiles, constantes uniquement',
-      'Secretaire : admission rapide < 90 secondes',
+      'Secrétaire : admission rapide < 90 secondes',
     ],
     status: 'done',
   },
   {
     icon: <Zap className="h-6 w-6" />,
     title: 'Admin 1 tap',
-    description: 'Reduire de 6-8 clics a 1 seul tap pour administrer un medicament.',
+    description: 'Réduire de 6-8 clics à 1 seul tap pour administrer un médicament.',
     details: [
-      'Bouton "Administre" visible directement sur chaque ligne',
+      'Bouton "Administré" visible directement sur chaque ligne',
       'Dose et lot modifiables inline',
-      'Titrations avec dose cumulee et seuil max',
+      'Titrations avec dose cumulée et seuil max',
       'Conditionnels avec intervalle et compteur de doses',
       'Audit trail automatique de chaque administration',
     ],
@@ -74,38 +75,38 @@ const PILLARS: Feature[] = [
   {
     icon: <Activity className="h-6 w-6" />,
     title: 'Timeline IA',
-    description: 'Chronologie patient assistee par IA. Antecedents, allergies, traitements et historique structures.',
+    description: 'Chronologie patient assistée par IA. Antécédents, allergies, traitements et historique structurés.',
     details: [
-      'Frise chronologique du sejour aux urgences',
+      'Frise chronologique du séjour aux urgences',
       'Import automatique depuis FHIR et HL7v2',
-      'Synthese assistee pour le compte-rendu hospitalier',
-      'Diagnostic, antecedents, allergies horodates',
+      'Synthèse assistée pour le compte-rendu hospitalier',
+      'Diagnostic, antécédents, allergies horodatés',
     ],
     status: 'beta',
   },
   {
     icon: <WifiOff className="h-6 w-6" />,
     title: 'Offline-first',
-    description: 'PWA avec plus de 4h d\'autonomie hors connexion. Les urgences ne s\'arretent pas quand le reseau tombe.',
+    description: 'PWA avec plus de 4h d\'autonomie hors connexion. Les urgences ne s\'arrêtent pas quand le réseau tombe.',
     details: [
-      'Service Worker avec cache des donnees patients du service',
+      'Service Worker avec cache des données patients du service',
       'File d\'attente des actions hors connexion (IndexedDB)',
-      'Sync automatique au retour du reseau',
+      'Sync automatique au retour du réseau',
       'Indicateur de statut connexion permanent',
-      'Objectif : >4h d\'autonomie complete',
+      'Objectif : >4h d\'autonomie complète',
     ],
     status: 'planned',
   },
   {
     icon: <Shield className="h-6 w-6" />,
     title: 'Secure-by-design',
-    description: 'RLS, encryption, audit trails natifs. La securite n\'est pas un add-on, c\'est le fondement.',
+    description: 'RLS, encryption, audit trails natifs. La sécurité n\'est pas un add-on, c\'est le fondement.',
     details: [
-      'Row Level Security (RLS) strict par role Supabase',
-      'Chaque role ne voit que ce qu\'il doit voir',
+      'Row Level Security (RLS) strict par rôle Supabase',
+      'Chaque rôle ne voit que ce qu\'il doit voir',
       'Audit trail : qui, quoi, quand pour chaque action',
-      'Auto-deconnexion apres 30 min d\'inactivite',
-      'RGPD sante : retention 3 ans max, droit a l\'oubli',
+      'Auto-déconnexion après 30 min d\'inactivité',
+      'RGPD santé : rétention 3 ans max, droit à l\'oubli',
     ],
     status: 'done',
   },
@@ -114,21 +115,21 @@ const PILLARS: Feature[] = [
 const TECH_FEATURES = [
   { icon: <Monitor className="h-5 w-5" />, title: 'React + TypeScript', desc: 'SPA avec Vite, SWC, et HMR ultra-rapide' },
   { icon: <Server className="h-5 w-5" />, title: 'Supabase', desc: 'PostgreSQL, Auth, Realtime, Edge Functions, Storage' },
-  { icon: <LayoutGrid className="h-5 w-5" />, title: 'Shadcn/UI + Tailwind', desc: '48 composants UI, design tokens medicaux, dark mode' },
+  { icon: <LayoutGrid className="h-5 w-5" />, title: 'Shadcn/UI + Tailwind', desc: '48 composants UI, design tokens médicaux, dark mode' },
   { icon: <Database className="h-5 w-5" />, title: '12 tables', desc: 'patients, encounters, vitals, prescriptions, administrations...' },
-  { icon: <RefreshCcw className="h-5 w-5" />, title: 'Realtime', desc: 'Supabase Realtime sur patients, constantes, resultats' },
-  { icon: <Lock className="h-5 w-5" />, title: 'RLS natif', desc: 'Row Level Security par role dans PostgreSQL' },
+  { icon: <RefreshCcw className="h-5 w-5" />, title: 'Realtime', desc: 'Supabase Realtime sur patients, constantes, résultats' },
+  { icon: <Lock className="h-5 w-5" />, title: 'RLS natif', desc: 'Row Level Security par rôle dans PostgreSQL' },
   { icon: <Smartphone className="h-5 w-5" />, title: 'Responsive', desc: 'Mobile-first, gros boutons tactiles, gants-friendly' },
   { icon: <Wifi className="h-5 w-5" />, title: 'PWA', desc: 'Installable, manifest, service worker, offline cache' },
 ];
 
 const INTEROP = [
   { label: 'FHIR R4', desc: 'Patient, Encounter, Observation, MedicationRequest, DiagnosticReport' },
-  { label: 'HL7v2', desc: 'ADT (Admission/Transfert), ORM (Orders), ORU (Resultats)' },
-  { label: 'MS-Sante', desc: 'Echanges professionnels de sante securises' },
-  { label: 'INS', desc: 'Identite Nationale de Sante integree' },
+  { label: 'HL7v2', desc: 'ADT (Admission/Transfert), ORM (Orders), ORU (Résultats)' },
+  { label: 'MSSanté', desc: 'Échanges professionnels de santé sécurisés' },
+  { label: 'INS', desc: 'Identité Nationale de Santé intégrée' },
   { label: 'LOINC', desc: 'Codage des constantes et examens biologiques' },
-  { label: 'ATC', desc: 'Classification des medicaments' },
+  { label: 'ATC', desc: 'Classification des médicaments' },
 ];
 
 export default function FeaturesPage() {
@@ -137,8 +138,8 @@ export default function FeaturesPage() {
   const statusBadge = (status: Feature['status']) => {
     const map = {
       done: { label: 'Disponible', className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-      beta: { label: 'Beta', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-      planned: { label: 'Prevu', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+      beta: { label: 'Bêta', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+      planned: { label: 'Prévu', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
     };
     const s = map[status];
     return <Badge className={cn('text-[10px]', s.className)}>{s.label}</Badge>;
@@ -146,25 +147,12 @@ export default function FeaturesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur-lg">
-        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-lg font-bold">
-            <ArrowLeft className="h-4 w-4" /> Urgence<span className="text-primary">OS</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button size="sm" variant="outline" onClick={() => navigate('/demo')}>Demo</Button>
-            <Button size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-1" /> Connexion
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">Fonctionnalites detaillees</Badge>
+          <Badge variant="outline" className="mb-4">Fonctionnalités détaillées</Badge>
           <h1 className="text-4xl font-bold mb-4">
             7 piliers pour transformer les urgences
           </h1>
@@ -213,7 +201,7 @@ export default function FeaturesPage() {
         {/* Tech stack */}
         <div className="mb-20">
           <h2 className="text-2xl font-bold text-center mb-2">Stack technique</h2>
-          <p className="text-muted-foreground text-center mb-8">Architecture moderne, zero dependance lourde inutile</p>
+          <p className="text-muted-foreground text-center mb-8">Architecture moderne, zéro dépendance lourde inutile</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {TECH_FEATURES.map(item => (
               <div key={item.title} className="p-4 rounded-xl border bg-card space-y-2">
@@ -229,8 +217,8 @@ export default function FeaturesPage() {
 
         {/* Interop */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Interoperabilite</h2>
-          <p className="text-muted-foreground text-center mb-8">Standards de sante integres nativement</p>
+          <h2 className="text-2xl font-bold text-center mb-2">Interopérabilité</h2>
+          <p className="text-muted-foreground text-center mb-8">Standards de santé intégrés nativement</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {INTEROP.map(item => (
               <div key={item.label} className="flex items-start gap-3 p-4 rounded-xl border bg-card">
@@ -243,15 +231,15 @@ export default function FeaturesPage() {
 
         {/* Roles summary */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">5 interfaces, 1 systeme</h2>
-          <p className="text-muted-foreground text-center mb-8">Chaque role a son interface optimisee</p>
+          <h2 className="text-2xl font-bold text-center mb-2">5 interfaces, 1 système</h2>
+          <p className="text-muted-foreground text-center mb-8">Chaque rôle a son interface optimisée</p>
           <div className="grid sm:grid-cols-5 gap-4">
             {[
-              { role: 'Medecin', route: '/board', icon: <Stethoscope className="h-5 w-5" />, metric: 'Board 3 zones' },
+              { role: 'Médecin', route: '/board', icon: <Stethoscope className="h-5 w-5" />, metric: 'Board 3 zones' },
               { role: 'IOA', route: '/triage', icon: <ClipboardList className="h-5 w-5" />, metric: 'Tri < 2 min' },
               { role: 'IDE', route: '/pancarte', icon: <Heart className="h-5 w-5" />, metric: 'Admin 1 tap' },
               { role: 'AS', route: '/as', icon: <Activity className="h-5 w-5" />, metric: '4 boutons' },
-              { role: 'Secretaire', route: '/accueil', icon: <UserPlus className="h-5 w-5" />, metric: '< 90 sec' },
+              { role: 'Secrétaire', route: '/accueil', icon: <UserPlus className="h-5 w-5" />, metric: '< 90 sec' },
             ].map(item => (
               <div key={item.role} className="p-4 rounded-xl border bg-card text-center space-y-2">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto text-primary">
@@ -266,13 +254,13 @@ export default function FeaturesPage() {
 
         {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-3">Pret a tester UrgenceOS ?</h2>
+          <h2 className="text-2xl font-bold mb-3">Prêt à tester UrgenceOS ?</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            5 comptes demo preconfigures, 15 patients fictifs. Testez chaque role en quelques clics.
+            5 comptes démo préconfigurés, 15 patients fictifs. Testez chaque rôle en quelques clics.
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/demo')} variant="outline">
-              Voir la demo <ArrowRight className="h-4 w-4 ml-1" />
+              Voir la démo <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button onClick={() => navigate('/login')}>
               <LogIn className="h-4 w-4 mr-1" /> Se connecter
@@ -283,11 +271,13 @@ export default function FeaturesPage() {
         {/* Disclaimer */}
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            UrgenceOS est un outil d'aide a la gestion des urgences hospitalieres.
-            Il ne constitue pas un dispositif medical certifie au sens de la reglementation en vigueur.
+            UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
+            Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
       </div>
+
+      <FooterSection />
     </div>
   );
 }

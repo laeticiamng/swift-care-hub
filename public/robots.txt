@@ -1,7 +1,12 @@
 User-agent: *
 Allow: /
-Allow: /landing
 Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /blog
 Allow: /demo
 Allow: /mentions-legales
 Allow: /politique-confidentialite
@@ -14,9 +19,16 @@ Disallow: /patient/
 Disallow: /triage
 Disallow: /pancarte/
 Disallow: /as
+Disallow: /constantes
 Disallow: /accueil
+Disallow: /admission
 Disallow: /ioa-queue
+Disallow: /prescriptions
 Disallow: /recap/
 Disallow: /interop
+Disallow: /garde
+Disallow: /audit
+Disallow: /demo/live
+Disallow: /sih-validation
 
 Sitemap: https://urgenceos.fr/sitemap.xml

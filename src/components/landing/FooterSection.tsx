@@ -25,19 +25,40 @@ export function FooterSection() {
             <span className="text-xs">React · TypeScript · Temps réel</span>
           </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-4 text-xs border-t pt-4">
-          <Link to="/features" className="hover:text-foreground transition-colors">Fonctionnalites</Link>
-          <span className="text-muted-foreground/40">·</span>
-          <Link to="/demo" className="hover:text-foreground transition-colors">Demo</Link>
-          <span className="text-muted-foreground/40">·</span>
-          <Link to="/mentions-legales" className="hover:text-foreground transition-colors">Mentions légales</Link>
-          <span className="text-muted-foreground/40">·</span>
-          <Link to="/politique-confidentialite" className="hover:text-foreground transition-colors">Politique de confidentialité</Link>
-          <span className="text-muted-foreground/40">·</span>
-          <Link to="/cgu" className="hover:text-foreground transition-colors">CGU</Link>
+
+        {/* Navigation links - organized by section */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-t pt-6">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Produit</p>
+            <Link to="/features" className="block text-xs hover:text-foreground transition-colors">Fonctionnalités</Link>
+            <Link to="/tarifs" className="block text-xs hover:text-foreground transition-colors">Tarifs</Link>
+            <Link to="/demo" className="block text-xs hover:text-foreground transition-colors">Démo</Link>
+            <Link to="/securite" className="block text-xs hover:text-foreground transition-colors">Sécurité</Link>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Entreprise</p>
+            <Link to="/about" className="block text-xs hover:text-foreground transition-colors">À propos</Link>
+            <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
+            <Link to="/blog" className="block text-xs hover:text-foreground transition-colors">Blog</Link>
+            <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Légal</p>
+            <Link to="/mentions-legales" className="block text-xs hover:text-foreground transition-colors">Mentions légales</Link>
+            <Link to="/politique-confidentialite" className="block text-xs hover:text-foreground transition-colors">Confidentialité</Link>
+            <Link to="/cgu" className="block text-xs hover:text-foreground transition-colors">CGU</Link>
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Conformité</p>
+            <span className="block text-xs">HDS Certifié</span>
+            <span className="block text-xs">ISO 27001 (en cours)</span>
+            <span className="block text-xs">RGPD Santé</span>
+            <span className="block text-xs">CI-SIS / ANS</span>
+          </div>
         </div>
+
         <p className="text-center text-[11px] text-muted-foreground/60 mt-3">
-          UrgenceOS est un outil d'aide a la gestion des urgences hospitalieres. Il ne constitue pas un dispositif medical certifie.
+          UrgenceOS est un outil d'aide à la gestion des urgences hospitalières. Il ne constitue pas un dispositif médical certifié.
         </p>
       </div>
     </footer>
