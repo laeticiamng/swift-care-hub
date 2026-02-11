@@ -28,6 +28,12 @@ import FeaturesPage from "./pages/FeaturesPage";
 import GardePage from "./pages/GardePage";
 import AuditPage from "./pages/AuditPage";
 import SIHValidationPage from "./pages/SIHValidationPage";
+import PricingPage from "./pages/PricingPage";
+import FAQPage from "./pages/FAQPage";
+import AboutPage from "./pages/AboutPage";
+import B2BPage from "./pages/B2BPage";
+import BlogPage from "./pages/BlogPage";
+import SecurityPage from "./pages/SecurityPage";
 import NotFound from "./pages/NotFound";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
@@ -81,6 +87,14 @@ function AppRoutes() {
       <Route path="/demo/live" element={<DemoLivePage />} />
       <Route path="/sih-validation" element={<SIHValidationPage />} />
       <Route path="/features" element={<FeaturesPage />} />
+      <Route path="/tarifs" element={<PricingPage />} />
+      <Route path="/pricing" element={<Navigate to="/tarifs" replace />} />
+      <Route path="/faq" element={<FAQPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/b2b" element={<B2BPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/securite" element={<SecurityPage />} />
+      <Route path="/security" element={<Navigate to="/securite" replace />} />
       <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
       <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
       <Route path="/cgu" element={<CGUPage />} />

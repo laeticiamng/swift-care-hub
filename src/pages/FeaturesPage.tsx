@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { SiteHeader } from '@/components/landing/SiteHeader';
+import { FooterSection } from '@/components/landing/FooterSection';
 import { cn } from '@/lib/utils';
 import {
-  Activity, ArrowLeft, ArrowRight, CheckCircle, ClipboardList,
-  Clock, Database, FileText, Heart, LayoutGrid, Lock, LogIn,
+  Activity, ArrowRight, CheckCircle, ClipboardList,
+  Database, FileText, Heart, LayoutGrid, Lock, LogIn,
   Monitor, RefreshCcw, Server, Shield, Smartphone, Stethoscope,
-  Timer, UserPlus, Users, Wifi, WifiOff, Zap,
+  UserPlus, Users, Wifi, WifiOff, Zap,
 } from 'lucide-react';
 
 interface Feature {
@@ -146,20 +147,7 @@ export default function FeaturesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur-lg">
-        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-lg font-bold">
-            <ArrowLeft className="h-4 w-4" /> Urgence<span className="text-primary">OS</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button size="sm" variant="outline" onClick={() => navigate('/demo')}>Demo</Button>
-            <Button size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-1" /> Connexion
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Hero */}
@@ -288,6 +276,8 @@ export default function FeaturesPage() {
           </p>
         </div>
       </div>
+
+      <FooterSection />
     </div>
   );
 }
