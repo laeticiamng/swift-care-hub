@@ -19,6 +19,7 @@ import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History,
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
+import { trackAdministrationTap } from '@/lib/kpi-tracker';
 import {
   parsePrescriptionMeta,
   getPancarteSection,
@@ -101,6 +102,7 @@ export default function PancartePage() {
   // ── Admin handlers ──
   const handleAdminister = async (rx: any, doseGiven?: string, adminNotes?: string) => {
     if (!user || !encounter) return;
+    trackAdministrationTap(rx.id);
     const dose = doseGiven || titrationDoses[rx.id] || rx.dosage;
     const lot = lotNumbers[rx.id] || '';
     const notes = adminNotes || (lot ? `lot:${lot}` : null);

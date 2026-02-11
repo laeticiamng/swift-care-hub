@@ -17,6 +17,8 @@ import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
+import { startAdmissionTimer, stopAdmissionTimer } from '@/lib/kpi-tracker';
+import { validateINSFormat } from '@/lib/ins-service';
 
 export default function AccueilPage() {
   const { signOut } = useAuth();
@@ -89,10 +91,22 @@ export default function AccueilPage() {
   const handleAdmission = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    const admissionTimerId = `admission_${Date.now()}`;
+    startAdmissionTimer(admissionTimerId);
     const birthDate = new Date(dateNaissance);
     const today = new Date();
     if (birthDate > today) { toast.error('La date de naissance ne peut pas être dans le futur'); setSubmitting(false); return; }
     if (birthDate < new Date('1900-01-01')) { toast.error('Date de naissance invalide'); setSubmitting(false); return; }
+
+    // INS format validation if provided
+    if (insNumero) {
+      const insResult = validateINSFormat(insNumero);
+      if (!insResult.valid) {
+        toast.error(`N° SS invalide : ${insResult.error}`);
+        setSubmitting(false);
+        return;
+      }
+    }
 
     let patientId: string;
     if (selectedExisting) { patientId = selectedExisting.id; }
@@ -103,7 +117,8 @@ export default function AccueilPage() {
     }
     const { error } = await supabase.from('encounters').insert({ patient_id: patientId, status: 'arrived', motif_sfmu: motif || null });
     if (error) { toast.error('Erreur de création passage'); setSubmitting(false); return; }
-    toast.success('Passage créé');
+    const admissionSecs = stopAdmissionTimer(admissionTimerId);
+    toast.success(`Passage créé${admissionSecs > 0 ? ` (${admissionSecs}s)` : ''}`);
     setNom(''); setPrenom(''); setDateNaissance(''); setSexe('M'); setMotif(''); setTelephone(''); setInsNumero(''); setAdresse(''); setPoids('');
     setMedecinTraitant(''); setAntecedents(''); setAllergies('');
     setSelectedExisting(null); setSubmitting(false); fetchToday();

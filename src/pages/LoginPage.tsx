@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, CheckCircle, ArrowLeft, Info, Play } from 'lucide-react';
+import { Activity, ArrowLeft, Info, Play } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -14,15 +14,12 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,38 +28,10 @@ export default function LoginPage() {
     if (!validation.success) { setError(validation.error.errors[0].message); return; }
     setLoading(true);
     try {
-      if (isSignUp) {
-        if (!fullName.trim()) { setError('Le nom complet est requis'); return; }
-        const { error } = await signUp(email, password, fullName);
-        if (error) {
-          setError(error.message.includes('already registered') ? 'Cet email est déjà enregistré. Connectez-vous.' : error.message);
-        } else { setSignUpSuccess(true); }
-      } else {
-        const { error } = await signIn(email, password);
-        if (error) { setError('Email ou mot de passe incorrect'); } else { navigate('/select-role'); }
-      }
+      const { error } = await signIn(email, password);
+      if (error) { setError('Email ou mot de passe incorrect'); } else { navigate('/select-role'); }
     } finally { setLoading(false); }
   };
-
-  if (signUpSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
-        </div>
-        <Card className="w-full max-w-md shadow-lg border relative z-10 animate-in fade-in scale-in duration-300">
-          <CardContent className="pt-8 pb-6 text-center space-y-4">
-            <CheckCircle className="h-12 w-12 text-medical-success mx-auto" />
-            <h2 className="text-xl font-semibold">Compte créé avec succès !</h2>
-            <p className="text-muted-foreground">Vous pouvez maintenant vous connecter.</p>
-            <Button className="w-full touch-target" onClick={() => { setSignUpSuccess(false); setIsSignUp(false); setPassword(''); }}>
-              Se connecter
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
@@ -117,18 +86,12 @@ export default function LoginPage() {
             <div>
               <CardTitle className="text-2xl">UrgenceOS</CardTitle>
               <CardDescription className="mt-1">
-                {isSignUp ? 'Créer un compte' : 'Connexion au système'}
+                Connexion au système
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {isSignUp && (
-                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <Label htmlFor="fullName">Nom complet</Label>
-                  <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Dr. Martin Dupont" required />
-                </div>
-              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="nom@hopital.fr" required />
@@ -139,13 +102,10 @@ export default function LoginPage() {
               </div>
               {error && <p className="text-sm text-medical-critical animate-in fade-in duration-200">{error}</p>}
               <Button type="submit" className="w-full touch-target" disabled={loading}>
-                {loading ? 'Chargement...' : isSignUp ? 'Créer le compte' : 'Se connecter'}
+                {loading ? 'Chargement...' : 'Se connecter'}
               </Button>
-              <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); }} className="text-sm text-muted-foreground hover:text-foreground w-full text-center mt-2 transition-colors">
-                {isSignUp ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
-              </button>
             </form>
-            {!isSignUp && (
+            {(
               <div className="mt-6 space-y-4">
                 <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
                   <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
