@@ -434,8 +434,8 @@ export default function PatientDossierPage() {
     const bundle = encounterBundleToFHIR(data);
     const validation = validateGeneratedBundle(bundle);
     if (!validation.valid) {
-      const errorCount = validation.issues.filter(i => i.severity === 'error').length;
-      console.warn(`[FHIR] Bundle has ${errorCount} validation error(s)`, validation.issues);
+      const errorCount = validation.errors.filter(i => i.severity === 'error').length;
+      console.warn(`[FHIR] Bundle has ${errorCount} validation error(s)`, validation.errors);
     }
     setFhirBundle(bundle);
     setFhirDrawerOpen(true);
@@ -800,7 +800,7 @@ export default function PatientDossierPage() {
               <Card className="animate-in fade-in duration-300" style={{ animationDelay: '40ms', animationFillMode: 'both' }}>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Activity className="h-5 w-5 text-primary" />
+                    <History className="h-5 w-5 text-primary" />
                     Fil chronologique SIH
                   </CardTitle>
                   {/* M6-02: Quick communication entry */}

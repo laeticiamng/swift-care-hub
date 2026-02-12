@@ -73,9 +73,9 @@ export async function exportPatientData(
     supabase.from('prescriptions').select('*').eq('patient_id', patientId),
     supabase.from('vitals').select('*').eq('patient_id', patientId),
     supabase.from('results').select('*').eq('patient_id', patientId),
-    supabase.from('allergies').select('*').eq('patient_id', patientId),
-    supabase.from('conditions').select('*').eq('patient_id', patientId),
-    supabase.from('audit_logs').select('*').eq('patient_id', patientId).order('created_at', { ascending: false }),
+    supabase.from('timeline_items').select('*').eq('patient_id', patientId).eq('item_type', 'allergie'),
+    supabase.from('timeline_items').select('*').eq('patient_id', patientId).eq('item_type', 'antecedent'),
+    supabase.from('audit_logs').select('*').eq('user_id', patientId).order('created_at', { ascending: false }),
   ]);
 
   return {
@@ -112,13 +112,15 @@ export async function requestDataDeletion(
   requestedBy: string,
   reason: string = ''
 ): Promise<{ success: boolean; deletionId: string | null; error?: string }> {
+  // data_deletion_requests table doesn't exist yet — log to audit_logs instead
   const { data, error } = await supabase
-    .from('data_deletion_requests')
+    .from('audit_logs')
     .insert({
-      patient_id: patientId,
-      requested_by: requestedBy,
-      reason,
-      status: 'pending',
+      user_id: requestedBy,
+      action: 'data_deletion_request',
+      resource_type: 'patient',
+      resource_id: patientId,
+      details: { reason, status: 'pending' },
     })
     .select('id')
     .single();
@@ -134,28 +136,32 @@ export async function getDeletionRequests(
   patientId?: string
 ): Promise<DeletionRequest[]> {
   let query = supabase
-    .from('data_deletion_requests')
+    .from('audit_logs')
     .select('*')
+    .eq('action', 'data_deletion_request')
     .order('created_at', { ascending: false });
 
   if (patientId) {
-    query = query.eq('patient_id', patientId);
+    query = query.eq('resource_id', patientId);
   }
 
   const { data } = await query;
-  return (data as DeletionRequest[]) || [];
+  // Map audit_logs rows to DeletionRequest shape
+  return ((data || []) as Record<string, unknown>[]).map(row => ({
+    id: row.id as string,
+    patient_id: (row.resource_id || '') as string,
+    requested_by: (row.user_id || '') as string,
+    reason: ((row.details as Record<string, unknown>)?.reason || '') as string,
+    status: ((row.details as Record<string, unknown>)?.status || 'pending') as DeletionRequest['status'],
+    created_at: row.created_at as string,
+  }));
 }
 
 // ── Consent Management ──
 
-export async function getConsentStatus(patientId: string): Promise<ConsentRecord[]> {
-  const { data } = await supabase
-    .from('patient_consents')
-    .select('*')
-    .eq('patient_id', patientId)
-    .order('created_at', { ascending: false });
-
-  return (data as ConsentRecord[]) || [];
+export async function getConsentStatus(_patientId: string): Promise<ConsentRecord[]> {
+  // patient_consents table doesn't exist yet — return empty
+  return [];
 }
 
 export async function recordConsent(
@@ -171,9 +177,16 @@ export async function recordConsent(
     granted_by: consent.granted_by,
   };
 
+  // patient_consents table doesn't exist yet — store in audit_logs
   const { error } = await supabase
-    .from('patient_consents')
-    .insert(payload);
+    .from('audit_logs')
+    .insert({
+      user_id: payload.granted_by || null,
+      action: 'consent_record',
+      resource_type: 'patient',
+      resource_id: patientId,
+      details: payload as unknown as Record<string, unknown>,
+    } as any);
 
   if (error) {
     return { success: false, error: error.message };
@@ -183,19 +196,11 @@ export async function recordConsent(
 }
 
 export async function hasActiveConsent(
-  patientId: string,
-  consentType: ConsentType
+  _patientId: string,
+  _consentType: ConsentType
 ): Promise<boolean> {
-  const { data } = await supabase
-    .from('patient_consents')
-    .select('granted')
-    .eq('patient_id', patientId)
-    .eq('consent_type', consentType)
-    .order('created_at', { ascending: false })
-    .limit(1);
-
-  if (!data || data.length === 0) return false;
-  return (data[0] as Record<string, unknown>).granted === true;
+  // patient_consents table doesn't exist yet — default to false
+  return false;
 }
 
 // ── Privacy-safe audit log ──

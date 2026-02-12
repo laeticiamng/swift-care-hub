@@ -166,7 +166,7 @@ export default function PancartePage() {
     if (newVitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(newVitals.frequence_respiratoire);
     if (newVitals.gcs) obj.gcs = parseInt(newVitals.gcs);
     if (newVitals.eva_douleur) obj.eva_douleur = parseInt(newVitals.eva_douleur);
-    await supabase.from('vitals').insert(obj);
+    await supabase.from('vitals').insert(obj as any);
     toast.success('Constantes enregistrees');
     setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
     setShowVitalsInput(false);
