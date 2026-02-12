@@ -132,7 +132,7 @@ export default function AideSoignantPage() {
       obj.pa_diastolique = parseFloat(value2);
     }
 
-    const { error } = await supabase.from('vitals').insert(obj);
+    const { error } = await supabase.from('vitals').insert(obj as any);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constante enregistree');
     setVitalValue('');
@@ -166,7 +166,7 @@ export default function AideSoignantPage() {
     if (vitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(vitals.frequence_respiratoire);
     if (vitals.gcs) obj.gcs = parseInt(vitals.gcs);
     if (vitals.eva_douleur) obj.eva_douleur = parseInt(vitals.eva_douleur);
-    const { error } = await supabase.from('vitals').insert(obj);
+    const { error } = await supabase.from('vitals').insert(obj as any);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constantes enregistrees');
     setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });

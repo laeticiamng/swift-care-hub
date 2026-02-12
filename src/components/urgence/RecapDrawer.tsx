@@ -446,7 +446,7 @@ export function RecapDrawer({ encounterId, trigger }: RecapDrawerProps) {
                   {encounter.ccmu ? ` — CCMU ${encounter.ccmu}` : ''}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {encounter.motif_sfmu || 'Motif non precise'}
+                  {(encounter.motif_sfmu as string) || 'Motif non precise'}
                   {encounter.zone ? ` · ${(encounter.zone as string).toUpperCase()}` : ''}
                   {encounter.box_number ? ` Box ${encounter.box_number}` : ''}
                   {medecinName ? ` · Dr. ${medecinName}` : ''}
