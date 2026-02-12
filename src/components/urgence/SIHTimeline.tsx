@@ -39,6 +39,8 @@ const ENTRY_TYPE_CONFIG: Record<TimelineEntryType, {
   prescription_orale: { icon: <Pill className="h-4 w-4" />, label: 'Rx orale', color: 'text-orange-500' },
   acte: { icon: <Activity className="h-4 w-4" />, label: 'Acte', color: 'text-green-500' },
   resultat_bio: { icon: <FlaskConical className="h-4 w-4" />, label: 'Resultat bio', color: 'text-cyan-500' },
+  resultat_imagerie: { icon: <Activity className="h-4 w-4" />, label: 'Resultat imagerie', color: 'text-indigo-500' },
+  resultat_ecg: { icon: <Activity className="h-4 w-4" />, label: 'Resultat ECG', color: 'text-rose-500' },
   alerte_labo: { icon: <Bell className="h-4 w-4" />, label: 'Alerte labo', color: 'text-red-500' },
   info_orale: { icon: <MessageSquare className="h-4 w-4" />, label: 'Info orale', color: 'text-amber-500' },
   communication: { icon: <Phone className="h-4 w-4" />, label: 'Communication', color: 'text-indigo-500' },

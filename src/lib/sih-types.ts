@@ -52,6 +52,8 @@ export type TimelineEntryType =
   | 'prescription_orale'
   | 'acte'
   | 'resultat_bio'
+  | 'resultat_imagerie'
+  | 'resultat_ecg'
   | 'alerte_labo'
   | 'info_orale'
   | 'communication'

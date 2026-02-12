@@ -138,7 +138,8 @@ export default function PatientDossierPage() {
       }
       if (resRes.data) {
         resRes.data.forEach((r: any) => {
-          autoEntries.push({ id: `auto-res-${r.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'resultat_bio', content: `${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`, author_id: 'system', author_name: 'Automate', validation_status: r.is_critical ? 'critique' : 'valide', created_at: r.received_at || r.created_at });
+          const entryType = r.category === 'imagerie' ? 'resultat_imagerie' : r.category === 'ecg' ? 'resultat_ecg' : 'resultat_bio';
+          autoEntries.push({ id: `auto-res-${r.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: entryType, content: `${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`, author_id: 'system', author_name: r.category === 'imagerie' ? 'Imagerie' : r.category === 'ecg' ? 'ECG' : 'Labo', validation_status: r.is_critical ? 'critique' : 'valide', created_at: r.received_at || r.created_at });
         });
       }
       setSihTimelineEntries(autoEntries);

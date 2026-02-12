@@ -361,9 +361,9 @@ export function RecapDrawer({ encounterId, trigger }: RecapDrawerProps) {
         id: `result-${r.id}`,
         timestamp: r.received_at as string,
         type: 'result',
-        icon: '🔬',
-        content: `Resultat ${r.category}: ${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`,
-        author: 'Labo',
+        icon: r.category === 'imagerie' ? '🩻' : r.category === 'ecg' ? '💓' : '🔬',
+        content: `Resultat ${r.category === 'imagerie' ? 'imagerie' : r.category === 'ecg' ? 'ECG' : 'bio'}: ${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`,
+        author: r.category === 'imagerie' ? 'Imagerie' : r.category === 'ecg' ? 'ECG' : 'Labo',
         is_critical: r.is_critical as boolean,
       });
     });
