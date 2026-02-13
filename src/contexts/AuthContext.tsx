@@ -4,6 +4,16 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type AppRole = 'medecin' | 'ioa' | 'ide' | 'as' | 'secretaire';
 
+const LEGACY_ROLE_MAP: Record<string, AppRole> = {
+  urgentiste: 'medecin',
+};
+
+const normalizeRole = (role: string): AppRole | null => {
+  if (role in LEGACY_ROLE_MAP) return LEGACY_ROLE_MAP[role];
+  if (role === 'medecin' || role === 'ioa' || role === 'ide' || role === 'as' || role === 'secretaire') return role;
+  return null;
+};
+
 const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 interface AuthContextType {
@@ -65,10 +75,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .eq('user_id', userId);
 
     if (!error && data) {
-      const roles = data.map(r => r.role as AppRole);
+      const roles = Array.from(new Set(data
+        .map(r => normalizeRole(r.role))
+        .filter((r): r is AppRole => r !== null)));
       setAvailableRoles(roles);
       // Restore from sessionStorage first
-      const savedRole = sessionStorage.getItem('urgenceos_role') as AppRole | null;
+      const savedRole = normalizeRole(sessionStorage.getItem('urgenceos_role') || '');
       if (savedRole && roles.includes(savedRole)) {
         setRole(savedRole);
       } else if (roles.length === 1) {
