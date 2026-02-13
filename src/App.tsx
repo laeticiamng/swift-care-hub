@@ -40,6 +40,7 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const B2BPage = lazy(() => import("./pages/B2BPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
+const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ── Loading fallback ──
@@ -170,6 +171,10 @@ function AppRoutes() {
         <Route path="/interop" element={<ProtectedRoute><RoleGuard allowedRoles={PRESCRIBERS}><InteropPage /></RoleGuard></ProtectedRoute>} />
         <Route path="/garde" element={<ProtectedRoute><RoleGuard allowedRoles={CLINICAL_CORE}><GardePage /></RoleGuard></ProtectedRoute>} />
         <Route path="/audit" element={<ProtectedRoute><RoleGuard allowedRoles={PRESCRIBERS}><AuditPage /></RoleGuard></ProtectedRoute>} />
+
+        {/* Statistics — médecin + IOA */}
+        <Route path="/statistics" element={<ProtectedRoute><RoleGuard allowedRoles={CLINICAL_CORE}><StatisticsPage /></RoleGuard></ProtectedRoute>} />
+        <Route path="/statistiques" element={<Navigate to="/statistics" replace />} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
