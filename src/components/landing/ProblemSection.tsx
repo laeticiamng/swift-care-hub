@@ -23,7 +23,7 @@ const debts = [
     title: 'Dette de temps',
     value: '45-90 min',
     label: 'perdues par poste en friction logicielle',
-    desc: 'Navigation entre écrans, ressaisies, attentes, coordination manuelle : de la capacité de soin évaporée.',
+    desc: 'Navigation entre écrans, ressaisies, attentes, coordination manuelle : autant de temps clinique perdu.',
     accent: 'text-primary',
   },
   {
@@ -31,7 +31,7 @@ const debts = [
     title: 'Dette de sécurité',
     value: '×3',
     label: 'surface d\'attaque par rapport à un socle unifié',
-    desc: 'Chaque application exposée, chaque connecteur non chiffré est un vecteur d\'attaque.',
+    desc: 'Chaque application exposée, chaque connecteur non chiffré : autant de vecteurs d\'attaque.',
     accent: 'text-medical-critical',
   },
 ];

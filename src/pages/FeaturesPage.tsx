@@ -78,7 +78,7 @@ export default function FeaturesPage() {
           </div>
           <p className="text-muted-foreground mb-6 leading-relaxed">
             Un écran unique qui reconstitue le parcours complet d'un patient aux urgences, adapté au rôle de l'utilisateur.
-            C'est la "Freebox" d'UrgenceOS — l'écran qui vend en 10 secondes.
+            C'est l'interface centrale d'UrgenceOS — celle que cliniciens et décideurs comprennent immédiatement.
           </p>
 
           <div className="grid sm:grid-cols-3 gap-4 mb-6">

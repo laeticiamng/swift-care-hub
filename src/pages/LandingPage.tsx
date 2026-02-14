@@ -39,7 +39,7 @@ export default function LandingPage() {
               {
                 icon: Layers,
                 title: 'Socle interne',
-                desc: 'Identité, droits, audit, bus d\'intégration FHIR, observabilité. Un socle que l\'hôpital possède et gouverne.',
+                desc: 'Identité, droits, audit, échanges de données sécurisés (FHIR), monitoring complet. Un socle que l\'hôpital possède et gouverne.',
               },
               {
                 icon: MonitorSmartphone,
@@ -49,7 +49,7 @@ export default function LandingPage() {
               {
                 icon: RefreshCcw,
                 title: 'Intégration sans refonte',
-                desc: 'Le DPI reste en place. On l\'encadre via des connecteurs standards. Zéro projet cimetière.',
+                desc: 'Le DPI reste en place. Nous l\'encadrons via des connecteurs standards (FHIR R4, HL7v2). Zéro refonte inutile.',
               },
             ].map((item) => (
               <div key={item.title} className="p-6 rounded-xl border bg-card space-y-3">
@@ -83,7 +83,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="mt-8 text-sm text-muted-foreground">
-            Chaque mois de statu quo est un mois de dette supplémentaire. Le pilote de 10 semaines ne demande pas un acte de foi : il demande un test mesuré, cadré, réversible.
+            Chaque mois de statu quo est un mois de dette supplémentaire. Le pilote de 10 semaines ne demande pas une décision irréversible : il demande un test mesuré, cadré, avec critères de succès définis à l'avance.
           </p>
         </div>
       </section>
@@ -122,7 +122,7 @@ export default function LandingPage() {
             <div>
               <h2 className="text-2xl font-bold mb-2">La sécurité n'est pas une option. C'est l'architecture.</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Authentification forte. Droits par rôle vérifiés côté serveur. Audit log immuable. Chiffrement en transit et au repos. Séparation des environnements. Alerting sur comportements suspects.
+                Authentification forte. Droits par rôle vérifiés côté serveur. Journal d'audit non modifiable. Chiffrement en transit et au repos. Environnements isolés. Alertes automatiques sur comportements suspects.
               </p>
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function LandingPage() {
             {[
               'Le socle réduit la surface d\'attaque en réduisant le nombre d\'applications exposées',
               'Chaque échange DPI passe par un bus d\'intégration documenté, testé, surveillé',
-              'Pas de comptes génériques. Pas de données en clair. Pas de zone d\'ombre.',
+              'Pas de comptes partagés. Pas de données non chiffrées. Pas de données orphelines.',
               'Traçabilité complète : qui a vu quoi, fait quoi, quand — immuable',
             ].map((point) => (
               <div key={point} className="flex items-start gap-2 text-sm p-3 rounded-lg bg-card border">

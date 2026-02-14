@@ -215,10 +215,10 @@ export default function B2BPage() {
               'Le DPI est nécessaire. L\'empilement autour du DPI est le problème. UrgenceOS remplace l\'empilement, pas le DPI.',
               'Un éditeur vous vend une roadmap. Hospital-Owned Software vous donne le contrôle de la vôtre.',
               'Quand un hôpital possède son socle logiciel, il cesse de négocier des augmentations de licence — il décide de ses investissements.',
-              '45 à 90 minutes par poste et par jour perdues en friction logicielle. Ce n\'est pas un problème IT. C\'est une perte de capacité clinique.',
+              'Le temps perdu en friction logicielle n\'est pas un problème IT. C\'est une perte nette de capacité clinique. Il se mesure, et il se récupère.',
               'La sécurité n\'est pas une fonctionnalité. C\'est une architecture. Soit elle est dans le socle, soit elle n\'existe pas.',
               'Un GHT qui mutualise un socle logiciel interne divise ses coûts, standardise ses flux et augmente sa résilience. Un GHT qui empile les éditeurs multiplie les trois.',
-              'Le pilote ne dure pas un an. Il dure 10 semaines. Si le ROI n\'est pas là, vous arrêtez. Si il est là, vous scalez.',
+              'Le pilote ne dure pas un an. Il dure 10 semaines. Si le ROI n\'est pas là, vous arrêtez. S\'il est là, vous passez au déploiement.',
             ].map((phrase, i) => (
               <div key={i} className="p-4 rounded-xl border bg-card flex items-start gap-3">
                 <span className="text-xs font-bold text-primary shrink-0 mt-0.5 w-5">{i + 1}.</span>

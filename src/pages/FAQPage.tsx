@@ -83,7 +83,7 @@ const FAQ_CATEGORIES: { title: string; items: FAQItem[] }[] = [
       },
       {
         question: 'Un test d\'intrusion est-il réalisé ?',
-        answer: 'Oui. Un test d\'intrusion et un scan de vulnérabilités (infra + application) sont réalisés ou planifiés avant chaque go-live pilote. Audit sécurité annuel inclus dans l\'offre Extension. Zéro CVE critique non corrigée en production.',
+        answer: 'Oui. Un test d\'intrusion et un scan de vulnérabilités (infra + application) sont réalisés ou planifiés avant chaque go-live pilote. Audit sécurité annuel inclus dans l\'offre Extension. Objectif : aucune CVE critique connue non corrigée en production.',
       },
     ],
   },

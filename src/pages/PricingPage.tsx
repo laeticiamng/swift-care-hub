@@ -162,7 +162,7 @@ export default function PricingPage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-4 mt-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm mb-2 text-medical-critical">Coûts actuels (à mesurer)</h4>
+              <h4 className="font-semibold text-sm mb-2 text-foreground">Coûts actuels (à mesurer)</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
                 <li>Licences outils satellites urgences</li>
                 <li>Maintenance et support éditeurs</li>
@@ -178,7 +178,7 @@ export default function PricingPage() {
                 <li>Équipe plateforme interne (part ETP DSI)</li>
                 <li>Hébergement HDS</li>
                 <li>MCO et audit sécurité annuel</li>
-                <li>ROI = (coûts actuels - coûts cible) / investissement</li>
+                <li>Voir les formules détaillées ci-dessous</li>
               </ul>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function PricingPage() {
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
-            Les chiffres sont les vôtres, pas les nôtres. Aucun ROI spéculatif. Aucune promesse non vérifiable.
+            Transparence totale. ROI calculé sur vos données réelles. Aucun chiffre présélectionné.
           </p>
         </div>
 
