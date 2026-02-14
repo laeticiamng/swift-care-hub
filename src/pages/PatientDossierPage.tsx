@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
+import { DEMO_ENCOUNTERS, DEMO_PATIENTS, DEMO_VITALS } from '@/lib/demo-data';
 import { IdentityBanner } from '@/components/urgence/IdentityBanner';
 import { SIHTimeline } from '@/components/urgence/SIHTimeline';
 import { CommunicationEntryButton } from '@/components/urgence/CommunicationEntry';
@@ -56,7 +58,9 @@ export default function PatientDossierPage() {
   const { encounterId } = useParams();
   const navigate = useNavigate();
   const { user, role } = useAuth();
-  const isReadOnly = role === 'as' || role === 'secretaire';
+  const { isDemoMode, demoRole } = useDemo();
+  const effectiveRole = isDemoMode ? demoRole : role;
+  const isReadOnly = effectiveRole === 'as' || effectiveRole === 'secretaire';
   const [encounter, setEncounter] = useState<any>(null);
   const [patient, setPatient] = useState<any>(null);
   const [vitals, setVitals] = useState<any[]>([]);
@@ -94,14 +98,40 @@ export default function PatientDossierPage() {
   useEffect(() => {
     if (!encounterId) return;
     fetchAll();
+    if (isDemoMode) return;
     const channel = supabase.channel(`dossier-${encounterId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [encounterId]);
+  }, [encounterId, isDemoMode]);
 
   const fetchAll = async () => {
+    if (isDemoMode) {
+      const demoEnc = DEMO_ENCOUNTERS.find(e => e.id === encounterId);
+      if (!demoEnc) return;
+      const demoPat = DEMO_PATIENTS.find(p => p.id === demoEnc.patient_id);
+      if (!demoPat) return;
+      setEncounter({
+        id: demoEnc.id, patient_id: demoEnc.patient_id, status: demoEnc.status,
+        zone: demoEnc.zone, box_number: demoEnc.box_number, ccmu: demoEnc.ccmu,
+        cimu: demoEnc.cimu, motif_sfmu: demoEnc.motif_sfmu, medecin_id: demoEnc.medecin_id,
+        arrival_time: demoEnc.arrival_time, triage_time: demoEnc.triage_time,
+      });
+      setPatient({
+        id: demoPat.id, nom: demoPat.nom, prenom: demoPat.prenom,
+        date_naissance: demoPat.date_naissance, sexe: demoPat.sexe,
+        allergies: demoPat.allergies, antecedents: demoPat.antecedents,
+        medecin_traitant: demoPat.medecin_traitant, poids: demoPat.poids,
+        telephone: demoPat.telephone,
+      });
+      setVitals(DEMO_VITALS.filter(v => v.encounter_id === encounterId));
+      setPrescriptions([]);
+      setResults([]);
+      setTimeline([]);
+      if (demoEnc.medecin_id) setMedecinName('Dr. Martin Dupont');
+      return;
+    }
     const { data: enc } = await supabase.from('encounters').select('*').eq('id', encounterId!).single();
     if (!enc) return;
     setEncounter(enc);
