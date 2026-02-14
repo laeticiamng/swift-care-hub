@@ -388,9 +388,9 @@ export default function DemoPage() {
         {/* Bottom features */}
         <div className="mt-16 grid sm:grid-cols-3 gap-6">
           {[
-            { icon: Shield, title: 'Secure-by-design', desc: 'RLS strict par role, encryption, audit trail complet. RGPD sante natif.' },
-            { icon: WifiOff, title: 'Offline-first', desc: 'PWA avec >4h d\'autonomie hors connexion. Sync automatique au retour reseau.' },
-            { icon: Timer, title: 'Performance', desc: 'Chaque ecran charge en <1 seconde. Zero friction, zero formation.' },
+            { icon: Shield, title: 'Secure-by-design', desc: 'RLS strict par rôle, chiffrement, audit trail complet. RGPD santé natif.' },
+            { icon: WifiOff, title: 'Offline-first', desc: 'Mode hors connexion >4h. Synchronisation automatique au retour réseau.' },
+            { icon: Timer, title: 'Performance', desc: 'Chaque écran charge en <1 seconde. Zéro friction, zéro formation.' },
           ].map(item => (
             <div key={item.title} className="p-5 rounded-xl border bg-card text-center space-y-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -405,9 +405,9 @@ export default function DemoPage() {
         {/* Disclaimer */}
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            UrgenceOS est un outil d'aide a la gestion des urgences hospitalieres.
-            Il ne constitue pas un dispositif medical certifie.
-            Les donnees presentees dans cette demo sont fictives.
+            UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
+            Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
+            Les données présentées dans cette démo sont fictives.
           </p>
         </div>
       </div>

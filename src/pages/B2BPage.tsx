@@ -201,6 +201,33 @@ export default function B2BPage() {
           </div>
         </div>
 
+        {/* 10 punchlines Free vs Orange */}
+        <div className="mb-20">
+          <h2 className="text-2xl font-bold text-center mb-2">10 convictions. Zéro marketing.</h2>
+          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
+            Chaque phrase est vérifiable. Chaque promesse est mesurable ou formulée comme un objectif évalué.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {[
+              'Un hôpital qui loue son SI à un éditeur ne maîtrise ni ses coûts, ni ses priorités, ni sa sécurité.',
+              'La dette opérationnelle ne se voit pas dans les bilans. Elle se voit dans le temps que les soignants ne passent plus avec les patients.',
+              'Chaque outil satellite ajouté augmente la surface d\'attaque. Chaque module intégré au socle la réduit.',
+              'Le DPI est nécessaire. L\'empilement autour du DPI est le problème. UrgenceOS remplace l\'empilement, pas le DPI.',
+              'Un éditeur vous vend une roadmap. Hospital-Owned Software vous donne le contrôle de la vôtre.',
+              'Quand un hôpital possède son socle logiciel, il cesse de négocier des augmentations de licence — il décide de ses investissements.',
+              '45 à 90 minutes par poste et par jour perdues en friction logicielle. Ce n\'est pas un problème IT. C\'est une perte de capacité clinique.',
+              'La sécurité n\'est pas une fonctionnalité. C\'est une architecture. Soit elle est dans le socle, soit elle n\'existe pas.',
+              'Un GHT qui mutualise un socle logiciel interne divise ses coûts, standardise ses flux et augmente sa résilience. Un GHT qui empile les éditeurs multiplie les trois.',
+              'Le pilote ne dure pas un an. Il dure 10 semaines. Si le ROI n\'est pas là, vous arrêtez. Si il est là, vous scalez.',
+            ].map((phrase, i) => (
+              <div key={i} className="p-4 rounded-xl border bg-card flex items-start gap-3">
+                <span className="text-xs font-bold text-primary shrink-0 mt-0.5 w-5">{i + 1}.</span>
+                <p className="text-sm text-muted-foreground leading-relaxed">{phrase}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Contact form */}
         <div id="contact" className="scroll-mt-20 mb-20">
           <div className="max-w-2xl mx-auto p-8 rounded-2xl border bg-card">

@@ -182,8 +182,27 @@ export default function PricingPage() {
               </ul>
             </div>
           </div>
+          <div className="mt-6 p-4 rounded-xl border bg-card">
+            <h4 className="font-semibold text-sm mb-3">Formules ROI / Payback</h4>
+            <ul className="space-y-2 text-xs text-muted-foreground">
+              <li><strong className="text-foreground">Économie annuelle nette</strong> = coûts actuels (A) - coûts cible (B)</li>
+              <li><strong className="text-foreground">ROI année 1</strong> = (A - B - investissement initial) / investissement × 100</li>
+              <li><strong className="text-foreground">Payback</strong> = investissement initial / (A - B) en mois</li>
+              <li><strong className="text-foreground">ROI cumulé 5 ans</strong> = ((A - B) × 5 - investissement) / investissement × 100</li>
+            </ul>
+          </div>
+          <div className="mt-4 p-4 rounded-xl border bg-card">
+            <h4 className="font-semibold text-sm mb-3">Méthode : réunion DAF 60 minutes</h4>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              <li>0-10 min — Contexte : combien d'outils, combien de licences, combien d'interfaces</li>
+              <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
+              <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
+              <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
+              <li>55-60 min — Prochaines étapes : go/no-go pilote, calendrier, périmètre</li>
+            </ul>
+          </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
-            Réunion de 60 minutes avec le DAF pour remplir le modèle ensemble. Calcul ROI en direct.
+            Les chiffres sont les vôtres, pas les nôtres. Aucun ROI spéculatif. Aucune promesse non vérifiable.
           </p>
         </div>
 
