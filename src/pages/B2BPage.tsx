@@ -43,7 +43,7 @@ export default function B2BPage() {
             <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')}>
+            <Button size="lg" variant="outline" onClick={() => navigate('/features')}>
               Voir l'architecture
             </Button>
           </div>

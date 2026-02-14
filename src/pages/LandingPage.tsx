@@ -203,6 +203,16 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Disclaimer réglementaire */}
+      <div className="max-w-4xl mx-auto px-6 pb-8">
+        <div className="p-4 rounded-lg border bg-muted/30 text-center">
+          <p className="text-xs text-muted-foreground">
+            UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
+            Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
+          </p>
+        </div>
+      </div>
+
       <FooterSection />
     </div>
   );
