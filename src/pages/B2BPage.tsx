@@ -8,66 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  ArrowRight, Building2, Check, Clock, FileText, Heart,
-  Lock, Monitor, RefreshCcw, Shield, Stethoscope, Timer,
-  Users, Wifi, WifiOff, Zap, CheckCircle, Send,
+  ArrowRight, Building2, Check, CheckCircle, Send, Shield,
+  Clock, Users, Layers, RefreshCcw, Eye, Target,
 } from 'lucide-react';
-
-const PAIN_POINTS = [
-  { icon: Clock, stat: '45 min', desc: 'perdues par garde en clics inutiles par soignant' },
-  { icon: Monitor, stat: '12+', desc: 'écrans différents pour une seule prise en charge' },
-  { icon: WifiOff, stat: '0', desc: 'outil fonctionnel quand le réseau tombe' },
-  { icon: Users, stat: '1', desc: 'interface identique pour 5 métiers différents' },
-];
-
-const BENEFITS = [
-  {
-    icon: Timer,
-    title: 'Tri IOA en < 2 minutes',
-    desc: 'Workflow 5 étapes avec suggestion CIMU automatique. Fini les 5-8 minutes de saisie.',
-  },
-  {
-    icon: Zap,
-    title: 'Administration en 1 tap',
-    desc: 'De 6-8 clics à 1 seul tap pour administrer un médicament. Traçabilité automatique.',
-  },
-  {
-    icon: Heart,
-    title: 'Admission en < 90 secondes',
-    desc: 'Workflow secrétariat optimisé avec vérification INS intégrée.',
-  },
-  {
-    icon: Stethoscope,
-    title: 'Pancarte IDE zéro page',
-    desc: 'Tout le dossier infirmier sur un seul écran. Prescriptions, constantes, transmissions.',
-  },
-  {
-    icon: Wifi,
-    title: 'Offline 4h+',
-    desc: 'PWA avec cache local. Les urgences ne s\'arrêtent pas quand le réseau tombe.',
-  },
-  {
-    icon: Lock,
-    title: 'Sécurité native',
-    desc: 'HDS, RLS, chiffrement, audit trail. Conforme dès la conception.',
-  },
-];
-
-const INTEGRATION_POINTS = [
-  'FHIR R4 (Patient, Encounter, Observation, MedicationRequest)',
-  'HL7v2 (ADT, ORM, ORU) — flux bidirectionnels',
-  'MSSanté — échanges sécurisés professionnels de santé',
-  'Identité INS — vérification d\'identité nationale',
-  'RPU normalisé FEDORU — génération automatique',
-  'SSO / LDAP — authentification établissement',
-];
-
-const DEPLOYMENT_STEPS = [
-  { step: '1', title: 'Cadrage', desc: 'Audit du workflow existant, identification des zones et boxes, mapping SIH', duration: 'Semaine 1' },
-  { step: '2', title: 'Configuration', desc: 'Paramétrage UrgenceOS, connecteurs SIH, tests d\'intégration', duration: 'Semaine 2' },
-  { step: '3', title: 'Formation', desc: 'Formation des référents (1 jour), déploiement pilote sur un périmètre restreint', duration: 'Semaine 3' },
-  { step: '4', title: 'Go-live', desc: 'Mise en production, support renforcé, ajustements terrain', duration: 'Semaine 4' },
-];
 
 export default function B2BPage() {
   const navigate = useNavigate();
@@ -83,131 +26,176 @@ export default function B2BPage() {
       <SiteHeader />
 
       <div className="max-w-6xl mx-auto px-6 py-16">
-        {/* Hero */}
+        {/* Hero — Positionnement stratégique */}
         <div className="text-center mb-20">
-          <Badge variant="secondary" className="mb-4">Établissements de santé</Badge>
+          <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Digitalisez vos urgences en 4 semaines
+            Reprenez le contrôle de votre SI hospitalier.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            UrgenceOS est le système d'exploitation conçu spécifiquement pour les services
-            d'accueil des urgences. Déploiement clé en main, hébergement HDS,
-            interopérabilité SIH native.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-2">
+            UrgenceOS n'est pas un logiciel à acheter. C'est un plan d'autonomie logicielle :
+            un socle interne possédé par l'hôpital + des modules urgences à ROI mesurable + des standards d'interopérabilité ouverts.
+          </p>
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+            Le DPI reste en place. Les outils satellites disparaissent. La dette opérationnelle se rembourse.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
-              Demander une démo <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/tarifs')}>
-              Voir les tarifs
+            <Button size="lg" variant="outline" onClick={() => navigate('/fonctionnalites')}>
+              Voir l'architecture
             </Button>
           </div>
         </div>
 
-        {/* Pain points */}
+        {/* 4 discours par persona */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Le constat terrain</h2>
-          <p className="text-muted-foreground text-center mb-8">
-            Les outils actuels des urgences ne sont pas à la hauteur de l'exigence du terrain
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PAIN_POINTS.map((p) => (
-              <div key={p.desc} className="p-6 rounded-xl border bg-card text-center">
-                <p.icon className="h-6 w-6 text-medical-critical mx-auto mb-3" />
-                <p className="text-3xl font-extrabold text-medical-critical">{p.stat}</p>
-                <p className="text-sm text-muted-foreground mt-1">{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Benefits */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Ce qu'UrgenceOS change</h2>
-          <p className="text-muted-foreground text-center mb-8">
-            Des résultats mesurables dès les premières semaines
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {BENEFITS.map((b) => (
-              <div key={b.title} className="p-6 rounded-xl border bg-card space-y-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <b.icon className="h-5 w-5 text-primary" />
+          <h2 className="text-2xl font-bold text-center mb-2">Un discours, quatre interlocuteurs.</h2>
+          <p className="text-muted-foreground text-center mb-10">Chaque décideur trouve sa réponse dans UrgenceOS.</p>
+          <div className="grid sm:grid-cols-2 gap-6">
+            {[
+              {
+                icon: Building2,
+                role: 'Direction Générale / DAF',
+                message: 'Chaque année, 3 à 7 % du budget de fonctionnement part en licences non maîtrisées. Pendant ce temps, 45 à 90 minutes par poste sont perdues en friction logicielle. UrgenceOS rembourse cette dette : un socle que vous possédez, des modules à ROI mesurable, des coûts prévisibles et décroissants.',
+              },
+              {
+                icon: Shield,
+                role: 'DSI',
+                message: 'Votre SI est une mosaïque de 15 à 40 applications connectées par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — identité, RBAC, audit, bus FHIR — que votre équipe gouverne. Le DPI reste en place. La surface d\'attaque diminue. La continuité de service augmente.',
+              },
+              {
+                icon: Eye,
+                role: 'ARS',
+                message: 'Un modèle de sobriété logicielle mutualisable à l\'échelle d\'un GHT. Un socle commun déployable entre établissements, des modules standardisés, une gouvernance d\'interopérabilité alignée sur les référentiels nationaux (INS, DMP, MSSanté, RPU ATIH).',
+              },
+              {
+                icon: Users,
+                role: 'Terrain urgences',
+                message: 'Un écran unique, structuré par rôle, où le parcours patient complet est lisible en moins de 10 secondes. Timeline horodatée, alertes labo, tâches en cours, transmissions. Un tap pour valider un acte. Zéro ressaisie. Zéro navigation inutile.',
+              },
+            ].map((p) => (
+              <div key={p.role} className="p-6 rounded-xl border bg-card space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <p.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-bold">{p.role}</h3>
                 </div>
-                <h3 className="font-bold">{b.title}</h3>
-                <p className="text-sm text-muted-foreground">{b.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{p.message}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Integration */}
-        <div className="mb-20 p-8 rounded-2xl border bg-card">
+        {/* Hospital-Owned Software */}
+        <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <div className="flex items-start gap-4 mb-6">
-            <RefreshCcw className="h-6 w-6 text-primary shrink-0 mt-1" />
+            <Layers className="h-6 w-6 text-primary shrink-0 mt-1" />
             <div>
-              <h2 className="text-2xl font-bold mb-2">Interopérabilité SIH native</h2>
-              <p className="text-muted-foreground">
-                UrgenceOS s'intègre à votre système d'information hospitalier sans remplacer vos outils existants.
+              <h2 className="text-2xl font-bold mb-2">Hospital-Owned Software</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                L'établissement détient, gouverne et priorise un socle logiciel interne. Le code est accessible.
+                Les données restent sous gouvernance hospitalière. Les priorités d'évolution sont décidées par l'hôpital, pas par un éditeur.
               </p>
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {INTEGRATION_POINTS.map((point) => (
+          <div className="grid sm:grid-cols-2 gap-3 mt-6">
+            {[
+              'Le socle est possédé par l\'hôpital — pas loué à un éditeur',
+              'Les données restent sous gouvernance hospitalière — pas de lock-in',
+              'Les priorités sont décidées en interne — pas par un plan produit commercial',
+              'La sécurité est auditable — pas de boîte noire',
+              'Le DPI reste en place — le socle l\'encadre sans le remplacer',
+              'Les coûts sont prévisibles et décroissants — pas de hausse unilatérale',
+            ].map((point) => (
               <div key={point} className="flex items-start gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                {point}
+                <span className="text-muted-foreground">{point}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Deployment timeline */}
+        {/* Ce que nous remplaçons / Ce que nous unifions */}
+        <div className="mb-20 grid sm:grid-cols-2 gap-6">
+          <div className="p-6 rounded-xl border bg-card space-y-4">
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <RefreshCcw className="h-5 w-5 text-medical-critical" /> Ce que nous remplaçons
+            </h3>
+            <ul className="space-y-2">
+              {[
+                'Empilement de logiciels satellites non intégrés',
+                'Interfaces artisanales entre applications',
+                'Outils bureautiques détournés en outils métier',
+                'Doubles saisies systématiques',
+                'Coordination opaque : qui fait quoi, depuis quand',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <span className="h-1.5 w-1.5 rounded-full bg-medical-critical shrink-0 mt-1.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-6 rounded-xl border bg-card space-y-4">
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" /> Ce que nous unifions
+            </h3>
+            <ul className="space-y-2">
+              {[
+                'Parcours patient complet dans une seule timeline',
+                'Tâches et responsabilités visibles par tous selon leurs droits',
+                'Alertes structurées routées vers le bon professionnel',
+                'Transmissions inter-équipes horodatées et rattachées au patient',
+                'Audit et traçabilité : chaque action journalisée',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <Check className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Pilote 10 semaines */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Déploiement en 4 semaines</h2>
+          <h2 className="text-2xl font-bold text-center mb-2">Pilote DG/DSI ready : 10 semaines.</h2>
           <p className="text-muted-foreground text-center mb-8">
-            Un accompagnement structuré pour une mise en production rapide et maîtrisée
+            Périmètre strict. ROI mesuré. Critères go/no-go définis avant le lancement.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {DEPLOYMENT_STEPS.map((s) => (
-              <div key={s.step} className="p-6 rounded-xl border bg-card">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm mb-3">
-                  {s.step}
-                </div>
-                <h3 className="font-bold mb-1">{s.title}</h3>
-                <p className="text-xs text-primary font-medium mb-2">{s.duration}</p>
+            {[
+              { step: 'S1-S2', title: 'Cadrage & baseline', desc: 'Audit technique, cartographie des flux, chronométrage terrain, mesure de l\'état initial.' },
+              { step: 'S3-S5', title: 'Déploiement', desc: 'Socle + 2 modules urgences. Connecteurs DPI/LIS. Tests d\'intégration.' },
+              { step: 'S6-S8', title: 'Formation & terrain', desc: 'Formation par rôle. Lancement progressif. Présence physique. Quick wins visibles.' },
+              { step: 'S9-S10', title: 'Mesure & rapport', desc: 'Chronométrage post-déploiement. Rapport DG/DAF + DSI + terrain. Décision go/no-go.' },
+            ].map((s) => (
+              <div key={s.step} className="p-5 rounded-xl border bg-card">
+                <span className="text-xs font-semibold text-primary">{s.step}</span>
+                <h3 className="font-bold mt-1 mb-2">{s.title}</h3>
                 <p className="text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Certifications */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Certifications & conformité</h2>
-          <div className="grid sm:grid-cols-3 gap-6">
+        {/* Phrases prêtes à coller par persona */}
+        <div className="mb-20 p-8 rounded-2xl border bg-card">
+          <h2 className="text-xl font-bold mb-6 text-center">5 phrases prêtes à convaincre</h2>
+          <div className="space-y-4">
             {[
-              {
-                icon: Shield,
-                title: 'HDS Certifié',
-                desc: 'Hébergement de Données de Santé conforme à l\'article L.1111-8 du Code de la santé publique.',
-              },
-              {
-                icon: Lock,
-                title: 'ISO 27001',
-                desc: 'Système de management de la sécurité de l\'information. Démarche de certification en cours.',
-              },
-              {
-                icon: FileText,
-                title: 'Conformité ANS',
-                desc: 'Respect du cadre d\'interopérabilité CI-SIS et des référentiels de l\'Agence du Numérique en Santé.',
-              },
-            ].map((c) => (
-              <div key={c.title} className="p-6 rounded-xl border bg-card text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <c.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-bold">{c.title}</h3>
-                <p className="text-sm text-muted-foreground">{c.desc}</p>
+              { role: 'DG', phrase: 'Avec Hospital-Owned Software, vous cessez de louer votre SI : vous en devenez propriétaire, vous décidez des priorités, et vous maîtrisez les coûts sur 5 ans.' },
+              { role: 'DAF', phrase: 'Chaque outil satellite remplacé par un module intégré au socle, c\'est une ligne de coût récurrent supprimée et un risque de surcoût éditeur éliminé.' },
+              { role: 'DSI', phrase: 'Le socle interne vous donne ce qu\'aucun éditeur ne vous donnera jamais : le contrôle total sur l\'architecture, la sécurité, les données et le rythme des évolutions.' },
+              { role: 'ARS', phrase: 'Hospital-Owned Software, c\'est un modèle de sobriété logicielle mutualisable à l\'échelle d\'un GHT : un socle commun, des modules standards, des coûts divisés.' },
+              { role: 'Urgences', phrase: 'Vous n\'aurez plus à naviguer entre 5 écrans pour savoir où en est un patient : un seul écran, adapté à votre rôle, mis à jour en temps réel.' },
+            ].map((item) => (
+              <div key={item.role} className="flex items-start gap-3">
+                <Badge variant="outline" className="shrink-0 mt-0.5 text-xs min-w-[72px] justify-center">{item.role}</Badge>
+                <p className="text-sm text-muted-foreground leading-relaxed italic">"{item.phrase}"</p>
               </div>
             ))}
           </div>
@@ -218,9 +206,9 @@ export default function B2BPage() {
           <div className="max-w-2xl mx-auto p-8 rounded-2xl border bg-card">
             <div className="text-center mb-8">
               <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Demander une présentation</h2>
+              <h2 className="text-2xl font-bold mb-2">Demander un pilote</h2>
               <p className="text-muted-foreground">
-                Remplissez ce formulaire et notre équipe vous recontacte sous 48h.
+                10 semaines, périmètre urgences, ROI mesuré. Notre équipe vous recontacte sous 48h.
               </p>
             </div>
 
@@ -229,7 +217,7 @@ export default function B2BPage() {
                 <CheckCircle className="h-12 w-12 text-medical-success mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">Demande envoyée</h3>
                 <p className="text-muted-foreground">
-                  Merci pour votre intérêt. Notre équipe vous recontacte dans les 48 heures ouvrées.
+                  Merci. Notre équipe vous recontacte dans les 48 heures ouvrées pour organiser un premier échange.
                 </p>
               </div>
             ) : (
@@ -255,7 +243,7 @@ export default function B2BPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Fonction *</Label>
-                    <Input id="role" placeholder="DSI, Chef de service, Directeur..." required />
+                    <Input id="role" placeholder="DG, DAF, DSI, Chef de service..." required />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -263,11 +251,11 @@ export default function B2BPage() {
                   <Input id="passages" placeholder="ex: 35 000" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message (optionnel)</Label>
-                  <Textarea id="message" placeholder="Décrivez votre contexte, vos enjeux..." rows={4} />
+                  <Label htmlFor="message">Contexte et enjeux (optionnel)</Label>
+                  <Textarea id="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} />
                 </div>
                 <Button type="submit" className="w-full" size="lg">
-                  <Send className="h-4 w-4 mr-2" /> Envoyer la demande
+                  <Send className="h-4 w-4 mr-2" /> Demander un pilote
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}
