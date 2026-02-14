@@ -3,61 +3,62 @@ import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, ArrowRight, Building2, HelpCircle } from 'lucide-react';
+import { Check, ArrowRight, Building2, HelpCircle, Calculator } from 'lucide-react';
 
 const PLANS = [
   {
-    name: 'Starter',
-    target: 'SAU < 25 000 passages/an',
-    price: '990',
-    period: '/mois HT',
-    description: 'Idéal pour les services d\'urgences de petits établissements.',
+    name: 'Pilote',
+    target: 'Un service d\'urgences',
+    price: 'Forfait cadré',
+    period: '',
+    description: '10 semaines. 2 modules. ROI mesuré. Intégration DPI lecture seule.',
     features: [
-      '5 profils métier (Médecin, IOA, IDE, AS, Secrétaire)',
-      'Board panoramique temps réel',
-      'Triage IOA CIMU < 2 min',
-      'Pancarte IDE unifiée',
-      'Mode offline 4h+',
-      'Hébergement HDS certifié',
-      'Support email J+1',
+      'Socle interne (identité, RBAC, audit, API)',
+      'Module récap parcours patient par rôle',
+      'Module traçabilité temps réel',
+      'Connecteur DPI lecture (FHIR R4 / HL7v2)',
+      'Connecteur LIS (réception résultats)',
+      'Formation par rôle (2h par profil)',
+      'Mesure avant/après + rapport DG/DAF/DSI',
+      'Critères go/no-go documentés',
     ],
-    cta: 'Demander une démo',
-    popular: false,
-  },
-  {
-    name: 'Pro',
-    target: 'SAU 25 000 – 60 000 passages/an',
-    price: '1 990',
-    period: '/mois HT',
-    description: 'Pour les centres hospitaliers à forte activité.',
-    features: [
-      'Tout Starter +',
-      'Interopérabilité FHIR R4 & HL7v2',
-      'Identité INS intégrée',
-      'RPU normalisé automatique',
-      'Timeline IA assistée',
-      'Intégration SIH bidirectionnelle',
-      'Support prioritaire < 4h',
-      'Formation sur site (2 jours)',
-    ],
-    cta: 'Demander une démo',
+    cta: 'Demander un pilote',
     popular: true,
   },
   {
-    name: 'Établissement',
-    target: 'CHU / GHT / Multi-sites',
+    name: 'Extension',
+    target: 'Multi-services',
     price: 'Sur mesure',
     period: '',
-    description: 'Déploiement multi-sites avec accompagnement dédié.',
+    description: 'Après validation pilote. Extension à d\'autres services + modules supplémentaires.',
     features: [
-      'Tout Pro +',
-      'Déploiement multi-services',
-      'SSO / LDAP établissement',
-      'API d\'intégration complète',
-      'SLA 99,9% garanti',
-      'Chef de projet dédié',
+      'Tout le pilote +',
+      'Modules supplémentaires (triage, prescriptions, sortie)',
+      'Intégration bidirectionnelle DPI',
+      'SSO / LDAP institutionnel',
+      'Observabilité complète',
       'Comité de pilotage trimestriel',
       'Audit sécurité annuel inclus',
+      'Coûts récurrents décroissants',
+    ],
+    cta: 'Contacter l\'équipe',
+    popular: false,
+  },
+  {
+    name: 'Consortium GHT',
+    target: 'Multi-établissements',
+    price: 'Mutualisé',
+    period: '',
+    description: 'Socle partagé. Modules communs. Coûts divisés. Gouvernance GHT.',
+    features: [
+      'Socle mutualisé multi-tenant',
+      'Bibliothèque de modules partagés',
+      'Connecteurs réutilisables entre établissements',
+      'Équipe plateforme mutualisée',
+      'Gouvernance d\'interopérabilité commune',
+      'Indicateurs consolidés ARS-ready',
+      'Division des coûts par établissement',
+      'Standardisation des flux GHT',
     ],
     cta: 'Contacter l\'équipe',
     popular: false,
@@ -66,20 +67,20 @@ const PLANS = [
 
 const FAQ_PRICING = [
   {
-    q: 'Le prix inclut-il l\'hébergement HDS ?',
-    a: 'Oui. Toutes les offres incluent l\'hébergement sur infrastructure certifiée HDS (Hébergement de Données de Santé), conformément à la réglementation française.',
+    q: 'Pourquoi commencer par un pilote plutôt qu\'un déploiement complet ?',
+    a: 'Le pilote mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
   },
   {
-    q: 'Y a-t-il des frais de mise en service ?',
-    a: 'L\'offre Starter ne requiert aucun frais d\'installation. Les offres Pro et Établissement incluent un accompagnement au déploiement dont le coût est détaillé dans la proposition commerciale.',
+    q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
+    a: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
   },
   {
-    q: 'Quelle est la durée d\'engagement ?',
-    a: 'Engagement annuel avec facturation mensuelle ou annuelle (remise de 15% en paiement annuel). Résiliation possible à échéance avec préavis de 3 mois.',
+    q: 'Comment construire le business case pour mon établissement ?',
+    a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
   },
   {
-    q: 'Comment fonctionne le support ?',
-    a: 'Support email pour Starter (J+1), support prioritaire pour Pro (< 4h en heures ouvrées), et support dédié 24/7 pour Établissement avec astreinte téléphonique.',
+    q: 'Quel est le coût d\'un pilote ?',
+    a: 'Le forfait pilote est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
   },
 ];
 
@@ -93,13 +94,14 @@ export default function PricingPage() {
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4">Tarification transparente</Badge>
+          <Badge variant="secondary" className="mb-4">Modèle économique</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Un prix adapté à votre établissement
+            Pilote cadré, ROI mesuré, extension par la preuve.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            SaaS clé en main. Hébergement HDS inclus. Aucun coût caché.
-            Facturation par service d'urgences.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Pas d'engagement pluriannuel en première intention.
+            Un pilote de 10 semaines pour mesurer le ROI avec vos chiffres.
+            Si les résultats sont là, vous scalez. Si non, vous arrêtez.
           </p>
         </div>
 
@@ -116,16 +118,15 @@ export default function PricingPage() {
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                  Le plus choisi
+                  Recommandé
                 </Badge>
               )}
               <div className="mb-6">
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{plan.target}</p>
               </div>
-              <div className="mb-6">
-                <span className="text-4xl font-extrabold">{plan.price}</span>
-                <span className="text-sm text-muted-foreground">{plan.period ? ` €${plan.period}` : ''}</span>
+              <div className="mb-4">
+                <span className="text-2xl font-extrabold">{plan.price}</span>
               </div>
               <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
               <ul className="space-y-3 mb-8 flex-1">
@@ -139,7 +140,7 @@ export default function PricingPage() {
               <Button
                 className="w-full"
                 variant={plan.popular ? 'default' : 'outline'}
-                onClick={() => navigate('/demo')}
+                onClick={() => navigate('/b2b')}
               >
                 {plan.cta} <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
@@ -147,31 +148,67 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Included everywhere */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Inclus dans toutes les offres</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { title: 'Hébergement HDS', desc: 'Infrastructure certifiée conforme aux exigences CNIL/ANS' },
-              { title: 'Mises à jour', desc: 'Nouvelles fonctionnalités et correctifs déployés en continu' },
-              { title: 'Chiffrement', desc: 'Données chiffrées au repos et en transit (TLS 1.3)' },
-              { title: 'Sauvegardes', desc: 'Backups quotidiens avec rétention 90 jours' },
-              { title: 'Mode offline', desc: 'PWA avec 4h+ d\'autonomie sans connexion réseau' },
-              { title: '5 profils métier', desc: 'Interfaces adaptées : Médecin, IOA, IDE, AS, Secrétaire' },
-              { title: 'Mode sombre', desc: 'Interface adaptée aux gardes de nuit par défaut' },
-              { title: 'Conformité RGPD', desc: 'Droit à l\'oubli, portabilité, registre de traitements' },
-            ].map((item) => (
-              <div key={item.title} className="p-4 rounded-xl border bg-card space-y-1">
-                <h4 className="font-semibold text-sm">{item.title}</h4>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
+        {/* Business case */}
+        <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+          <div className="flex items-start gap-4 mb-6">
+            <Calculator className="h-6 w-6 text-primary shrink-0 mt-1" />
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Business case : vos chiffres, pas les nôtres.</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Nous fournissons un modèle de business case TCO 5 ans à remplir avec les données de votre établissement.
+                Aucun chiffre inventé. Les formules ROI/payback sont transparentes.
+              </p>
+            </div>
           </div>
+          <div className="grid sm:grid-cols-2 gap-4 mt-6">
+            <div className="p-4 rounded-xl border bg-card">
+              <h4 className="font-semibold text-sm mb-2 text-foreground">Coûts actuels (à mesurer)</h4>
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                <li>Licences outils satellites urgences</li>
+                <li>Maintenance et support éditeurs</li>
+                <li>Coûts d'interfaces et connecteurs</li>
+                <li>Incidents d'intégration (heures DSI)</li>
+                <li>Temps clinique perdu (min/poste x postes x 365j)</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-xl border bg-card">
+              <h4 className="font-semibold text-sm mb-2 text-primary">Coûts cible (avec UrgenceOS)</h4>
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                <li>Investissement initial (socle + modules + formation)</li>
+                <li>Équipe plateforme interne (part ETP DSI)</li>
+                <li>Hébergement HDS</li>
+                <li>MCO et audit sécurité annuel</li>
+                <li>Voir les formules détaillées ci-dessous</li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-6 p-4 rounded-xl border bg-card">
+            <h4 className="font-semibold text-sm mb-3">Formules ROI / Payback</h4>
+            <ul className="space-y-2 text-xs text-muted-foreground">
+              <li><strong className="text-foreground">Économie annuelle nette</strong> = coûts actuels (A) - coûts cible (B)</li>
+              <li><strong className="text-foreground">ROI année 1</strong> = (A - B - investissement initial) / investissement × 100</li>
+              <li><strong className="text-foreground">Payback</strong> = investissement initial / (A - B) en mois</li>
+              <li><strong className="text-foreground">ROI cumulé 5 ans</strong> = ((A - B) × 5 - investissement) / investissement × 100</li>
+            </ul>
+          </div>
+          <div className="mt-4 p-4 rounded-xl border bg-card">
+            <h4 className="font-semibold text-sm mb-3">Méthode : réunion DAF 60 minutes</h4>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              <li>0-10 min — Contexte : combien d'outils, combien de licences, combien d'interfaces</li>
+              <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
+              <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
+              <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
+              <li>55-60 min — Prochaines étapes : go/no-go pilote, calendrier, périmètre</li>
+            </ul>
+          </div>
+          <p className="text-xs text-muted-foreground text-center mt-4">
+            Transparence totale. ROI calculé sur vos données réelles. Aucun chiffre présélectionné.
+          </p>
         </div>
 
         {/* FAQ pricing */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Questions fréquentes sur les tarifs</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4">
             {FAQ_PRICING.map((item) => (
               <div key={item.q} className="p-5 rounded-xl border bg-card">
@@ -188,16 +225,16 @@ export default function PricingPage() {
         {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
           <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">Besoin d'un devis personnalisé ?</h2>
+          <h2 className="text-2xl font-bold mb-3">Prêt à mesurer votre dette opérationnelle ?</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Notre équipe vous accompagne pour dimensionner l'offre adaptée à votre établissement.
+            60 minutes pour remplir le business case avec vos chiffres. Zéro engagement.
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Nous contacter <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
-              Tester gratuitement
+              Voir la démo
             </Button>
           </div>
         </div>
@@ -205,7 +242,7 @@ export default function PricingPage() {
         {/* Disclaimer */}
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            Prix indicatifs au 1er janvier 2026. TVA applicable en sus. Les tarifs peuvent varier selon les spécificités du déploiement.
+            Les tarifs dépendent du périmètre de déploiement et de la complexité d'intégration.
             UrgenceOS ne constitue pas un dispositif médical certifié.
           </p>
         </div>

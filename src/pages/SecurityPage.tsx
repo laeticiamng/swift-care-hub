@@ -4,125 +4,123 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowRight, Check, CheckCircle, Database, Eye, FileText,
+  ArrowRight, Check, CheckCircle, Database, Eye,
   Key, Lock, Mail, Monitor, Server, Shield, ShieldCheck,
-  UserCheck, Wifi,
+  UserCheck, AlertTriangle,
 } from 'lucide-react';
-
-const CERTIFICATIONS = [
-  {
-    icon: ShieldCheck,
-    title: 'HDS — Hébergement de Données de Santé',
-    status: 'Certifié',
-    statusColor: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    description: 'Infrastructure d\'hébergement certifiée HDS conformément à l\'article L.1111-8 du Code de la santé publique. Obligation légale pour tout hébergeur de données de santé à caractère personnel en France.',
-    details: [
-      'Hébergement sur datacenter certifié en France métropolitaine',
-      'Audit annuel par organisme certificateur accrédité COFRAC',
-      'Procédures d\'exploitation et de sécurité documentées',
-      'Plan de continuité et de reprise d\'activité (PCA/PRA)',
-    ],
-  },
-  {
-    icon: Lock,
-    title: 'ISO 27001 — Sécurité de l\'information',
-    status: 'En cours',
-    statusColor: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-    description: 'Système de management de la sécurité de l\'information (SMSI). Démarche de certification engagée, audit prévu 2026.',
-    details: [
-      'Politique de sécurité formalisée et approuvée par la direction',
-      'Analyse de risques selon méthodologie EBIOS RM',
-      'Plan de traitement des risques documenté',
-      'Revue de direction et amélioration continue',
-    ],
-  },
-  {
-    icon: FileText,
-    title: 'Conformité ANS & CI-SIS',
-    status: 'Conforme',
-    statusColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-    description: 'Respect du Cadre d\'Interopérabilité des Systèmes d\'Information de Santé défini par l\'Agence du Numérique en Santé.',
-    details: [
-      'Identité INS (Identité Nationale de Santé) intégrée',
-      'Interopérabilité FHIR R4, HL7v2, MSSanté',
-      'RPU normalisé conforme FEDORU',
-      'Vocabulaires standards : LOINC, ATC, SNOMED CT',
-    ],
-  },
-];
 
 const SECURITY_LAYERS = [
   {
     icon: Key,
-    title: 'Authentification',
+    title: 'Minimisation des accès',
     items: [
-      'Authentification forte multi-facteurs (MFA)',
-      'Auto-déconnexion après 30 minutes d\'inactivité',
-      'Compatibilité SSO/LDAP pour intégration établissement',
-      'Gestion des sessions avec tokens JWT sécurisés',
+      'Principe du moindre privilège : accès limité aux données strictement nécessaires',
+      'Pas de comptes génériques : chaque accès est nominatif et traçable',
+      'Élévations de privilèges temporaires, motivées et journalisées',
+      'Revue périodique des droits (recommandation : trimestrielle)',
     ],
   },
   {
     icon: UserCheck,
-    title: 'Contrôle d\'accès',
+    title: 'Droits par rôle (RBAC)',
     items: [
-      'Row Level Security (RLS) PostgreSQL natif',
-      '5 rôles métier avec permissions granulaires',
-      'Chaque professionnel n\'accède qu\'aux données nécessaires',
-      'Séparation stricte des environnements (dev, staging, prod)',
-    ],
-  },
-  {
-    icon: Database,
-    title: 'Protection des données',
-    items: [
-      'Chiffrement au repos (AES-256)',
-      'Chiffrement en transit (TLS 1.3)',
-      'Sauvegardes quotidiennes chiffrées (rétention 90 jours)',
-      'Isolation des données par établissement',
+      '7 rôles de base extensibles (médecin, IOA, IDE, AS, secrétaire, admin, auditeur)',
+      'Vérification systématique côté serveur (pas de contrôle client seul)',
+      'Séparation rôles opérationnels et rôles d\'administration',
+      'Matrice de droits documentée, versionnée, auditable',
     ],
   },
   {
     icon: Eye,
-    title: 'Audit & traçabilité',
+    title: 'Traçabilité complète',
     items: [
-      'Audit trail complet : qui, quoi, quand pour chaque action',
-      'Logs d\'accès aux données patients',
-      'Dashboard d\'audit intégré pour les administrateurs',
-      'Conservation des traces conformément aux obligations légales',
+      'Chaque action journalisée : consultation, création, modification, suppression, export',
+      'Logs immuables (append-only) — aucune suppression possible',
+      'Horodatage, identifiant utilisateur, rôle, action, ressource, IP, résultat',
+      'Rétention minimum 5 ans, configurable selon l\'établissement',
     ],
   },
   {
-    icon: Wifi,
-    title: 'Réseau & infrastructure',
+    icon: Server,
+    title: 'Séparation des environnements',
     items: [
-      'Hébergement en datacenter Tier III+ en France',
-      'Redondance multi-zones pour haute disponibilité',
-      'Monitoring 24/7 avec alerting automatique',
-      'Tests d\'intrusion annuels par prestataire externe',
+      'Trois environnements minimum : développement, pré-production, production',
+      'Données de production jamais utilisées en développement (anonymisation obligatoire)',
+      'Accès distincts par environnement — pas de compte partagé',
+      'Déploiement production = passage obligatoire par pré-production',
+    ],
+  },
+  {
+    icon: Database,
+    title: 'Chiffrement & privacy-by-design',
+    items: [
+      'Chiffrement en transit : TLS 1.2 minimum sur toutes les communications',
+      'Chiffrement au repos : AES-256 pour les données sensibles',
+      'Rotation périodique des clés, stockage sécurisé séparé',
+      'Collecte minimale, durée de conservation définie, anonymisation non-clinique',
     ],
   },
   {
     icon: Monitor,
-    title: 'Application',
+    title: 'Journalisation & alerting',
     items: [
-      'Analyse statique de code (SAST) en continu',
-      'Revue de sécurité à chaque mise en production',
-      'Protection OWASP Top 10 (XSS, injection, CSRF...)',
-      'Content Security Policy (CSP) stricte',
+      'Logs centralisés et corrélés (socle + modules + infrastructure)',
+      'Alertes : tentatives d\'accès échouées, élévation de privilèges, export massif',
+      'Dashboard sécurité accessible au DSI et au RSSI',
+      'Intégration possible avec un SIEM existant',
     ],
   },
 ];
 
-const RGPD_POINTS = [
-  { title: 'Base légale', desc: 'Traitement fondé sur l\'intérêt légitime et l\'obligation légale (soins de santé)' },
-  { title: 'Minimisation', desc: 'Seules les données strictement nécessaires à la prise en charge sont collectées' },
-  { title: 'Durée de conservation', desc: 'Données patient : durée légale du dossier médical. Logs : 12 mois. Sauvegardes : 90 jours' },
-  { title: 'Droit d\'accès', desc: 'Procédure documentée pour l\'exercice des droits des patients (accès, rectification, suppression)' },
-  { title: 'Portabilité', desc: 'Export des données en format standard (FHIR) sur demande' },
-  { title: 'DPO', desc: 'Délégué à la Protection des Données désigné et joignable par les établissements et les patients' },
-  { title: 'Registre des traitements', desc: 'Registre conforme à l\'article 30 du RGPD, mis à jour et disponible sur demande' },
-  { title: 'Sous-traitants', desc: 'Liste documentée des sous-traitants avec DPA (Data Processing Agreement) signés' },
+const THREAT_MODEL = [
+  {
+    actor: 'Attaquant externe',
+    risk: 'Ransomware, vol de données, déni de service',
+    parade: 'Sauvegardes chiffrées déconnectées, segmentation réseau, monitoring d\'activité anormale',
+  },
+  {
+    actor: 'Utilisateur interne malveillant',
+    risk: 'Accès non autorisé, export massif, modification de données',
+    parade: 'RBAC strict, audit log immuable, alerting sur comportements suspects',
+  },
+  {
+    actor: 'Utilisateur négligent',
+    risk: 'Partage mot de passe, session non verrouillée, phishing',
+    parade: 'Authentification forte, expiration session, formation, alerting connexions simultanées',
+  },
+  {
+    actor: 'Fournisseur compromis',
+    risk: 'Supply chain, accès de maintenance détourné',
+    parade: 'Audit dépendances, verrouillage versions, scan CVE automatisé, revue mises à jour',
+  },
+];
+
+const CHECKLIST = [
+  'Authentification forte activée pour tous les comptes',
+  'Matrice RBAC documentée et validée par le DSI',
+  'Vérification RBAC côté serveur testée sur chaque endpoint',
+  'Audit logs activés, immuables, et vérifiés',
+  'Politique de rétention des logs configurée',
+  'Chiffrement TLS activé sur toutes les communications',
+  'Chiffrement au repos activé pour les données sensibles',
+  'Comptes génériques supprimés ou désactivés',
+  'Politique de mots de passe conforme',
+  'Sessions avec expiration et révocation configurées',
+  'Environnements séparés (dev / préprod / prod)',
+  'Données prod absentes des environnements non-production',
+  'Sauvegardes chiffrées, testées, plan de restauration documenté',
+  'Procédure réponse incidents documentée et communiquée',
+  'Test d\'intrusion réalisé ou planifié avant go-live',
+  'Scan vulnérabilités réalisé (infra + application)',
+  'Dépendances auditées (zéro CVE critique non corrigée)',
+  'API rate-limitée et protégée contre les abus',
+  'Validation entrées sur tous les endpoints (anti-injection)',
+  'Headers sécurité HTTP configurés (CSP, HSTS, X-Frame)',
+  'Hébergement HDS confirmé avec contrat signé',
+  'DPO informé, registre traitements mis à jour',
+  'Formation sécurité dispensée aux utilisateurs pilotes',
+  'Plan de continuité documenté et testé',
+  'Alerting sécurité configuré et testé',
 ];
 
 export default function SecurityPage() {
@@ -136,53 +134,22 @@ export default function SecurityPage() {
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4 gap-1.5">
-            <Shield className="h-3 w-3" /> Sécurité & Conformité
+            <Shield className="h-3 w-3" /> Security-first
           </Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            La sécurité n'est pas une option
+            La sécurité n'est pas une option. C'est l'architecture.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            UrgenceOS est conçu secure-by-design. Chiffrement, contrôle d'accès par rôle,
-            hébergement HDS et conformité réglementaire sont intégrés dès la fondation.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Dans un contexte où les cyberattaques contre les hôpitaux se multiplient, un SI sécurisé par conception
+            est un avantage structurel. UrgenceOS intègre la sécurité dès l'architecture, pas en option.
           </p>
-        </div>
-
-        {/* Certifications */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Certifications & conformité</h2>
-          <div className="space-y-6">
-            {CERTIFICATIONS.map((cert) => (
-              <div key={cert.title} className="p-6 rounded-2xl border bg-card">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <cert.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-lg font-bold">{cert.title}</h3>
-                      <Badge className={cert.statusColor}>{cert.status}</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">{cert.description}</p>
-                  </div>
-                </div>
-                <div className="ml-16 grid sm:grid-cols-2 gap-2">
-                  {cert.details.map((detail) => (
-                    <div key={detail} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      {detail}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Security layers */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Architecture de sécurité</h2>
+          <h2 className="text-2xl font-bold text-center mb-2">6 principes de sécurité</h2>
           <p className="text-muted-foreground text-center mb-8">
-            6 couches de protection pour garantir la confidentialité et l'intégrité des données
+            Chaque couche réduit la surface d'attaque et renforce la traçabilité
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {SECURITY_LAYERS.map((layer) => (
@@ -206,30 +173,46 @@ export default function SecurityPage() {
           </div>
         </div>
 
-        {/* RGPD */}
+        {/* Threat model */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Conformité RGPD santé</h2>
-          <p className="text-muted-foreground text-center mb-8">
-            Protection des données personnelles de santé conforme au RGPD et à ses spécificités sectorielles
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {RGPD_POINTS.map((point) => (
-              <div key={point.title} className="p-4 rounded-xl border bg-card">
-                <h4 className="font-semibold text-sm mb-1">{point.title}</h4>
-                <p className="text-xs text-muted-foreground">{point.desc}</p>
+          <h2 className="text-2xl font-bold text-center mb-2">Threat model haut niveau</h2>
+          <p className="text-muted-foreground text-center mb-8">Acteurs de menace identifiés, risques évalués, parades déployées</p>
+          <div className="space-y-4">
+            {THREAT_MODEL.map((t) => (
+              <div key={t.actor} className="p-5 rounded-xl border bg-card">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-medical-warning" />
+                  <h4 className="font-semibold text-sm">{t.actor}</h4>
+                </div>
+                <p className="text-xs text-medical-critical mb-1">Risques : {t.risk}</p>
+                <p className="text-xs text-muted-foreground">Parades : {t.parade}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Trust indicators */}
+        {/* Checklist go-live */}
+        <div className="mb-20">
+          <h2 className="text-2xl font-bold text-center mb-2">Checklist go-live sécurité</h2>
+          <p className="text-muted-foreground text-center mb-8">25 points vérifiés avant tout déploiement pilote</p>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {CHECKLIST.map((item) => (
+              <div key={item} className="flex items-start gap-2 text-sm p-2 rounded-lg">
+                <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <span className="text-muted-foreground">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Engagements */}
         <div className="mb-20 p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-transparent to-transparent border">
           <h2 className="text-xl font-bold mb-6 text-center">Engagements de sécurité</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
             {[
-              { value: '100%', label: 'Données hébergées en France' },
+              { value: '100%', label: 'Données hébergées en France (HDS)' },
               { value: '99,9%', label: 'Disponibilité cible (SLA)' },
-              { value: '< 4h', label: 'Temps de réponse support Pro' },
+              { value: '< 1h', label: 'Réponse incident critique' },
               { value: '24/7', label: 'Monitoring infrastructure' },
             ].map((item) => (
               <div key={item.label}>
@@ -242,18 +225,18 @@ export default function SecurityPage() {
 
         {/* Contact security */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
-          <Server className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">Questions sur la sécurité ?</h2>
+          <ShieldCheck className="h-10 w-10 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-3">Questions sécurité ?</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Notre équipe sécurité est disponible pour répondre à vos questions et
-            fournir toute documentation complémentaire (PAS, PSSI, DPA).
+            Notre équipe fournit toute documentation complémentaire : PAS, PSSI, DPA, rapport de pentest.
+            Transparence totale.
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => window.location.href = 'mailto:security@emotionscare.com'}>
               <Mail className="h-4 w-4 mr-2" /> security@emotionscare.com
             </Button>
-            <Button variant="outline" onClick={() => navigate('/faq')}>
-              Voir la FAQ
+            <Button variant="outline" onClick={() => navigate('/b2b')}>
+              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>
@@ -263,7 +246,6 @@ export default function SecurityPage() {
           <p className="text-xs text-muted-foreground">
             UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
-            Les informations de cette page sont fournies à titre indicatif et sont susceptibles d'évoluer.
           </p>
         </div>
       </div>
