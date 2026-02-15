@@ -112,22 +112,30 @@ export async function requestDataDeletion(
   requestedBy: string,
   reason: string = ''
 ): Promise<{ success: boolean; deletionId: string | null; error?: string }> {
-  // data_deletion_requests table doesn't exist yet — log to audit_logs instead
+  // Use the data_deletion_requests table (created in audit_hardening migration)
   const { data, error } = await supabase
-    .from('audit_logs')
+    .from('data_deletion_requests')
     .insert({
-      user_id: requestedBy,
-      action: 'data_deletion_request',
-      resource_type: 'patient',
-      resource_id: patientId,
-      details: { reason, status: 'pending' },
-    })
+      patient_id: patientId,
+      requested_by: requestedBy,
+      reason,
+      status: 'pending',
+    } as any)
     .select('id')
     .single();
 
   if (error) {
     return { success: false, deletionId: null, error: error.message };
   }
+
+  // Also log to audit trail for immutable record
+  await supabase.from('audit_logs').insert({
+    user_id: requestedBy,
+    action: 'data_deletion_request',
+    resource_type: 'patient',
+    resource_id: patientId,
+    details: { reason, deletion_request_id: (data as Record<string, unknown>)?.id },
+  });
 
   return { success: true, deletionId: (data as Record<string, unknown>)?.id as string };
 }
@@ -136,32 +144,45 @@ export async function getDeletionRequests(
   patientId?: string
 ): Promise<DeletionRequest[]> {
   let query = supabase
-    .from('audit_logs')
+    .from('data_deletion_requests')
     .select('*')
-    .eq('action', 'data_deletion_request')
     .order('created_at', { ascending: false });
 
   if (patientId) {
-    query = query.eq('resource_id', patientId);
+    query = query.eq('patient_id', patientId);
   }
 
   const { data } = await query;
-  // Map audit_logs rows to DeletionRequest shape
   return ((data || []) as Record<string, unknown>[]).map(row => ({
     id: row.id as string,
-    patient_id: (row.resource_id || '') as string,
-    requested_by: (row.user_id || '') as string,
-    reason: ((row.details as Record<string, unknown>)?.reason || '') as string,
-    status: ((row.details as Record<string, unknown>)?.status || 'pending') as DeletionRequest['status'],
+    patient_id: (row.patient_id || '') as string,
+    requested_by: (row.requested_by || '') as string,
+    reason: (row.reason || '') as string,
+    status: (row.status || 'pending') as DeletionRequest['status'],
     created_at: row.created_at as string,
   }));
 }
 
 // ── Consent Management ──
 
-export async function getConsentStatus(_patientId: string): Promise<ConsentRecord[]> {
-  // patient_consents table doesn't exist yet — return empty
-  return [];
+export async function getConsentStatus(patientId: string): Promise<ConsentRecord[]> {
+  const { data, error } = await supabase
+    .from('patient_consents')
+    .select('*')
+    .eq('patient_id', patientId)
+    .order('created_at', { ascending: false });
+
+  if (error || !data) return [];
+
+  return (data as Record<string, unknown>[]).map(row => ({
+    id: row.id as string,
+    patient_id: row.patient_id as string,
+    consent_type: row.consent_type as ConsentType,
+    granted: row.granted as boolean,
+    granted_at: (row.granted_at || null) as string | null,
+    revoked_at: (row.revoked_at || null) as string | null,
+    granted_by: (row.granted_by || null) as string | null,
+  }));
 }
 
 export async function recordConsent(
@@ -177,30 +198,42 @@ export async function recordConsent(
     granted_by: consent.granted_by,
   };
 
-  // patient_consents table doesn't exist yet — store in audit_logs
+  // Use the patient_consents table (created in audit_hardening migration)
   const { error } = await supabase
-    .from('audit_logs')
-    .insert({
-      user_id: payload.granted_by || null,
-      action: 'consent_record',
-      resource_type: 'patient',
-      resource_id: patientId,
-      details: payload as unknown as Record<string, unknown>,
-    } as any);
+    .from('patient_consents')
+    .insert(payload as any);
 
   if (error) {
     return { success: false, error: error.message };
   }
 
+  // Also log to audit trail for immutable record
+  await supabase.from('audit_logs').insert({
+    user_id: consent.granted_by || null,
+    action: 'consent_record',
+    resource_type: 'patient',
+    resource_id: patientId,
+    details: payload as unknown as Record<string, unknown>,
+  } as any);
+
   return { success: true };
 }
 
 export async function hasActiveConsent(
-  _patientId: string,
-  _consentType: ConsentType
+  patientId: string,
+  consentType: ConsentType
 ): Promise<boolean> {
-  // patient_consents table doesn't exist yet — default to false
-  return false;
+  const { data, error } = await supabase
+    .from('patient_consents')
+    .select('granted')
+    .eq('patient_id', patientId)
+    .eq('consent_type', consentType)
+    .is('revoked_at', null)
+    .eq('granted', true)
+    .limit(1);
+
+  if (error || !data || data.length === 0) return false;
+  return true;
 }
 
 // ── Privacy-safe audit log ──

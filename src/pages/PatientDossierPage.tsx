@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, FileText, AlertTriangle, Clock, FlaskConical, Image, Eye, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, ExternalLink, Pill, HeartPulse, Microscope, ScanLine, History, Stethoscope, Share2, PenLine, FileDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
+import { guardPrescription, guardClinical } from '@/lib/server-role-guard';
 import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
@@ -199,6 +200,11 @@ export default function PatientDossierPage() {
 
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
+    // Server-side role verification before prescription mutation
+    if (!isDemoMode) {
+      const check = await guardPrescription();
+      if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
+    }
     if (allergyWarning.length > 0) {
       toast.error(`ALLERGIE : ${allergyWarning.join(', ')} — bloquee`);
       return;
@@ -256,6 +262,10 @@ export default function PatientDossierPage() {
   const handleApplyPack = async (packKey: string) => {
     const pack = PRESCRIPTION_PACKS[packKey];
     if (!pack || !encounter || !user) return;
+    if (!isDemoMode) {
+      const check = await guardPrescription();
+      if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
+    }
     for (const item of pack.items) {
       const meta: PrescriptionMetadata = { ...item };
       const notes = encodePrescriptionMeta(meta);
@@ -276,6 +286,10 @@ export default function PatientDossierPage() {
   };
 
   const handleCancelPrescription = async (rxId: string) => {
+    if (!isDemoMode) {
+      const check = await guardPrescription();
+      if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
+    }
     await supabase.from('prescriptions').update({ status: 'cancelled' as any }).eq('id', rxId);
     if (user) {
       await supabase.from('audit_logs').insert({
@@ -287,6 +301,10 @@ export default function PatientDossierPage() {
   };
 
   const handleSuspendPrescription = async (rxId: string) => {
+    if (!isDemoMode) {
+      const check = await guardPrescription();
+      if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
+    }
     await supabase.from('prescriptions').update({ status: 'suspended' as any }).eq('id', rxId);
     if (user) {
       await supabase.from('audit_logs').insert({
@@ -298,6 +316,10 @@ export default function PatientDossierPage() {
   };
 
   const handleReactivatePrescription = async (rxId: string) => {
+    if (!isDemoMode) {
+      const check = await guardPrescription();
+      if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
+    }
     await supabase.from('prescriptions').update({ status: 'active' as any }).eq('id', rxId);
     if (user) {
       await supabase.from('audit_logs').insert({
