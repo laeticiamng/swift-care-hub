@@ -196,10 +196,10 @@ export function calculateTriageSuggestion(input: TriageInput): TriageSuggestion 
   if (input.constantes) {
     const news = calculateNEWS(input.constantes);
     scores_calcules.push(news);
-    if (news.valeur >= 7) {
+    if (Number(news.valeur) >= 7) {
       alertes.push(`NEWS ${news.valeur} ≥ 7: Réponse médicale immédiate requise`);
       if (cimu_suggere > 2) { cimu_suggere = 2; cimu_justification = `NEWS élevé (${news.valeur})`; }
-    } else if (news.valeur >= 5) {
+    } else if (Number(news.valeur) >= 5) {
       alertes.push(`NEWS ${news.valeur}: Surveillance rapprochée recommandée`);
     }
   }
