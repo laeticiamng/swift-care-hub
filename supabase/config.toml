@@ -1,4 +1,14 @@
 project_id = "ktjbdwdswdlnjksunkls"
 
+[auth]
+# Enable leaked password protection (HaveIBeenPwned API check)
+# Blocks sign-ups and password changes with known compromised passwords
+enable_signup = true
+password_min_length = 8
+
+[auth.external.hibp]
+enabled = true
+
 [functions.seed-data]
-verify_jwt = false
+# Re-enabled JWT verification — seed data requires authentication
+verify_jwt = true

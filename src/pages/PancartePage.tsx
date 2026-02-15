@@ -18,6 +18,7 @@ import { StatCard } from '@/components/urgence/StatCard';
 import { Check, Plus, FlaskConical, Image, ChevronDown, ChevronUp, Eye, History, Loader2, Pill, ClipboardList, Activity, Phone, ArrowUp, Droplets, Wind, Stethoscope, Pin } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 import { toast } from 'sonner';
+import { guardAdministration, guardClinical } from '@/lib/server-role-guard';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
 import { trackAdministrationTap } from '@/lib/kpi-tracker';
 import {
@@ -102,6 +103,9 @@ export default function PancartePage() {
   // ── Admin handlers ──
   const handleAdminister = async (rx: any, doseGiven?: string, adminNotes?: string) => {
     if (!user || !encounter) return;
+    // Server-side role verification before administration mutation
+    const check = await guardAdministration();
+    if (!check.authorized) { toast.error(check.error || 'Non autorisé à administrer'); return; }
     trackAdministrationTap(rx.id);
     const dose = doseGiven || titrationDoses[rx.id] || rx.dosage;
     const lot = lotNumbers[rx.id] || '';
@@ -175,6 +179,8 @@ export default function PancartePage() {
 
   const handleProcedure = async () => {
     if (!user || !encounter || !procType) return;
+    const procCheck = await guardClinical();
+    if (!procCheck.authorized) { toast.error(procCheck.error || 'Non autorisé'); return; }
     await supabase.from('procedures').insert({
       encounter_id: encounter.id, patient_id: encounter.patient_id,
       performed_by: user.id, procedure_type: procType as any,

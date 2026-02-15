@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
 import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle, Pill } from 'lucide-react';
 import { toast } from 'sonner';
+import { guardTriage } from '@/lib/server-role-guard';
 import { startTriageTimer, stopTriageTimer } from '@/lib/kpi-tracker';
 
 const SFMU_MOTIFS = [
@@ -223,6 +224,13 @@ export default function TriagePage() {
   const handleSubmit = async () => {
     if (!user) return;
     setSubmitting(true);
+    // Server-side role verification before triage mutation
+    const triageCheck = await guardTriage();
+    if (!triageCheck.authorized) {
+      toast.error(triageCheck.error || 'Non autorisé à trier');
+      setSubmitting(false);
+      return;
+    }
 
     // Client-side date validation
     if (!selectedExisting) {
