@@ -17,6 +17,8 @@ const makePatient = (id: string, nom: string, prenom: string, ddn = '1985-03-15'
   date_naissance: ddn,
   sexe: 'M' as const,
   ipp,
+  service: 'Urgences',
+  numero_sejour: 'SEJ-2025-000001',
 });
 
 describe('detectHomonymy', () => {
