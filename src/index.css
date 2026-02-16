@@ -114,3 +114,26 @@
     @apply min-h-[60px] min-w-[60px];
   }
 }
+
+/* ── Accessibility: Reduced Motion ──
+ * Disables ALL animations and transitions when the user prefers reduced motion.
+ * Critical for WCAG 2.3.1 (Three Flashes) and photosensitive users.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Accessibility: Skip Link ── */
+.skip-link {
+  @apply sr-only;
+}
+.skip-link:focus {
+  @apply not-sr-only fixed top-2 left-2 z-[9999] bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-lg;
+}

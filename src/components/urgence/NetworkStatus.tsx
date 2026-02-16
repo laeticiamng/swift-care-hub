@@ -87,7 +87,9 @@ export function NetworkStatus() {
         className="flex items-center gap-1.5"
         title={state === 'online' ? 'Connecte' : state === 'degraded' ? 'Connexion instable' : 'Hors ligne'}
       >
-        <span className={cn(
+        <span
+          aria-label={state === 'online' ? 'Connecté' : state === 'degraded' ? 'Connexion instable' : 'Hors ligne'}
+          className={cn(
           'h-2.5 w-2.5 rounded-full transition-colors',
           state === 'online' && 'bg-medical-success animate-pulse',
           state === 'degraded' && 'bg-orange-500 animate-pulse',

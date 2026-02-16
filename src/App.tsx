@@ -112,7 +112,13 @@ function AppRoutes() {
   const { isDemoMode } = useDemo();
 
   return (
+    <>
+    {/* WCAG 2.4.1: Skip navigation link */}
+    <a href="#main-content" className="skip-link">
+      Aller au contenu principal
+    </a>
     <Suspense fallback={<PageLoader />}>
+      <div id="main-content">
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={user ? <Navigate to="/select-role" replace /> : <LoginPage />} />
@@ -179,7 +185,9 @@ function AppRoutes() {
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </div>
     </Suspense>
+    </>
   );
 }
 

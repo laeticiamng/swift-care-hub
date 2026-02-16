@@ -68,7 +68,7 @@ export function OnboardingBanner({ role }: OnboardingBannerProps) {
             </ul>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="shrink-0 h-7 w-7" onClick={handleDismiss}>
+        <Button variant="ghost" size="icon" className="shrink-0 h-7 w-7" onClick={handleDismiss} aria-label="Fermer">
           <X className="h-4 w-4" />
         </Button>
       </div>

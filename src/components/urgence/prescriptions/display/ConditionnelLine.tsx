@@ -4,12 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Check, Zap, Clock, AlertCircle } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface ConditionnelLineProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  administrations: any[];
-  onAction: (action: string, data?: any) => void;
+  administrations: Tables<'administrations'>[];
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 export function ConditionnelLine({ rx, meta, administrations, onAction }: ConditionnelLineProps) {
@@ -30,7 +31,7 @@ export function ConditionnelLine({ rx, meta, administrations, onAction }: Condit
       parseInt(intervalMatch[1]) * (intervalMatch[2].toLowerCase() === 'h' ? 3_600_000 : 60_000);
 
     const lastAdminTime = administrations
-      .map((a: any) => new Date(a.administered_at).getTime())
+      .map((a: Tables<'administrations'>) => new Date(a.administered_at).getTime())
       .sort((a: number, b: number) => b - a)[0];
 
     if (!lastAdminTime) return { intervalElapsed: true, nextAvailableTime: null };

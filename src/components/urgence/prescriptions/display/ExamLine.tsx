@@ -10,11 +10,12 @@ import {
   Check,
 } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface ExamLineProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  onAction: (action: string, data?: any) => void;
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 type ExamStatus = NonNullable<PrescriptionMetadata['exam_status']>;

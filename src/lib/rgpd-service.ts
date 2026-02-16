@@ -8,6 +8,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 // ── Types ──
 
@@ -120,7 +121,7 @@ export async function requestDataDeletion(
       requested_by: requestedBy,
       reason,
       status: 'pending',
-    } as any)
+    } as unknown as Record<string, unknown>)
     .select('id')
     .single();
 
@@ -201,7 +202,7 @@ export async function recordConsent(
   // Use the patient_consents table (created in audit_hardening migration)
   const { error } = await supabase
     .from('patient_consents')
-    .insert(payload as any);
+    .insert(payload as unknown as Record<string, unknown>);
 
   if (error) {
     return { success: false, error: error.message };
@@ -213,8 +214,8 @@ export async function recordConsent(
     action: 'consent_record',
     resource_type: 'patient',
     resource_id: patientId,
-    details: payload as unknown as Record<string, unknown>,
-  } as any);
+    details: payload as unknown as Json,
+  });
 
   return { success: true };
 }

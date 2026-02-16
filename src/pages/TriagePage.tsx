@@ -18,6 +18,17 @@ import { toast } from 'sonner';
 import { guardTriage } from '@/lib/server-role-guard';
 import { startTriageTimer, stopTriageTimer } from '@/lib/kpi-tracker';
 
+interface PatientSearchResult {
+  id: string;
+  nom: string;
+  prenom: string;
+  date_naissance: string;
+  sexe: string;
+  allergies: string[] | null;
+  antecedents: string[] | null;
+  traitements_actuels: unknown;
+}
+
 const SFMU_MOTIFS = [
   'Douleur thoracique', 'Dyspnée', 'Douleur abdominale', 'Traumatisme membre',
   'Chute personne âgée', 'Céphalée', 'Malaise / syncope', 'Intoxication',
@@ -69,8 +80,8 @@ export default function TriagePage() {
   }, [triageTimerId]);
 
   // Pre-fill from IOA queue (supports location.state, URL params, and query params)
-  const prefillPatientId = (location.state as any)?.patientId as string | undefined;
-  const prefillEncounterId = params.encounterId || (location.state as any)?.encounterId as string | undefined;
+  const prefillPatientId = (location.state as Record<string, unknown>)?.patientId as string | undefined;
+  const prefillEncounterId = params.encounterId || (location.state as Record<string, unknown>)?.encounterId as string | undefined;
   const [prefilled, setPrefilled] = useState(false);
 
   // Step 1 — Identity
@@ -78,8 +89,8 @@ export default function TriagePage() {
   const [prenom, setPrenom] = useState('');
   const [dateNaissance, setDateNaissance] = useState('');
   const [sexe, setSexe] = useState('M');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedExisting, setSelectedExisting] = useState<any>(null);
+  const [searchResults, setSearchResults] = useState<PatientSearchResult[]>([]);
+  const [selectedExisting, setSelectedExisting] = useState<PatientSearchResult | null>(null);
 
   const [newAllergies, setNewAllergies] = useState('');
   const [newAntecedents, setNewAntecedents] = useState('');
@@ -167,7 +178,7 @@ export default function TriagePage() {
 
   const [homonymAlert, setHomonymAlert] = useState(false);
 
-  const detectHomonyms = (patients: any[]) => {
+  const detectHomonyms = (patients: PatientSearchResult[]) => {
     if (patients.length < 2) { setHomonymAlert(false); return; }
     for (let i = 0; i < patients.length; i++) {
       for (let j = i + 1; j < patients.length; j++) {
@@ -195,7 +206,7 @@ export default function TriagePage() {
     searchPatients(value);
   };
 
-  const selectExistingPatient = (patient: any) => {
+  const selectExistingPatient = (patient: PatientSearchResult) => {
     setSelectedExisting(patient);
     setNom(patient.nom);
     setPrenom(patient.prenom);
@@ -245,7 +256,7 @@ export default function TriagePage() {
     if (selectedExisting) {
       patientId = selectedExisting.id;
     } else {
-      const insertData: any = { nom, prenom, date_naissance: dateNaissance, sexe };
+      const insertData: Record<string, unknown> = { nom, prenom, date_naissance: dateNaissance, sexe };
       if (newAllergies.trim()) insertData.allergies = newAllergies.split(',').map(s => s.trim()).filter(Boolean);
       if (newAntecedents.trim()) insertData.antecedents = newAntecedents.split(',').map(s => s.trim()).filter(Boolean);
       const { data: patient, error: patErr } = await supabase.from('patients').insert(insertData).select().single();
@@ -256,8 +267,8 @@ export default function TriagePage() {
     // If pre-filled from IOA queue, UPDATE instead of INSERT
     if (prefillEncounterId) {
       const { error: encErr } = await supabase.from('encounters').update({
-        status: 'triaged' as any,
-        zone: zone as any,
+        status: 'triaged' as string,
+        zone: zone as string,
         box_number: boxNumber ? parseInt(boxNumber) : null,
         ccmu: cimu, cimu,
         motif_sfmu: motif,
@@ -269,7 +280,7 @@ export default function TriagePage() {
 
       // Update patient weight and medecin traitant if provided
       if (poids || medecinTraitant) {
-        const updates: any = {};
+        const updates: Record<string, unknown> = {};
         if (poids) updates.poids = parseFloat(poids);
         if (medecinTraitant) updates.medecin_traitant = medecinTraitant;
         await supabase.from('patients').update(updates).eq('id', patientId);
@@ -278,7 +289,7 @@ export default function TriagePage() {
       // Insert vitals
       const hasVitals = Object.values(vitalsData).some(v => v !== '');
       if (hasVitals) {
-        const vObj: any = { encounter_id: prefillEncounterId, patient_id: patientId, recorded_by: user.id };
+        const vObj: Record<string, unknown> = { encounter_id: prefillEncounterId, patient_id: patientId, recorded_by: user.id };
         if (vitalsData.fc) vObj.fc = parseInt(vitalsData.fc);
         if (vitalsData.pa_systolique) vObj.pa_systolique = parseInt(vitalsData.pa_systolique);
         if (vitalsData.pa_diastolique) vObj.pa_diastolique = parseInt(vitalsData.pa_diastolique);
@@ -301,7 +312,7 @@ export default function TriagePage() {
     const { data: encounter, error: encErr } = await supabase.from('encounters').insert({
       patient_id: patientId,
       status: 'triaged',
-      zone: zone as any,
+      zone: zone as string,
       box_number: boxNumber ? parseInt(boxNumber) : null,
       ccmu: cimu, cimu,
       motif_sfmu: motif,
@@ -313,7 +324,7 @@ export default function TriagePage() {
 
     // Update patient weight and medecin traitant if provided
     if (poids || medecinTraitant) {
-      const updates: any = {};
+      const updates: Record<string, unknown> = {};
       if (poids) updates.poids = parseFloat(poids);
       if (medecinTraitant) updates.medecin_traitant = medecinTraitant;
       await supabase.from('patients').update(updates).eq('id', patientId);
@@ -321,7 +332,7 @@ export default function TriagePage() {
 
     const hasVitals = Object.values(vitalsData).some(v => v !== '');
     if (hasVitals) {
-      const vObj: any = { encounter_id: encounter.id, patient_id: patientId, recorded_by: user.id };
+      const vObj: Record<string, unknown> = { encounter_id: encounter.id, patient_id: patientId, recorded_by: user.id };
       if (vitalsData.fc) vObj.fc = parseInt(vitalsData.fc);
       if (vitalsData.pa_systolique) vObj.pa_systolique = parseInt(vitalsData.pa_systolique);
       if (vitalsData.pa_diastolique) vObj.pa_diastolique = parseInt(vitalsData.pa_diastolique);
@@ -452,7 +463,7 @@ export default function TriagePage() {
                     <div className="p-3 rounded-lg bg-accent/50 border">
                       <p className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1"><Pill className="h-3 w-3" /> Traitements en cours</p>
                       <div className="flex flex-wrap gap-1.5">
-                        {traitements.map((t: any, i: number) => (
+                        {traitements.map((t: unknown, i: number) => (
                           <Badge key={i} variant="outline" className="text-xs">
                             {typeof t === 'object' ? JSON.stringify(t) : String(t)}
                           </Badge>

@@ -156,9 +156,9 @@ export function sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
   const sanitized = { ...obj };
   for (const [key, value] of Object.entries(sanitized)) {
     if (typeof value === 'string') {
-      (sanitized as any)[key] = sanitizeInput(value);
+      (sanitized as Record<string, unknown>)[key] = sanitizeInput(value);
     } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      (sanitized as any)[key] = sanitizeObject(value as Record<string, unknown>);
+      (sanitized as Record<string, unknown>)[key] = sanitizeObject(value as Record<string, unknown>);
     }
   }
   return sanitized;

@@ -21,7 +21,7 @@ function formatHL7Date(date: Date | string): string {
 }
 
 function generateMsgId(): string {
-  return `URGOS${Date.now()}`;
+  return `URGOS${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function escapeHL7(text: string): string {
@@ -46,6 +46,7 @@ export function encounterToADT_A01(
     `EVN|A01|${now}`,
     `PID|1||${escapeHL7(patient.ipp || '')}^^^${site}^PI~${escapeHL7(patient.ins_numero || '')}^^^INS^NH||${escapeHL7(patient.nom)}^${escapeHL7(patient.prenom)}||${patient.date_naissance ? formatHL7Date(patient.date_naissance) : ''}|${patient.sexe === 'M' ? 'M' : 'F'}|||${escapeHL7(patient.adresse || '')}||${escapeHL7(patient.telephone || '')}`,
     `PV1|1|E|${escapeHL7(encounter.location || `SAU BOX ${encounter.box_number || ''}`)}^^^${site}||||${encounter.assigned_doctor_id || ''}|||||||||||${encounter.id}|||||||||||||||||||||||${encounter.when_event ? formatHL7Date(encounter.when_event) : now}`,
+    `PV2|||${escapeHL7(encounter.motif_sfmu || '')}||||||||${encounter.gemsa || ''}|||||||||||${escapeHL7(encounter.orientation || '')}`,
   ];
 
   return segments.join('\r');
@@ -196,7 +197,7 @@ export function parseORU_R01(message: string): CanonicalResult[] {
 }
 
 function parseHL7Date(hl7Date: string): string {
-  if (!hl7Date || hl7Date.length < 8) return new Date().toISOString();
+  if (!hl7Date || hl7Date.length < 8) return '';
   const year = hl7Date.slice(0, 4);
   const month = hl7Date.slice(4, 6);
   const day = hl7Date.slice(6, 8);

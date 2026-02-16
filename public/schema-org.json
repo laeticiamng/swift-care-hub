@@ -1,0 +1,8 @@
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalOrganization",
+  "name": "UrgenceOS",
+  "description": "Outil d'aide à la gestion des urgences hospitalières. Attention : UrgenceOS est un outil d'aide, pas un dispositif médical certifié.",
+  "url": "https://urgenceos.fr",
+  "medicalSpecialty": "Emergency Medicine"
+}

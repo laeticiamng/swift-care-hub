@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Check, Pill, Clock } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface MedicamentLineProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  lastAdmin: any;
+  lastAdmin: Tables<'administrations'> | null;
   onAdminister: (doseGiven: string, lotNumber: string) => void;
 }
 

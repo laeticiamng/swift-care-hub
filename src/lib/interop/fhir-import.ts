@@ -18,6 +18,97 @@ import type {
 
 import type { FHIRBundle, FHIRResource, FHIRBundleEntry } from './fhir-adapter';
 
+// ── FHIR R4 structural sub-types for typed access ──
+
+interface FHIRCoding {
+  system?: string;
+  code?: string;
+  display?: string;
+}
+
+interface FHIRCodeableConcept {
+  coding?: FHIRCoding[];
+  text?: string;
+}
+
+interface FHIRHumanName {
+  family?: string;
+  given?: string[];
+  use?: string;
+}
+
+interface FHIRIdentifier {
+  system?: string;
+  value?: string;
+  use?: string;
+}
+
+interface FHIRPeriod {
+  start?: string;
+  end?: string;
+}
+
+interface FHIRTelecom {
+  system?: string;
+  value?: string;
+  use?: string;
+}
+
+interface FHIRAddress {
+  text?: string;
+  line?: string[];
+  postalCode?: string;
+  city?: string;
+}
+
+interface FHIRReference {
+  reference?: string;
+  display?: string;
+}
+
+interface FHIRQuantity {
+  value?: number;
+  unit?: string;
+  system?: string;
+  code?: string;
+}
+
+interface FHIRDoseAndRate {
+  doseQuantity?: FHIRQuantity;
+}
+
+interface FHIRDosageInstruction {
+  text?: string;
+  route?: FHIRCodeableConcept;
+  timing?: { code?: FHIRCodeableConcept };
+  doseAndRate?: FHIRDoseAndRate[];
+}
+
+interface FHIRAnnotation {
+  text?: string;
+}
+
+interface FHIRReaction {
+  manifestation?: FHIRCodeableConcept[];
+  severity?: string;
+}
+
+interface FHIRPerformer {
+  actor?: FHIRReference;
+}
+
+interface FHIRHospitalization {
+  dischargeDisposition?: FHIRCodeableConcept;
+}
+
+interface FHIRLocation {
+  location?: FHIRReference;
+}
+
+interface FHIRReferenceRange {
+  text?: string;
+}
+
 // ── Import Result ──
 
 export interface FHIRImportResult {
@@ -152,11 +243,11 @@ export function importFHIRBundle(bundle: FHIRBundle): FHIRImportResult {
 // ── Individual Resource Converters ──
 
 function fhirPatientToCanonical(resource: FHIRResource): CanonicalPatient {
-  const name = getFirst(resource.name as any[]);
-  const identifiers = (resource.identifier as any[]) || [];
+  const name = getFirst(resource.name as FHIRHumanName[]);
+  const identifiers = (resource.identifier as FHIRIdentifier[]) || [];
 
-  const insId = identifiers.find((i: any) => i.system === 'urn:oid:1.2.250.1.213.1.4.8');
-  const ippId = identifiers.find((i: any) => i.use === 'usual');
+  const insId = identifiers.find((i: FHIRIdentifier) => i.system === 'urn:oid:1.2.250.1.213.1.4.8');
+  const ippId = identifiers.find((i: FHIRIdentifier) => i.use === 'usual');
 
   return {
     id: resource.id || crypto.randomUUID(),
@@ -166,9 +257,9 @@ function fhirPatientToCanonical(resource: FHIRResource): CanonicalPatient {
     sexe: resource.gender === 'female' ? 'F' : 'M',
     ins_numero: insId?.value,
     ipp: ippId?.value,
-    telephone: extractTelecom(resource.telecom as any[], 'phone'),
-    adresse: extractAddress(resource.address as any[]),
-    medecin_traitant: extractDisplay(getFirst(resource.generalPractitioner as any[])),
+    telephone: extractTelecom(resource.telecom as FHIRTelecom[] | undefined, 'phone'),
+    adresse: extractAddress(resource.address as FHIRAddress[] | undefined),
+    medecin_traitant: extractDisplay(getFirst(resource.generalPractitioner as FHIRReference[])),
     provenance: 'import_fhir',
   };
 }

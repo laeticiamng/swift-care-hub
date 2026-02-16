@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpCircle, Plus, Target, Clock, Activity } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface TitrationCardProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  administrations: any[];
-  onAction: (action: string, data?: any) => void;
+  administrations: Tables<'administrations'>[];
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 export function TitrationCard({ rx, meta, administrations, onAction }: TitrationCardProps) {

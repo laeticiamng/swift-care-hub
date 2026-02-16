@@ -173,7 +173,23 @@ export default function PolitiqueConfidentialitePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold text-primary">12. Modification de la politique</h2>
+          <h2 className="text-xl font-semibold text-primary">12. Analyse d'impact (AIPD)</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Conformément à l'article 35 du RGPD, une Analyse d'Impact relative à la Protection des Données (AIPD) a été réalisée pour le traitement de données de santé à grande échelle opéré par UrgenceOS. Cette analyse couvre :
+          </p>
+          <ul className="list-disc list-inside text-muted-foreground leading-relaxed space-y-1">
+            <li>La description systématique des traitements et de leurs finalités</li>
+            <li>L'évaluation de la nécessité et de la proportionnalité des traitements</li>
+            <li>L'évaluation des risques pour les droits et libertés des personnes concernées</li>
+            <li>Les mesures de sécurité et mécanismes de protection mis en œuvre</li>
+          </ul>
+          <p className="text-muted-foreground leading-relaxed">
+            L'AIPD est tenue à la disposition de la CNIL et peut être consultée sur demande auprès du DPO à <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline">dpo@emotionscare.com</a>.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold text-primary">13. Modification de la politique</h2>
           <p className="text-muted-foreground leading-relaxed">
             Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Toute modification substantielle sera notifiée aux utilisateurs via l'application. La version en vigueur est toujours disponible à cette adresse.
           </p>

@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232b7fc3'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='36' font-weight='bold' font-family='Arial,sans-serif' fill='white'%3EU%3C/text%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>UrgenceOS — Urgences Hospitalières</title>
     <meta name="description" content="Le système d'exploitation des urgences hospitalières. Un point d'entrée unique pour cinq profils soignants." />
-    <meta name="author" content="UrgenceOS" />
+    <meta name="author" content="UrgenceOS par EmotionsCare SASU" />
 
     <meta property="og:title" content="UrgenceOS — Urgences Hospitalières" />
     <meta property="og:description" content="Le système d'exploitation des urgences hospitalières. Un point d'entrée unique, cinq profils, zéro perte de temps." />
@@ -30,48 +30,9 @@
     <meta name="theme-color" content="#2b7fc3" />
     <link rel="manifest" href="/manifest.json" />
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "UrgenceOS",
-      "applicationCategory": "HealthApplication",
-      "operatingSystem": "Web",
-      "description": "Le système d'exploitation des urgences hospitalières. Un point d'entrée unique pour cinq profils soignants : médecin, IOA, IDE, aide-soignant, secrétaire.",
-      "url": "https://urgenceos.fr",
-      "author": {
-        "@type": "Organization",
-        "name": "EmotionsCare SASU",
-        "url": "https://urgenceos.fr"
-      },
-      "offers": {
-        "@type": "AggregateOffer",
-        "lowPrice": "990",
-        "highPrice": "1990",
-        "priceCurrency": "EUR",
-        "offerCount": "3"
-      },
-      "featureList": [
-        "Pancarte infirmière unifiée",
-        "Transmissions DAR",
-        "Interface adaptative par rôle",
-        "Administration médicaments en 1 tap",
-        "Timeline IA",
-        "Mode offline PWA",
-        "Sécurité RLS native"
-      ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalOrganization",
-      "name": "UrgenceOS",
-      "description": "Outil d'aide à la gestion des urgences hospitalières. Attention : UrgenceOS est un outil d'aide, pas un dispositif médical certifié.",
-      "url": "https://urgenceos.fr",
-      "medicalSpecialty": "Emergency Medicine"
-    }
-    </script>
+    <!-- Schema.org structured data — externalized for CSP compliance -->
+    <script type="application/ld+json" src="/schema-app.json"></script>
+    <script type="application/ld+json" src="/schema-org.json"></script>
   </head>
 
   <body>

@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Droplets, Gauge, Clock, Settings, CheckCircle2 } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface PerfusionCardProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  onAction: (action: string, data?: any) => void;
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 export function PerfusionCard({ rx, meta, onAction }: PerfusionCardProps) {

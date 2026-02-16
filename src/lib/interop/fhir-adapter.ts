@@ -40,6 +40,7 @@ export interface FHIRResource {
 export interface FHIRBundle {
   resourceType: 'Bundle';
   type: 'collection' | 'document' | 'transaction';
+  meta?: { lastUpdated?: string };
   timestamp?: string;
   entry: FHIRBundleEntry[];
 }
@@ -100,6 +101,14 @@ export function patientToFHIR(patient: CanonicalPatient): FHIRResource {
   return {
     resourceType: 'Patient',
     id: patient.id,
+    meta: {
+      profile: ['http://hl7.org/fhir/StructureDefinition/Patient'],
+      lastUpdated: new Date().toISOString(),
+    },
+    text: {
+      status: 'generated',
+      div: `<div xmlns="http://www.w3.org/1999/xhtml">Patient: ${patient.prenom} ${patient.nom}, born ${patient.date_naissance || 'unknown'}, gender ${patient.sexe === 'M' ? 'male' : 'female'}</div>`,
+    },
     identifier: identifiers,
     name: [{
       family: patient.nom,
@@ -119,6 +128,14 @@ export function encounterToFHIR(encounter: CanonicalEncounter): FHIRResource {
   return {
     resourceType: 'Encounter',
     id: encounter.id,
+    meta: {
+      profile: ['http://hl7.org/fhir/StructureDefinition/Encounter'],
+      lastUpdated: new Date().toISOString(),
+    },
+    text: {
+      status: 'generated',
+      div: `<div xmlns="http://www.w3.org/1999/xhtml">Emergency encounter for Patient/${encounter.patient_id}, status: ${encounter.status || 'unknown'}${encounter.motif_sfmu ? `, reason: ${encounter.motif_sfmu}` : ''}</div>`,
+    },
     status: mapEncounterStatusToFHIR(encounter.status),
     class: {
       system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode',
@@ -256,6 +273,14 @@ function medicationRequestToFHIR(rx: CanonicalPrescription): FHIRResource {
   return {
     resourceType: 'MedicationRequest',
     id: rx.id,
+    meta: {
+      profile: ['http://hl7.org/fhir/StructureDefinition/MedicationRequest'],
+      lastUpdated: new Date().toISOString(),
+    },
+    text: {
+      status: 'generated',
+      div: `<div xmlns="http://www.w3.org/1999/xhtml">MedicationRequest: ${rx.medication_name || 'unknown medication'} for Patient/${rx.patient_id}</div>`,
+    },
     status: mapPrescriptionStatusToFHIR(rx.status),
     intent: rx.provenance === 'ia_suggestion' ? 'proposal' : 'order',
     priority: rx.priority || 'routine',
@@ -576,6 +601,9 @@ export function encounterBundleToFHIR(data: FullEncounterData): FHIRBundle {
   return {
     resourceType: 'Bundle',
     type: 'collection',
+    meta: {
+      lastUpdated: new Date().toISOString(),
+    },
     timestamp: new Date().toISOString(),
     entry: entries,
   };

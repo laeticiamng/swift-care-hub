@@ -4,12 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Wind, Settings, Power, CheckCircle2, AlertTriangle } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface OxygeneBannerProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  lastVital: any;
-  onAction: (action: string, data?: any) => void;
+  lastVital: Tables<'vitals'> | null;
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 export function OxygeneBanner({ rx, meta, lastVital, onAction }: OxygeneBannerProps) {

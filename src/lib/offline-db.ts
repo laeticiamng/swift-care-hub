@@ -1,10 +1,12 @@
 /**
  * UrgenceOS — IndexedDB Offline Storage
  * Provides persistent offline storage for patient data, encounters,
- * and mutation queue with encryption support.
+ * and mutation queue with AES-256-GCM encryption for PHI (Protected Health Information).
  * Replaces localStorage-based offline queue (5MB limit).
  * IndexedDB limit: ~50MB+ per origin.
  */
+
+import { encryptIfReady, decryptIfNeeded, isEncryptionReady } from './offline-crypto';
 
 const DB_NAME = 'urgenceos-offline';
 const DB_VERSION = 1;
@@ -31,9 +33,11 @@ export interface QueuedAction {
 
 interface CachedRecord {
   id: string;
-  data: Record<string, unknown>;
+  /** Encrypted string (AES-256-GCM) or plain object if encryption not ready */
+  data: string | Record<string, unknown>;
   cached_at: number;
   expires_at: number;
+  encrypted: boolean;
 }
 
 // ── Database initialization ──
@@ -195,11 +199,14 @@ export async function getQueueSize(): Promise<number> {
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
 
 export async function cachePatient(patient: Record<string, unknown>): Promise<void> {
+  const encrypted = isEncryptionReady();
+  const data = encrypted ? await encryptIfReady(patient) : patient;
   const entry: CachedRecord = {
     id: patient.id as string,
-    data: patient,
+    data: data as string | Record<string, unknown>,
     cached_at: Date.now(),
     expires_at: Date.now() + CACHE_TTL,
+    encrypted,
   };
   await idbPut(STORES.PATIENTS, entry);
 }
@@ -211,15 +218,21 @@ export async function getCachedPatient(id: string): Promise<Record<string, unkno
     await idbDelete(STORES.PATIENTS, id);
     return null;
   }
-  return entry.data;
+  if (entry.encrypted) {
+    return decryptIfNeeded<Record<string, unknown>>(entry.data);
+  }
+  return entry.data as Record<string, unknown>;
 }
 
 export async function cacheEncounter(encounter: Record<string, unknown>): Promise<void> {
+  const encrypted = isEncryptionReady();
+  const data = encrypted ? await encryptIfReady(encounter) : encounter;
   const entry: CachedRecord = {
     id: encounter.id as string,
-    data: encounter,
+    data: data as string | Record<string, unknown>,
     cached_at: Date.now(),
     expires_at: Date.now() + CACHE_TTL,
+    encrypted,
   };
   await idbPut(STORES.ENCOUNTERS, entry);
 }
@@ -231,15 +244,25 @@ export async function getCachedEncounter(id: string): Promise<Record<string, unk
     await idbDelete(STORES.ENCOUNTERS, id);
     return null;
   }
-  return entry.data;
+  if (entry.encrypted) {
+    return decryptIfNeeded<Record<string, unknown>>(entry.data);
+  }
+  return entry.data as Record<string, unknown>;
 }
 
 export async function getAllCachedEncounters(): Promise<Record<string, unknown>[]> {
   const entries = await idbGetAll<CachedRecord>(STORES.ENCOUNTERS);
   const now = Date.now();
-  return entries
-    .filter(e => now <= e.expires_at)
-    .map(e => e.data);
+  const validEntries = entries.filter(e => now <= e.expires_at);
+  const results: Record<string, unknown>[] = [];
+  for (const e of validEntries) {
+    if (e.encrypted) {
+      results.push(await decryptIfNeeded<Record<string, unknown>>(e.data));
+    } else {
+      results.push(e.data as Record<string, unknown>);
+    }
+  }
+  return results;
 }
 
 // ── Sync engine ──

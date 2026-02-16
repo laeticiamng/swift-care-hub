@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "UrgenceOS",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "description": "Le système d'exploitation des urgences hospitalières. Un point d'entrée unique pour cinq profils soignants : médecin, IOA, IDE, aide-soignant, secrétaire.",
+  "url": "https://urgenceos.fr",
+  "author": {
+    "@type": "Organization",
+    "name": "EmotionsCare SASU",
+    "url": "https://urgenceos.fr"
+  },
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": "990",
+    "highPrice": "1990",
+    "priceCurrency": "EUR",
+    "offerCount": "3"
+  },
+  "featureList": [
+    "Pancarte infirmière unifiée",
+    "Transmissions DAR",
+    "Interface adaptative par rôle",
+    "Administration médicaments en 1 tap",
+    "Timeline IA",
+    "Mode offline PWA",
+    "Sécurité RLS native"
+  ]
+}

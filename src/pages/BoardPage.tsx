@@ -278,7 +278,7 @@ export default function BoardPage() {
                 {z.label} {byZone(z.key).length}/{z.boxCount}
               </button>
             ))}
-            <StatCard label="En attente" value={waitingCount} icon={Hourglass} variant={waitingVariant as any} className="py-1 px-3" />
+            <StatCard label="En attente" value={waitingCount} icon={Hourglass} variant={waitingVariant as 'default' | 'critical' | 'warning' | 'success'} className="py-1 px-3" />
           </div>
           <div className="flex items-center gap-2">
             {(role === 'ioa' || role === 'medecin') && (
@@ -289,14 +289,14 @@ export default function BoardPage() {
             <Button variant={myOnly ? 'default' : 'outline'} size="sm" onClick={() => setMyOnly(!myOnly)}>
               <Filter className="h-4 w-4 mr-1" /> {!isMobile && 'Mes patients'}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
+            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')} aria-label={viewMode === 'grid' ? 'Basculer en vue liste' : 'Basculer en vue grille'}>
               {viewMode === 'grid' ? <List className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>
               {!isMobile && 'Changer rôle'}
             </Button>
             <ThemeToggle />
-            <Button variant="ghost" size="icon" onClick={signOut}>
+            <Button variant="ghost" size="icon" onClick={signOut} aria-label="Se déconnecter">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>

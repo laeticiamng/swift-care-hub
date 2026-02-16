@@ -1,9 +1,10 @@
 import { cn } from '@/lib/utils';
 import { UtensilsCrossed, PersonStanding, Stethoscope, ClipboardList } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface ConsignesBannerProps {
-  items: Array<{ rx: any; meta: PrescriptionMetadata }>;
+  items: Array<{ rx: Tables<'prescriptions'>; meta: PrescriptionMetadata }>;
 }
 
 function getConsigneIcon(type: string) {
@@ -44,7 +45,7 @@ function getConsigneColor(type: string) {
   }
 }
 
-function getConsigneText(rx: any, meta: PrescriptionMetadata): string {
+function getConsigneText(rx: Tables<'prescriptions'>, meta: PrescriptionMetadata): string {
   switch (meta.type) {
     case 'regime':
       return meta.regime_details || rx.medication_name;

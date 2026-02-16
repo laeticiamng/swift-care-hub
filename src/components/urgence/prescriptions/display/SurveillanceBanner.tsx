@@ -3,11 +3,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Clock, Check } from 'lucide-react';
 import type { PrescriptionMetadata } from '@/lib/prescription-types';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface SurveillanceBannerProps {
-  rx: any;
+  rx: Tables<'prescriptions'>;
   meta: PrescriptionMetadata;
-  onAction: (action: string, data?: any) => void;
+  onAction: (action: string, data?: Record<string, unknown>) => void;
 }
 
 export function SurveillanceBanner({ rx, meta, onAction }: SurveillanceBannerProps) {

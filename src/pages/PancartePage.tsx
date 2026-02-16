@@ -37,14 +37,14 @@ export default function PancartePage() {
   const { encounterId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [encounter, setEncounter] = useState<any>(null);
-  const [patient, setPatient] = useState<any>(null);
-  const [vitals, setVitals] = useState<any[]>([]);
-  const [prescriptions, setPrescriptions] = useState<any[]>([]);
-  const [administrations, setAdministrations] = useState<any[]>([]);
-  const [procedures, setProcedures] = useState<any[]>([]);
-  const [results, setResults] = useState<any[]>([]);
-  const [transmissions, setTransmissions] = useState<any[]>([]);
+  const [encounter, setEncounter] = useState<Record<string, unknown> | null>(null);
+  const [patient, setPatient] = useState<Record<string, unknown> | null>(null);
+  const [vitals, setVitals] = useState<Record<string, unknown>[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Record<string, unknown>[]>([]);
+  const [administrations, setAdministrations] = useState<Record<string, unknown>[]>([]);
+  const [procedures, setProcedures] = useState<Record<string, unknown>[]>([]);
+  const [results, setResults] = useState<Record<string, unknown>[]>([]);
+  const [transmissions, setTransmissions] = useState<Record<string, unknown>[]>([]);
   const [resultsOpen, setResultsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [medecinName, setMedecinName] = useState<string | undefined>(undefined);
@@ -101,7 +101,7 @@ export default function PancartePage() {
   };
 
   // ── Admin handlers ──
-  const handleAdminister = async (rx: any, doseGiven?: string, adminNotes?: string) => {
+  const handleAdminister = async (rx: Record<string, unknown>, doseGiven?: string, adminNotes?: string) => {
     if (!user || !encounter) return;
     // Server-side role verification before administration mutation
     const check = await guardAdministration();
@@ -130,7 +130,7 @@ export default function PancartePage() {
     fetchAll();
   };
 
-  const handleUpdateExamStatus = async (rx: any, meta: PrescriptionMetadata, newStatus: string) => {
+  const handleUpdateExamStatus = async (rx: Record<string, unknown>, meta: PrescriptionMetadata, newStatus: string) => {
     const updatedMeta = { ...meta, exam_status: newStatus };
     await supabase.from('prescriptions').update({ notes: JSON.stringify(updatedMeta) }).eq('id', rx.id);
     if (newStatus === 'realise' || newStatus === 'resultat_recu') {
@@ -144,7 +144,7 @@ export default function PancartePage() {
     fetchAll();
   };
 
-  const handleUpdateAvisStatus = async (rx: any, meta: PrescriptionMetadata, newStatus: string) => {
+  const handleUpdateAvisStatus = async (rx: Record<string, unknown>, meta: PrescriptionMetadata, newStatus: string) => {
     const updatedMeta = { ...meta, avis_status: newStatus, avis_notes: avisNotes[rx.id] || meta.avis_notes };
     await supabase.from('prescriptions').update({ notes: JSON.stringify(updatedMeta) }).eq('id', rx.id);
     toast.success(`Avis: ${newStatus.replace('_', ' ')}`);
@@ -152,7 +152,7 @@ export default function PancartePage() {
     fetchAll();
   };
 
-  const handleUpdateDeviceStatus = async (rx: any, meta: PrescriptionMetadata) => {
+  const handleUpdateDeviceStatus = async (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     const updatedMeta = { ...meta, device_status: 'pose' as const };
     await supabase.from('prescriptions').update({ notes: JSON.stringify(updatedMeta) }).eq('id', rx.id);
     toast.success(`${meta.device_name || rx.medication_name} pose`);
@@ -170,7 +170,7 @@ export default function PancartePage() {
     if (newVitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(newVitals.frequence_respiratoire);
     if (newVitals.gcs) obj.gcs = parseInt(newVitals.gcs);
     if (newVitals.eva_douleur) obj.eva_douleur = parseInt(newVitals.eva_douleur);
-    await supabase.from('vitals').insert(obj as any);
+    await supabase.from('vitals').insert(obj as Record<string, unknown>);
     toast.success('Constantes enregistrees');
     setNewVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
     setShowVitalsInput(false);
@@ -183,7 +183,7 @@ export default function PancartePage() {
     if (!procCheck.authorized) { toast.error(procCheck.error || 'Non autorisé'); return; }
     await supabase.from('procedures').insert({
       encounter_id: encounter.id, patient_id: encounter.patient_id,
-      performed_by: user.id, procedure_type: procType as any,
+      performed_by: user.id, procedure_type: procType as string,
     });
     const procLabels: Record<string, string> = { vvp: 'VVP', prelevement: 'Prelevement', pansement: 'Pansement', sondage: 'Sondage', ecg: 'ECG', autre: 'Acte' };
     toast.success(`${procLabels[procType] || 'Acte'} trace`);
@@ -225,7 +225,7 @@ export default function PancartePage() {
 
   // ── Group prescriptions by pancarte section ──
   const rxWithMeta = prescriptions.map(rx => ({ rx, meta: parsePrescriptionMeta(rx) }));
-  const sectionGroups: Record<PancarteSection, Array<{ rx: any; meta: PrescriptionMetadata }>> = {
+  const sectionGroups: Record<PancarteSection, Array<{ rx: Record<string, unknown>; meta: PrescriptionMetadata }>> = {
     oxygene_surveillance: [],
     perfusions: [],
     titrations: [],
@@ -241,7 +241,7 @@ export default function PancartePage() {
   }
 
   const getRxAdmins = (rxId: string) => administrations.filter(a => a.prescription_id === rxId);
-  const isRxDone = (rx: any) => rx.status === 'completed';
+  const isRxDone = (rx: Record<string, unknown>) => rx.status === 'completed';
 
   // ── Section icons ──
   const sectionLucideIcons: Record<PancarteSection, React.ReactNode> = {
@@ -256,7 +256,7 @@ export default function PancartePage() {
   };
 
   // ── Render a perfusion card ──
-  const renderPerfusion = (rx: any, meta: PrescriptionMetadata) => {
+  const renderPerfusion = (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     const total = meta.volume_total || parseFloat(rx.dosage) || 500;
     const passed = meta.volume_passed || 0;
     const pct = Math.min(100, Math.round((passed / total) * 100));
@@ -292,7 +292,7 @@ export default function PancartePage() {
   };
 
   // ── Render a titration card ──
-  const renderTitration = (rx: any, meta: PrescriptionMetadata) => {
+  const renderTitration = (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     const cumulated = meta.titration_cumulated || 0;
     const max = meta.titration_dose_max || 10;
     const step = meta.titration_step || 2;
@@ -354,7 +354,7 @@ export default function PancartePage() {
   };
 
   // ── Render O2/Surveillance banner ──
-  const renderOxySurveillance = (rx: any, meta: PrescriptionMetadata) => {
+  const renderOxySurveillance = (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     if (meta.type === 'oxygene') {
       const currentSpO2 = lastVital?.spo2;
       const target = meta.o2_target || '';
@@ -392,7 +392,7 @@ export default function PancartePage() {
   };
 
   // ── Render medication line ──
-  const renderMedicament = (rx: any, meta: PrescriptionMetadata) => {
+  const renderMedicament = (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     const admins = getRxAdmins(rx.id);
     const done = isRxDone(rx) || admins.length > 0;
     const isSuspended = rx.status === 'suspended';
@@ -445,7 +445,7 @@ export default function PancartePage() {
   };
 
   // ── Render conditionnel line ──
-  const renderConditionnel = (rx: any, meta: PrescriptionMetadata) => {
+  const renderConditionnel = (rx: Record<string, unknown>, meta: PrescriptionMetadata) => {
     const maxDoses = meta.condition_max_doses || 99;
     const dosesGiven = meta.condition_doses_given || 0;
     const remaining = maxDoses - dosesGiven;
