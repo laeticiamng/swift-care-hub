@@ -20,7 +20,7 @@ export function NetworkStatus() {
   // Sync offline queue when coming back online
   useEffect(() => {
     if (state === 'online') {
-      syncOfflineQueue(supabase as any).then(({ synced }) => {
+      syncOfflineQueue(supabase as Parameters<typeof syncOfflineQueue>[0]).then(({ synced }) => {
         if (synced > 0) console.log(`[OfflineSync] Synced ${synced} queued action(s)`);
       }).catch(() => {});
       getQueueSize().then(setQueueCount).catch(() => {});

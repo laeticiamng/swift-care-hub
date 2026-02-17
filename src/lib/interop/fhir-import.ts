@@ -265,11 +265,11 @@ function fhirPatientToCanonical(resource: FHIRResource): CanonicalPatient {
 }
 
 function fhirEncounterToCanonical(resource: FHIRResource, patientId: string): CanonicalEncounter {
-  const period = resource.period as any;
-  const priority = resource.priority as any;
-  const reasonCode = getFirst(resource.reasonCode as any[]);
-  const hospitalization = resource.hospitalization as any;
-  const location = getFirst(resource.location as any[]);
+  const period = resource.period as FHIRPeriod | undefined;
+  const priority = resource.priority as FHIRCodeableConcept | undefined;
+  const reasonCode = getFirst(resource.reasonCode as FHIRCodeableConcept[] | undefined);
+  const hospitalization = resource.hospitalization as FHIRHospitalization | undefined;
+  const location = getFirst(resource.location as FHIRLocation[] | undefined);
 
   const cimuCode = priority?.coding?.[0]?.code;
 
@@ -288,10 +288,10 @@ function fhirEncounterToCanonical(resource: FHIRResource, patientId: string): Ca
 }
 
 function isVitalSignObservation(resource: FHIRResource): boolean {
-  const categories = resource.category as any[];
+  const categories = resource.category as FHIRCodeableConcept[] | undefined;
   if (!categories) return false;
-  return categories.some((cat: any) =>
-    cat.coding?.some((c: any) => c.code === 'vital-signs')
+  return categories.some((cat: FHIRCodeableConcept) =>
+    cat.coding?.some((c: FHIRCoding) => c.code === 'vital-signs')
   );
 }
 
@@ -321,8 +321,8 @@ function groupVitalsFromObservations(
     };
 
     for (const obs of obsGroup) {
-      const code = extractCodeFromCoding(obs.code as any);
-      const value = (obs.valueQuantity as any)?.value;
+      const code = extractCodeFromCoding(obs.code as FHIRCodeableConcept | undefined);
+      const value = (obs.valueQuantity as FHIRQuantity | undefined)?.value;
       if (value == null) continue;
 
       // Map LOINC codes back to vital fields
@@ -347,13 +347,17 @@ function fhirObservationToResult(
   patientId: string,
   encounterId: string,
 ): CanonicalResult {
-  const category = getFirst(resource.category as any[]);
+  const category = getFirst(resource.category as FHIRCodeableConcept[] | undefined);
   const categoryCode = category?.coding?.[0]?.code;
-  const code = resource.code as any;
-  const interpretation = getFirst(resource.interpretation as any[]);
+  const code = resource.code as FHIRCodeableConcept | undefined;
+  const interpretation = getFirst(resource.interpretation as FHIRCodeableConcept[] | undefined);
 
   let resultType: 'bio' | 'imagerie' | 'ecg' | 'autre' = 'bio';
   if (categoryCode === 'procedure') resultType = 'ecg';
+
+  const valueQuantity = resource.valueQuantity as FHIRQuantity | undefined;
+  const referenceRange = getFirst(resource.referenceRange as FHIRReferenceRange[] | undefined);
+  const flagCode = interpretation?.coding?.[0]?.code as CanonicalResult['abnormal_flag'];
 
   return {
     id: resource.id || crypto.randomUUID(),
@@ -363,11 +367,11 @@ function fhirObservationToResult(
     result_type: resultType,
     name: code?.text || code?.coding?.[0]?.display || '',
     code: code?.coding?.[0]?.code,
-    value_numeric: (resource.valueQuantity as any)?.value,
-    value_unit: (resource.valueQuantity as any)?.unit,
+    value_numeric: valueQuantity?.value,
+    value_unit: valueQuantity?.unit,
     value_text: resource.valueString as string,
-    reference_range: getFirst(resource.referenceRange as any[])?.text,
-    abnormal_flag: interpretation?.coding?.[0]?.code as any,
+    reference_range: referenceRange?.text,
+    abnormal_flag: flagCode,
     provenance: 'import_fhir',
   };
 }
@@ -377,7 +381,7 @@ function fhirDiagnosticReportToResult(
   patientId: string,
   encounterId: string,
 ): CanonicalResult {
-  const code = resource.code as any;
+  const code = resource.code as FHIRCodeableConcept | undefined;
   return {
     id: resource.id || crypto.randomUUID(),
     encounter_id: encounterId,
@@ -396,8 +400,8 @@ function fhirMedRequestToCanonical(
   patientId: string,
   encounterId: string,
 ): CanonicalPrescription {
-  const medication = resource.medicationCodeableConcept as any;
-  const dosage = getFirst(resource.dosageInstruction as any[]);
+  const medication = resource.medicationCodeableConcept as FHIRCodeableConcept | undefined;
+  const dosage = getFirst(resource.dosageInstruction as FHIRDosageInstruction[] | undefined);
   const doseAndRate = getFirst(dosage?.doseAndRate);
 
   return {
@@ -407,8 +411,8 @@ function fhirMedRequestToCanonical(
     prescription_type: 'medicament',
     medication_name: medication?.text || medication?.coding?.[0]?.display || '',
     medication_atc_code: medication?.coding?.[0]?.code,
-    dose_value: (doseAndRate as any)?.doseQuantity?.value,
-    dose_unit: (doseAndRate as any)?.doseQuantity?.unit,
+    dose_value: doseAndRate?.doseQuantity?.value,
+    dose_unit: doseAndRate?.doseQuantity?.unit,
     dosage: dosage?.text,
     route: dosage?.route?.text,
     frequency: dosage?.timing?.code?.text,

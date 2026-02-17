@@ -63,6 +63,7 @@ export default function BoardPage() {
   useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
   useEffect(() => { localStorage.setItem(`urgenceos_selectedZone${userKey}`, selectedZone); }, [selectedZone, userKey]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- subscribe on mount only
   useEffect(() => {
     fetchEncounters();
     const channel = supabase

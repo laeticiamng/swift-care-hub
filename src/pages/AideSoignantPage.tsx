@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDemo } from '@/contexts/DemoContext';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { BigButton } from '@/components/urgence/BigButton';
 import { StatCard } from '@/components/urgence/StatCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -77,6 +78,7 @@ export default function AideSoignantPage() {
   const [confortNotes, setConfortNotes] = useState('');
   const [abnormalAlert, setAbnormalAlert] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch on mount only
   useEffect(() => { fetchEncounters(); }, []);
 
   const fetchEncounters = async () => {
@@ -132,7 +134,7 @@ export default function AideSoignantPage() {
       obj.pa_diastolique = parseFloat(value2);
     }
 
-    const { error } = await supabase.from('vitals').insert(obj as any);
+    const { error } = await supabase.from('vitals').insert(obj as Database['public']['Tables']['vitals']['Insert']);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constante enregistree');
     setVitalValue('');
@@ -166,7 +168,7 @@ export default function AideSoignantPage() {
     if (vitals.frequence_respiratoire) obj.frequence_respiratoire = parseInt(vitals.frequence_respiratoire);
     if (vitals.gcs) obj.gcs = parseInt(vitals.gcs);
     if (vitals.eva_douleur) obj.eva_douleur = parseInt(vitals.eva_douleur);
-    const { error } = await supabase.from('vitals').insert(obj as any);
+    const { error } = await supabase.from('vitals').insert(obj as Database['public']['Tables']['vitals']['Insert']);
     if (error) { toast.error('Erreur lors de l\'enregistrement'); return; }
     toast.success('Constantes enregistrees');
     setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
@@ -178,7 +180,7 @@ export default function AideSoignantPage() {
     if (isDemoMode) { toast.success('Surveillance tracee (demo)'); setSurvNotes(''); setView('menu'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}` });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre', notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}` });
     toast.success('Surveillance tracee');
     setSurvNotes(''); setView('menu');
   };
@@ -188,7 +190,7 @@ export default function AideSoignantPage() {
     if (isDemoMode) { toast.success('Brancardage trace (demo)'); setBrancDestination(''); setView('menu'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Brancardage: ${brancDestination || 'Transport effectue'}` });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre', notes: `Brancardage: ${brancDestination || 'Transport effectue'}` });
     toast.success('Brancardage trace');
     setBrancDestination(''); setView('menu');
   };
@@ -198,7 +200,7 @@ export default function AideSoignantPage() {
     if (isDemoMode) { toast.success('Soin de confort trace (demo)'); setConfortNotes(''); setView('menu'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
-    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Confort: ${confortNotes || 'Soins de confort effectues'}` });
+    await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre', notes: `Confort: ${confortNotes || 'Soins de confort effectues'}` });
     toast.success('Soin de confort trace');
     setConfortNotes(''); setView('menu');
   };

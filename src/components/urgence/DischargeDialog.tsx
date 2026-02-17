@@ -5,7 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
+
+type EncounterUpdate = Database['public']['Tables']['encounters']['Update'];
+type TimelineInsert = Database['public']['Tables']['timeline_items']['Insert'];
 
 interface DischargeDialogProps {
   open: boolean;
@@ -15,9 +19,9 @@ interface DischargeDialogProps {
   userId: string;
   onDone: () => void;
   motif?: string | null;
-  prescriptions?: any[];
-  diagnostics?: any[];
-  vitals?: any[];
+  prescriptions?: Array<{ status: string; medication_name: string; dosage: string; route: string; frequency?: string }>;
+  diagnostics?: Array<{ content: string }>;
+  vitals?: Array<{ fc?: number | null; pa_systolique?: number | null; pa_diastolique?: number | null; spo2?: number | null; temperature?: number | null; frequence_respiratoire?: number | null; gcs?: number | null; eva_douleur?: number | null }>;
 }
 
 const GEMSA_MAP: Record<string, string> = {
@@ -64,7 +68,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
     if (vitals.length > 0) {
       const first = vitals[0];
       const last = vitals[vitals.length - 1];
-      const fmt = (v: any) => {
+      const fmt = (v: NonNullable<DischargeDialogProps['vitals']>[number]) => {
         const p = [];
         if (v.fc) p.push(`FC ${v.fc} bpm`);
         if (v.pa_systolique) p.push(`PA ${v.pa_systolique}/${v.pa_diastolique || '?'} mmHg`);
@@ -101,8 +105,8 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const updateData: any = {
-      status: 'finished' as any,
+    const updateData: EncounterUpdate = {
+      status: 'finished',
       discharge_time: new Date().toISOString(),
       orientation,
     };
@@ -120,7 +124,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
     if (summary.trim()) {
       await supabase.from('timeline_items').insert({
         patient_id: patientId,
-        item_type: 'crh' as any,
+        item_type: 'crh',
         content: summary.trim(),
         source_author: userId,
         source_date: new Date().toISOString().split('T')[0],
@@ -132,7 +136,7 @@ export function DischargeDialog({ open, onOpenChange, encounterId, patientId, us
     if (ordonnance.trim()) {
       await supabase.from('timeline_items').insert({
         patient_id: patientId,
-        item_type: 'crh' as any,
+        item_type: 'crh',
         content: `Ordonnance de sortie :\n${ordonnance.trim()}`,
         source_author: userId,
         source_date: new Date().toISOString().split('T')[0],

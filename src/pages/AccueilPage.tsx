@@ -36,9 +36,9 @@ export default function AccueilPage() {
   const [allergies, setAllergies] = useState('');
   const [motif, setMotif] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [todayEncounters, setTodayEncounters] = useState<any[]>([]);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedExisting, setSelectedExisting] = useState<any>(null);
+  const [todayEncounters, setTodayEncounters] = useState<Array<Record<string, unknown>>>([]);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; nom: string; prenom: string; date_naissance: string; sexe: string; telephone: string | null }>>([]);
+  const [selectedExisting, setSelectedExisting] = useState<{ id: string; nom: string; prenom: string; date_naissance: string; sexe: string; telephone: string | null } | null>(null);
 
   const [, setTick] = useState(0);
 
@@ -58,12 +58,12 @@ export default function AccueilPage() {
       .select('id, status, arrival_time, motif_sfmu, patients(nom, prenom, date_naissance, sexe)')
       .gte('arrival_time', today)
       .order('arrival_time', { ascending: false });
-    if (data) setTodayEncounters(data as any[]);
+    if (data) setTodayEncounters(data as Array<Record<string, unknown>>);
   };
 
   const [homonymAlert, setHomonymAlert] = useState(false);
 
-  const detectHomonyms = (patients: any[]) => {
+  const detectHomonyms = (patients: Array<{ nom: string; prenom: string }>) => {
     if (patients.length < 2) { setHomonymAlert(false); return; }
     for (let i = 0; i < patients.length; i++) {
       for (let j = i + 1; j < patients.length; j++) {
@@ -83,7 +83,7 @@ export default function AccueilPage() {
   }, []);
 
   const handleNomChange = (value: string) => { setNom(value); setSelectedExisting(null); searchPatients(value); };
-  const selectExistingPatient = (patient: any) => {
+  const selectExistingPatient = (patient: typeof searchResults[number]) => {
     setSelectedExisting(patient); setNom(patient.nom); setPrenom(patient.prenom);
     setDateNaissance(patient.date_naissance); setSexe(patient.sexe); setTelephone(patient.telephone || ''); setSearchResults([]);
   };
