@@ -8,6 +8,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 // ── Types ──
 
@@ -129,13 +130,13 @@ export async function requestDataDeletion(
   }
 
   // Also log to audit trail for immutable record
-  await supabase.from('audit_logs').insert({
+  await supabase.from('audit_logs').insert([{
     user_id: requestedBy,
     action: 'data_deletion_request',
     resource_type: 'patient',
     resource_id: patientId,
-    details: { reason, deletion_request_id: (data as Record<string, unknown>)?.id },
-  });
+    details: { reason, deletion_request_id: (data as Record<string, unknown>)?.id } as unknown as Json,
+  }]);
 
   return { success: true, deletionId: (data as Record<string, unknown>)?.id as string };
 }
@@ -208,13 +209,13 @@ export async function recordConsent(
   }
 
   // Also log to audit trail for immutable record
-  await supabase.from('audit_logs').insert({
+  await supabase.from('audit_logs').insert([{
     user_id: consent.granted_by || null,
     action: 'consent_record',
     resource_type: 'patient',
     resource_id: patientId,
-    details: payload as unknown as Record<string, unknown>,
-  } as any);
+    details: payload as unknown as Json,
+  }]);
 
   return { success: true };
 }
