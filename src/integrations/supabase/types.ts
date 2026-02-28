@@ -102,6 +102,44 @@ export type Database = {
         }
         Relationships: []
       }
+      data_deletion_requests: {
+        Row: {
+          created_at: string
+          executed_at: string | null
+          id: string
+          patient_id: string
+          reason: string | null
+          requested_by: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          executed_at?: string | null
+          id?: string
+          patient_id: string
+          reason?: string | null
+          requested_by: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          executed_at?: string | null
+          id?: string
+          patient_id?: string
+          reason?: string | null
+          requested_by?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_deletion_requests_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       encounters: {
         Row: {
           arrival_time: string
@@ -160,6 +198,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "encounters_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_consents: {
+        Row: {
+          consent_type: string
+          created_at: string
+          granted: boolean
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          patient_id: string
+          revoked_at: string | null
+        }
+        Insert: {
+          consent_type: string
+          created_at?: string
+          granted?: boolean
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          patient_id: string
+          revoked_at?: string | null
+        }
+        Update: {
+          consent_type?: string
+          created_at?: string
+          granted?: boolean
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          patient_id?: string
+          revoked_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_consents_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
@@ -585,6 +664,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_assigned_to_encounter: {
+        Args: { _encounter_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_assigned_to_patient: {
+        Args: { _patient_id: string; _user_id: string }
         Returns: boolean
       }
     }
