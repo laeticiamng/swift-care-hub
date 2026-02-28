@@ -346,8 +346,7 @@ export default function PatientDossierPage() {
       <Sheet open={interop.crhDrawerOpen} onOpenChange={interop.setCrhDrawerOpen}>
         <SheetContent side="right" className="w-[600px] sm:w-[700px] overflow-y-auto">
           <SheetHeader className="sr-only"><SheetTitle>CRH</SheetTitle></SheetHeader>
-          <CRHPreview htmlContent={interop.crhHTML} status={interop.crhStatus} onSign={interop.handleSignCRH} onSendMSSante={interop.handleSendMSSante}
-            patientName={`${patient.nom} ${patient.prenom}`} medecinTraitant={patient.medecin_traitant} />
+          <CRHPreview htmlContent={interop.crhHTML} status={interop.crhStatus} onSign={interop.handleSignCRH} onSendMSSante={interop.handleSendMSSante} />
         </SheetContent>
       </Sheet>
 
