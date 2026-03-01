@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { JsonLd, PageMeta, webPageSchema, organizationSchema } from '@/components/seo/JsonLd';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +53,17 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="À propos d'UrgenceOS — EmotionsCare, Hospital-Owned Software"
+        description="EmotionsCare conçoit UrgenceOS : socle Hospital-Owned pour urgences hospitalières. Autonomie SI, ROI mesurable, co-construction terrain, sécurité structurelle."
+      />
+      <JsonLd id="about-webpage" data={webPageSchema({
+        name: 'À propos d\'UrgenceOS — EmotionsCare SASU',
+        description: 'EmotionsCare conçoit UrgenceOS : socle Hospital-Owned Software que l\'hôpital possède, modules urgences à ROI mesurable, architecture sécurité structurelle.',
+        url: 'https://urgenceos.fr/about',
+        breadcrumb: ['Accueil', 'À propos'],
+      })} />
+      <JsonLd id="about-org" data={organizationSchema()} />
       <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-16">
