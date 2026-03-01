@@ -1,3 +1,102 @@
+# UrgenceOS — robots.txt
+# GEO-optimized: explicit allow for AI crawlers
+
+# ── AI Engine Crawlers — explicitly allowed ──
+User-agent: GPTBot
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /blog
+Allow: /demo
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+Disallow: /as
+Disallow: /constantes
+Disallow: /accueil
+Disallow: /admission
+Disallow: /ioa-queue
+Disallow: /prescriptions
+Disallow: /recap/
+Disallow: /interop
+Disallow: /garde
+Disallow: /audit
+Disallow: /demo/live
+Disallow: /sih-validation
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /blog
+Allow: /demo
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+
+User-agent: Claude-Web
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /blog
+Allow: /demo
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /blog
+Allow: /demo
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /login
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+
+# ── Standard crawlers ──
 User-agent: *
 Allow: /
 Allow: /features
