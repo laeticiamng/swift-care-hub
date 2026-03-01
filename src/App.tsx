@@ -37,6 +37,7 @@ const SIHValidationPage = lazy(() => import("./pages/SIHValidationPage"));
 const PricingPage = lazy(() => import("./pages/PricingPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const GlossairePage = lazy(() => import("./pages/GlossairePage"));
 const B2BPage = lazy(() => import("./pages/B2BPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
@@ -124,6 +125,7 @@ function AppRoutes() {
         <Route path="/pricing" element={<Navigate to="/tarifs" replace />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/glossaire" element={<GlossairePage />} />
         <Route path="/b2b" element={<B2BPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/securite" element={<SecurityPage />} />
