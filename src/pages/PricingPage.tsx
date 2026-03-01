@@ -4,6 +4,7 @@ import { FooterSection } from '@/components/landing/FooterSection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight, Building2, HelpCircle, Calculator } from 'lucide-react';
+import { JsonLd, PageMeta, webPageSchema, faqPageSchema } from '@/components/seo/JsonLd';
 
 const PLANS = [
   {
@@ -89,6 +90,17 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="Tarifs UrgenceOS — Pilote 10 semaines, Extension, Consortium GHT"
+        description="Modèle économique UrgenceOS : pilote cadré 10 semaines avec ROI mesuré, extension multi-services, consortium GHT mutualisé. Pas d'engagement pluriannuel."
+      />
+      <JsonLd id="pricing-webpage" data={webPageSchema({
+        name: 'Tarifs UrgenceOS — Modèle économique Hospital-Owned Software',
+        description: 'Pilote 10 semaines avec ROI mesuré, extension multi-services, consortium GHT. Coûts prévisibles et décroissants.',
+        url: 'https://urgenceos.fr/tarifs',
+        breadcrumb: ['Accueil', 'Tarifs'],
+      })} />
+      <JsonLd id="pricing-faq" data={faqPageSchema(FAQ_PRICING.map(f => ({ question: f.q, answer: f.a })))} />
       <SiteHeader />
 
       <div className="max-w-6xl mx-auto px-6 py-16">
