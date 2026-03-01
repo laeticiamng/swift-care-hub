@@ -36,13 +36,31 @@
       "@type": "SoftwareApplication",
       "name": "UrgenceOS",
       "applicationCategory": "HealthApplication",
-      "operatingSystem": "Web",
-      "description": "Le système d'exploitation des urgences hospitalières. Un point d'entrée unique pour cinq profils soignants : médecin, IOA, IDE, aide-soignant, secrétaire.",
+      "applicationSubCategory": "Emergency Department Management",
+      "operatingSystem": "Web (PWA)",
+      "description": "Socle logiciel Hospital-Owned pour urgences hospitalières. Interface adaptative par rôle (médecin, IOA, IDE, aide-soignant, secrétaire). Interopérabilité FHIR R4/HL7v2. Audit immuable, RBAC serveur, hébergement HDS France.",
       "url": "https://urgenceos.fr",
       "author": {
         "@type": "Organization",
         "name": "EmotionsCare SASU",
-        "url": "https://urgenceos.fr"
+        "url": "https://urgenceos.fr",
+        "foundingDate": "2024",
+        "areaServed": { "@type": "Country", "name": "France" },
+        "knowsAbout": [
+          "Urgences hospitalières",
+          "Système d'information hospitalier (SIH)",
+          "Interopérabilité FHIR R4",
+          "HL7v2",
+          "Hospital-Owned Software",
+          "Triage CIMU",
+          "RPU ATIH",
+          "MSSanté",
+          "DMP",
+          "Hébergement données de santé HDS",
+          "RBAC santé",
+          "Médecine d'urgence"
+        ],
+        "slogan": "Le système d'exploitation des urgences hospitalières"
       },
       "offers": {
         "@type": "AggregateOffer",
@@ -52,13 +70,18 @@
         "offerCount": "3"
       },
       "featureList": [
-        "Pancarte infirmière unifiée",
-        "Transmissions DAR",
-        "Interface adaptative par rôle",
-        "Administration médicaments en 1 tap",
-        "Timeline IA",
-        "Mode offline PWA",
-        "Sécurité RLS native"
+        "Interface adaptative par rôle soignant (5 profils)",
+        "Récap parcours patient temps réel",
+        "Prescriptions et administration médicaments en 1 tap",
+        "Triage CIMU avec aide à la décision",
+        "Interopérabilité FHIR R4, HL7v2, HPRIM",
+        "RPU ATIH automatique",
+        "Audit immuable — traçabilité médico-légale",
+        "RBAC strict vérifié côté serveur",
+        "Mode offline PWA avec sync",
+        "Hébergement HDS France",
+        "Intégration DPI sans refonte",
+        "Multi-tenant GHT"
       ]
     }
     </script>
@@ -70,6 +93,26 @@
       "description": "Outil d'aide à la gestion des urgences hospitalières. Attention : UrgenceOS est un outil d'aide, pas un dispositif médical certifié.",
       "url": "https://urgenceos.fr",
       "medicalSpecialty": "Emergency Medicine"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "UrgenceOS",
+      "url": "https://urgenceos.fr",
+      "description": "Le système d'exploitation des urgences hospitalières. Socle Hospital-Owned Software avec interface par rôle, interopérabilité FHIR R4/HL7v2, et traçabilité temps réel.",
+      "inLanguage": "fr-FR",
+      "publisher": {
+        "@type": "Organization",
+        "name": "EmotionsCare SASU",
+        "url": "https://urgenceos.fr"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://urgenceos.fr/faq?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
   </head>

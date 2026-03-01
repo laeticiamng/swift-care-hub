@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import { JsonLd, PageMeta, faqPageSchema, webPageSchema } from '@/components/seo/JsonLd';
 import { useState } from 'react';
 
 interface FAQItem {
@@ -155,8 +156,22 @@ function FAQAccordion({ item }: { item: FAQItem }) {
 export default function FAQPage() {
   const navigate = useNavigate();
 
+  // Flatten all FAQ items for JSON-LD
+  const allFaqs = FAQ_CATEGORIES.flatMap((cat) => cat.items);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="FAQ UrgenceOS — Questions fréquentes sur le logiciel urgences hospitalières"
+        description="Réponses aux questions des DSI, DAF et soignants sur UrgenceOS : architecture Hospital-Owned, interopérabilité FHIR R4, sécurité HDS, pilote 10 semaines, RBAC, RPU automatique."
+      />
+      <JsonLd id="faq-page" data={faqPageSchema(allFaqs)} />
+      <JsonLd id="faq-webpage" data={webPageSchema({
+        name: 'FAQ UrgenceOS',
+        description: 'Questions fréquentes sur le logiciel urgences hospitalières UrgenceOS — architecture, sécurité, intégration DPI, déploiement pilote.',
+        url: 'https://urgenceos.fr/faq',
+        breadcrumb: ['Accueil', 'FAQ'],
+      })} />
       <SiteHeader />
 
       <div className="max-w-4xl mx-auto px-6 py-16">

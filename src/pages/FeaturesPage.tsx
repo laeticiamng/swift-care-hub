@@ -8,12 +8,23 @@ import {
   Bell, ClipboardList, BarChart3, Shield, RefreshCcw,
   Database, Eye, Users, Key, FileText, Server,
 } from 'lucide-react';
+import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
 
 export default function FeaturesPage() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
+      <PageMeta
+        title="Architecture UrgenceOS — Socle Hospital-Owned + Modules urgences"
+        description="Architecture produit UrgenceOS : socle interne (RBAC, audit, FHIR), modules urgences à ROI (récap parcours, traçabilité temps réel), intégration DPI sans refonte."
+      />
+      <JsonLd id="features-webpage" data={webPageSchema({
+        name: 'Architecture UrgenceOS — Fonctionnalités',
+        description: 'Socle Hospital-Owned + modules métier urgences : récap parcours patient, traçabilité temps réel, intégration DPI FHIR R4/HL7v2.',
+        url: 'https://urgenceos.fr/features',
+        breadcrumb: ['Accueil', 'Fonctionnalités'],
+      })} />
       <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-12">

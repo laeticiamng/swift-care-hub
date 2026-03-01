@@ -9,12 +9,24 @@ import { HeroSection } from '@/components/landing/HeroSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { JsonLd, PageMeta, howToSchema, webPageSchema } from '@/components/seo/JsonLd';
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="UrgenceOS — Logiciel urgences hospitalières Hospital-Owned Software"
+        description="Socle logiciel Hospital-Owned pour urgences hospitalières. Interface par rôle (médecin, IOA, IDE, AS, secrétaire). Interopérabilité FHIR R4/HL7v2. Pilote 10 semaines. HDS France."
+      />
+      <JsonLd id="landing-howto" data={howToSchema()} />
+      <JsonLd id="landing-webpage" data={webPageSchema({
+        name: 'UrgenceOS — Le système d\'exploitation des urgences hospitalières',
+        description: 'Socle Hospital-Owned Software avec interface par rôle, interopérabilité FHIR R4/HL7v2, audit immuable et hébergement HDS France.',
+        url: 'https://urgenceos.fr',
+        breadcrumb: ['Accueil'],
+      })} />
       <SiteHeader />
 
       {/* BLOC 1 — Hero */}
