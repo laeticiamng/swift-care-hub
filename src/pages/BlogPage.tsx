@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -94,6 +95,39 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="Blog UrgenceOS — Expertise urgences hospitalières et e-santé"
+        description="Analyses, retours d'expérience et guides techniques : interopérabilité FHIR R4, sécurité HDS, triage CIMU, Hospital-Owned Software pour urgences hospitalières."
+      />
+      <JsonLd id="blog-webpage" data={webPageSchema({
+        name: 'Blog UrgenceOS — Expertise urgences hospitalières',
+        description: 'Analyses et guides techniques sur la transformation numérique des urgences : FHIR R4, HDS, CIMU, Hospital-Owned Software.',
+        url: 'https://urgenceos.fr/blog',
+        breadcrumb: ['Accueil', 'Blog'],
+      })} />
+      <JsonLd id="blog-collection" data={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Articles UrgenceOS',
+        description: 'Collection d\'articles sur les urgences hospitalières, l\'interopérabilité FHIR, la sécurité HDS et le Hospital-Owned Software.',
+        url: 'https://urgenceos.fr/blog',
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: ARTICLES.length,
+          itemListElement: ARTICLES.map((a, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            item: {
+              '@type': 'BlogPosting',
+              headline: a.title,
+              description: a.excerpt,
+              datePublished: a.date,
+              author: { '@type': 'Organization', name: 'EmotionsCare SASU' },
+              publisher: { '@type': 'Organization', name: 'EmotionsCare SASU', url: 'https://urgenceos.fr' },
+            },
+          })),
+        },
+      }} />
       <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-16">
