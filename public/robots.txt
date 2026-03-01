@@ -10,6 +10,7 @@ Allow: /b2b
 Allow: /securite
 Allow: /about
 Allow: /faq
+Allow: /glossaire
 Allow: /blog
 Allow: /demo
 Disallow: /login
