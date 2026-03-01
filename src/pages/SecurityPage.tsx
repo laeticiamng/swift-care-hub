@@ -8,6 +8,7 @@ import {
   Key, Lock, Mail, Monitor, Server, Shield, ShieldCheck,
   UserCheck, AlertTriangle,
 } from 'lucide-react';
+import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
 
 const SECURITY_LAYERS = [
   {
@@ -128,6 +129,16 @@ export default function SecurityPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="Sécurité UrgenceOS — RBAC, audit immuable, HDS, chiffrement AES-256"
+        description="Architecture de sécurité UrgenceOS : RBAC serveur, audit immuable, chiffrement TLS 1.2+ et AES-256, hébergement HDS France, threat model 4 acteurs, conformité RGPD."
+      />
+      <JsonLd id="security-webpage" data={webPageSchema({
+        name: 'Sécurité UrgenceOS — Architecture de protection des données de santé',
+        description: 'RBAC strict vérifié côté serveur, audit immuable, chiffrement en transit et au repos, hébergement HDS France, conformité RGPD, threat model documenté.',
+        url: 'https://urgenceos.fr/securite',
+        breadcrumb: ['Accueil', 'Sécurité'],
+      })} />
       <SiteHeader />
 
       <div className="max-w-5xl mx-auto px-6 py-16">
