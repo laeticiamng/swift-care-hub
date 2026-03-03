@@ -89,27 +89,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Check MFA status for medical roles
       const hasMedicalRole = roles.some(r => MEDICAL_ROLES.includes(r));
+      let needsMfa = false;
       if (hasMedicalRole) {
         const { data: factors } = await supabase.auth.mfa.listFactors();
         const hasVerifiedTOTP = factors?.totp?.some(f => f.status === 'verified') ?? false;
         if (!hasVerifiedTOTP) {
           setMfaEnrollRequired(true);
+          needsMfa = true;
         } else {
-          // Check AAL level — if only aal1, need MFA challenge
           const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
           if (aal?.currentLevel === 'aal1') {
             setMfaRequired(true);
+            needsMfa = true;
           }
         }
       }
 
-      // Restore from sessionStorage first
-      const savedRole = normalizeRole(sessionStorage.getItem('urgenceos_role') || '');
-      if (savedRole && roles.includes(savedRole)) {
-        setRole(savedRole);
-      } else if (roles.length === 1) {
-        setRole(roles[0]);
-        sessionStorage.setItem('urgenceos_role', roles[0]);
+      // Don't auto-select role if MFA is pending
+      if (!needsMfa) {
+        const savedRole = normalizeRole(sessionStorage.getItem('urgenceos_role') || '');
+        if (savedRole && roles.includes(savedRole)) {
+          setRole(savedRole);
+        } else if (roles.length === 1) {
+          setRole(roles[0]);
+          sessionStorage.setItem('urgenceos_role', roles[0]);
+        }
       }
     }
     setLoading(false);
