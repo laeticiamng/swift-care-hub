@@ -6,6 +6,8 @@ import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut, AlertTria
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
+import MFASetup from '@/components/urgence/MFASetup';
+import MFAChallenge from '@/components/urgence/MFAChallenge';
 
 const roleConfig: { role: AppRole; label: string; description: string; icon: React.ElementType; color: string }[] = [
   { role: 'medecin', label: 'Médecin', description: 'Board panoramique & dossiers patients', icon: Stethoscope, color: 'text-medical-info' },
@@ -24,7 +26,7 @@ const roleRedirects: Record<AppRole, string> = {
 };
 
 export default function RoleSelector() {
-  const { selectRole, availableRoles, role, signOut, user, loading } = useAuth();
+  const { selectRole, availableRoles, role, signOut, user, loading, mfaRequired, mfaEnrollRequired, completeMFA, completeMFAEnroll } = useAuth();
   const navigate = useNavigate();
   const [assigning, setAssigning] = useState(false);
 
@@ -47,6 +49,14 @@ export default function RoleSelector() {
 
   const isNewUser = !loading && availableRoles.length === 0;
   const visibleRoles = isNewUser ? roleConfig : roleConfig.filter(r => availableRoles.includes(r.role));
+
+  // MFA screens for medical roles
+  if (mfaEnrollRequired) {
+    return <MFASetup onComplete={completeMFAEnroll} />;
+  }
+  if (mfaRequired) {
+    return <MFAChallenge onVerified={completeMFA} onCancel={signOut} />;
+  }
 
   if (!loading && role) return null;
 
