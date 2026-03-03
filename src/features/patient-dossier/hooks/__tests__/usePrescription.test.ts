@@ -29,6 +29,7 @@ vi.mock('@/contexts/DemoContext', () => ({
 // Mock server guard
 vi.mock('@/lib/server-role-guard', () => ({
   guardPrescription: vi.fn(() => Promise.resolve({ authorized: true })),
+  checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 19, resetIn: 60000 })),
 }));
 
 // Mock sonner

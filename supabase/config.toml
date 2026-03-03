@@ -12,3 +12,7 @@ enabled = true
 [functions.seed-data]
 # Re-enabled JWT verification — seed data requires authentication
 verify_jwt = true
+
+[functions.csp-report]
+# CSP violation reports are sent by browsers without auth headers
+verify_jwt = false
