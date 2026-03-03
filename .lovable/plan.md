@@ -1,82 +1,68 @@
 
 
-# Plan d'execution — 6 corrections securite prioritaires
+# Plan — 6 corrections hardening final (score 10/10)
 
-## Analyse de l'existant
+## Analyse de faisabilité
 
-| Correction | Etat actuel |
-|------------|-------------|
-| 1. Leaked Password Protection | **config.toml a `[auth.external.hibp] enabled = true`** mais l'audit precedent indique que c'est desactive cote serveur. A verifier/activer via configure-auth |
-| 2. Audit UPDATE RLS | **FAIT** — Toutes les tables ont des policies UPDATE restrictives conditionnees par role + encounter. Deja verifie dans l'audit |
-| 3. CSP unsafe-inline | **PRESENT** — `script-src 'self' 'unsafe-inline'` et `style-src 'self' 'unsafe-inline'` dans index.html ligne 7 |
-| 4. Rate limiting mutations | **Code existe** (`checkRateLimit` dans server-role-guard.ts) mais **jamais utilise** — 0 appels dans le codebase |
-| 5. CSP report-uri | **ABSENT** — Aucun endpoint de reporting, `logCSPViolation()` existe mais non connecte |
-| 6. MFA roles medicaux | **ABSENT** — Aucune implementation MFA |
+| # | Correction | Faisabilité Lovable Cloud | Action |
+|---|-----------|--------------------------|--------|
+| 1 | Supprimer unsafe-inline CSP | **Impossible** — Vite injecte des scripts inline au build, Tailwind/Radix utilisent des styles inline. Nécessite un serveur avec nonces dynamiques, hors scope Lovable Cloud | Documenter + mitiger via CSP report-uri (déjà fait) |
+| 2 | Test SQL automatique RLS sur tables futures | **Faisable** — Créer un test Vitest qui vérifie que toutes les tables publiques ont RLS activé | Nouveau fichier test |
+| 3 | Leaked Password Protection HIBP | **Déjà activé** dans config.toml. Vérification effective via configure-auth | Vérifier/confirmer activation |
+| 4 | Rate limiting serveur personnalisé | **Faisable** — Edge function middleware qui vérifie un compteur en DB avant les mutations sensibles | Nouvelle edge function |
+| 5 | Alerting sécurité (Slack/Email) | **Partiellement faisable** — Edge function qui envoie des alertes email via Supabase (pas de connecteur Slack natif). Nécessite un webhook ou une clé API externe | Edge function + discussion secret |
+| 6 | Tests E2E automatisés "rôle interdit" | **Faisable** — Tests Vitest vérifiant les guards de rôle côté client | Nouveau fichier test |
 
-## Ce qui reste a faire (4 corrections reelles)
+## Corrections à implémenter
 
-Les corrections 1 (leaked pwd) et 2 (UPDATE RLS) sont deja en place. Il reste :
+### 1. Documenter limitation unsafe-inline (déjà fait)
+Le commentaire dans `index.html` documente déjà cette limitation. Le `report-uri` est en place. **Aucune action supplémentaire.**
 
----
+### 2. Test automatique RLS future-proof
+**Fichier à créer** : `src/test/rls-coverage.test.ts`
 
-### Correction 3 — Supprimer unsafe-inline de la CSP (P1)
+Teste via requête SQL que toutes les tables du schéma `public` ont `row_security` activé. Utilise `supabase.rpc` ou une requête directe sur `pg_tables`.
 
-**Probleme** : `script-src 'self' 'unsafe-inline'` autorise l'execution de scripts inline, annulant partiellement la protection XSS.
+Approche pragmatique : maintenir une liste whitelist des tables connues et vérifier qu'aucune n'a RLS désactivé.
 
-**Approche** : Vite genere des scripts inline au build. On ne peut pas supprimer `unsafe-inline` de `script-src` sans casser l'app (Vite injecte un module preload). Pour `style-src`, Tailwind et Radix utilisent des styles inline — suppression impossible sans refonte majeure.
+### 3. Confirmer HIBP activation
+Vérifier via `configure-auth` que leaked password protection est bien activée côté serveur.
 
-**Action realisable** : Documenter cette limitation technique. Ajouter `report-uri` (correction 5) pour monitorer les violations. La suppression complete de `unsafe-inline` necessite une migration vers un serveur qui injecte des nonces dynamiques — hors scope Lovable Cloud.
+### 4. Rate limiting serveur via edge function
+**Fichier à créer** : `supabase/functions/rate-limit/index.ts`
 
----
+Middleware serveur qui :
+- Reçoit un identifiant d'action + user_id
+- Vérifie un compteur en mémoire (Map) par user/action
+- Retourne 429 si dépassé
+- Les mutations critiques (prescriptions via edge function) appellent ce endpoint avant d'exécuter
 
-### Correction 4 — Brancher le rate limiter sur les mutations critiques (P1)
+Note : le rate limiting client est déjà en place. Le rate limiting serveur natif de Supabase Auth protège déjà les endpoints auth. Cette edge function ajoute une couche supplémentaire pour les endpoints métier.
 
-**Fichiers a modifier** :
-- `src/features/patient-dossier/hooks/usePrescription.ts` — ajouter `checkRateLimit` avant chaque `guardPrescription()`
-- `src/pages/LoginPage.tsx` — ajouter rate limiting sur `handleSubmit` (max 5 tentatives/minute)
-- `src/pages/TriagePage.tsx` — ajouter rate limiting sur creation encounter
+### 5. Alerting sécurité
+**Fichier à modifier** : `supabase/functions/csp-report/index.ts`
 
-Le rate limiter est client-side (memoire), suffisant pour bloquer les scripts automatises depuis le navigateur. Le vrai rate limiting serveur est assure par les policies RLS + Supabase auth rate limits natifs.
+Étendre pour détecter les patterns d'attaque (violations CSP répétées, brute force) et envoyer une alerte.
 
----
+Pour l'alerting email/Slack : nécessite soit un webhook Slack, soit un service email. Je recommande d'utiliser un webhook Discord/Slack que l'utilisateur fournit.
 
-### Correction 5 — Ajouter CSP report-uri via edge function (P2)
+### 6. Tests E2E rôle interdit
+**Fichier à créer** : `src/test/role-guards.test.ts`
 
-**Fichiers a creer** :
-- `supabase/functions/csp-report/index.ts` — endpoint qui recoit les violations CSP et les log dans `audit_logs`
+Tests unitaires vérifiant :
+- `guardPrescription()` refuse si rôle != medecin
+- `guardTriage()` refuse si rôle != medecin/ioa
+- `guardAdministration()` refuse si rôle != ide/medecin
+- Rate limiter bloque après N tentatives
 
-**Fichier a modifier** :
-- `index.html` — ajouter `report-uri` a la directive CSP pointant vers l'edge function
-
----
-
-### Correction 6 — MFA pour roles medicaux (P0 strategique)
-
-**Approche** : Utiliser Supabase MFA (TOTP) natif.
-
-**Fichiers a creer** :
-- `src/components/urgence/MFASetup.tsx` — composant d'enrolement MFA (QR code + verification)
-- `src/components/urgence/MFAChallenge.tsx` — composant de verification OTP au login
-
-**Fichiers a modifier** :
-- `src/contexts/AuthContext.tsx` — apres login reussi, verifier si MFA est active et exiger la verification
-- `src/pages/LoginPage.tsx` — integrer le flow MFA challenge
-- `src/pages/RoleSelector.tsx` — forcer l'enrolement MFA si role medical et MFA non configure
-
-**Flow** :
-1. Login email/password → succes
-2. Si role medical (medecin/ide/ioa) et MFA non enrole → rediriger vers MFASetup
-3. Si MFA enrole → afficher MFAChallenge (code TOTP 6 chiffres)
-4. Verification reussie → acces au selecteur de role
-
----
-
-## Resume des modifications
+## Résumé des modifications
 
 | # | Action | Fichiers | Effort |
 |---|--------|----------|--------|
-| 3 | Documenter limitation unsafe-inline | Commentaire index.html | Minimal |
-| 4 | Brancher rate limiter | usePrescription.ts, LoginPage.tsx, TriagePage.tsx | Moyen |
-| 5 | Edge function CSP report | csp-report/index.ts, index.html | Moyen |
-| 6 | MFA TOTP | MFASetup.tsx, MFAChallenge.tsx, AuthContext.tsx, LoginPage.tsx, RoleSelector.tsx | Important |
+| 1 | Aucune action (déjà documenté) | — | 0 |
+| 2 | Test RLS coverage | `src/test/rls-coverage.test.ts` | Léger |
+| 3 | Vérifier HIBP | configure-auth | Minimal |
+| 4 | Rate limit serveur | `supabase/functions/rate-limit/index.ts` | Moyen |
+| 5 | Alerting sécurité | Extension `csp-report`, discussion webhook | Moyen |
+| 6 | Tests guards rôle | `src/test/role-guards.test.ts` | Léger |
 
