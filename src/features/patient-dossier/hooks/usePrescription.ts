@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDemo } from '@/contexts/DemoContext';
-import { guardPrescription } from '@/lib/server-role-guard';
+import { guardPrescription, checkRateLimit } from '@/lib/server-role-guard';
 import { checkAllergyConflict, checkDrugInteractions, type DrugInteraction } from '@/lib/allergy-check';
 import {
   encodePrescriptionMeta,
@@ -44,6 +44,8 @@ export function usePrescription(encounter: any, patient: any, prescriptions: any
   const handlePrescribe = async () => {
     if (!encounter || !user) return;
     if (!isDemoMode) {
+      const rl = checkRateLimit(`rx_${user.id}`, 20, 60_000);
+      if (!rl.allowed) { toast.error(`Trop de prescriptions. Réessayez dans ${Math.ceil(rl.resetIn / 1000)}s`); return; }
       const check = await guardPrescription();
       if (!check.authorized) { toast.error(check.error || 'Non autorisé'); return; }
     }

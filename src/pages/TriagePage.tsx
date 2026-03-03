@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
 import { ArrowLeft, ArrowRight, Check, Search, Lightbulb, AlertTriangle, Pill } from 'lucide-react';
 import { toast } from 'sonner';
-import { guardTriage } from '@/lib/server-role-guard';
+import { guardTriage, checkRateLimit } from '@/lib/server-role-guard';
 import { startTriageTimer, stopTriageTimer } from '@/lib/kpi-tracker';
 
 const SFMU_MOTIFS = [
@@ -224,6 +224,9 @@ export default function TriagePage() {
   const handleSubmit = async () => {
     if (!user) return;
     setSubmitting(true);
+    // Rate limit triage submissions
+    const rl = checkRateLimit(`triage_${user.id}`, 10, 60_000);
+    if (!rl.allowed) { toast.error(`Trop de triages. Réessayez dans ${Math.ceil(rl.resetIn / 1000)}s`); setSubmitting(false); return; }
     // Server-side role verification before triage mutation
     const triageCheck = await guardTriage();
     if (!triageCheck.authorized) {

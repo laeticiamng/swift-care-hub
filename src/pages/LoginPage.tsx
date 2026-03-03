@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Activity, ArrowLeft, Info, Play } from 'lucide-react';
 import { z } from 'zod';
+import { checkRateLimit } from '@/lib/server-role-guard';
+import MFAChallenge from '@/components/urgence/MFAChallenge';
+import MFASetup from '@/components/urgence/MFASetup';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Email invalide'),
@@ -14,18 +17,29 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
+  const { signIn, mfaRequired, mfaEnrollRequired, completeMFA, completeMFAEnroll, signOut } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // MFA Challenge after login
+  if (mfaRequired) {
+    return <MFAChallenge onVerified={() => { completeMFA(); navigate('/select-role'); }} onCancel={signOut} />;
+  }
+  // MFA Enrollment required for medical roles
+  if (mfaEnrollRequired) {
+    return <MFASetup onComplete={() => { completeMFAEnroll(); navigate('/select-role'); }} />;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     const validation = loginSchema.safeParse({ email, password });
     if (!validation.success) { setError(validation.error.errors[0].message); return; }
+    const rl = checkRateLimit(`login_${email}`, 5, 60_000);
+    if (!rl.allowed) { setError(`Trop de tentatives. Réessayez dans ${Math.ceil(rl.resetIn / 1000)}s`); return; }
     setLoading(true);
     try {
       const { error } = await signIn(email, password);

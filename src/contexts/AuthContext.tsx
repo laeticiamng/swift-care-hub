@@ -15,16 +15,21 @@ const normalizeRole = (role: string): AppRole | null => {
 };
 
 const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const MEDICAL_ROLES: AppRole[] = ['medecin', 'ioa', 'ide'];
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
   loading: boolean;
+  mfaRequired: boolean;
+  mfaEnrollRequired: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   selectRole: (role: AppRole) => Promise<void>;
+  completeMFA: () => void;
+  completeMFAEnroll: () => void;
   availableRoles: AppRole[];
 }
 
@@ -38,6 +43,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<AppRole | null>(null);
   const [availableRoles, setAvailableRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaEnrollRequired, setMfaEnrollRequired] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -79,12 +86,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .map(r => normalizeRole(r.role))
         .filter((r): r is AppRole => r !== null)));
       setAvailableRoles(roles);
+
+      // Check MFA status for medical roles
+      const hasMedicalRole = roles.some(r => MEDICAL_ROLES.includes(r));
+      if (hasMedicalRole) {
+        const { data: factors } = await supabase.auth.mfa.listFactors();
+        const hasVerifiedTOTP = factors?.totp?.some(f => f.status === 'verified') ?? false;
+        if (!hasVerifiedTOTP) {
+          setMfaEnrollRequired(true);
+        } else {
+          // Check AAL level — if only aal1, need MFA challenge
+          const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+          if (aal?.currentLevel === 'aal1') {
+            setMfaRequired(true);
+          }
+        }
+      }
+
       // Restore from sessionStorage first
       const savedRole = normalizeRole(sessionStorage.getItem('urgenceos_role') || '');
       if (savedRole && roles.includes(savedRole)) {
         setRole(savedRole);
       } else if (roles.length === 1) {
-        // Auto-select if only one role
         setRole(roles[0]);
         sessionStorage.setItem('urgenceos_role', roles[0]);
       }
@@ -112,6 +135,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = useCallback(async () => {
     sessionStorage.removeItem('urgenceos_role');
     setRole(null);
+    setMfaRequired(false);
+    setMfaEnrollRequired(false);
     await supabase.auth.signOut();
   }, []);
 
@@ -143,8 +168,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sessionStorage.setItem('urgenceos_role', selectedRole);
   };
 
+  const completeMFA = useCallback(() => {
+    setMfaRequired(false);
+  }, []);
+
+  const completeMFAEnroll = useCallback(() => {
+    setMfaEnrollRequired(false);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, signIn, signUp, signOut, selectRole, availableRoles }}>
+    <AuthContext.Provider value={{ user, session, role, loading, mfaRequired, mfaEnrollRequired, signIn, signUp, signOut, selectRole, completeMFA, completeMFAEnroll, availableRoles }}>
       {children}
     </AuthContext.Provider>
   );
