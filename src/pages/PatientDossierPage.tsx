@@ -27,6 +27,8 @@ import { RecapDrawer } from '@/components/urgence/RecapDrawer';
 import { PatientTimeline } from '@/components/urgence/PatientTimeline';
 import { AISynthesisPanel } from '@/components/urgence/AISynthesisPanel';
 import { ProtocolLibrary } from '@/components/urgence/ProtocolLibrary';
+import { ChatPanel } from '@/components/urgence/ChatPanel';
+import type { ChatChannel } from '@/hooks/useChat';
 import { toast } from 'sonner';
 
 // Feature modules
@@ -132,6 +134,15 @@ export default function PatientDossierPage() {
             <Button variant="outline" size="sm" onClick={interop.handleExportFHIR}><Share2 className="h-4 w-4 mr-1" /> Export FHIR</Button>
             <Button variant="outline" size="sm" onClick={interop.handleGenerateCRH}><FileText className="h-4 w-4 mr-1" /> Generer CRH</Button>
             <Button variant="outline" size="sm" onClick={interop.handleGenerateOrdonnance}><FileDown className="h-4 w-4 mr-1" /> Ordonnance</Button>
+            <ChatPanel
+              channels={[
+                { type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' },
+                { type: 'zone', id: encounter.zone || 'sau', label: `Zone ${(encounter.zone || 'sau').toUpperCase()}`, icon: 'radio' },
+                { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
+              ] as ChatChannel[]}
+              defaultChannel={{ type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' }}
+              triggerLabel="Chat"
+            />
             {encounter.status !== 'finished' && (
               <Button variant="outline" size="sm" onClick={() => setDischargeOpen(true)}><DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie</Button>
             )}

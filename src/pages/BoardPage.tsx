@@ -20,6 +20,8 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
 import { FloorPlanView } from '@/components/urgence/FloorPlanView';
+import { ChatPanel } from '@/components/urgence/ChatPanel';
+import type { ChatChannel } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -313,6 +315,16 @@ export default function BoardPage() {
               onMarkAsRead={markAsRead}
               onMarkAllAsRead={markAllAsRead}
               onRequestPermission={requestPermission}
+            />
+            <ChatPanel
+              channels={[
+                { type: 'zone', id: selectedZone || 'sau', label: `Zone ${(selectedZone || 'sau').toUpperCase()}`, icon: 'radio' },
+                { type: 'zone', id: 'sau', label: 'SAU', icon: 'radio' },
+                { type: 'zone', id: 'uhcd', label: 'UHCD', icon: 'radio' },
+                { type: 'zone', id: 'dechocage', label: 'Déchocage', icon: 'radio' },
+                { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
+              ] as ChatChannel[]}
+              triggerLabel="Chat"
             />
             <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={signOut}>
