@@ -18,13 +18,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertTriangle, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, FileText, Share2, FileDown, History, Microscope, ScanLine, Pill, Stethoscope, Eye } from 'lucide-react';
+import { AlertTriangle, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, FileText, Share2, FileDown, History, Microscope, ScanLine, Pill, Stethoscope, Eye, Sparkles } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { FHIRViewer } from '@/components/urgence/interop/FHIRViewer';
 import { CRHPreview } from '@/components/urgence/documents/CRHPreview';
 import { DischargeDialog } from '@/components/urgence/DischargeDialog';
 import { RecapDrawer } from '@/components/urgence/RecapDrawer';
 import { PatientTimeline } from '@/components/urgence/PatientTimeline';
+import { AISynthesisPanel } from '@/components/urgence/AISynthesisPanel';
+import { ProtocolLibrary } from '@/components/urgence/ProtocolLibrary';
 import { toast } from 'sonner';
 
 // Feature modules
@@ -126,6 +128,7 @@ export default function PatientDossierPage() {
         )}
         {!isReadOnly && (
           <div className="flex flex-wrap justify-end gap-2 mb-4">
+            <ProtocolLibrary onApplyProtocol={rx.handleApplyPack} motifSfmu={encounter.motif_sfmu} />
             <Button variant="outline" size="sm" onClick={interop.handleExportFHIR}><Share2 className="h-4 w-4 mr-1" /> Export FHIR</Button>
             <Button variant="outline" size="sm" onClick={interop.handleGenerateCRH}><FileText className="h-4 w-4 mr-1" /> Generer CRH</Button>
             <Button variant="outline" size="sm" onClick={interop.handleGenerateOrdonnance}><FileDown className="h-4 w-4 mr-1" /> Ordonnance</Button>
@@ -173,6 +176,20 @@ export default function PatientDossierPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           {/* Left column — 3 cols */}
           <div className="lg:col-span-3 space-y-4">
+            {!isReadOnly && (
+              <AISynthesisPanel
+                patientData={{
+                  patient: { nom: patient.nom, prenom: patient.prenom, date_naissance: patient.date_naissance, sexe: patient.sexe, poids: patient.poids, allergies: patient.allergies, antecedents: patient.antecedents, medecin_traitant: patient.medecin_traitant },
+                  encounter: { motif_sfmu: encounter.motif_sfmu, ccmu: encounter.ccmu, cimu: encounter.cimu, zone: encounter.zone, arrival_time: encounter.arrival_time },
+                  vitals: vitals.map(v => ({ fc: v.fc, pa_systolique: v.pa_systolique, pa_diastolique: v.pa_diastolique, spo2: v.spo2, temperature: v.temperature, frequence_respiratoire: v.frequence_respiratoire, gcs: v.gcs, eva_douleur: v.eva_douleur, recorded_at: v.recorded_at })),
+                  prescriptions: prescriptions.map(rx => ({ medication_name: rx.medication_name, dosage: rx.dosage, route: rx.route, status: rx.status })),
+                  results: results.map(r => ({ title: r.title, category: r.category, content: r.content, is_critical: r.is_critical })),
+                  timeline: timeline.map(t => ({ item_type: t.item_type, content: t.content })),
+                }}
+                className="animate-in fade-in duration-300"
+              />
+            )}
+
             {!isReadOnly && (
               <Card className="animate-in fade-in duration-300">
                 <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
