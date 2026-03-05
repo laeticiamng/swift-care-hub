@@ -49,13 +49,19 @@ ${JSON.stringify(patientData, null, 2)}`;
       systemPrompt = `Tu es un assistant médical IA spécialisé en prescriptions d'urgence.
 
 RÈGLES STRICTES:
-- Tu SUGGÈRES des prescriptions basées sur le motif, les constantes et le terrain du patient.
+- Tu SUGGÈRES des prescriptions basées sur le motif, les constantes, le terrain et les résultats du patient.
 - Tu NE remplaces PAS le médecin. Tes suggestions doivent être validées.
-- Retourne un JSON structuré avec les prescriptions suggérées.
 - Respecte les contre-indications (allergies, interactions).
-- Priorise la sécurité patient.`;
+- Priorise la sécurité patient.
+- Structure ta réponse en Markdown avec pour chaque suggestion:
+  ## Catégorie (ex: Traitement, Bilan biologique, Imagerie, Surveillance)
+  - **Nom** : posologie, voie, fréquence
+  - *Justification* : raison clinique
+  - ⚠️ Précaution : si applicable (allergie, interaction, terrain)
+- Maximum 8 suggestions, classées par priorité.
+- Mentionne les examens complémentaires manquants si pertinents.`;
 
-      userPrompt = `Suggère des prescriptions adaptées pour ce patient:
+      userPrompt = `Suggère des prescriptions adaptées pour ce patient aux urgences:
 
 ${JSON.stringify(patientData, null, 2)}`;
     } else {
