@@ -18,7 +18,8 @@ import { LabAlertNotification } from '@/components/urgence/LabAlertNotification'
 import { NotificationCenter } from '@/components/urgence/NotificationCenter';
 import { useNotifications } from '@/hooks/useNotifications';
 import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
-import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
+import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
+import { FloorPlanView } from '@/components/urgence/FloorPlanView';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -55,7 +56,7 @@ export default function BoardPage() {
   const [medecins, setMedecins] = useState<{ id: string; full_name: string }[]>([]);
   const userKey = user?.id ? `_${user.id}` : '';
   const [myOnly, setMyOnly] = useState(() => localStorage.getItem(`urgenceos_myOnly${userKey}`) === 'true');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => (localStorage.getItem(`urgenceos_viewMode${userKey}`) as 'grid' | 'list') || 'grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'plan'>(() => (localStorage.getItem(`urgenceos_viewMode${userKey}`) as 'grid' | 'list' | 'plan') || 'grid');
   const [selectedZone, setSelectedZone] = useState<ZoneKey | 'all'>(() => (localStorage.getItem(`urgenceos_selectedZone${userKey}`) as ZoneKey | 'all') || 'all');
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
@@ -292,9 +293,17 @@ export default function BoardPage() {
             <Button variant={myOnly ? 'default' : 'outline'} size="sm" onClick={() => setMyOnly(!myOnly)}>
               <Filter className="h-4 w-4 mr-1" /> {!isMobile && 'Mes patients'}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
-              {viewMode === 'grid' ? <List className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
-            </Button>
+            <div className="flex items-center border rounded-lg overflow-hidden">
+              <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('grid')}>
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('list')}>
+                <List className="h-4 w-4" />
+              </Button>
+              <Button variant={viewMode === 'plan' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('plan')}>
+                <MapPin className="h-4 w-4" />
+              </Button>
+            </div>
             <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>
               {!isMobile && 'Changer rôle'}
             </Button>
@@ -346,7 +355,16 @@ export default function BoardPage() {
           onClickPatient={navigateToPatient}
         />
 
-        {viewMode === 'grid' ? (
+        {viewMode === 'plan' ? (
+          <FloorPlanView
+            encounters={filtered}
+            resultCounts={resultCounts}
+            waitingPatients={[...preIOA, ...noZone, ...noBox]}
+            highlightedIds={highlightedIds}
+            hasActiveFilter={myOnly}
+            onClickEncounter={navigateToPatient}
+          />
+        ) : viewMode === 'grid' ? (
           <div className="space-y-6">
             {ZONE_CONFIGS.filter(z => selectedZone === 'all' || z.key === selectedZone).map(z => (
               <ZoneGrid
