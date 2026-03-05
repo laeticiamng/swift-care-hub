@@ -186,6 +186,7 @@ export default function PatientDossierPage() {
                   results: results.map(r => ({ title: r.title, category: r.category, content: r.content, is_critical: r.is_critical })),
                   timeline: timeline.map(t => ({ item_type: t.item_type, content: t.content })),
                 }}
+                onCRHGenerated={interop.handleSetAICRH}
                 className="animate-in fade-in duration-300"
               />
             )}

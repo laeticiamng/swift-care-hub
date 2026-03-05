@@ -124,10 +124,17 @@ export function useInterop(
     setOrdonnanceDrawerOpen(true);
   };
 
+  const handleSetAICRH = (html: string) => {
+    setCrhHTML(html);
+    setCrhStatus('draft');
+    setCrhDrawerOpen(true);
+  };
+
   return {
     fhirDrawerOpen, setFhirDrawerOpen, fhirBundle,
-    crhDrawerOpen, setCrhDrawerOpen, crhHTML, crhStatus,
+    crhDrawerOpen, setCrhDrawerOpen, crhHTML, setCrhHTML, crhStatus,
     ordonnanceDrawerOpen, setOrdonnanceDrawerOpen, ordonnanceHTML,
     handleExportFHIR, handleGenerateCRH, handleSignCRH, handleSendMSSante, handleGenerateOrdonnance,
+    handleSetAICRH,
   };
 }
