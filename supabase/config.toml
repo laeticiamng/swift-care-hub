@@ -16,3 +16,6 @@ verify_jwt = true
 [functions.csp-report]
 # CSP violation reports are sent by browsers without auth headers
 verify_jwt = false
+
+[functions.ai-clinical]
+verify_jwt = false

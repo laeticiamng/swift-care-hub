@@ -15,6 +15,8 @@ import { WaitingBanner } from '@/components/urgence/WaitingBanner';
 import { OnboardingBanner } from '@/components/urgence/OnboardingBanner';
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
 import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
+import { NotificationCenter } from '@/components/urgence/NotificationCenter';
+import { useNotifications } from '@/hooks/useNotifications';
 import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,6 +48,7 @@ export default function BoardPage() {
   const effectiveRole = isDemoMode ? demoRole : role;
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, requestPermission } = useNotifications(user?.id);
   const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
   const [resultCounts, setResultCounts] = useState<ResultCount[]>([]);
   const [rxCounts, setRxCounts] = useState<RxCount[]>([]);
@@ -295,6 +298,13 @@ export default function BoardPage() {
             <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>
               {!isMobile && 'Changer rôle'}
             </Button>
+            <NotificationCenter
+              notifications={notifications}
+              unreadCount={unreadCount}
+              onMarkAsRead={markAsRead}
+              onMarkAllAsRead={markAllAsRead}
+              onRequestPermission={requestPermission}
+            />
             <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={signOut}>
               <LogOut className="h-4 w-4" />
