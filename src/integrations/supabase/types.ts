@@ -205,6 +205,39 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          channel_id: string
+          channel_type: Database["public"]["Enums"]["channel_type"]
+          content: string
+          created_at: string
+          id: string
+          is_urgent: boolean
+          read_by: string[]
+          sender_id: string
+        }
+        Insert: {
+          channel_id: string
+          channel_type: Database["public"]["Enums"]["channel_type"]
+          content: string
+          created_at?: string
+          id?: string
+          is_urgent?: boolean
+          read_by?: string[]
+          sender_id: string
+        }
+        Update: {
+          channel_id?: string
+          channel_type?: Database["public"]["Enums"]["channel_type"]
+          content?: string
+          created_at?: string
+          id?: string
+          is_urgent?: boolean
+          read_by?: string[]
+          sender_id?: string
+        }
+        Relationships: []
+      }
       patient_consents: {
         Row: {
           consent_type: string
@@ -677,6 +710,7 @@ export type Database = {
     }
     Enums: {
       app_role: "medecin" | "ioa" | "ide" | "as" | "secretaire"
+      channel_type: "patient" | "zone" | "general"
       encounter_status:
         | "planned"
         | "arrived"
@@ -830,6 +864,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["medecin", "ioa", "ide", "as", "secretaire"],
+      channel_type: ["patient", "zone", "general"],
       encounter_status: [
         "planned",
         "arrived",
