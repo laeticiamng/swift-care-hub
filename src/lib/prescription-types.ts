@@ -376,6 +376,83 @@ export const PRESCRIPTION_PACKS: Record<string, PrescriptionPack> = {
       { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '500mL', route: 'IV', debit: '125 mL/h' },
     ],
   },
+  // ==========================================
+  // NEW PROTOCOLS — AVC, Sepsis sévère, Polytraumatisme, Anaphylaxie, État de mal épileptique
+  // ==========================================
+  'AVC / Deficit neurologique': {
+    label: 'Pack AVC aigu',
+    items: [
+      { type: 'surveillance', medication_name: 'Scope neuro continu', dosage: '', route: '', surveillance_type: 'scope + GCS + pupilles + glycemie + PA', surveillance_frequency: 'q15min' },
+      { type: 'exam_bio', medication_name: 'Bio AVC', dosage: '', route: '', exam_list: ['NFS', 'TP/INR', 'Ionogramme', 'Creatinine', 'Troponine', 'Glycemie'], exam_urgency: 'urgent' },
+      { type: 'exam_ecg', medication_name: 'ECG 12 derivations', dosage: '', route: '', priority: 'stat' },
+      { type: 'exam_imagerie', medication_name: 'Scanner cerebral + angioscanner', dosage: '', route: '', exam_site: 'Cerebral sans puis avec injection + angio TSA/Willis', exam_urgency: 'urgent' },
+      { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '500mL', route: 'IV', debit: '60 mL/h' },
+      { type: 'regime', medication_name: 'A jeun strict', dosage: '', route: '', regime_details: 'A jeun strict — risque de thrombolyse' },
+      { type: 'conditionnel', medication_name: 'Nicardipine IVSE', dosage: '1mg/h', route: 'IVSE', condition_trigger: 'si PAS > 220 ou PAD > 120 (AVC ischemique) / PAS > 180 (AVC hemorragique)', condition_max_doses: 1 },
+      { type: 'avis_specialise', medication_name: 'Avis UNV / Neurologie', dosage: '', route: '', avis_speciality: 'Neurologie', avis_motif: 'Deficit neurologique aigu — evaluation thrombolyse / thrombectomie', avis_urgency: 'urgent' },
+      { type: 'mobilisation', medication_name: 'Repos strict au lit', dosage: '', route: '', mobilisation_details: 'Decubitus dorsal 30° — pas de lever' },
+    ],
+  },
+  'Sepsis severe / Choc septique': {
+    label: 'Pack sepsis severe (Surviving Sepsis)',
+    items: [
+      { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '1000mL', route: 'IV', debit: '1000 mL/h', duration: 'Bolus 30mL/kg en 1h' },
+      { type: 'medicament', medication_name: 'Cefotaxime', dosage: '2g', route: 'IV', frequency: 'q8h', priority: 'stat' },
+      { type: 'medicament', medication_name: 'Gentamicine', dosage: '5mg/kg', route: 'IV', frequency: '1 dose', priority: 'stat' },
+      { type: 'conditionnel', medication_name: 'Noradrenaline IVSE', dosage: '0.1µg/kg/min', route: 'IVSE', condition_trigger: 'si PAM < 65 apres remplissage 30mL/kg', condition_max_doses: 1 },
+      { type: 'exam_bio', medication_name: 'Bio sepsis complet', dosage: '', route: '', exam_list: ['NFS', 'CRP', 'Hemocultures', 'Lactates', 'Ionogramme', 'Creatinine', 'Bilan hepatique', 'TP/INR', 'Fibrinogene', 'GDS arteriels'], exam_urgency: 'urgent' },
+      { type: 'exam_imagerie', medication_name: 'Radio thorax', dosage: '', route: '', exam_site: 'Thorax face', exam_urgency: 'urgent' },
+      { type: 'surveillance', medication_name: 'Monitorage hemodynamique', dosage: '', route: '', surveillance_type: 'scope + PA invasive + diurese horaire + lactates q2h', surveillance_frequency: 'continue' },
+      { type: 'medicament', medication_name: 'Paracetamol', dosage: '1g', route: 'IV', frequency: 'q6h', priority: 'routine' },
+      { type: 'regime', medication_name: 'A jeun strict', dosage: '', route: '', regime_details: 'A jeun strict' },
+      { type: 'avis_specialise', medication_name: 'Avis reanimation', dosage: '', route: '', avis_speciality: 'Reanimation', avis_motif: 'Sepsis severe / choc septique — discussion transfert rea', avis_urgency: 'urgent' },
+    ],
+  },
+  'Polytraumatisme': {
+    label: 'Pack polytrauma / trauma grave',
+    items: [
+      { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '1000mL', route: 'IV', debit: '1000 mL/h', duration: 'Bolus' },
+      { type: 'medicament', medication_name: 'Acide tranexamique', dosage: '1g', route: 'IV', frequency: '1 dose en 10min (< H3 post-trauma)', priority: 'stat' },
+      { type: 'titration', medication_name: 'Morphine', dosage: '', route: 'IV', titration_dose_init: 2, titration_dose_max: 20, titration_step: 2, titration_interval: '5 min', titration_target: 'EVA < 4', priority: 'stat' },
+      { type: 'exam_bio', medication_name: 'Bio trauma', dosage: '', route: '', exam_list: ['NFS', 'Groupe Rh RAI', 'TP/INR', 'Fibrinogene', 'Ionogramme', 'Creatinine', 'Lactates', 'GDS arteriels'], exam_urgency: 'urgent' },
+      { type: 'exam_imagerie', medication_name: 'Body scanner', dosage: '', route: '', exam_site: 'Body scanner (crane + rachis + TAP)', exam_urgency: 'urgent' },
+      { type: 'exam_imagerie', medication_name: 'FAST echo', dosage: '', route: '', exam_site: 'FAST echo (epanchement)', exam_urgency: 'urgent' },
+      { type: 'surveillance', medication_name: 'Monitorage complet', dosage: '', route: '', surveillance_type: 'scope + SpO2 + PA + GCS + pupilles + diurese', surveillance_frequency: 'continue' },
+      { type: 'oxygene', medication_name: 'O2', dosage: '', route: '', o2_device: 'Masque HC', o2_debit: '15L/min', o2_target: 'SpO2 > 95%' },
+      { type: 'regime', medication_name: 'A jeun strict', dosage: '', route: '', regime_details: 'A jeun strict — bloc potentiel' },
+      { type: 'dispositif', medication_name: 'Collier cervical rigide', dosage: '', route: '', device_name: 'Collier cervical rigide', device_details: 'Maintien jusqua TDM rachis cervical' },
+      { type: 'avis_specialise', medication_name: 'Avis chirurgie', dosage: '', route: '', avis_speciality: 'Chirurgie generale', avis_motif: 'Polytraumatisme — evaluation chirurgicale', avis_urgency: 'urgent' },
+    ],
+  },
+  'Anaphylaxie': {
+    label: 'Pack anaphylaxie',
+    items: [
+      { type: 'medicament', medication_name: 'Adrenaline IM', dosage: '0.5mg', route: 'IM', frequency: '1 dose (repeter a 5min si besoin)', priority: 'stat' },
+      { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '1000mL', route: 'IV', debit: '1000 mL/h', duration: 'Bolus rapide' },
+      { type: 'medicament', medication_name: 'Methylprednisolone', dosage: '120mg', route: 'IV', frequency: '1 dose', priority: 'stat' },
+      { type: 'medicament', medication_name: 'Dexchlorpheniramine', dosage: '5mg', route: 'IV', frequency: '1 dose', priority: 'urgent' },
+      { type: 'conditionnel', medication_name: 'Salbutamol nebulise', dosage: '5mg', route: 'INH', condition_trigger: 'si bronchospasme', condition_max_doses: 3, condition_interval: '20min' },
+      { type: 'oxygene', medication_name: 'O2', dosage: '', route: '', o2_device: 'Masque HC', o2_debit: '15L/min', o2_target: 'SpO2 > 95%' },
+      { type: 'surveillance', medication_name: 'Surveillance anaphylaxie', dosage: '', route: '', surveillance_type: 'scope + PA + SpO2 + signes cutanes + voies aeriennes', surveillance_frequency: 'continue' },
+      { type: 'exam_bio', medication_name: 'Bio anaphylaxie', dosage: '', route: '', exam_list: ['Tryptase', 'NFS', 'Histamine'], exam_urgency: 'urgent' },
+      { type: 'mobilisation', medication_name: 'Position allongee', dosage: '', route: '', mobilisation_details: 'Decubitus dorsal — jambes surelevees' },
+    ],
+  },
+  'Etat de mal epileptique': {
+    label: 'Pack EME',
+    items: [
+      { type: 'medicament', medication_name: 'Clonazepam', dosage: '1mg', route: 'IV', frequency: '1 dose IVL (1min) — repeter 1x a 5min si echec', priority: 'stat' },
+      { type: 'conditionnel', medication_name: 'Levetiracetam', dosage: '30mg/kg', route: 'IV', condition_trigger: 'si crise persistante > 5min apres benzodiazepine', condition_max_doses: 1 },
+      { type: 'conditionnel', medication_name: 'Fosphenytoine', dosage: '20mg EP/kg', route: 'IV', condition_trigger: 'si echec levetiracetam a 30min', condition_max_doses: 1 },
+      { type: 'oxygene', medication_name: 'O2', dosage: '', route: '', o2_device: 'Masque HC', o2_debit: '15L/min', o2_target: 'SpO2 > 95%' },
+      { type: 'perfusion', medication_name: 'NaCl 0.9%', dosage: '500mL', route: 'IV', debit: '60 mL/h' },
+      { type: 'surveillance', medication_name: 'Surveillance EME', dosage: '', route: '', surveillance_type: 'scope + GCS + pupilles + glycemie + SpO2 + chrono crises', surveillance_frequency: 'continue' },
+      { type: 'exam_bio', medication_name: 'Bio EME', dosage: '', route: '', exam_list: ['NFS', 'Ionogramme', 'Creatinine', 'CPK', 'Lactates', 'Glycemie', 'GDS arteriels'], exam_urgency: 'urgent' },
+      { type: 'exam_imagerie', medication_name: 'Scanner cerebral', dosage: '', route: '', exam_site: 'Cerebral sans injection', exam_urgency: 'urgent' },
+      { type: 'mobilisation', medication_name: 'PLS si convulsions', dosage: '', route: '', mobilisation_details: 'PLS — protection des VAS — canule de Guedel' },
+      { type: 'avis_specialise', medication_name: 'Avis reanimation', dosage: '', route: '', avis_speciality: 'Reanimation', avis_motif: 'EME refractaire — discussion IOT + transfert rea', avis_urgency: 'urgent' },
+    ],
+  },
 };
 
 // ==========================================
