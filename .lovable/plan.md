@@ -1,76 +1,40 @@
 
 
-# Plan de Service — Vue spatiale des locaux d'urgence
+# AUDIT PREPRODUCTION v6 — UrgenceOS
 
-## Contexte
+## 1. RESUME EXECUTIF
 
-Actuellement, le board affiche les patients dans une grille numerique (box 1, 2, 3...) par zone. C'est fonctionnel mais ne reflete pas la realite spatiale des locaux. Un "plan de service" permet de voir d'un coup d'oeil ou se trouve physiquement chaque patient dans le batiment.
+La plateforme a subi 5 cycles d'audit et de corrections. Les bloquants de securite (trigger auto-role, hack inviteUserByEmail, dead code) sont tous resolus. Le parcours auth est complet et coherent. La landing page est professionnelle. Le formulaire B2B fonctionne avec rate limiting serveur. Les pages legales sont completes. Il ne reste qu'un seul defaut factuel.
 
-## Ce qui sera construit
+**Publiable aujourd'hui : OUI**
 
-### 1. Configuration spatiale des boxes (`box-config.ts`)
+**Note globale : 18/20**
 
-Ajouter des coordonnees x/y et dimensions pour chaque box dans chaque zone, representant leur position reelle dans les locaux. Layout type service d'urgence :
+**Seul probleme restant :**
+1. **B2BPage.tsx ligne 71** : l'URL SEO JsonLd utilise `https://flow-pulse-assist.lovable.app/b2b` au lieu de `https://urgenceos.fr/b2b`. Toutes les autres pages utilisent correctement `urgenceos.fr`. C'est une incoherence SEO qui doit etre corrigee.
 
-```text
-+--------------------------------------------------+
-|  ACCUEIL / SALLE D'ATTENTE                       |
-+--------+--------+--------+--------+--------+-----+
-|  Box 1 |  Box 2 |  Box 3 |  Box 4 |  Box 5 |    |
-+--------+--------+--------+--------+--------+ C  |
-|  Box 6 |  Box 7 |  Box 8 |  Box 9 | Box 10 | O  |
-+--------+--------+--------+--------+--------+ U  |
-| Box 11 | Box 12 | Box 13 | Box 14 | Box 15 | L  |
-+--------+--------+--------+--------+--------+ O  |
-|       Box 16    |       Box 17    |         | I  |
-+-----------------+-----------------+---------+ R  |
-|                                             |    |
-|          U H C D  (8 lits)                  |    |
-|  +-----+-----+-----+-----+                 |    |
-|  | L1  | L2  | L3  | L4  |                 |    |
-|  +-----+-----+-----+-----+                 |    |
-|  | L5  | L6  | L7  | L8  |                 |    |
-|  +-----+-----+-----+-----+                 |    |
-+--------------------------------------------|    |
-|       DECHOCAGE (5 boxes)                   |    |
-|  +--------+--------+--------+              |    |
-|  | Dech 1 | Dech 2 | Dech 3 |              |    |
-|  +--------+--------+--------+              |    |
-|  |   Dech 4   |   Dech 5   |               |    |
-|  +-------------+-----------+               |    |
-+--------------------------------------------------+
-```
+Tout le reste est conforme. Toutes les corrections des audits v1 a v5 ont ete appliquees correctement :
+- Trigger auto-role supprime
+- RoleSelector coherent ("En attente d'attribution")
+- Hack inviteUserByEmail supprime
+- BlogPage.tsx supprime
+- Rate limit serveur dans contact-lead
+- Validation login alignee sur min(8)
+- Mentions legales completes (capital, hebergeur, adresse)
+- "Security-first" traduit en "Securite native"
+- FAQ dans le header
+- Contact dans le footer
+- SEO sur toutes les pages sauf B2B (URL incorrecte)
 
-### 2. Composant `FloorPlanView` (nouveau)
+## 2. CORRECTION UNIQUE A APPLIQUER
 
-- Vue SVG/CSS interactive representant le plan du service
-- Chaque box est un rectangle cliquable positionne spatialement
-- Code couleur identique a BoxCell (CCMU border, temps d'attente, resultats critiques)
-- Box vide = grise/pointille, box occupee = carte patient condensee
-- Zones visuellement separees avec labels (SAU, UHCD, Dechocage)
-- Zone d'attente/couloir pour patients non installes
-- Responsive : zoom/pan sur mobile, vue complete sur desktop
+### Tache 1 : Corriger l'URL SEO dans B2BPage.tsx
+**Fichier** : `src/pages/B2BPage.tsx`
+- Ligne 71 : Remplacer `https://flow-pulse-assist.lovable.app/b2b` par `https://urgenceos.fr/b2b`
 
-### 3. Integration dans BoardPage
+C'est la seule correction restante. Apres cela, la plateforme est prete pour publication.
 
-- Ajouter un 3e mode de vue : Grille | Liste | **Plan**
-- Toggle dans le header (icone `Map`)
-- Persistance du choix dans localStorage
-- Memes interactions : clic sur un box ouvre le dossier patient
+## 3. VERDICT FINAL
 
-### 4. Details techniques
-
-**Fichiers a creer :**
-- `src/components/urgence/FloorPlanView.tsx` — composant principal du plan spatial
-- `src/lib/floor-plan-config.ts` — coordonnees/dimensions des boxes par zone
-
-**Fichiers a modifier :**
-- `src/pages/BoardPage.tsx` — ajouter le toggle "Plan" et le rendu conditionnel
-- `src/lib/box-config.ts` — enrichir avec positions spatiales (optionnel, peut etre dans un fichier separe)
-
-**Approche rendu :**
-- CSS Grid avec `grid-template-areas` pour un layout fidele aux locaux
-- Pas de SVG complexe : des divs positionnees dans une grille, plus maintenable
-- Couloir central et salle d'attente comme zones visuelles non-interactives
-- Patients en attente affiches dans la zone "salle d'attente" du plan
+La plateforme est **prete pour publication**. Les 5 cycles d'audit precedents ont systematiquement resolu chaque probleme identifie. L'architecture de securite est solide (RBAC, RLS, audit logs immuables, MFA). Le parcours utilisateur est coherent de bout en bout. La vitrine commerciale (landing, B2B, tarifs, securite, FAQ, about, glossaire) est professionnelle et complete.
 
