@@ -58,7 +58,7 @@ function MockTriageScreen() {
       </div>
       <Progress value={60} className="h-2" />
       <div className="flex justify-between text-[10px] text-muted-foreground">
-        {['Identite', 'Motif', 'Constantes', 'CIMU', 'Orientation'].map((s, i) => (
+        {['Identité', 'Motif', 'Constantes', 'CIMU', 'Orientation'].map((s, i) => (
           <span key={s} className={cn(i < 3 ? 'text-primary font-medium' : '')}>{s}</span>
         ))}
       </div>
