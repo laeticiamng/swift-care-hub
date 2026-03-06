@@ -65,7 +65,7 @@ export function SocialProofSection() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6 italic">
-          Les noms des établissements partenaires seront publiés avec leur accord après le lancement du premier pilote.
+          Phase pré-commerciale — premiers pilotes prévus en 2026.
         </p>
       </div>
     </Section>
