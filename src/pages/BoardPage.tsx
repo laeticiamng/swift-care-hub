@@ -67,7 +67,10 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
-  const [labAlerts, setLabAlerts] = useState(SIH_LAB_ALERTS);
+  const [labAlerts, setLabAlerts] = useState(() => {
+    const acked = JSON.parse(localStorage.getItem('urgenceos_acked_lab_alerts') || '[]') as string[];
+    return SIH_LAB_ALERTS.map(a => acked.includes(a.id) ? { ...a, acknowledged: true } : a);
+  });
   const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
@@ -374,9 +377,14 @@ export default function BoardPage() {
       <LabAlertNotification
         alerts={labAlerts}
         onAcknowledge={(alertId, note) => {
-          setLabAlerts(prev => prev.map(a =>
-            a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
-          ));
+          setLabAlerts(prev => {
+            const updated = prev.map(a =>
+              a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
+            );
+            const acked = updated.filter(a => a.acknowledged).map(a => a.id);
+            localStorage.setItem('urgenceos_acked_lab_alerts', JSON.stringify(acked));
+            return updated;
+          });
         }}
       />
 
