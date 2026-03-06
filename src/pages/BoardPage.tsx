@@ -419,6 +419,7 @@ export default function BoardPage() {
                 highlightedIds={highlightedIds}
                 hasActiveFilter={myOnly}
                 onClickEncounter={navigateToPatient}
+                onDropToZone={handleDropToZone}
               />
             ))}
           </div>
