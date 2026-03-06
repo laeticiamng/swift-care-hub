@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, GripVertical } from 'lucide-react';
-import { DragEvent } from 'react';
+import { FlaskConical, GripVertical, Move } from 'lucide-react';
+import { DragEvent, useRef, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const ccmuBorderColors: Record<number, string> = {
@@ -30,12 +30,41 @@ interface BoxCellProps {
   isHighlighted?: boolean;
   hasActiveFilter?: boolean;
   isDragOver?: boolean;
+  isSelected?: boolean;
   onClick?: () => void;
+  onLongPress?: () => void;
   onDropEncounter?: (encounterId: string, boxNumber: number) => void;
 }
 
-export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighlighted, hasActiveFilter, isDragOver, onClick, onDropEncounter }: BoxCellProps) {
+export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighlighted, hasActiveFilter, isDragOver, isSelected, onClick, onLongPress, onDropEncounter }: BoxCellProps) {
   const isMobile = useIsMobile();
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchMoved = useRef(false);
+
+  const handleTouchStart = useCallback(() => {
+    if (!encounter || !onLongPress) return;
+    touchMoved.current = false;
+    longPressTimer.current = setTimeout(() => {
+      onLongPress();
+      // Vibrate for haptic feedback if available
+      if (navigator.vibrate) navigator.vibrate(30);
+    }, 500);
+  }, [encounter, onLongPress]);
+
+  const handleTouchMove = useCallback(() => {
+    touchMoved.current = true;
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
     if (!encounter) return;
@@ -76,8 +105,8 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
             ? 'border-primary bg-primary/10 scale-[1.03] shadow-md'
             : 'border-border/50 bg-muted/30',
         )}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
+        onDragOver={!isMobile ? handleDragOver : undefined}
+        onDrop={!isMobile ? handleDrop : undefined}
       >
         <span className={cn('text-lg font-bold', isDragOver ? 'text-primary' : 'text-muted-foreground/40')}>{boxNumber}</span>
         <span className={cn('text-[10px]', isDragOver ? 'text-primary font-medium' : 'text-muted-foreground/30')}>
@@ -103,14 +132,18 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
       onDragEnd={!isMobile ? handleDragEnd : undefined}
       onDragOver={!isMobile ? handleDragOver : undefined}
       onDrop={!isMobile ? handleDrop : undefined}
+      onTouchStart={isMobile ? handleTouchStart : undefined}
+      onTouchMove={isMobile ? handleTouchMove : undefined}
+      onTouchEnd={isMobile ? handleTouchEnd : undefined}
       onClick={onClick}
       className={cn(
         'rounded-lg border p-2 min-h-[100px] md:min-h-[90px] flex flex-col justify-between transition-all duration-200',
         'bg-card hover:shadow-lg hover:scale-[1.02] active:scale-[0.97]',
-        isMobile ? 'cursor-pointer' : 'cursor-grab active:cursor-grabbing',
+        isMobile ? 'cursor-pointer select-none' : 'cursor-grab active:cursor-grabbing',
         borderColor && `border-l-4 ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
-        hasActiveFilter && !isHighlighted && 'opacity-40',
+        isSelected && 'ring-2 ring-primary ring-offset-2 bg-primary/5 scale-[1.03] shadow-lg',
+        hasActiveFilter && !isHighlighted && !isSelected && 'opacity-40',
         isDragOver && 'ring-2 ring-primary/50 bg-primary/5',
       )}
     >
@@ -124,6 +157,9 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
             {rc && rc.unread > 0 && rc.critical === 0 && (
               <FlaskConical className="h-3 w-3 text-muted-foreground" />
             )}
+            {isMobile && encounter && (
+              <Move className="h-3 w-3 text-muted-foreground/40" />
+            )}
             {!isMobile && <GripVertical className="h-3 w-3 text-muted-foreground/40" />}
           </div>
         </div>
@@ -135,12 +171,17 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
           <p className="text-[10px] text-muted-foreground/70 truncate leading-tight">{encounter.motif_sfmu}</p>
         )}
       </div>
-      <p className={cn(
-        'text-xs font-medium mt-1',
-        waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground',
-      )}>
-        {waitStr}
-      </p>
+      <div className="flex items-center justify-between mt-1">
+        <p className={cn(
+          'text-xs font-medium',
+          waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground',
+        )}>
+          {waitStr}
+        </p>
+        {isSelected && (
+          <span className="text-[9px] text-primary font-semibold animate-pulse">Sélectionné</span>
+        )}
+      </div>
     </div>
   );
 }
