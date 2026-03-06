@@ -13,7 +13,7 @@ import MFASetup from '@/components/urgence/MFASetup';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Email invalide'),
-  password: z.string().min(6, 'Minimum 6 caractères'),
+  password: z.string().min(8, 'Minimum 8 caractères'),
 });
 
 export default function LoginPage() {

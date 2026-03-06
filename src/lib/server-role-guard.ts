@@ -114,6 +114,8 @@ export async function guardAdmin(): Promise<RoleCheckResult> {
 }
 
 // ── Rate Limiter simple ──
+// WARNING: Client-side rate limit uniquement (Map en mémoire navigateur).
+// À remplacer par un rate limit serveur (edge function) avant production clinique.
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
