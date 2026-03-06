@@ -50,7 +50,7 @@ export function FooterSection() {
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Conformité</p>
-            <span className="block text-xs">HDS Certifié</span>
+            <span className="block text-xs">HDS (en cours)</span>
             <span className="block text-xs">ISO 27001 (en cours)</span>
             <span className="block text-xs">RGPD Santé</span>
             <span className="block text-xs">CI-SIS / ANS</span>
