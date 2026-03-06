@@ -51,27 +51,72 @@ const zoneLabelColors: Record<ZoneKey, string> = {
 
 function FloorBoxCell({
   box,
+  zoneKey,
   encounter,
   resultCount,
   isHighlighted,
   hasActiveFilter,
+  isDragOver,
   onClick,
+  onDropEncounter,
 }: {
   box: FloorBox;
+  zoneKey: ZoneKey;
   encounter?: Encounter;
   resultCount?: ResultCount;
   isHighlighted?: boolean;
   hasActiveFilter?: boolean;
+  isDragOver?: boolean;
   onClick?: () => void;
+  onDropEncounter?: (encounterId: string, boxNumber: number) => void;
 }) {
+  const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
+    if (!encounter) return;
+    e.dataTransfer.setData('application/urgenceos-encounter', JSON.stringify({
+      encounterId: encounter.id,
+      fromZone: zoneKey,
+      fromBox: box.boxNumber,
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    (e.currentTarget as HTMLDivElement).style.opacity = '0.4';
+  };
+
+  const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
+    (e.currentTarget as HTMLDivElement).style.opacity = '1';
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/urgenceos-encounter'));
+      if (data.encounterId && onDropEncounter) {
+        onDropEncounter(data.encounterId, box.boxNumber);
+      }
+    } catch {}
+  };
+
   if (!encounter) {
     return (
       <div
-        className="rounded-md border-2 border-dashed border-border/40 flex flex-col items-center justify-center p-1.5 bg-muted/20 transition-colors min-h-[70px]"
+        className={cn(
+          'rounded-md border-2 border-dashed flex flex-col items-center justify-center p-1.5 transition-all duration-200 min-h-[70px]',
+          isDragOver
+            ? 'border-primary bg-primary/10 scale-[1.03] shadow-md'
+            : 'border-border/40 bg-muted/20',
+        )}
         style={{ gridColumn: box.col, gridRow: box.row }}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
-        <span className="text-xs font-semibold text-muted-foreground/30">{box.label}</span>
-        <span className="text-[9px] text-muted-foreground/20">Libre</span>
+        <span className={cn('text-xs font-semibold', isDragOver ? 'text-primary' : 'text-muted-foreground/30')}>{box.label}</span>
+        <span className={cn('text-[9px]', isDragOver ? 'text-primary font-medium' : 'text-muted-foreground/20')}>
+          {isDragOver ? 'Déposer ici' : 'Libre'}
+        </span>
       </div>
     );
   }
@@ -87,22 +132,32 @@ function FloorBoxCell({
 
   return (
     <div
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       onClick={onClick}
       className={cn(
-        'rounded-md border p-1.5 flex flex-col justify-between cursor-pointer transition-all duration-200 min-h-[70px]',
+        'rounded-md border p-1.5 flex flex-col justify-between cursor-grab transition-all duration-200 min-h-[70px]',
         'bg-card hover:shadow-md hover:scale-[1.02] active:scale-[0.97]',
+        'active:cursor-grabbing',
         borderColor && `border-l-[3px] ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
         hasActiveFilter && !isHighlighted && 'opacity-40',
+        isDragOver && 'ring-2 ring-primary/50 bg-primary/5',
       )}
       style={{ gridColumn: box.col, gridRow: box.row }}
     >
       <div>
         <div className="flex items-center justify-between">
           <span className="text-[9px] text-muted-foreground font-medium">{box.label}</span>
-          {rc && rc.critical > 0 && (
-            <FlaskConical className="h-3 w-3 text-medical-critical animate-pulse" />
-          )}
+          <div className="flex items-center gap-0.5">
+            {rc && rc.critical > 0 && (
+              <FlaskConical className="h-3 w-3 text-medical-critical animate-pulse" />
+            )}
+            <GripVertical className="h-3 w-3 text-muted-foreground/40" />
+          </div>
         </div>
         <p className="font-semibold text-xs leading-tight truncate mt-0.5">
           {p.nom.toUpperCase().slice(0, 8)}
