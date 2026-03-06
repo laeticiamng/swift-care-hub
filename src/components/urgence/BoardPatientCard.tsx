@@ -86,10 +86,27 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
   const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
   const ws = showWaitingBadge ? getWaitingStatus(encounter) : null;
 
+  const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData('application/urgenceos-encounter', JSON.stringify({
+      encounterId: encounter.id,
+      fromZone: encounter.zone,
+      fromBox: encounter.box_number,
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    (e.currentTarget as HTMLDivElement).style.opacity = '0.4';
+  };
+
+  const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
+    (e.currentTarget as HTMLDivElement).style.opacity = '1';
+  };
+
   return (
     <Card
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={cn(
-        'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2',
+        'cursor-grab hover:shadow-md transition-all duration-200 active:scale-[0.99] active:cursor-grabbing animate-in fade-in slide-in-from-bottom-2',
         borderColor && `border-l-4 ${borderColor}`,
         waitCritical && 'ring-2 ring-medical-critical/40',
       )}
