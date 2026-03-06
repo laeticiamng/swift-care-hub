@@ -241,10 +241,10 @@ const DEMO_STEPS: DemoStep[] = [
   },
   {
     role: 'secretaire',
-    roleLabel: 'Secretaire',
+    roleLabel: 'Secrétaire',
     title: 'Admission rapide',
-    description: 'Formulaire d\'admission optimise pour enregistrer un patient en moins de 90 secondes. Recherche automatique des patients existants, detection des homonymes.',
-    features: ['Admission < 90 secondes', 'Recherche patient existant', 'Detection homonymes', 'Attribution box/brancard'],
+    description: 'Formulaire d\'admission optimisé pour enregistrer un patient en moins de 90 secondes. Recherche automatique des patients existants, détection des homonymes.',
+    features: ['Admission < 90 secondes', 'Recherche patient existant', 'Détection homonymes', 'Attribution box/brancard'],
     icon: <UserPlus className="h-5 w-5" />,
     color: 'text-purple-600',
     bgColor: 'bg-purple-100 dark:bg-purple-900/30',
