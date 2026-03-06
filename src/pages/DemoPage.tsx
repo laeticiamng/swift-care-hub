@@ -197,7 +197,7 @@ function MockSecretaireScreen() {
 const DEMO_STEPS: DemoStep[] = [
   {
     role: 'medecin',
-    roleLabel: 'Medecin',
+    roleLabel: 'Médecin',
     title: 'Board panoramique',
     description: 'Vue d\'ensemble de tous les patients par zone (SAU, UHCD, Dechocage). Filtrage par medecin, alertes temps reel sur les resultats critiques, timer de prise en charge.',
     features: ['Board Kanban par zone', 'Carte patient avec constantes', 'Alerte resultats critiques', 'Timer > 4h de prise en charge'],
