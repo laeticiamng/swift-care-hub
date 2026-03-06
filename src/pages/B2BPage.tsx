@@ -279,7 +279,7 @@ export default function B2BPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Nom *</Label>
-                    <Input id="lastName" placeholder="Dupont" required />
+                    <Input id="lastName" name="lastName" placeholder="Dupont" required maxLength={200} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="firstName">Prénom *</Label>
