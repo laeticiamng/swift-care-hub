@@ -10,9 +10,9 @@ const stats = [
 ];
 
 const partners = [
-  { name: 'CHU Design Partner', status: 'En discussion' },
-  { name: 'GHT Île-de-France', status: 'Pilote prévu' },
-  { name: 'CH Régional', status: 'Évaluation technique' },
+  { name: 'CHU universitaire', status: 'Co-conception en cours' },
+  { name: 'GHT multi-sites', status: 'Évaluation architecture' },
+  { name: 'CH de proximité', status: 'Cadrage pilote' },
 ];
 
 export function SocialProofSection() {
