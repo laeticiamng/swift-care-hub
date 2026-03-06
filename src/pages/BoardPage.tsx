@@ -427,6 +427,11 @@ export default function BoardPage() {
             {!isMobile && (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>Changer rôle</Button>
+                {effectiveRole === 'medecin' && (
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin/roles')}>
+                    <Shield className="h-4 w-4 mr-1" /> Rôles
+                  </Button>
+                )}
                 <NotificationCenter
                   notifications={notifications}
                   unreadCount={unreadCount}
