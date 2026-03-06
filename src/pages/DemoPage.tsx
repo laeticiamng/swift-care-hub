@@ -54,7 +54,7 @@ function MockTriageScreen() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <ClipboardList className="h-3.5 w-3.5" /> Triage IOA - 5 etapes
+        <ClipboardList className="h-3.5 w-3.5" /> Triage IOA - 5 étapes
       </div>
       <Progress value={60} className="h-2" />
       <div className="flex justify-between text-[10px] text-muted-foreground">
