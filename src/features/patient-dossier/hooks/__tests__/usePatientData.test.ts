@@ -1,5 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
+
+const waitFor = async (callback: () => void, options?: { timeout?: number }) => {
+  const timeout = options?.timeout ?? 1000;
+  const start = Date.now();
+  while (true) {
+    try { callback(); return; } catch (e) {
+      if (Date.now() - start > timeout) throw e;
+      await new Promise(r => setTimeout(r, 50));
+    }
+  }
+};
 import { DEMO_ENCOUNTERS, DEMO_PATIENTS, DEMO_VITALS } from '@/lib/demo-data';
 
 // Mock supabase

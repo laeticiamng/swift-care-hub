@@ -24,6 +24,8 @@ import { ChatPanel } from '@/components/urgence/ChatPanel';
 import type { ChatChannel } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { addToOfflineQueue } from '@/lib/offline-db';
 
 interface EncounterWithPatient {
   id: string;
@@ -46,6 +48,7 @@ interface EncounterWithPatient {
 interface ResultCount { encounter_id: string; unread: number; critical: number; }
 interface RxCount { encounter_id: string; count: number; }
 export default function BoardPage() {
+  const { status: syncStatus, doSync } = useOfflineSync();
   const { user, role, signOut } = useAuth();
   const { isDemoMode, demoRole } = useDemo();
   const effectiveRole = isDemoMode ? demoRole : role;
@@ -207,6 +210,12 @@ export default function BoardPage() {
   };
 
   const handleMoveZone = async (encounterId: string, newZone: ZoneKey) => {
+    if (!navigator.onLine) {
+      await addToOfflineQueue({ table: 'encounters', operation: 'update', payload: { id: encounterId, zone: newZone }, userId: user?.id ?? null, priority: 'normal' });
+      // Optimistic update
+      setEncounters(prev => prev.map(e => e.id === encounterId ? { ...e, zone: newZone } : e));
+      return;
+    }
     await supabase.from('encounters').update({ zone: newZone }).eq('id', encounterId);
     if (user) {
       await supabase.from('audit_logs').insert({
@@ -269,7 +278,7 @@ export default function BoardPage() {
             <Badge variant="secondary" className="text-xs">
               {effectiveRole === 'medecin' ? 'Medecin' : effectiveRole === 'ioa' ? 'IOA' : effectiveRole === 'ide' ? 'IDE' : effectiveRole || ''}
             </Badge>
-            <NetworkStatus />
+            <NetworkStatus syncStatus={syncStatus} onManualSync={doSync} />
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button onClick={() => setSelectedZone('all')}
