@@ -565,6 +565,19 @@ export default function BoardPage() {
           </div>
         )}
       </div>
+
+      {/* Mobile move bar — appears on long-press */}
+      {isMobile && mobileSelectedEncounter && (
+        <MobileMoveBar
+          patientName={`${mobileSelectedEncounter.patients.nom.toUpperCase()} ${mobileSelectedEncounter.patients.prenom}`}
+          currentZone={mobileSelectedEncounter.zone}
+          onMoveToZone={(newZone) => {
+            handleMoveZone(mobileSelectedEncounter.id, newZone);
+            setMobileSelectedEncounter(null);
+          }}
+          onCancel={() => setMobileSelectedEncounter(null)}
+        />
+      )}
     </div>
   );
 }
