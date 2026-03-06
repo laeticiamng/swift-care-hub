@@ -39,7 +39,6 @@ export function FooterSection() {
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Entreprise</p>
             <Link to="/about" className="block text-xs hover:text-foreground transition-colors">À propos</Link>
             <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
-            <Link to="/blog" className="block text-xs hover:text-foreground transition-colors">Blog</Link>
             <Link to="/glossaire" className="block text-xs hover:text-foreground transition-colors">Glossaire</Link>
             <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
           </div>
