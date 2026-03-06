@@ -22,7 +22,7 @@ export function FooterSection() {
               Haut de page
             </button>
             <span className="text-muted-foreground/40">|</span>
-            <span className="text-xs">React · TypeScript · Temps réel</span>
+            <span className="text-xs">Workflow urgences temps réel</span>
           </div>
         </div>
 
