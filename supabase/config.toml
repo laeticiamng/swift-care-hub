@@ -19,3 +19,6 @@ verify_jwt = false
 
 [functions.ai-clinical]
 verify_jwt = false
+
+[functions.contact-lead]
+verify_jwt = false

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, ArrowLeft, Info, Play } from 'lucide-react';
+import { Activity, ArrowLeft, Play } from 'lucide-react';
 import { z } from 'zod';
 import { checkRateLimit } from '@/lib/server-role-guard';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
@@ -124,28 +124,6 @@ export default function LoginPage() {
                 <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
                   <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
                 </Button>
-              <div className="p-5 rounded-xl bg-muted/50 border border-border space-y-4">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <Info className="h-3.5 w-3.5" />
-                  Comptes de demonstration
-                </div>
-                <div className="space-y-1">
-                  {[
-                    { email: 'martin@urgenceos.fr', label: 'Dr. Martin Dupont', role: 'Médecin' },
-                    { email: 'sophie@urgenceos.fr', label: 'Sophie Lefevre', role: 'IOA' },
-                    { email: 'julie@urgenceos.fr', label: 'Julie Bernard', role: 'IDE' },
-                    { email: 'marc@urgenceos.fr', label: 'Marc Petit', role: 'Aide-soignant' },
-                    { email: 'nathalie@urgenceos.fr', label: 'Nathalie Moreau', role: 'Secrétaire' },
-                  ].map(account => (
-                    <button key={account.email} type="button"
-                      onClick={() => { setEmail(account.email); setPassword('urgenceos2026'); }}
-                      className="flex items-center justify-between w-full text-sm text-primary hover:bg-accent hover:shadow-sm rounded-lg px-3 py-2.5 transition-all touch-target">
-                      <span className="font-medium">{account.label}</span>
-                      <span className="text-muted-foreground text-xs">{account.role}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
               </div>
             )}
           </CardContent>

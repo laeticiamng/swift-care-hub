@@ -102,6 +102,42 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_leads: {
+        Row: {
+          created_at: string
+          email: string
+          establishment: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          passages_volume: string | null
+          role_function: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          establishment: string
+          first_name: string
+          id?: string
+          last_name: string
+          message?: string | null
+          passages_volume?: string | null
+          role_function: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          establishment?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          passages_volume?: string | null
+          role_function?: string
+        }
+        Relationships: []
+      }
       data_deletion_requests: {
         Row: {
           created_at: string

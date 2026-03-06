@@ -54,11 +54,11 @@ function MockTriageScreen() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <ClipboardList className="h-3.5 w-3.5" /> Triage IOA - 5 etapes
+        <ClipboardList className="h-3.5 w-3.5" /> Triage IOA - 5 étapes
       </div>
       <Progress value={60} className="h-2" />
       <div className="flex justify-between text-[10px] text-muted-foreground">
-        {['Identite', 'Motif', 'Constantes', 'CIMU', 'Orientation'].map((s, i) => (
+        {['Identité', 'Motif', 'Constantes', 'CIMU', 'Orientation'].map((s, i) => (
           <span key={s} className={cn(i < 3 ? 'text-primary font-medium' : '')}>{s}</span>
         ))}
       </div>
@@ -121,7 +121,7 @@ function MockPancarteScreen() {
             ) : rx.status === 'pending' ? (
               <Button size="sm" className="h-6 text-[10px] bg-green-600 hover:bg-green-700 text-white px-2">Administrer</Button>
             ) : (
-              <Badge variant="outline" className="text-[9px]">Preleve</Badge>
+              <Badge variant="outline" className="text-[9px]">Prélevé</Badge>
             )}
           </div>
         ))}
@@ -149,7 +149,7 @@ function MockASScreen() {
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-muted-foreground text-center">Gros boutons tactiles — concu pour les urgences (gants, ecrans mouilles)</p>
+      <p className="text-[10px] text-muted-foreground text-center">Gros boutons tactiles — conçu pour les urgences (gants, écrans mouillés)</p>
     </div>
   );
 }
@@ -187,8 +187,8 @@ function MockSecretaireScreen() {
         </div>
       </div>
       <div className="flex items-center justify-between p-2 rounded-lg bg-medical-success/10 border border-medical-success/20">
-        <span className="text-xs text-medical-success font-medium">Patient existant detecte</span>
-        <Badge variant="secondary" className="text-[9px]">Auto-complete</Badge>
+        <span className="text-xs text-medical-success font-medium">Patient existant détecté</span>
+        <Badge variant="secondary" className="text-[9px]">Auto-complété</Badge>
       </div>
     </div>
   );
@@ -197,10 +197,10 @@ function MockSecretaireScreen() {
 const DEMO_STEPS: DemoStep[] = [
   {
     role: 'medecin',
-    roleLabel: 'Medecin',
+    roleLabel: 'Médecin',
     title: 'Board panoramique',
-    description: 'Vue d\'ensemble de tous les patients par zone (SAU, UHCD, Dechocage). Filtrage par medecin, alertes temps reel sur les resultats critiques, timer de prise en charge.',
-    features: ['Board Kanban par zone', 'Carte patient avec constantes', 'Alerte resultats critiques', 'Timer > 4h de prise en charge'],
+    description: 'Vue d\'ensemble de tous les patients par zone (SAU, UHCD, Déchocage). Filtrage par médecin, alertes temps réel sur les résultats critiques, timer de prise en charge.',
+    features: ['Board Kanban par zone', 'Carte patient avec constantes', 'Alerte résultats critiques', 'Timer > 4h de prise en charge'],
     icon: <Stethoscope className="h-5 w-5" />,
     color: 'text-blue-600',
     bgColor: 'bg-blue-100 dark:bg-blue-900/30',
@@ -209,9 +209,9 @@ const DEMO_STEPS: DemoStep[] = [
   {
     role: 'ioa',
     roleLabel: 'IOA',
-    title: 'Triage en 5 etapes',
-    description: 'Workflow optimise pour trier un patient en moins de 2 minutes. Suggestion automatique de la classification CIMU basee sur les constantes. Detection des homonymes.',
-    features: ['Workflow 5 etapes', 'Timer < 2 min', 'Classification CIMU assistee', 'Recherche patient existant'],
+    title: 'Triage en 5 étapes',
+    description: 'Workflow optimisé pour trier un patient en moins de 2 minutes. Suggestion automatique de la classification CIMU basée sur les constantes. Détection des homonymes.',
+    features: ['Workflow 5 étapes', 'Timer < 2 min', 'Classification CIMU assistée', 'Recherche patient existant'],
     icon: <ClipboardList className="h-5 w-5" />,
     color: 'text-orange-600',
     bgColor: 'bg-orange-100 dark:bg-orange-900/30',
@@ -220,9 +220,9 @@ const DEMO_STEPS: DemoStep[] = [
   {
     role: 'ide',
     roleLabel: 'IDE',
-    title: 'Pancarte unifiee',
-    description: 'Tout le dossier patient sur un seul ecran. Administration medicaments en 1 tap, transmissions DAR auto-remplies, graphiques constantes en temps reel.',
-    features: ['Fiche patient 0 changement de page', 'Admin medicaments en 1 tap', 'Transmissions DAR integrees', 'Constantes avec mini-graphiques'],
+    title: 'Pancarte unifiée',
+    description: 'Tout le dossier patient sur un seul écran. Administration médicaments en 1 tap, transmissions DAR auto-remplies, graphiques constantes en temps réel.',
+    features: ['Fiche patient 0 changement de page', 'Admin médicaments en 1 tap', 'Transmissions DAR intégrées', 'Constantes avec mini-graphiques'],
     icon: <Heart className="h-5 w-5" />,
     color: 'text-pink-600',
     bgColor: 'bg-pink-100 dark:bg-pink-900/30',
@@ -232,8 +232,8 @@ const DEMO_STEPS: DemoStep[] = [
     role: 'as',
     roleLabel: 'Aide-soignant',
     title: '4 gros boutons',
-    description: 'Interface minimaliste avec gros boutons tactiles. Saisie des constantes avec validation automatique et alerte si hors norme. Concue pour les gants et ecrans mouilles.',
-    features: ['4 boutons principaux', 'Saisie numerique validee', 'Alerte valeurs anormales', 'Interface tactile optimisee'],
+    description: 'Interface minimaliste avec gros boutons tactiles. Saisie des constantes avec validation automatique et alerte si hors norme. Conçue pour les gants et écrans mouillés.',
+    features: ['4 boutons principaux', 'Saisie numérique validée', 'Alerte valeurs anormales', 'Interface tactile optimisée'],
     icon: <Activity className="h-5 w-5" />,
     color: 'text-green-600',
     bgColor: 'bg-green-100 dark:bg-green-900/30',
@@ -241,10 +241,10 @@ const DEMO_STEPS: DemoStep[] = [
   },
   {
     role: 'secretaire',
-    roleLabel: 'Secretaire',
+    roleLabel: 'Secrétaire',
     title: 'Admission rapide',
-    description: 'Formulaire d\'admission optimise pour enregistrer un patient en moins de 90 secondes. Recherche automatique des patients existants, detection des homonymes.',
-    features: ['Admission < 90 secondes', 'Recherche patient existant', 'Detection homonymes', 'Attribution box/brancard'],
+    description: 'Formulaire d\'admission optimisé pour enregistrer un patient en moins de 90 secondes. Recherche automatique des patients existants, détection des homonymes.',
+    features: ['Admission < 90 secondes', 'Recherche patient existant', 'Détection homonymes', 'Attribution box/brancard'],
     icon: <UserPlus className="h-5 w-5" />,
     color: 'text-purple-600',
     bgColor: 'bg-purple-100 dark:bg-purple-900/30',
@@ -279,10 +279,10 @@ export default function DemoPage() {
         {/* Intro */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-3">
-            Decouvrez UrgenceOS en 5 ecrans
+            Découvrez UrgenceOS en 5 écrans
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Chaque role soignant dispose d'une interface adaptee a ses besoins.
+            Chaque rôle soignant dispose d'une interface adaptée à ses besoins.
             Parcourez les 5 profils pour comprendre comment UrgenceOS optimise le workflow des urgences.
           </p>
         </div>
@@ -319,7 +319,7 @@ export default function DemoPage() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-semibold">Points cles :</p>
+              <p className="text-sm font-semibold">Points clés :</p>
               {step.features.map(f => (
                 <div key={f} className="flex items-center gap-2 text-sm">
                   <ChevronRight className="h-4 w-4 text-primary shrink-0" />
@@ -334,7 +334,7 @@ export default function DemoPage() {
                 onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
                 disabled={currentStep === 0}
               >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Precedent
+                <ArrowLeft className="h-4 w-4 mr-1" /> Précédent
               </Button>
               {currentStep < DEMO_STEPS.length - 1 ? (
                 <Button onClick={() => setCurrentStep(currentStep + 1)}>
@@ -346,7 +346,7 @@ export default function DemoPage() {
                 </Button>
               )}
               <Button variant="ghost" size="sm" onClick={() => navigate('/demo/live')} className="text-xs text-primary">
-                Demo interactive
+                Démo interactive
               </Button>
             </div>
           </div>

@@ -3,10 +3,11 @@ import { FooterSection } from '@/components/landing/FooterSection';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { supabase } from '@/integrations/supabase/client';
 import {
   ArrowRight, Building2, Check, CheckCircle, Send, Shield,
   Clock, Users, Layers, RefreshCcw, Eye, Target,
@@ -15,10 +16,36 @@ import {
 export default function B2BPage() {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitError('');
+    setSubmitting(true);
+    const form = formRef.current;
+    if (!form) return;
+    const data = new FormData(form);
+    try {
+      const { error } = await supabase.functions.invoke('contact-lead', {
+        body: {
+          lastName: data.get('lastName'),
+          firstName: data.get('firstName'),
+          email: data.get('email'),
+          establishment: data.get('establishment'),
+          roleFunction: data.get('role'),
+          passagesVolume: data.get('passages'),
+          message: data.get('message'),
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Une erreur est survenue. Veuillez réessayer ou nous contacter par email.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -248,41 +275,42 @@ export default function B2BPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Nom *</Label>
-                    <Input id="lastName" placeholder="Dupont" required />
+                    <Input id="lastName" name="lastName" placeholder="Dupont" required maxLength={200} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="firstName">Prénom *</Label>
-                    <Input id="firstName" placeholder="Marie" required />
+                    <Input id="firstName" name="firstName" placeholder="Marie" required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email professionnel *</Label>
-                  <Input id="email" type="email" placeholder="m.dupont@ch-exemple.fr" required />
+                  <Input id="email" name="email" type="email" placeholder="m.dupont@ch-exemple.fr" required maxLength={255} />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="establishment">Établissement *</Label>
-                    <Input id="establishment" placeholder="CH de Exemple" required />
+                    <Input id="establishment" name="establishment" placeholder="CH de Exemple" required maxLength={300} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Fonction *</Label>
-                    <Input id="role" placeholder="DG, DAF, DSI, Chef de service..." required />
+                    <Input id="role" name="role" placeholder="DG, DAF, DSI, Chef de service..." required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="passages">Volume de passages/an (estimation)</Label>
-                  <Input id="passages" placeholder="ex: 35 000" />
+                  <Input id="passages" name="passages" placeholder="ex: 35 000" maxLength={100} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="message">Contexte et enjeux (optionnel)</Label>
-                  <Textarea id="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} />
+                  <Textarea id="message" name="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} maxLength={2000} />
                 </div>
-                <Button type="submit" className="w-full" size="lg">
-                  <Send className="h-4 w-4 mr-2" /> Demander un pilote
+                {submitError && <p className="text-sm text-medical-critical text-center">{submitError}</p>}
+                <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un pilote'}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}

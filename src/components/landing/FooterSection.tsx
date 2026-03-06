@@ -22,7 +22,7 @@ export function FooterSection() {
               Haut de page
             </button>
             <span className="text-muted-foreground/40">|</span>
-            <span className="text-xs">React · TypeScript · Temps réel</span>
+            <span className="text-xs">Workflow urgences temps réel</span>
           </div>
         </div>
 
@@ -39,7 +39,6 @@ export function FooterSection() {
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Entreprise</p>
             <Link to="/about" className="block text-xs hover:text-foreground transition-colors">À propos</Link>
             <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
-            <Link to="/blog" className="block text-xs hover:text-foreground transition-colors">Blog</Link>
             <Link to="/glossaire" className="block text-xs hover:text-foreground transition-colors">Glossaire</Link>
             <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
           </div>
@@ -51,7 +50,7 @@ export function FooterSection() {
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Conformité</p>
-            <span className="block text-xs">HDS Certifié</span>
+            <span className="block text-xs">HDS (en cours)</span>
             <span className="block text-xs">ISO 27001 (en cours)</span>
             <span className="block text-xs">RGPD Santé</span>
             <span className="block text-xs">CI-SIS / ANS</span>
