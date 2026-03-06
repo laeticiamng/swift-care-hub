@@ -98,16 +98,16 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      draggable={!isMobile}
+      onDragStart={!isMobile ? handleDragStart : undefined}
+      onDragEnd={!isMobile ? handleDragEnd : undefined}
+      onDragOver={!isMobile ? handleDragOver : undefined}
+      onDrop={!isMobile ? handleDrop : undefined}
       onClick={onClick}
       className={cn(
-        'rounded-lg border p-2 min-h-[100px] md:min-h-[90px] flex flex-col justify-between cursor-grab transition-all duration-200',
+        'rounded-lg border p-2 min-h-[100px] md:min-h-[90px] flex flex-col justify-between transition-all duration-200',
         'bg-card hover:shadow-lg hover:scale-[1.02] active:scale-[0.97]',
-        'active:cursor-grabbing',
+        isMobile ? 'cursor-pointer' : 'cursor-grab active:cursor-grabbing',
         borderColor && `border-l-4 ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
         hasActiveFilter && !isHighlighted && 'opacity-40',
