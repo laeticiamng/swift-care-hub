@@ -51,6 +51,38 @@ export function HeroSection() {
           </Button>
         </div>
 
+        {/* Board mockup preview */}
+        <div className="mt-16 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
+          <div className="rounded-2xl border bg-card shadow-xl overflow-hidden" style={{ perspective: '1200px' }}>
+            <div className="bg-muted/50 px-4 py-2 border-b flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+              </div>
+              <span className="ml-2 font-medium">Board — SAU</span>
+            </div>
+            <div className="p-4 grid grid-cols-3 sm:grid-cols-4 gap-3">
+              {[
+                { box: 1, name: 'M. Dupont', ccmu: 3, time: '1h20', color: 'border-l-yellow-500' },
+                { box: 2, name: 'Mme Martin', ccmu: 2, time: '0h45', color: 'border-l-green-500' },
+                { box: 3, name: 'M. Bernard', ccmu: 4, time: '2h10', color: 'border-l-orange-500' },
+                { box: 5, name: 'Mme Petit', ccmu: 1, time: '0h15', color: 'border-l-green-500' },
+              ].map((p) => (
+                <div key={p.box} className={`rounded-lg border border-l-4 ${p.color} bg-background p-3 text-left`}>
+                  <div className="text-[10px] text-muted-foreground font-medium">Box {p.box}</div>
+                  <div className="text-sm font-semibold truncate">{p.name}</div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">CCMU {p.ccmu}</span>
+                    <span className="text-[10px] text-muted-foreground">{p.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 text-center">Aperçu du board panoramique — données fictives</p>
+        </div>
+
         {/* Trust indicators */}
         <div className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> Socle possédé par l'hôpital</span>
