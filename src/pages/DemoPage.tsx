@@ -346,7 +346,7 @@ export default function DemoPage() {
                 </Button>
               )}
               <Button variant="ghost" size="sm" onClick={() => navigate('/demo/live')} className="text-xs text-primary">
-                Demo interactive
+                Démo interactive
               </Button>
             </div>
           </div>
