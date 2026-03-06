@@ -49,8 +49,27 @@ export default function B2BPage() {
     }
   };
 
+  useEffect(() => {
+    document.title = 'UrgenceOS — Établissements hospitaliers | Autonomie logicielle SI';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4.');
+    else {
+      const m = document.createElement('meta');
+      m.name = 'description';
+      m.content = 'Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4.';
+      document.head.appendChild(m);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'UrgenceOS — Établissements hospitaliers',
+        description: 'Reprenez le contrôle de votre SI hospitalier. Socle interne possédé par l\'hôpital, modules urgences, interopérabilité FHIR R4.',
+        url: 'https://flow-pulse-assist.lovable.app/b2b',
+      }} />
       <SiteHeader />
 
       <div className="max-w-6xl mx-auto px-6 py-16">
