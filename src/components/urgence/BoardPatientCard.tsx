@@ -116,6 +116,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
       <CardContent className="p-4 space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 flex-wrap">
+            <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
             <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
             <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
             {waitCritical && (
