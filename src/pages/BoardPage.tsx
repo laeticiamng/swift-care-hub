@@ -366,7 +366,7 @@ export default function BoardPage() {
   const highlightedIds = myOnly ? new Set(filtered.map(e => e.id)) : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background has-bottom-nav">
       <DechocageConfirmDialog
         open={!!dechocagePending}
         patientName={dechocagePending?.patientName || ''}
