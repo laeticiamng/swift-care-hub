@@ -72,16 +72,11 @@ export default function RoleSelector() {
           <span className="text-2xl font-bold">Urgence<span className="text-primary">OS</span></span>
         </div>
         <h1 className="text-2xl font-bold">
-          {isNewUser ? 'Bienvenue ! Choisissez votre rôle' : 'Sélection du rôle'}
+          {isNewUser ? 'En attente d\'attribution' : 'Sélection du rôle'}
         </h1>
         <p className="text-muted-foreground mt-1">
-          {isNewUser ? 'Ce rôle sera attribué de façon permanente à votre compte' : 'Choisissez votre profil pour cette session'}
+          {isNewUser ? 'Un administrateur doit vous attribuer un rôle pour accéder à la plateforme' : 'Choisissez votre profil pour cette session'}
         </p>
-        {isNewUser && (
-          <p className="text-xs text-medical-warning mt-2 font-medium flex items-center justify-center gap-1">
-            <AlertTriangle className="h-3.5 w-3.5 inline shrink-0" /> Ce choix est définitif. Contactez un administrateur pour le modifier ultérieurement.
-          </p>
-        )}
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
 

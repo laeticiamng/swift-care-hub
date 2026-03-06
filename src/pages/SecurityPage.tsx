@@ -25,7 +25,7 @@ const SECURITY_LAYERS = [
     icon: UserCheck,
     title: 'Droits par rôle (RBAC)',
     items: [
-      '7 rôles de base extensibles (médecin, IOA, IDE, AS, secrétaire, admin, auditeur)',
+      '5 rôles opérationnels (médecin, IOA, IDE, aide-soignant, secrétaire)',
       'Vérification systématique côté serveur (pas de contrôle client seul)',
       'Séparation rôles opérationnels et rôles d\'administration',
       'Matrice de droits documentée, versionnée, auditable',

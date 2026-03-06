@@ -16,7 +16,7 @@ export default function MentionsLegalesPage() {
             <li><strong className="text-foreground">Raison sociale :</strong> EmotionsCare SASU</li>
             <li><strong className="text-foreground">SIREN :</strong> 944 505 445</li>
             <li><strong className="text-foreground">Forme juridique :</strong> Société par Actions Simplifiée Unipersonnelle</li>
-            <li><strong className="text-foreground">Capital social :</strong> En cours de constitution</li>
+            <li><strong className="text-foreground">Capital social :</strong> 1 000 €</li>
             <li><strong className="text-foreground">Siège social :</strong> France</li>
             <li><strong className="text-foreground">Directeur de la publication :</strong> Le président de la SASU EmotionsCare</li>
             <li><strong className="text-foreground">Contact :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a></li>
@@ -27,10 +27,9 @@ export default function MentionsLegalesPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-primary">Hébergement</h2>
           <ul className="space-y-1 text-muted-foreground leading-relaxed">
-            <li><strong className="text-foreground">Infrastructure applicative :</strong> Supabase Inc.</li>
+            <li><strong className="text-foreground">Infrastructure applicative :</strong> Infrastructure cloud européenne (AWS Frankfurt, Allemagne)</li>
             <li><strong className="text-foreground">Localisation des serveurs :</strong> Union Européenne (AWS Frankfurt, Allemagne)</li>
-            <li><strong className="text-foreground">Hébergement web :</strong> Vercel Inc. / Netlify Inc.</li>
-            <li><strong className="text-foreground">CDN :</strong> Cloudflare Inc.</li>
+            <li><strong className="text-foreground">Hébergement web :</strong> Lovable Cloud</li>
           </ul>
           <p className="text-muted-foreground leading-relaxed">
             L'ensemble des données est hébergé au sein de l'Union Européenne, conformément aux exigences du RGPD. La qualification HDS (Hébergeur de Données de Santé) est en cours d'obtention pour la phase de déploiement en production.

@@ -10,7 +10,7 @@ const PLANS = [
   {
     name: 'Pilote',
     target: 'Un service d\'urgences',
-    price: 'Forfait cadré',
+    price: 'Forfait cadré — nous consulter',
     period: '',
     description: '10 semaines. 2 modules. ROI mesuré. Intégration DPI lecture seule.',
     features: [
@@ -159,6 +159,10 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+        <p className="text-sm text-muted-foreground text-center mb-20 -mt-14">
+          Le montant du pilote dépend de la complexité d'intégration avec votre SIH existant.{' '}
+          <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">Contactez-nous pour un devis personnalisé →</button>
+        </p>
 
         {/* Business case */}
         <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
