@@ -220,9 +220,9 @@ const DEMO_STEPS: DemoStep[] = [
   {
     role: 'ide',
     roleLabel: 'IDE',
-    title: 'Pancarte unifiee',
-    description: 'Tout le dossier patient sur un seul ecran. Administration medicaments en 1 tap, transmissions DAR auto-remplies, graphiques constantes en temps reel.',
-    features: ['Fiche patient 0 changement de page', 'Admin medicaments en 1 tap', 'Transmissions DAR integrees', 'Constantes avec mini-graphiques'],
+    title: 'Pancarte unifiée',
+    description: 'Tout le dossier patient sur un seul écran. Administration médicaments en 1 tap, transmissions DAR auto-remplies, graphiques constantes en temps réel.',
+    features: ['Fiche patient 0 changement de page', 'Admin médicaments en 1 tap', 'Transmissions DAR intégrées', 'Constantes avec mini-graphiques'],
     icon: <Heart className="h-5 w-5" />,
     color: 'text-pink-600',
     bgColor: 'bg-pink-100 dark:bg-pink-900/30',
