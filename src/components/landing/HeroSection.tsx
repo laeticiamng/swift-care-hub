@@ -45,9 +45,9 @@ export function HeroSection() {
             size="lg"
             variant="outline"
             className="px-8 h-12 text-base animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500"
-            onClick={() => document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => navigate('/demo')}
           >
-            Comprendre la dette opérationnelle
+            Voir la démo
           </Button>
         </div>
 

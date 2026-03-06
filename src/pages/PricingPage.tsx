@@ -10,7 +10,7 @@ const PLANS = [
   {
     name: 'Pilote',
     target: 'Un service d\'urgences',
-    price: 'Forfait cadré',
+    price: 'Forfait cadré — nous consulter',
     period: '',
     description: '10 semaines. 2 modules. ROI mesuré. Intégration DPI lecture seule.',
     features: [
