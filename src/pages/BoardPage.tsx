@@ -226,6 +226,29 @@ export default function BoardPage() {
     fetchEncounters();
   };
 
+  const handleDropToZone = async (encounterId: string, newZone: string, boxNumber?: number) => {
+    const update: Record<string, unknown> = { zone: newZone };
+    if (boxNumber !== undefined) update.box_number = boxNumber;
+    // Optimistic update
+    setEncounters(prev => prev.map(e =>
+      e.id === encounterId
+        ? { ...e, zone: newZone as ZoneKey, ...(boxNumber !== undefined ? { box_number: boxNumber } : {}) }
+        : e
+    ));
+    if (!navigator.onLine) {
+      await addToOfflineQueue({ table: 'encounters', operation: 'update', payload: { id: encounterId, ...update }, userId: user?.id ?? null, priority: 'normal' });
+      return;
+    }
+    await supabase.from('encounters').update(update).eq('id', encounterId);
+    if (user) {
+      await supabase.from('audit_logs').insert({
+        user_id: user.id, action: 'drag_drop_move', resource_type: 'encounter',
+        resource_id: encounterId, details: update,
+      });
+    }
+    fetchEncounters();
+  };
+
   const handleAssignMedecin = async (encounterId: string, medecinId: string) => {
     await supabase.from('encounters').update({ medecin_id: medecinId }).eq('id', encounterId);
     if (user) {
