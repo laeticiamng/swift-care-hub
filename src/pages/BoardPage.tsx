@@ -364,6 +364,12 @@ export default function BoardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <DechocageConfirmDialog
+        open={!!dechocagePending}
+        patientName={dechocagePending?.patientName || ''}
+        onConfirm={handleDechocageConfirm}
+        onCancel={() => setDechocagePending(null)}
+      />
       {/* M3-02: Lab alert notifications — visible on all board views */}
       <LabAlertNotification
         alerts={labAlerts}
