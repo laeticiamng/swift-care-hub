@@ -297,7 +297,7 @@ export default function B2BPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Fonction *</Label>
-                    <Input id="role" placeholder="DG, DAF, DSI, Chef de service..." required />
+                    <Input id="role" name="role" placeholder="DG, DAF, DSI, Chef de service..." required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
