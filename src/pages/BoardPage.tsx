@@ -388,75 +388,84 @@ export default function BoardPage() {
         }}
       />
 
-      <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
+      <header className="sticky top-0 z-20 border-b shadow-sm px-3 py-2 md:px-4 md:py-3 bg-card/80 backdrop-blur-lg">
+        <div className="flex items-center justify-between max-w-7xl mx-auto gap-2">
+          {/* Left: logo + role */}
+          <div className="flex items-center gap-2 shrink-0">
+            <h1 className="text-lg md:text-xl font-bold">Urgence<span className="text-primary">OS</span></h1>
             {isDemoMode && <Badge variant="secondary" className="text-[10px]">Demo</Badge>}
-            <Badge variant="secondary" className="text-xs">
-              {effectiveRole === 'medecin' ? 'Medecin' : effectiveRole === 'ioa' ? 'IOA' : effectiveRole === 'ide' ? 'IDE' : effectiveRole || ''}
+            <Badge variant="secondary" className="text-[10px] md:text-xs">
+              {effectiveRole === 'medecin' ? 'Med' : effectiveRole === 'ioa' ? 'IOA' : effectiveRole === 'ide' ? 'IDE' : effectiveRole || ''}
             </Badge>
-            <NetworkStatus syncStatus={syncStatus} onManualSync={doSync} />
+            {!isMobile && <NetworkStatus syncStatus={syncStatus} onManualSync={doSync} />}
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <button onClick={() => setSelectedZone('all')}
-              className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
-                selectedZone === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
-              Tous ({filtered.length})
-            </button>
-            {ZONE_CONFIGS.map(z => (
-              <button key={z.key} onClick={() => setSelectedZone(z.key)}
-                className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
-                  selectedZone === z.key ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
-                {z.label} {byZone(z.key).length}/{z.boxCount}
-              </button>
-            ))}
-            <StatCard label="En attente" value={waitingCount} icon={Hourglass} variant={waitingVariant as any} className="py-1 px-3" />
-          </div>
-          <div className="flex items-center gap-2">
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
             {(role === 'ioa' || role === 'medecin') && (
-              <Button size="sm" onClick={() => navigate('/triage')}>
-                <UserPlus className="h-4 w-4 mr-1" /> {!isMobile && 'Nouveau patient'}
+              <Button size="sm" className="h-8 px-2 md:px-3" onClick={() => navigate('/triage')}>
+                <UserPlus className="h-4 w-4" /> {!isMobile && <span className="ml-1">Nouveau patient</span>}
               </Button>
             )}
-            <Button variant={myOnly ? 'default' : 'outline'} size="sm" onClick={() => setMyOnly(!myOnly)}>
-              <Filter className="h-4 w-4 mr-1" /> {!isMobile && 'Mes patients'}
+            <Button variant={myOnly ? 'default' : 'outline'} size="sm" className="h-8 px-2 md:px-3" onClick={() => setMyOnly(!myOnly)}>
+              <Filter className="h-4 w-4" /> {!isMobile && <span className="ml-1">Mes patients</span>}
             </Button>
             <div className="flex items-center border rounded-lg overflow-hidden">
-              <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('grid')}>
+              <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="sm" className="rounded-none px-1.5 h-8" onClick={() => setViewMode('grid')}>
                 <LayoutGrid className="h-4 w-4" />
               </Button>
-              <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('list')}>
+              <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" className="rounded-none px-1.5 h-8" onClick={() => setViewMode('list')}>
                 <List className="h-4 w-4" />
               </Button>
-              <Button variant={viewMode === 'plan' ? 'default' : 'ghost'} size="sm" className="rounded-none px-2" onClick={() => setViewMode('plan')}>
+              <Button variant={viewMode === 'plan' ? 'default' : 'ghost'} size="sm" className="rounded-none px-1.5 h-8" onClick={() => setViewMode('plan')}>
                 <MapPin className="h-4 w-4" />
               </Button>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>
-              {!isMobile && 'Changer rôle'}
-            </Button>
-            <NotificationCenter
-              notifications={notifications}
-              unreadCount={unreadCount}
-              onMarkAsRead={markAsRead}
-              onMarkAllAsRead={markAllAsRead}
-              onRequestPermission={requestPermission}
-            />
-            <ChatPanel
-              channels={[
-                { type: 'zone', id: selectedZone || 'sau', label: `Zone ${(selectedZone || 'sau').toUpperCase()}`, icon: 'radio' },
-                { type: 'zone', id: 'sau', label: 'SAU', icon: 'radio' },
-                { type: 'zone', id: 'uhcd', label: 'UHCD', icon: 'radio' },
-                { type: 'zone', id: 'dechocage', label: 'Déchocage', icon: 'radio' },
-                { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
-              ] as ChatChannel[]}
-              triggerLabel="Chat"
-            />
-            <ThemeToggle />
-            <Button variant="ghost" size="icon" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-            </Button>
+            {!isMobile && (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>Changer rôle</Button>
+                <NotificationCenter
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  onMarkAsRead={markAsRead}
+                  onMarkAllAsRead={markAllAsRead}
+                  onRequestPermission={requestPermission}
+                />
+                <ChatPanel
+                  channels={[
+                    { type: 'zone', id: selectedZone || 'sau', label: `Zone ${(selectedZone || 'sau').toUpperCase()}`, icon: 'radio' },
+                    { type: 'zone', id: 'sau', label: 'SAU', icon: 'radio' },
+                    { type: 'zone', id: 'uhcd', label: 'UHCD', icon: 'radio' },
+                    { type: 'zone', id: 'dechocage', label: 'Déchocage', icon: 'radio' },
+                    { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
+                  ] as ChatChannel[]}
+                  triggerLabel="Chat"
+                />
+                <ThemeToggle />
+                <Button variant="ghost" size="icon" onClick={signOut}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Zone filters — horizontal scroll on mobile */}
+        <div className="flex items-center gap-1.5 mt-2 overflow-x-auto scrollbar-hide flex-nowrap max-w-7xl mx-auto pb-1 -mb-1">
+          <button onClick={() => setSelectedZone('all')}
+            className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all whitespace-nowrap shrink-0',
+              selectedZone === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
+            Tous ({filtered.length})
+          </button>
+          {ZONE_CONFIGS.map(z => (
+            <button key={z.key} onClick={() => setSelectedZone(z.key)}
+              className={cn('px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all whitespace-nowrap shrink-0',
+                selectedZone === z.key ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border')}>
+              {z.label} {byZone(z.key).length}/{z.boxCount}
+            </button>
+          ))}
+          <div className="shrink-0">
+            <StatCard label="Attente" value={waitingCount} icon={Hourglass} variant={waitingVariant as any} className="py-1 px-2 text-xs" />
           </div>
         </div>
       </header>
