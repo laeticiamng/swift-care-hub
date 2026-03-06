@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Activity,
   Syringe,
+  ArrowRightLeft,
 } from 'lucide-react';
 
 interface TimelineItem {
@@ -41,6 +42,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   prescription: <Syringe className="h-4 w-4 text-medical-info" />,
   acte: <Activity className="h-4 w-4 text-medical-success" />,
   consultation: <Stethoscope className="h-4 w-4 text-primary" />,
+  deplacement: <ArrowRightLeft className="h-4 w-4 text-medical-info" />,
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -53,6 +55,7 @@ const TYPE_LABELS: Record<string, string> = {
   prescription: 'Prescription',
   acte: 'Acte',
   consultation: 'Consultation',
+  deplacement: 'Deplacement',
 };
 
 const ESSENTIAL_TYPES = ['allergie', 'crh', 'diagnostic'];
@@ -120,6 +123,7 @@ export function PatientTimeline({ items, showEssentialOnly = false }: PatientTim
           className={cn(
             'flex gap-3 p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2',
             item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5',
+            item.item_type === 'deplacement' && 'border-medical-info/30 bg-medical-info/5',
           )}
           style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}
         >

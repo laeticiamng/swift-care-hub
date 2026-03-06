@@ -209,10 +209,29 @@ export default function BoardPage() {
     setLoading(false);
   };
 
+  const ZONE_LABELS: Record<string, string> = { sau: 'SAU', uhcd: 'UHCD', dechocage: 'Déchocage' };
+
+  const logMovementToTimeline = async (encounterId: string, oldZone: string | null, newZone: string, boxNumber?: number) => {
+    const enc = encounters.find(e => e.id === encounterId);
+    if (!enc) return;
+    const fromLabel = oldZone ? ZONE_LABELS[oldZone] || oldZone : 'Salle d\'attente';
+    const toLabel = ZONE_LABELS[newZone] || newZone;
+    const boxStr = boxNumber ? ` Box ${boxNumber}` : '';
+    const content = `Déplacé de ${fromLabel} vers ${toLabel}${boxStr}`;
+    await supabase.from('timeline_items').insert({
+      patient_id: enc.patient_id,
+      item_type: 'deplacement' as any,
+      content,
+      source_author: user?.email || 'Système',
+      source_date: new Date().toISOString().split('T')[0],
+    });
+  };
+
   const handleMoveZone = async (encounterId: string, newZone: ZoneKey) => {
+    const oldEnc = encounters.find(e => e.id === encounterId);
+    const oldZone = oldEnc?.zone || null;
     if (!navigator.onLine) {
       await addToOfflineQueue({ table: 'encounters', operation: 'update', payload: { id: encounterId, zone: newZone }, userId: user?.id ?? null, priority: 'normal' });
-      // Optimistic update
       setEncounters(prev => prev.map(e => e.id === encounterId ? { ...e, zone: newZone } : e));
       return;
     }
@@ -220,16 +239,18 @@ export default function BoardPage() {
     if (user) {
       await supabase.from('audit_logs').insert({
         user_id: user.id, action: 'zone_change', resource_type: 'encounter',
-        resource_id: encounterId, details: { new_zone: newZone },
+        resource_id: encounterId, details: { old_zone: oldZone, new_zone: newZone },
       });
+      await logMovementToTimeline(encounterId, oldZone, newZone);
     }
     fetchEncounters();
   };
 
   const handleDropToZone = async (encounterId: string, newZone: string, boxNumber?: number) => {
+    const oldEnc = encounters.find(e => e.id === encounterId);
+    const oldZone = oldEnc?.zone || null;
     const update: Record<string, unknown> = { zone: newZone };
     if (boxNumber !== undefined) update.box_number = boxNumber;
-    // Optimistic update
     setEncounters(prev => prev.map(e =>
       e.id === encounterId
         ? { ...e, zone: newZone as ZoneKey, ...(boxNumber !== undefined ? { box_number: boxNumber } : {}) }
@@ -243,8 +264,9 @@ export default function BoardPage() {
     if (user) {
       await supabase.from('audit_logs').insert([{
         user_id: user.id, action: 'drag_drop_move', resource_type: 'encounter',
-        resource_id: encounterId, details: update as any,
+        resource_id: encounterId, details: { old_zone: oldZone, ...update } as any,
       }]);
+      await logMovementToTimeline(encounterId, oldZone, newZone, boxNumber);
     }
     fetchEncounters();
   };
