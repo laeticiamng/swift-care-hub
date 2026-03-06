@@ -101,7 +101,7 @@ export default function PatientDossierPage() {
   const showResultsFirst = ['cardio', 'respiratoire', 'infectieux'].includes(dossierContext);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background has-bottom-nav">
       <IdentityBanner
         nom={patient.nom} prenom={patient.prenom} dateNaissance={patient.date_naissance}
         sexe={patient.sexe} patientId={patient.id} encounterId={encounterId}
@@ -129,22 +129,24 @@ export default function PatientDossierPage() {
           </div>
         )}
         {!isReadOnly && (
-          <div className="flex flex-wrap justify-end gap-2 mb-4">
-            <ProtocolLibrary onApplyProtocol={rx.handleApplyPack} motifSfmu={encounter.motif_sfmu} />
-            <Button variant="outline" size="sm" onClick={interop.handleExportFHIR}><Share2 className="h-4 w-4 mr-1" /> Export FHIR</Button>
-            <Button variant="outline" size="sm" onClick={interop.handleGenerateCRH}><FileText className="h-4 w-4 mr-1" /> Generer CRH</Button>
-            <Button variant="outline" size="sm" onClick={interop.handleGenerateOrdonnance}><FileDown className="h-4 w-4 mr-1" /> Ordonnance</Button>
-            <ChatPanel
-              channels={[
-                { type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' },
-                { type: 'zone', id: encounter.zone || 'sau', label: `Zone ${(encounter.zone || 'sau').toUpperCase()}`, icon: 'radio' },
-                { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
-              ] as ChatChannel[]}
-              defaultChannel={{ type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' }}
-              triggerLabel="Chat"
-            />
+          <div className="flex justify-end gap-2 mb-4 overflow-x-auto scrollbar-hide flex-nowrap pb-1 -mb-1">
+            <div className="shrink-0"><ProtocolLibrary onApplyProtocol={rx.handleApplyPack} motifSfmu={encounter.motif_sfmu} /></div>
+            <Button variant="outline" size="sm" className="shrink-0" onClick={interop.handleExportFHIR}><Share2 className="h-4 w-4 mr-1" /> <span className="hidden sm:inline">Export</span> FHIR</Button>
+            <Button variant="outline" size="sm" className="shrink-0" onClick={interop.handleGenerateCRH}><FileText className="h-4 w-4 mr-1" /> CRH</Button>
+            <Button variant="outline" size="sm" className="shrink-0" onClick={interop.handleGenerateOrdonnance}><FileDown className="h-4 w-4 mr-1" /> <span className="hidden sm:inline">Ordonnance</span><span className="sm:hidden">Ordo</span></Button>
+            <div className="shrink-0">
+              <ChatPanel
+                channels={[
+                  { type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' },
+                  { type: 'zone', id: encounter.zone || 'sau', label: `Zone ${(encounter.zone || 'sau').toUpperCase()}`, icon: 'radio' },
+                  { type: 'general', id: 'general', label: 'Général', icon: 'hash' },
+                ] as ChatChannel[]}
+                defaultChannel={{ type: 'patient', id: encounterId || '', label: `${patient.nom} ${patient.prenom}`, icon: 'user' }}
+                triggerLabel="Chat"
+              />
+            </div>
             {encounter.status !== 'finished' && (
-              <Button variant="outline" size="sm" onClick={() => setDischargeOpen(true)}><DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie</Button>
+              <Button variant="outline" size="sm" className="shrink-0" onClick={() => setDischargeOpen(true)}><DoorOpen className="h-4 w-4 mr-1" /> Sortie</Button>
             )}
           </div>
         )}

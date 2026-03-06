@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
 import { FlaskConical, GripVertical } from 'lucide-react';
 import { DragEvent } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ccmuBorderColors: Record<number, string> = {
   1: 'border-l-medical-success',
@@ -34,6 +35,7 @@ interface BoxCellProps {
 }
 
 export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighlighted, hasActiveFilter, isDragOver, onClick, onDropEncounter }: BoxCellProps) {
+  const isMobile = useIsMobile();
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
     if (!encounter) return;
@@ -69,7 +71,7 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
     return (
       <div
         className={cn(
-          'rounded-lg border-2 border-dashed p-2 flex flex-col items-center justify-center min-h-[90px] transition-all duration-200',
+          'rounded-lg border-2 border-dashed p-2 flex flex-col items-center justify-center min-h-[90px] md:min-h-[90px] transition-all duration-200',
           isDragOver
             ? 'border-primary bg-primary/10 scale-[1.03] shadow-md'
             : 'border-border/50 bg-muted/30',
@@ -96,16 +98,16 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      draggable={!isMobile}
+      onDragStart={!isMobile ? handleDragStart : undefined}
+      onDragEnd={!isMobile ? handleDragEnd : undefined}
+      onDragOver={!isMobile ? handleDragOver : undefined}
+      onDrop={!isMobile ? handleDrop : undefined}
       onClick={onClick}
       className={cn(
-        'rounded-lg border p-2 min-h-[90px] flex flex-col justify-between cursor-grab transition-all duration-200',
+        'rounded-lg border p-2 min-h-[100px] md:min-h-[90px] flex flex-col justify-between transition-all duration-200',
         'bg-card hover:shadow-lg hover:scale-[1.02] active:scale-[0.97]',
-        'active:cursor-grabbing',
+        isMobile ? 'cursor-pointer' : 'cursor-grab active:cursor-grabbing',
         borderColor && `border-l-4 ${borderColor}`,
         isHighlighted && 'ring-2 ring-primary ring-offset-1',
         hasActiveFilter && !isHighlighted && 'opacity-40',
@@ -122,11 +124,11 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
             {rc && rc.unread > 0 && rc.critical === 0 && (
               <FlaskConical className="h-3 w-3 text-muted-foreground" />
             )}
-            <GripVertical className="h-3 w-3 text-muted-foreground/40" />
+            {!isMobile && <GripVertical className="h-3 w-3 text-muted-foreground/40" />}
           </div>
         </div>
         <p className="font-semibold text-sm leading-tight truncate mt-0.5">
-          {p.nom.toUpperCase().slice(0, 8)}
+          {p.nom.toUpperCase().slice(0, 12)}
         </p>
         <p className="text-[10px] text-muted-foreground">{age}a · {p.sexe}</p>
         {encounter.motif_sfmu && (

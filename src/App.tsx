@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { BottomNav } from "./components/urgence/BottomNav";
 
 // ── Lazy-loaded pages (code splitting) ──
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -196,6 +197,7 @@ const App = () => (
             <AuthProvider>
               <DemoProvider>
                 <AppRoutes />
+                <BottomNav />
                 <MedicalDisclaimer />
                 <CookieConsent />
               </DemoProvider>
