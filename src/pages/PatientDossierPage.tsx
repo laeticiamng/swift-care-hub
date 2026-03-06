@@ -19,6 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertTriangle, DoorOpen, ToggleLeft, ToggleRight, Send, Loader2, FileText, Share2, FileDown, History, Microscope, ScanLine, Pill, Stethoscope, Eye, Sparkles } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { FHIRViewer } from '@/components/urgence/interop/FHIRViewer';
 import { CRHPreview } from '@/components/urgence/documents/CRHPreview';
