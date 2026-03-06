@@ -35,6 +35,7 @@ interface BoxCellProps {
 }
 
 export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighlighted, hasActiveFilter, isDragOver, onClick, onDropEncounter }: BoxCellProps) {
+  const isMobile = useIsMobile();
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
     if (!encounter) return;
