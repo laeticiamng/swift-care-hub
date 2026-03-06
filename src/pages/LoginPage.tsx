@@ -111,7 +111,10 @@ export default function LoginPage() {
                 <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="nom@hopital.fr" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Mot de passe</Label>
+                  <Link to="/forgot-password" className="text-xs text-primary hover:underline">Mot de passe oublié ?</Link>
+                </div>
                 <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••" required />
               </div>
               {error && <p className="text-sm text-medical-critical animate-in fade-in duration-200">{error}</p>}
@@ -119,13 +122,19 @@ export default function LoginPage() {
                 {loading ? 'Chargement...' : 'Se connecter'}
               </Button>
             </form>
-            {(
-              <div className="mt-6 space-y-4">
-                <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
-                  <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
-                </Button>
+            <div className="mt-6 space-y-3">
+              <div className="text-center text-sm text-muted-foreground">
+                Pas encore de compte ?{' '}
+                <Link to="/signup" className="text-primary hover:underline font-medium">Créer un compte</Link>
               </div>
-            )}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">ou</span></div>
+              </div>
+              <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
+                <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

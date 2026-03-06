@@ -12,6 +12,7 @@ import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { BottomNav } from "./components/urgence/BottomNav";
+import { DemoBanner } from "./components/urgence/DemoBanner";
 
 // ── Lazy-loaded pages (code splitting) ──
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -43,6 +44,9 @@ const B2BPage = lazy(() => import("./pages/B2BPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ── Loading fallback ──
@@ -118,6 +122,9 @@ function AppRoutes() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={user ? <Navigate to="/select-role" replace /> : <LoginPage />} />
+        <Route path="/signup" element={user ? <Navigate to="/select-role" replace /> : <SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/demo" element={<DemoPage />} />
         <Route path="/demo/live" element={<DemoLivePage />} />
         <Route path="/sih-validation" element={<SIHValidationPage />} />
@@ -196,6 +203,7 @@ const App = () => (
           <BrowserRouter>
             <AuthProvider>
               <DemoProvider>
+                <DemoBanner />
                 <AppRoutes />
                 <BottomNav />
                 <MedicalDisclaimer />
