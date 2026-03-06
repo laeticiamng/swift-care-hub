@@ -47,7 +47,7 @@ export default function RoleSelector() {
   };
 
   const isNewUser = !loading && availableRoles.length === 0;
-  const visibleRoles = isNewUser ? roleConfig : roleConfig.filter(r => availableRoles.includes(r.role));
+  const visibleRoles = roleConfig.filter(r => availableRoles.includes(r.role));
 
   // MFA screens for medical roles
   if (mfaEnrollRequired) {
