@@ -74,7 +74,6 @@ Deno.serve(async (req) => {
         .select("id", { count: "exact", head: true })
         .eq("action", "security_alert")
         .eq("resource_type", "security")
-        .eq("resource_id", sourceKey)
         .gte("created_at", windowStart);
 
       if ((existingAlerts ?? 0) === 0) {
