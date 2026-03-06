@@ -87,7 +87,7 @@ export function HeroSection() {
         <div className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> Socle possédé par l'hôpital</span>
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> Interopérabilité FHIR R4</span>
-          <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> Security-first</span>
+          <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> Sécurité native</span>
           <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-medical-success" /> ROI mesurable en semaines</span>
         </div>
       </div>

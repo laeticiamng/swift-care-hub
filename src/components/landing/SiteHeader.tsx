@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { label: 'Établissements', to: '/b2b' },
   { label: 'Sécurité', to: '/securite' },
   { label: 'Glossaire', to: '/glossaire' },
+  { label: 'FAQ', to: '/faq' },
   { label: 'Démo', to: '/demo' },
 ];
 
