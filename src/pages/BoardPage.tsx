@@ -18,7 +18,7 @@ import { LabAlertNotification } from '@/components/urgence/LabAlertNotification'
 import { NotificationCenter } from '@/components/urgence/NotificationCenter';
 import { useNotifications } from '@/hooks/useNotifications';
 import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
-import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
+import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList, Shield } from 'lucide-react';
 import { FloorPlanView } from '@/components/urgence/FloorPlanView';
 import { BoardEmptyState } from '@/components/urgence/BoardEmptyState';
 import { ChatPanel } from '@/components/urgence/ChatPanel';
@@ -427,6 +427,11 @@ export default function BoardPage() {
             {!isMobile && (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate('/select-role')}>Changer rôle</Button>
+                {effectiveRole === 'medecin' && (
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin/roles')}>
+                    <Shield className="h-4 w-4 mr-1" /> Rôles
+                  </Button>
+                )}
                 <NotificationCenter
                   notifications={notifications}
                   unreadCount={unreadCount}
