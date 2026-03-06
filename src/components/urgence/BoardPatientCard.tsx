@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill, Clock, Syringe } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill, Clock, Syringe, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DragEvent } from 'react';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
 const ZONES: { key: Zone; label: string }[] = [
@@ -85,10 +86,27 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
   const borderColor = encounter.ccmu ? ccmuBorderColors[encounter.ccmu] || '' : '';
   const ws = showWaitingBadge ? getWaitingStatus(encounter) : null;
 
+  const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData('application/urgenceos-encounter', JSON.stringify({
+      encounterId: encounter.id,
+      fromZone: encounter.zone,
+      fromBox: encounter.box_number,
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    (e.currentTarget as HTMLDivElement).style.opacity = '0.4';
+  };
+
+  const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
+    (e.currentTarget as HTMLDivElement).style.opacity = '1';
+  };
+
   return (
     <Card
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={cn(
-        'cursor-pointer hover:shadow-md transition-all duration-200 active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2',
+        'cursor-grab hover:shadow-md transition-all duration-200 active:scale-[0.99] active:cursor-grabbing animate-in fade-in slide-in-from-bottom-2',
         borderColor && `border-l-4 ${borderColor}`,
         waitCritical && 'ring-2 ring-medical-critical/40',
       )}
@@ -98,6 +116,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
       <CardContent className="p-4 space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 flex-wrap">
+            <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
             <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
             <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
             {waitCritical && (
