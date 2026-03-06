@@ -241,10 +241,10 @@ export default function BoardPage() {
     }
     await supabase.from('encounters').update(update).eq('id', encounterId);
     if (user) {
-      await supabase.from('audit_logs').insert({
+      await supabase.from('audit_logs').insert([{
         user_id: user.id, action: 'drag_drop_move', resource_type: 'encounter',
-        resource_id: encounterId, details: update,
-      });
+        resource_id: encounterId, details: update as any,
+      }]);
     }
     fetchEncounters();
   };
