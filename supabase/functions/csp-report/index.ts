@@ -65,8 +65,6 @@ Deno.serve(async (req) => {
 
     const violationCount = recentCount ?? 0;
 
-    const violationCount = recentCount ?? 0;
-
     if (violationCount >= ALERT_THRESHOLD) {
       // Check if we already fired an alert for this source_key recently (avoid spam)
       const { count: existingAlerts } = await supabase
