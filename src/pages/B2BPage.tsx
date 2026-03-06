@@ -288,7 +288,7 @@ export default function B2BPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email professionnel *</Label>
-                  <Input id="email" type="email" placeholder="m.dupont@ch-exemple.fr" required />
+                  <Input id="email" name="email" type="email" placeholder="m.dupont@ch-exemple.fr" required maxLength={255} />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
