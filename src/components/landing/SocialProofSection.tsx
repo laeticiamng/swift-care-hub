@@ -10,9 +10,9 @@ const stats = [
 ];
 
 const partners = [
-  { name: 'CHU Design Partner', status: 'En discussion' },
-  { name: 'GHT Île-de-France', status: 'Pilote prévu' },
-  { name: 'CH Régional', status: 'Évaluation technique' },
+  { name: 'CHU universitaire', status: 'Co-conception en cours' },
+  { name: 'GHT multi-sites', status: 'Évaluation architecture' },
+  { name: 'CH de proximité', status: 'Cadrage pilote' },
 ];
 
 export function SocialProofSection() {
@@ -43,10 +43,10 @@ export function SocialProofSection() {
 
         {/* Design Partners */}
         <div className="text-center mb-8">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">Design Partners</p>
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">Phase d'amorçage</p>
           <h3 className="text-xl sm:text-2xl font-bold mb-2">Co-construit avec des établissements hospitaliers.</h3>
           <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-            UrgenceOS se développe en partenariat direct avec des urgentistes, DSI et cadres de santé en milieu hospitalier.
+            UrgenceOS se développe en partenariat direct avec des urgentistes, DSI et cadres de santé. Les noms seront publiés après accord des établissements.
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export function SocialProofSection() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-6 italic">
-          Les noms des établissements partenaires seront publiés avec leur accord après le lancement du premier pilote.
+          Phase pré-commerciale — premiers pilotes prévus en 2026.
         </p>
       </div>
     </Section>

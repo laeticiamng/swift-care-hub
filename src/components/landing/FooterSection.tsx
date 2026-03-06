@@ -10,7 +10,7 @@ export function FooterSection() {
             <p className="font-medium">
               Urgence<span className="text-primary">OS</span> — EmotionsCare SASU — {new Date().getFullYear()}
             </p>
-            <a href="mailto:contact@emotionscare.com" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1">
+            <a href="mailto:contact@emotionscare.com" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1">
               <Mail className="h-3 w-3" /> contact@emotionscare.com
             </a>
           </div>
@@ -41,7 +41,7 @@ export function FooterSection() {
             <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
             <Link to="/glossaire" className="block text-xs hover:text-foreground transition-colors">Glossaire</Link>
             <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
-            <a href="mailto:contact@emotionscare.com" className="block text-xs hover:text-foreground transition-colors">Contact</a>
+            <a href="mailto:contact@emotionscare.com" rel="noopener noreferrer" className="block text-xs hover:text-foreground transition-colors">Contact</a>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Légal</p>
