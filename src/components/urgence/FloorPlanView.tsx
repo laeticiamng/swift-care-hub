@@ -285,6 +285,7 @@ function ZoneSection({
   hasActiveFilter,
   onClickEncounter,
   getResultCount,
+  onDropToZone,
 }: {
   zoneKey: ZoneKey;
   encountersByZoneBox: Map<string, Encounter>;
@@ -293,14 +294,58 @@ function ZoneSection({
   hasActiveFilter?: boolean;
   onClickEncounter: (e: Encounter) => void;
   getResultCount: (id: string) => ResultCount | undefined;
+  onDropToZone?: (encounterId: string, zone: string, boxNumber?: number) => void;
 }) {
   const zoneConfig = ZONE_CONFIGS.find(z => z.key === zoneKey)!;
   const boxes = FLOOR_PLAN[zoneKey];
   const gridTemplate = ZONE_GRID_TEMPLATES[zoneKey];
   const occupiedCount = boxes.filter(b => encountersByZoneBox.has(`${zoneKey}-${b.boxNumber}`)).length;
+  const [isDragOverZone, setIsDragOverZone] = useState(false);
+  const [dragOverBox, setDragOverBox] = useState<number | null>(null);
+
+  const handleZoneDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setIsDragOverZone(true);
+  };
+
+  const handleZoneDragLeave = (e: DragEvent) => {
+    if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
+      setIsDragOverZone(false);
+      setDragOverBox(null);
+    }
+  };
+
+  const handleZoneDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOverZone(false);
+    setDragOverBox(null);
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/urgenceos-encounter'));
+      if (data.encounterId && onDropToZone) {
+        onDropToZone(data.encounterId, zoneKey);
+      }
+    } catch {}
+  };
+
+  const handleDropToBox = (encounterId: string, boxNumber: number) => {
+    setDragOverBox(null);
+    setIsDragOverZone(false);
+    if (onDropToZone) {
+      onDropToZone(encounterId, zoneKey, boxNumber);
+    }
+  };
 
   return (
-    <div className="rounded-xl border bg-card/50 p-3">
+    <div
+      className={cn(
+        'rounded-xl border bg-card/50 p-3 transition-all duration-200',
+        isDragOverZone && 'ring-2 ring-primary shadow-lg scale-[1.01]',
+      )}
+      onDragOver={handleZoneDragOver}
+      onDragLeave={handleZoneDragLeave}
+      onDrop={handleZoneDrop}
+    >
       <div className="flex items-center gap-2 mb-3">
         <div className={cn('px-2.5 py-1 rounded-md text-xs font-bold', zoneLabelColors[zoneKey])}>
           {zoneConfig.label}
@@ -308,6 +353,11 @@ function ZoneSection({
         <Badge variant="outline" className="text-xs font-semibold">
           {occupiedCount}/{zoneConfig.boxCount}
         </Badge>
+        {isDragOverZone && (
+          <span className="text-xs text-primary font-medium animate-pulse">
+            Déposer vers {zoneConfig.label}
+          </span>
+        )}
       </div>
       <div
         className="grid gap-1.5"
@@ -319,15 +369,28 @@ function ZoneSection({
         {boxes.map(box => {
           const enc = encountersByZoneBox.get(`${zoneKey}-${box.boxNumber}`);
           return (
-            <FloorBoxCell
+            <div
               key={`${zoneKey}-${box.boxNumber}`}
-              box={box}
-              encounter={enc}
-              resultCount={enc ? getResultCount(enc.id) : undefined}
-              isHighlighted={enc ? highlightedIds?.has(enc.id) : false}
-              hasActiveFilter={hasActiveFilter}
-              onClick={enc ? () => onClickEncounter(enc) : undefined}
-            />
+              onDragEnter={() => setDragOverBox(box.boxNumber)}
+              onDragLeave={(e) => {
+                if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
+                  setDragOverBox(null);
+                }
+              }}
+              style={{ gridColumn: box.col, gridRow: box.row }}
+            >
+              <FloorBoxCell
+                box={{ ...box, col: '1 / -1', row: '1 / -1' }}
+                zoneKey={zoneKey}
+                encounter={enc}
+                resultCount={enc ? getResultCount(enc.id) : undefined}
+                isHighlighted={enc ? highlightedIds?.has(enc.id) : false}
+                hasActiveFilter={hasActiveFilter}
+                isDragOver={dragOverBox === box.boxNumber && !enc}
+                onClick={enc ? () => onClickEncounter(enc) : undefined}
+                onDropEncounter={(eid, boxNum) => handleDropToBox(eid, boxNum)}
+              />
+            </div>
           );
         })}
       </div>

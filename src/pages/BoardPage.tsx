@@ -407,6 +407,7 @@ export default function BoardPage() {
             highlightedIds={highlightedIds}
             hasActiveFilter={myOnly}
             onClickEncounter={navigateToPatient}
+            onDropToZone={handleDropToZone}
           />
         ) : viewMode === 'grid' ? (
           <div className="space-y-6">
