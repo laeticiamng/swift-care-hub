@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
 import { FlaskConical, GripVertical } from 'lucide-react';
 import { DragEvent } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ccmuBorderColors: Record<number, string> = {
   1: 'border-l-medical-success',
