@@ -24,6 +24,8 @@ import { ChatPanel } from '@/components/urgence/ChatPanel';
 import type { ChatChannel } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useOfflineSync } from '@/hooks/useOfflineSync';
+import { addToOfflineQueue } from '@/lib/offline-db';
 
 interface EncounterWithPatient {
   id: string;
