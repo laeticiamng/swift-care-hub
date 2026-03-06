@@ -73,6 +73,7 @@ export default function BoardPage() {
     return SIH_LAB_ALERTS.map(a => acked.includes(a.id) ? { ...a, acknowledged: true } : a);
   });
   const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
+  const [mobileSelectedEncounter, setMobileSelectedEncounter] = useState<EncounterWithPatient | null>(null);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
   useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
