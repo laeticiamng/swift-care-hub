@@ -506,7 +506,9 @@ export default function BoardPage() {
           onClickPatient={navigateToPatient}
         />
 
-        {viewMode === 'plan' ? (
+        {filtered.length === 0 ? (
+          <BoardEmptyState role={effectiveRole} isDemoMode={isDemoMode} hasFilter={myOnly} />
+        ) : viewMode === 'plan' ? (
           <FloorPlanView
             encounters={filtered}
             resultCounts={resultCounts}
@@ -528,7 +530,6 @@ export default function BoardPage() {
                 hasActiveFilter={myOnly}
                 selectedEncounterId={mobileSelectedEncounter?.id || null}
                 onClickEncounter={(enc) => {
-                  // If an encounter is selected for move and we tap another, navigate instead
                   if (mobileSelectedEncounter) {
                     setMobileSelectedEncounter(null);
                   }
@@ -541,11 +542,6 @@ export default function BoardPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.length === 0 && (
-              <div className="text-center py-16 space-y-3">
-                <p className="text-muted-foreground">Aucun patient</p>
-              </div>
-            )}
             {filtered.map((enc, i) => (
               <PatientCard
                 key={enc.id}
