@@ -210,6 +210,12 @@ export default function BoardPage() {
   };
 
   const handleMoveZone = async (encounterId: string, newZone: ZoneKey) => {
+    if (!navigator.onLine) {
+      await addToOfflineQueue({ table: 'encounters', operation: 'update', payload: { id: encounterId, zone: newZone }, userId: user?.id ?? null, priority: 'normal' });
+      // Optimistic update
+      setEncounters(prev => prev.map(e => e.id === encounterId ? { ...e, zone: newZone } : e));
+      return;
+    }
     await supabase.from('encounters').update({ zone: newZone }).eq('id', encounterId);
     if (user) {
       await supabase.from('audit_logs').insert({
