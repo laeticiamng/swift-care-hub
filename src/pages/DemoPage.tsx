@@ -279,10 +279,10 @@ export default function DemoPage() {
         {/* Intro */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-3">
-            Decouvrez UrgenceOS en 5 ecrans
+            Découvrez UrgenceOS en 5 écrans
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Chaque role soignant dispose d'une interface adaptee a ses besoins.
+            Chaque rôle soignant dispose d'une interface adaptée à ses besoins.
             Parcourez les 5 profils pour comprendre comment UrgenceOS optimise le workflow des urgences.
           </p>
         </div>
