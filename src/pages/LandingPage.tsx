@@ -9,6 +9,7 @@ import { HeroSection } from '@/components/landing/HeroSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { JsonLd, PageMeta, howToSchema, webPageSchema } from '@/components/seo/JsonLd';
 
 export default function LandingPage() {
