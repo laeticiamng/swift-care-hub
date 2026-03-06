@@ -278,7 +278,7 @@ export default function BoardPage() {
             <Badge variant="secondary" className="text-xs">
               {effectiveRole === 'medecin' ? 'Medecin' : effectiveRole === 'ioa' ? 'IOA' : effectiveRole === 'ide' ? 'IDE' : effectiveRole || ''}
             </Badge>
-            <NetworkStatus />
+            <NetworkStatus syncStatus={syncStatus} onManualSync={doSync} />
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button onClick={() => setSelectedZone('all')}
