@@ -188,7 +188,7 @@ function MockSecretaireScreen() {
       </div>
       <div className="flex items-center justify-between p-2 rounded-lg bg-medical-success/10 border border-medical-success/20">
         <span className="text-xs text-medical-success font-medium">Patient existant detecte</span>
-        <Badge variant="secondary" className="text-[9px]">Auto-complete</Badge>
+        <Badge variant="secondary" className="text-[9px]">Auto-complété</Badge>
       </div>
     </div>
   );
