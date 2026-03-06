@@ -123,6 +123,7 @@ export function PatientTimeline({ items, showEssentialOnly = false }: PatientTim
           className={cn(
             'flex gap-3 p-3 rounded-lg border animate-in fade-in slide-in-from-bottom-2',
             item.item_type === 'allergie' && 'border-medical-critical/30 bg-medical-critical/5',
+            item.item_type === 'deplacement' && 'border-medical-info/30 bg-medical-info/5',
           )}
           style={{ animationDelay: `${idx * 30}ms`, animationFillMode: 'both' }}
         >
