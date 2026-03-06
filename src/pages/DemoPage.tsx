@@ -209,9 +209,9 @@ const DEMO_STEPS: DemoStep[] = [
   {
     role: 'ioa',
     roleLabel: 'IOA',
-    title: 'Triage en 5 etapes',
-    description: 'Workflow optimise pour trier un patient en moins de 2 minutes. Suggestion automatique de la classification CIMU basee sur les constantes. Detection des homonymes.',
-    features: ['Workflow 5 etapes', 'Timer < 2 min', 'Classification CIMU assistee', 'Recherche patient existant'],
+    title: 'Triage en 5 étapes',
+    description: 'Workflow optimisé pour trier un patient en moins de 2 minutes. Suggestion automatique de la classification CIMU basée sur les constantes. Détection des homonymes.',
+    features: ['Workflow 5 étapes', 'Timer < 2 min', 'Classification CIMU assistée', 'Recherche patient existant'],
     icon: <ClipboardList className="h-5 w-5" />,
     color: 'text-orange-600',
     bgColor: 'bg-orange-100 dark:bg-orange-900/30',
