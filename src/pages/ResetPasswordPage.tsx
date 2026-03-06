@@ -19,7 +19,7 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     // Check for recovery token in URL hash
     const hash = window.location.hash;
-    if (hash.includes('type=recovery') || hash.includes('type=signup')) {
+    if (hash.includes('type=recovery')) {
       setHasRecoveryToken(true);
     }
 
