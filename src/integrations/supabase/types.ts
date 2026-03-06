@@ -735,6 +735,7 @@ export type Database = {
         | "crh"
         | "resultat"
         | "diagnostic"
+        | "deplacement"
       zone_type: "sau" | "uhcd" | "dechocage"
     }
     CompositeTypes: {
@@ -891,6 +892,7 @@ export const Constants = {
         "crh",
         "resultat",
         "diagnostic",
+        "deplacement",
       ],
       zone_type: ["sau", "uhcd", "dechocage"],
     },
