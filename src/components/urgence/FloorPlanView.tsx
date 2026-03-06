@@ -221,6 +221,7 @@ export function FloorPlanView({
   highlightedIds,
   hasActiveFilter,
   onClickEncounter,
+  onDropToZone,
 }: FloorPlanViewProps) {
   const getResultCount = (encId: string) => resultCounts.find(r => r.encounter_id === encId);
 
