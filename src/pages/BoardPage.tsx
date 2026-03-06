@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { addToOfflineQueue } from '@/lib/offline-db';
+import { DechocageConfirmDialog } from '@/components/urgence/DechocageConfirmDialog';
 
 interface EncounterWithPatient {
   id: string;
@@ -67,6 +68,7 @@ export default function BoardPage() {
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
   const [labAlerts, setLabAlerts] = useState(SIH_LAB_ALERTS);
+  const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
   useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
@@ -227,7 +229,20 @@ export default function BoardPage() {
     });
   };
 
+  const getPatientName = (encounterId: string) => {
+    const enc = encounters.find(e => e.id === encounterId);
+    return enc ? `${enc.patients.nom.toUpperCase()} ${enc.patients.prenom}` : 'Patient';
+  };
+
   const handleMoveZone = async (encounterId: string, newZone: ZoneKey) => {
+    if (newZone === 'dechocage') {
+      setDechocagePending({ encounterId, patientName: getPatientName(encounterId), source: 'move' });
+      return;
+    }
+    await executeMoveZone(encounterId, newZone);
+  };
+
+  const executeMoveZone = async (encounterId: string, newZone: ZoneKey, motif?: string) => {
     const oldEnc = encounters.find(e => e.id === encounterId);
     const oldZone = oldEnc?.zone || null;
     if (!navigator.onLine) {
@@ -239,14 +254,35 @@ export default function BoardPage() {
     if (user) {
       await supabase.from('audit_logs').insert({
         user_id: user.id, action: 'zone_change', resource_type: 'encounter',
-        resource_id: encounterId, details: { old_zone: oldZone, new_zone: newZone },
+        resource_id: encounterId, details: { old_zone: oldZone, new_zone: newZone, ...(motif ? { motif_dechocage: motif } : {}) },
       });
+      const suffix = motif ? ` — Motif: ${motif}` : '';
       await logMovementToTimeline(encounterId, oldZone, newZone);
+      if (motif) {
+        const enc = encounters.find(e => e.id === encounterId);
+        if (enc) {
+          await supabase.from('timeline_items').insert({
+            patient_id: enc.patient_id,
+            item_type: 'deplacement' as any,
+            content: `⚠️ Transfert Déchocage — Motif: ${motif}`,
+            source_author: user.email || 'Système',
+            source_date: new Date().toISOString().split('T')[0],
+          });
+        }
+      }
     }
     fetchEncounters();
   };
 
   const handleDropToZone = async (encounterId: string, newZone: string, boxNumber?: number) => {
+    if (newZone === 'dechocage') {
+      setDechocagePending({ encounterId, patientName: getPatientName(encounterId), boxNumber, source: 'drop' });
+      return;
+    }
+    await executeDropToZone(encounterId, newZone, boxNumber);
+  };
+
+  const executeDropToZone = async (encounterId: string, newZone: string, boxNumber?: number, motif?: string) => {
     const oldEnc = encounters.find(e => e.id === encounterId);
     const oldZone = oldEnc?.zone || null;
     const update: Record<string, unknown> = { zone: newZone };
@@ -264,11 +300,34 @@ export default function BoardPage() {
     if (user) {
       await supabase.from('audit_logs').insert([{
         user_id: user.id, action: 'drag_drop_move', resource_type: 'encounter',
-        resource_id: encounterId, details: { old_zone: oldZone, ...update } as any,
+        resource_id: encounterId, details: { old_zone: oldZone, ...update, ...(motif ? { motif_dechocage: motif } : {}) } as any,
       }]);
       await logMovementToTimeline(encounterId, oldZone, newZone, boxNumber);
+      if (motif) {
+        const enc = encounters.find(e => e.id === encounterId);
+        if (enc) {
+          await supabase.from('timeline_items').insert({
+            patient_id: enc.patient_id,
+            item_type: 'deplacement' as any,
+            content: `⚠️ Transfert Déchocage${boxNumber ? ` Box ${boxNumber}` : ''} — Motif: ${motif}`,
+            source_author: user.email || 'Système',
+            source_date: new Date().toISOString().split('T')[0],
+          });
+        }
+      }
     }
     fetchEncounters();
+  };
+
+  const handleDechocageConfirm = (motif: string) => {
+    if (!dechocagePending) return;
+    const { encounterId, boxNumber, source } = dechocagePending;
+    setDechocagePending(null);
+    if (source === 'move') {
+      executeMoveZone(encounterId, 'dechocage', motif);
+    } else {
+      executeDropToZone(encounterId, 'dechocage', boxNumber, motif);
+    }
   };
 
   const handleAssignMedecin = async (encounterId: string, medecinId: string) => {
@@ -305,6 +364,12 @@ export default function BoardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <DechocageConfirmDialog
+        open={!!dechocagePending}
+        patientName={dechocagePending?.patientName || ''}
+        onConfirm={handleDechocageConfirm}
+        onCancel={() => setDechocagePending(null)}
+      />
       {/* M3-02: Lab alert notifications — visible on all board views */}
       <LabAlertNotification
         alerts={labAlerts}
