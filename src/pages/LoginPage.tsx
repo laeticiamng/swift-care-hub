@@ -132,7 +132,7 @@ export default function LoginPage() {
                 <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">ou</span></div>
               </div>
               <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
-                <Play className="h-4 w-4 mr-2" /> Mode Demo — Aucun compte requis
+                <Play className="h-4 w-4 mr-2" /> Mode Démo — Aucun compte requis
               </Button>
             </div>
           </CardContent>

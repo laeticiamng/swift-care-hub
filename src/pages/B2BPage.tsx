@@ -209,51 +209,8 @@ export default function B2BPage() {
           </div>
         </div>
 
-        {/* Phrases prêtes à coller par persona */}
-        <div className="mb-20 p-8 rounded-2xl border bg-card">
-          <h2 className="text-xl font-bold mb-6 text-center">5 phrases prêtes à convaincre</h2>
-          <div className="space-y-4">
-            {[
-              { role: 'DG', phrase: 'Avec Hospital-Owned Software, vous cessez de louer votre SI : vous en devenez propriétaire, vous décidez des priorités, et vous maîtrisez les coûts sur 5 ans.' },
-              { role: 'DAF', phrase: 'Chaque outil satellite remplacé par un module intégré au socle, c\'est une ligne de coût récurrent supprimée et un risque de surcoût éditeur éliminé.' },
-              { role: 'DSI', phrase: 'Le socle interne vous donne ce qu\'aucun éditeur ne vous donnera jamais : le contrôle total sur l\'architecture, la sécurité, les données et le rythme des évolutions.' },
-              { role: 'ARS', phrase: 'Hospital-Owned Software, c\'est un modèle de sobriété logicielle mutualisable à l\'échelle d\'un GHT : un socle commun, des modules standards, des coûts divisés.' },
-              { role: 'Urgences', phrase: 'Vous n\'aurez plus à naviguer entre 5 écrans pour savoir où en est un patient : un seul écran, adapté à votre rôle, mis à jour en temps réel.' },
-            ].map((item) => (
-              <div key={item.role} className="flex items-start gap-3">
-                <Badge variant="outline" className="shrink-0 mt-0.5 text-xs min-w-[72px] justify-center">{item.role}</Badge>
-                <p className="text-sm text-muted-foreground leading-relaxed italic">"{item.phrase}"</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* 10 punchlines Free vs Orange */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">10 convictions. Zéro marketing.</h2>
-          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
-            Chaque phrase est vérifiable. Chaque promesse est mesurable ou formulée comme un objectif évalué.
-          </p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {[
-              'Un hôpital qui loue son SI à un éditeur ne maîtrise ni ses coûts, ni ses priorités, ni sa sécurité.',
-              'La dette opérationnelle ne se voit pas dans les bilans. Elle se voit dans le temps que les soignants ne passent plus avec les patients.',
-              'Chaque outil satellite ajouté augmente la surface d\'attaque. Chaque module intégré au socle la réduit.',
-              'Le DPI est nécessaire. L\'empilement autour du DPI est le problème. UrgenceOS remplace l\'empilement, pas le DPI.',
-              'Un éditeur vous vend une roadmap. Hospital-Owned Software vous donne le contrôle de la vôtre.',
-              'Quand un hôpital possède son socle logiciel, il cesse de négocier des augmentations de licence — il décide de ses investissements.',
-              'Le temps perdu en friction logicielle n\'est pas un problème IT. C\'est une perte nette de capacité clinique. Il se mesure, et il se récupère.',
-              'La sécurité n\'est pas une fonctionnalité. C\'est une architecture. Soit elle est dans le socle, soit elle n\'existe pas.',
-              'Un GHT qui mutualise un socle logiciel interne divise ses coûts, standardise ses flux et augmente sa résilience. Un GHT qui empile les éditeurs multiplie les trois.',
-              'Le pilote ne dure pas un an. Il dure 10 semaines. Si le ROI n\'est pas là, vous arrêtez. S\'il est là, vous passez au déploiement.',
-            ].map((phrase, i) => (
-              <div key={i} className="p-4 rounded-xl border bg-card flex items-start gap-3">
-                <span className="text-xs font-bold text-primary shrink-0 mt-0.5 w-5">{i + 1}.</span>
-                <p className="text-sm text-muted-foreground leading-relaxed">{phrase}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Contact form */}
         <div id="contact" className="scroll-mt-20 mb-20">
