@@ -149,7 +149,7 @@ function MockASScreen() {
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-muted-foreground text-center">Gros boutons tactiles — concu pour les urgences (gants, ecrans mouilles)</p>
+      <p className="text-[10px] text-muted-foreground text-center">Gros boutons tactiles — conçu pour les urgences (gants, écrans mouillés)</p>
     </div>
   );
 }
