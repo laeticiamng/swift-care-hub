@@ -377,9 +377,14 @@ export default function BoardPage() {
       <LabAlertNotification
         alerts={labAlerts}
         onAcknowledge={(alertId, note) => {
-          setLabAlerts(prev => prev.map(a =>
-            a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
-          ));
+          setLabAlerts(prev => {
+            const updated = prev.map(a =>
+              a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
+            );
+            const acked = updated.filter(a => a.acknowledged).map(a => a.id);
+            localStorage.setItem('urgenceos_acked_lab_alerts', JSON.stringify(acked));
+            return updated;
+          });
         }}
       />
 
