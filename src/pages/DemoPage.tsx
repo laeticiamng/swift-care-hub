@@ -334,7 +334,7 @@ export default function DemoPage() {
                 onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
                 disabled={currentStep === 0}
               >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Precedent
+                <ArrowLeft className="h-4 w-4 mr-1" /> Précédent
               </Button>
               {currentStep < DEMO_STEPS.length - 1 ? (
                 <Button onClick={() => setCurrentStep(currentStep + 1)}>
