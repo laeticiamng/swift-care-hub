@@ -3,7 +3,8 @@ import { FLOOR_PLAN, ZONE_GRID_TEMPLATES, FloorBox } from '@/lib/floor-plan-conf
 import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
 import { Badge } from '@/components/ui/badge';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Users } from 'lucide-react';
+import { FlaskConical, GripVertical, Users } from 'lucide-react';
+import { useState, DragEvent } from 'react';
 
 interface Encounter {
   id: string;
