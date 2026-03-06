@@ -48,7 +48,24 @@ Deno.serve(async (req) => {
       message: message?.trim().substring(0, 2000) || null,
     };
 
+    // Rate limit: max 1 submission per email per 24h
+    const { data: recentLead } = await supabaseAdmin
+      .from("contact_leads")
+      .select("id")
+      .eq("email", leadData.email)
+      .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    if (recentLead) {
+      return new Response(JSON.stringify({ error: "Demande déjà envoyée. Réessayez dans 24h." }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { error } = await supabaseAdmin.from("contact_leads").insert(leadData);
+
 
     if (error) {
       console.error("Insert error:", error);
