@@ -121,7 +121,7 @@ function MockPancarteScreen() {
             ) : rx.status === 'pending' ? (
               <Button size="sm" className="h-6 text-[10px] bg-green-600 hover:bg-green-700 text-white px-2">Administrer</Button>
             ) : (
-              <Badge variant="outline" className="text-[9px]">Preleve</Badge>
+              <Badge variant="outline" className="text-[9px]">Prélevé</Badge>
             )}
           </div>
         ))}

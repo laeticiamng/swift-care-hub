@@ -38,10 +38,9 @@ export default function RoleSelector() {
 
   const handleSelect = async (selectedRole: AppRole) => {
     if (availableRoles.length === 0 && user) {
-      setAssigning(true);
-      const { error } = await supabase.from('user_roles').insert({ user_id: user.id, role: selectedRole });
-      setAssigning(false);
-      if (error) { toast.error('Impossible d\'attribuer le rôle. Réessayez.'); return; }
+      // New users cannot self-assign roles — must be assigned by an administrator
+      toast.error('Aucun rôle attribué à votre compte. Contactez un administrateur pour obtenir un accès.');
+      return;
     }
     await selectRole(selectedRole);
     navigate(roleRedirects[selectedRole]);
