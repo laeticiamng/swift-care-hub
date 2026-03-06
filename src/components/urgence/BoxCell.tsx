@@ -69,7 +69,7 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
     return (
       <div
         className={cn(
-          'rounded-lg border-2 border-dashed p-2 flex flex-col items-center justify-center min-h-[90px] transition-all duration-200',
+          'rounded-lg border-2 border-dashed p-2 flex flex-col items-center justify-center min-h-[90px] md:min-h-[90px] transition-all duration-200',
           isDragOver
             ? 'border-primary bg-primary/10 scale-[1.03] shadow-md'
             : 'border-border/50 bg-muted/30',
