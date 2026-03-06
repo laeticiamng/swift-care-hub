@@ -525,8 +525,16 @@ export default function BoardPage() {
                 resultCounts={resultCounts}
                 highlightedIds={highlightedIds}
                 hasActiveFilter={myOnly}
-                onClickEncounter={navigateToPatient}
+                selectedEncounterId={mobileSelectedEncounter?.id || null}
+                onClickEncounter={(enc) => {
+                  // If an encounter is selected for move and we tap another, navigate instead
+                  if (mobileSelectedEncounter) {
+                    setMobileSelectedEncounter(null);
+                  }
+                  navigateToPatient(enc);
+                }}
                 onDropToZone={handleDropToZone}
+                onSelectEncounter={(enc) => setMobileSelectedEncounter(enc as EncounterWithPatient)}
               />
             ))}
           </div>
