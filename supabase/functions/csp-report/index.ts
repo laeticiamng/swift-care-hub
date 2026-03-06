@@ -79,7 +79,6 @@ Deno.serve(async (req) => {
         await supabase.from("audit_logs").insert({
           action: "security_alert",
           resource_type: "security",
-          
           details: {
             alert_type: "repeated_csp_violations",
             source: blockedUri,
