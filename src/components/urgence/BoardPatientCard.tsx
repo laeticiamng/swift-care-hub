@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { CCMUBadge } from '@/components/urgence/CCMUBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { calculateAge, getWaitTimeMinutes, formatWaitTime } from '@/lib/vitals-utils';
-import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill, Clock, Syringe } from 'lucide-react';
+import { FlaskConical, Stethoscope, AlertTriangle, ClipboardList, UserPlus, Pill, Clock, Syringe, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DragEvent } from 'react';
 
 type Zone = 'sau' | 'uhcd' | 'dechocage';
 const ZONES: { key: Zone; label: string }[] = [
