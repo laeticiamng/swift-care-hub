@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Activity,
   Syringe,
+  ArrowRightLeft,
 } from 'lucide-react';
 
 interface TimelineItem {
