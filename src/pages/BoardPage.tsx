@@ -48,6 +48,7 @@ interface EncounterWithPatient {
 interface ResultCount { encounter_id: string; unread: number; critical: number; }
 interface RxCount { encounter_id: string; count: number; }
 export default function BoardPage() {
+  const { status: syncStatus, doSync } = useOfflineSync();
   const { user, role, signOut } = useAuth();
   const { isDemoMode, demoRole } = useDemo();
   const effectiveRole = isDemoMode ? demoRole : role;
