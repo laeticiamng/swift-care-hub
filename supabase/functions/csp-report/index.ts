@@ -31,10 +31,9 @@ Deno.serve(async (req) => {
     const sourceKey = `${blockedUri}|${violatedDirective}`;
 
     // Log the violation
-    await supabase.from("audit_logs").insert({
+    const { error: insertErr } = await supabase.from("audit_logs").insert({
       action: "csp_violation",
       resource_type: "security",
-      resource_id: sourceKey,
       details: {
         document_uri: documentUri,
         violated_directive: violatedDirective,
@@ -46,17 +45,25 @@ Deno.serve(async (req) => {
       },
     });
 
+    if (insertErr) {
+      console.error("Insert error:", insertErr);
+    }
+
     // ── DB-based attack pattern detection ──
-    // Count recent violations with the same source_key in the alert window
     const windowStart = new Date(Date.now() - ALERT_WINDOW_MINUTES * 60_000).toISOString();
 
-    const { count: recentCount } = await supabase
+    const { count: recentCount, error: countErr } = await supabase
       .from("audit_logs")
       .select("id", { count: "exact", head: true })
       .eq("action", "csp_violation")
       .eq("resource_type", "security")
-      .eq("resource_id", sourceKey)
       .gte("created_at", windowStart);
+
+    if (countErr) {
+      console.error("Count error:", countErr);
+    }
+
+    const violationCount = recentCount ?? 0;
 
     const violationCount = recentCount ?? 0;
 
