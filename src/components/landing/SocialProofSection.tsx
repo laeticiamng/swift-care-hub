@@ -43,10 +43,10 @@ export function SocialProofSection() {
 
         {/* Design Partners */}
         <div className="text-center mb-8">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">Design Partners</p>
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">Phase d'amorçage</p>
           <h3 className="text-xl sm:text-2xl font-bold mb-2">Co-construit avec des établissements hospitaliers.</h3>
           <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-            UrgenceOS se développe en partenariat direct avec des urgentistes, DSI et cadres de santé en milieu hospitalier.
+            UrgenceOS se développe en partenariat direct avec des urgentistes, DSI et cadres de santé. Les noms seront publiés après accord des établissements.
           </p>
         </div>
 
