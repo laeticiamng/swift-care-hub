@@ -197,6 +197,7 @@ const App = () => (
             <AuthProvider>
               <DemoProvider>
                 <AppRoutes />
+                <BottomNav />
                 <MedicalDisclaimer />
                 <CookieConsent />
               </DemoProvider>

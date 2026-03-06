@@ -101,7 +101,7 @@ export default function PatientDossierPage() {
   const showResultsFirst = ['cardio', 'respiratoire', 'infectieux'].includes(dossierContext);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background has-bottom-nav">
       <IdentityBanner
         nom={patient.nom} prenom={patient.prenom} dateNaissance={patient.date_naissance}
         sexe={patient.sexe} patientId={patient.id} encounterId={encounterId}

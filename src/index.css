@@ -113,4 +113,17 @@
   .touch-target-lg {
     @apply min-h-[60px] min-w-[60px];
   }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* Bottom nav spacing for mobile pages */
+@media (max-width: 767px) {
+  .has-bottom-nav {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
 }

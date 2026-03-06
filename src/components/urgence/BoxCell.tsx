@@ -126,7 +126,7 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
           </div>
         </div>
         <p className="font-semibold text-sm leading-tight truncate mt-0.5">
-          {p.nom.toUpperCase().slice(0, 8)}
+          {p.nom.toUpperCase().slice(0, 12)}
         </p>
         <p className="text-[10px] text-muted-foreground">{age}a · {p.sexe}</p>
         {encounter.motif_sfmu && (
