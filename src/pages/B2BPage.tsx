@@ -16,10 +16,36 @@ import {
 export default function B2BPage() {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitError('');
+    setSubmitting(true);
+    const form = formRef.current;
+    if (!form) return;
+    const data = new FormData(form);
+    try {
+      const { error } = await supabase.functions.invoke('contact-lead', {
+        body: {
+          lastName: data.get('lastName'),
+          firstName: data.get('firstName'),
+          email: data.get('email'),
+          establishment: data.get('establishment'),
+          roleFunction: data.get('role'),
+          passagesVolume: data.get('passages'),
+          message: data.get('message'),
+        },
+      });
+      if (error) throw error;
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Une erreur est survenue. Veuillez réessayer ou nous contacter par email.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
