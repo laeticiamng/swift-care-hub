@@ -86,31 +86,44 @@ export default function RoleSelector() {
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-3xl w-full">
-        {visibleRoles.map(({ role: r, label, description, icon: Icon, color }, index) => (
-          <button
-            key={r}
-            onClick={() => handleSelect(r)}
-            disabled={assigning}
-            className={cn(
-              'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
-              'hover:shadow-xl hover:border-primary/30 hover:scale-[1.05] transition-all duration-300 active:scale-[0.98]',
-              'touch-target min-h-[140px]',
-              'animate-in fade-in slide-in-from-bottom-4',
-              assigning && 'opacity-50 pointer-events-none',
-            )}
-            style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
-          >
-            <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Icon className={cn('h-8 w-8', color)} />
-            </div>
-            <div className="text-center">
-              <p className="font-semibold text-lg">{label}</p>
-              <p className="text-sm text-muted-foreground mt-1">{description}</p>
-            </div>
-          </button>
-        ))}
-      </div>
+      {isNewUser ? (
+        <div className="relative z-10 max-w-md w-full text-center p-8 rounded-2xl border bg-card shadow-sm animate-in fade-in duration-300">
+          <AlertTriangle className="h-10 w-10 text-medical-warning mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Aucun rôle attribué</h2>
+          <p className="text-muted-foreground text-sm mb-4">
+            Votre compte n'a pas encore de rôle assigné. Contactez un administrateur pour obtenir l'accès à la plateforme.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Email de contact : <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a>
+          </p>
+        </div>
+      ) : (
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-3xl w-full">
+          {visibleRoles.map(({ role: r, label, description, icon: Icon, color }, index) => (
+            <button
+              key={r}
+              onClick={() => handleSelect(r)}
+              disabled={assigning}
+              className={cn(
+                'flex flex-col items-center gap-3 p-6 rounded-xl border bg-card shadow-sm',
+                'hover:shadow-xl hover:border-primary/30 hover:scale-[1.05] transition-all duration-300 active:scale-[0.98]',
+                'touch-target min-h-[140px]',
+                'animate-in fade-in slide-in-from-bottom-4',
+                assigning && 'opacity-50 pointer-events-none',
+              )}
+              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
+            >
+              <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Icon className={cn('h-8 w-8', color)} />
+              </div>
+              <div className="text-center">
+                <p className="font-semibold text-lg">{label}</p>
+                <p className="text-sm text-muted-foreground mt-1">{description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       <Button variant="ghost" onClick={signOut} className="mt-8 text-muted-foreground relative z-10">
         <LogOut className="h-4 w-4 mr-2" /> Déconnexion
