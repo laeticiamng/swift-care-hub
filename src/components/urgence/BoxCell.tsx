@@ -103,7 +103,7 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
       onDrop={handleDrop}
       onClick={onClick}
       className={cn(
-        'rounded-lg border p-2 min-h-[90px] flex flex-col justify-between cursor-grab transition-all duration-200',
+        'rounded-lg border p-2 min-h-[100px] md:min-h-[90px] flex flex-col justify-between cursor-grab transition-all duration-200',
         'bg-card hover:shadow-lg hover:scale-[1.02] active:scale-[0.97]',
         'active:cursor-grabbing',
         borderColor && `border-l-4 ${borderColor}`,
