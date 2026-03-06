@@ -6,23 +6,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ── Attack pattern detection ──
-const violationTracker = new Map<string, { count: number; firstSeen: number }>();
-const ALERT_THRESHOLD = 10; // violations from same source
-const ALERT_WINDOW_MS = 5 * 60_000; // 5 minutes
-
-function detectAttackPattern(sourceKey: string): boolean {
-  const now = Date.now();
-  const entry = violationTracker.get(sourceKey);
-
-  if (!entry || now - entry.firstSeen > ALERT_WINDOW_MS) {
-    violationTracker.set(sourceKey, { count: 1, firstSeen: now });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count >= ALERT_THRESHOLD;
-}
+const ALERT_THRESHOLD = 10;
+const ALERT_WINDOW_MINUTES = 5;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -43,9 +28,10 @@ Deno.serve(async (req) => {
     const blockedUri = report["blocked-uri"] || report.blockedURL || "unknown";
     const sourceFile = report["source-file"] || report.sourceFile || null;
     const lineNumber = report["line-number"] || report.lineNumber || null;
+    const sourceKey = `${blockedUri}|${violatedDirective}`;
 
     // Log the violation
-    await supabase.from("audit_logs").insert({
+    const { error: insertErr } = await supabase.from("audit_logs").insert({
       action: "csp_violation",
       resource_type: "security",
       details: {
@@ -54,54 +40,83 @@ Deno.serve(async (req) => {
         blocked_uri: blockedUri,
         source_file: sourceFile,
         line_number: lineNumber,
+        source_key: sourceKey,
         timestamp: new Date().toISOString(),
       },
     });
 
-    // ── Attack pattern detection ──
-    const sourceKey = `${blockedUri}|${violatedDirective}`;
-    const isAttackPattern = detectAttackPattern(sourceKey);
-
-    if (isAttackPattern) {
-      // Log security alert
-      await supabase.from("audit_logs").insert({
-        action: "security_alert",
-        resource_type: "security",
-        details: {
-          alert_type: "repeated_csp_violations",
-          source: blockedUri,
-          directive: violatedDirective,
-          document: documentUri,
-          violation_count: ALERT_THRESHOLD,
-          window_minutes: ALERT_WINDOW_MS / 60_000,
-          severity: "high",
-          timestamp: new Date().toISOString(),
-          message: `Repeated CSP violations detected: ${ALERT_THRESHOLD}+ from ${blockedUri} in ${ALERT_WINDOW_MS / 60_000}min`,
-        },
-      });
-
-      // Send webhook alert if configured
-      const webhookUrl = Deno.env.get("SECURITY_WEBHOOK_URL");
-      if (webhookUrl) {
-        try {
-          await fetch(webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              text: `🚨 *Security Alert — UrgenceOS*\nRepeated CSP violations: ${ALERT_THRESHOLD}+ from \`${blockedUri}\`\nDirective: \`${violatedDirective}\`\nDocument: ${documentUri}`,
-              // Discord-compatible format
-              content: `🚨 **Security Alert — UrgenceOS**\nRepeated CSP violations: ${ALERT_THRESHOLD}+ from \`${blockedUri}\``,
-            }),
-          });
-        } catch (webhookErr) {
-          console.error("Webhook alert failed:", webhookErr);
-        }
-      }
-
-      console.warn(`[SECURITY ALERT] Repeated CSP violations from ${blockedUri}`);
+    if (insertErr) {
+      console.error("Insert error:", insertErr);
     }
 
-    return new Response(JSON.stringify({ ok: true }), {
+    // ── DB-based attack pattern detection ──
+    const windowStart = new Date(Date.now() - ALERT_WINDOW_MINUTES * 60_000).toISOString();
+
+    const { count: recentCount, error: countErr } = await supabase
+      .from("audit_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("action", "csp_violation")
+      .eq("resource_type", "security")
+      .gte("created_at", windowStart);
+
+    if (countErr) {
+      console.error("Count error:", countErr);
+    }
+
+    const violationCount = recentCount ?? 0;
+
+    if (violationCount >= ALERT_THRESHOLD) {
+      // Check if we already fired an alert for this source_key recently (avoid spam)
+      const { count: existingAlerts } = await supabase
+        .from("audit_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("action", "security_alert")
+        .eq("resource_type", "security")
+        .gte("created_at", windowStart);
+
+      if ((existingAlerts ?? 0) === 0) {
+        // First alert for this pattern in this window — fire it
+        await supabase.from("audit_logs").insert({
+          action: "security_alert",
+          resource_type: "security",
+          details: {
+            alert_type: "repeated_csp_violations",
+            source: blockedUri,
+            directive: violatedDirective,
+            document: documentUri,
+            violation_count: violationCount,
+            window_minutes: ALERT_WINDOW_MINUTES,
+            severity: "high",
+            timestamp: new Date().toISOString(),
+            message: `Repeated CSP violations detected: ${violationCount}+ from ${blockedUri} in ${ALERT_WINDOW_MINUTES}min`,
+          },
+        });
+
+        // Send webhook alert if configured
+        const webhookUrl = Deno.env.get("SECURITY_WEBHOOK_URL");
+        if (webhookUrl) {
+          try {
+            await fetch(webhookUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                text: `🚨 *Security Alert — UrgenceOS*\nRepeated CSP violations: ${violationCount}+ from \`${blockedUri}\`\nDirective: \`${violatedDirective}\`\nDocument: ${documentUri}`,
+                content: `🚨 **Security Alert — UrgenceOS**\nRepeated CSP violations: ${violationCount}+ from \`${blockedUri}\`\nDirective: \`${violatedDirective}\``,
+              }),
+            });
+            console.log(`[SECURITY] Webhook alert sent for ${sourceKey}`);
+          } catch (webhookErr) {
+            console.error("Webhook alert failed:", webhookErr);
+          }
+        } else {
+          console.warn(`[SECURITY ALERT] No SECURITY_WEBHOOK_URL configured. Alert: ${violationCount}+ violations from ${blockedUri}`);
+        }
+
+        console.warn(`[SECURITY ALERT] Repeated CSP violations (${violationCount}) from ${blockedUri}`);
+      }
+    }
+
+    return new Response(JSON.stringify({ ok: true, violation_count: violationCount }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
