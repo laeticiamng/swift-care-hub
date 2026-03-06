@@ -67,7 +67,10 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
-  const [labAlerts, setLabAlerts] = useState(SIH_LAB_ALERTS);
+  const [labAlerts, setLabAlerts] = useState(() => {
+    const acked = JSON.parse(localStorage.getItem('urgenceos_acked_lab_alerts') || '[]') as string[];
+    return SIH_LAB_ALERTS.map(a => acked.includes(a.id) ? { ...a, acknowledged: true } : a);
+  });
   const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
