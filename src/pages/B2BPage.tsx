@@ -283,7 +283,7 @@ export default function B2BPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="firstName">Prénom *</Label>
-                    <Input id="firstName" placeholder="Marie" required />
+                    <Input id="firstName" name="firstName" placeholder="Marie" required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
