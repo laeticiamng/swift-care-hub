@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth, type AppRole } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { Stethoscope, ClipboardList, Syringe, Heart, UserPlus, LogOut, AlertTriangle, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
