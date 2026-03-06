@@ -190,183 +190,333 @@ export default function PatientDossierPage() {
           );
         })()}
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          {/* Left column — 3 cols */}
-          <div className="lg:col-span-3 space-y-4">
-            {!isReadOnly && (
-              <AISynthesisPanel
-                patientData={{
-                  patient: { nom: patient.nom, prenom: patient.prenom, date_naissance: patient.date_naissance, sexe: patient.sexe, poids: patient.poids, allergies: patient.allergies, antecedents: patient.antecedents, medecin_traitant: patient.medecin_traitant },
-                  encounter: { motif_sfmu: encounter.motif_sfmu, ccmu: encounter.ccmu, cimu: encounter.cimu, zone: encounter.zone, arrival_time: encounter.arrival_time },
-                  vitals: vitals.map(v => ({ fc: v.fc, pa_systolique: v.pa_systolique, pa_diastolique: v.pa_diastolique, spo2: v.spo2, temperature: v.temperature, frequence_respiratoire: v.frequence_respiratoire, gcs: v.gcs, eva_douleur: v.eva_douleur, recorded_at: v.recorded_at })),
-                  prescriptions: prescriptions.map(rx => ({ medication_name: rx.medication_name, dosage: rx.dosage, route: rx.route, status: rx.status })),
-                  results: results.map(r => ({ title: r.title, category: r.category, content: r.content, is_critical: r.is_critical })),
-                  timeline: timeline.map(t => ({ item_type: t.item_type, content: t.content })),
-                }}
-                onCRHGenerated={interop.handleSetAICRH}
-                className="animate-in fade-in duration-300"
-              />
-            )}
+        {/* === MOBILE: Tabbed layout === */}
+        {isMobile ? (
+          <Tabs value={mobileTab} onValueChange={setMobileTab} className="w-full">
+            <TabsList className="w-full grid grid-cols-4 h-10">
+              <TabsTrigger value="synthese" className="text-xs px-1">Synthèse</TabsTrigger>
+              <TabsTrigger value="resultats" className="text-xs px-1">Résultats</TabsTrigger>
+              <TabsTrigger value="prescriptions" className="text-xs px-1">Rx</TabsTrigger>
+              <TabsTrigger value="timeline" className="text-xs px-1">Timeline</TabsTrigger>
+            </TabsList>
 
-            {!isReadOnly && (
-              <Card className="animate-in fade-in duration-300">
-                <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
-                    <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Observation clinique, hypothèse diagnostique..." rows={3} className="flex-1" />
-                    <Button onClick={handleSaveNote} disabled={!noteContent.trim() || savingNote} className="self-end"><Send className="h-4 w-4" /></Button>
-                  </div>
-                </CardContent>
+            {/* Tab: Synthèse — AI, notes, diagnostics, allergies, antécédents, constantes */}
+            <TabsContent value="synthese" className="space-y-4 mt-3">
+              {!isReadOnly && (
+                <AISynthesisPanel
+                  patientData={{
+                    patient: { nom: patient.nom, prenom: patient.prenom, date_naissance: patient.date_naissance, sexe: patient.sexe, poids: patient.poids, allergies: patient.allergies, antecedents: patient.antecedents, medecin_traitant: patient.medecin_traitant },
+                    encounter: { motif_sfmu: encounter.motif_sfmu, ccmu: encounter.ccmu, cimu: encounter.cimu, zone: encounter.zone, arrival_time: encounter.arrival_time },
+                    vitals: vitals.map(v => ({ fc: v.fc, pa_systolique: v.pa_systolique, pa_diastolique: v.pa_diastolique, spo2: v.spo2, temperature: v.temperature, frequence_respiratoire: v.frequence_respiratoire, gcs: v.gcs, eva_douleur: v.eva_douleur, recorded_at: v.recorded_at })),
+                    prescriptions: prescriptions.map(rx => ({ medication_name: rx.medication_name, dosage: rx.dosage, route: rx.route, status: rx.status })),
+                    results: results.map(r => ({ title: r.title, category: r.category, content: r.content, is_critical: r.is_critical })),
+                    timeline: timeline.map(t => ({ item_type: t.item_type, content: t.content })),
+                  }}
+                  onCRHGenerated={interop.handleSetAICRH}
+                />
+              )}
+
+              {/* Allergies + antecedents */}
+              {(patient.antecedents?.length > 0 || patient.allergies?.length > 0) && (
+                <Card>
+                  <CardContent className="p-4 space-y-3">
+                    {patient.allergies?.length > 0 && (
+                      <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
+                        <div className="flex items-center gap-2 mb-1.5"><AlertTriangle className="h-4 w-4 text-medical-critical" /><span className="text-xs font-semibold text-medical-critical uppercase tracking-wide">Allergies</span></div>
+                        <div className="flex flex-wrap gap-1.5">{patient.allergies.map((a: string, i: number) => <Badge key={i} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">{a}</Badge>)}</div>
+                      </div>
+                    )}
+                    {patient.antecedents?.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-1.5"><History className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Antécédents</span></div>
+                        <div className="flex flex-wrap gap-1.5">{patient.antecedents.map((a: string, i: number) => <Badge key={i} variant="secondary" className="text-xs">{a}</Badge>)}</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              <VitalsPanel vitals={vitals} orderedVitalKeys={orderedVitalKeys} contextPriorityVitals={contextPriorityVitals} />
+
+              {!isReadOnly && (
+                <Card>
+                  <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Observation clinique..." rows={2} className="flex-1" />
+                      <Button onClick={handleSaveNote} disabled={!noteContent.trim() || savingNote} className="self-end"><Send className="h-4 w-4" /></Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {!isReadOnly && (
+                <Card>
+                  <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)} placeholder="CIM-10 (ex: J18.9)" className="flex-1" />
+                      <Button onClick={handleSaveDiagnostic} disabled={!diagnosticContent.trim() || savingDiag}><Send className="h-4 w-4" /></Button>
+                    </div>
+                    {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
+                      <div className="mt-3 space-y-1.5">
+                        {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
+                          <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
+                            <Microscope className="h-3.5 w-3.5 text-primary" />
+                            <span className="text-sm font-medium">{d.content}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            {/* Tab: Résultats */}
+            <TabsContent value="resultats" className="space-y-4 mt-3">
+              {!isReadOnly && <ResultsPanel results={results} showResultsFirst={showResultsFirst} fetchAll={fetchAll} />}
+              {isReadOnly && <p className="text-sm text-muted-foreground p-4">Consultation seule — résultats non disponibles.</p>}
+            </TabsContent>
+
+            {/* Tab: Prescriptions */}
+            <TabsContent value="prescriptions" className="space-y-4 mt-3">
+              {!isReadOnly && (
+                <PrescriptionPanel
+                  prescriptions={prescriptions} encounter={encounter} vitals={vitals}
+                  {...rx}
+                />
+              )}
+              {isReadOnly && <p className="text-sm text-muted-foreground p-4">Consultation seule — prescriptions non disponibles.</p>}
+            </TabsContent>
+
+            {/* Tab: Timeline */}
+            <TabsContent value="timeline" className="space-y-4 mt-3">
+              {sihTimelineEntries.length > 0 && (
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-base flex items-center gap-2"><History className="h-5 w-5 text-primary" /> Fil SIH</CardTitle>
+                    {!isReadOnly && patient && (
+                      <CommunicationEntryButton
+                        patientId={patient.id} patientIpp={generateIPP(patient.id)} encounterId={encounterId!}
+                        authorId={user?.id || 'demo'} authorName={medecinName || user?.email || 'Clinicien'}
+                        onSubmit={(comm) => {
+                          const newEntry: TimelineEntry = {
+                            id: `comm-${Date.now()}`, encounter_id: encounterId!, patient_id: patient.id,
+                            patient_ipp: generateIPP(patient.id),
+                            entry_type: comm.type === 'prescription_orale' ? 'prescription_orale' : comm.type === 'appel_labo' ? 'alerte_labo' : 'communication',
+                            content: comm.content, author_id: comm.author_id, author_name: comm.author_name,
+                            validation_status: comm.type === 'appel_labo' ? 'critique' : 'en_attente',
+                            created_at: new Date().toISOString(), lab_result_value: comm.lab_result_value, lab_interlocutor: comm.lab_interlocutor,
+                          };
+                          setSihTimelineEntries(prev => [newEntry, ...prev]);
+                          toast.success('Communication enregistrée');
+                        }}
+                      />
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <SIHTimeline entries={sihTimelineEntries}
+                      onValidateOralPrescription={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const, validated_at: new Date().toISOString() } : e)); toast.success('Prescription orale validée'); }}
+                      onAcknowledgeLabAlert={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const } : e)); toast.success('Alerte labo acquittée'); }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-base">Timeline patient</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={() => setTimelineEssential(!timelineEssential)}>
+                    {timelineEssential ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+                    {timelineEssential ? 'Essentiel' : 'Tout'}
+                  </Button>
+                </CardHeader>
+                <CardContent><PatientTimeline items={timeline} showEssentialOnly={timelineEssential} /></CardContent>
               </Card>
-            )}
+            </TabsContent>
+          </Tabs>
+        ) : (
+          /* === DESKTOP: Original 5-column grid === */
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            {/* Left column — 3 cols */}
+            <div className="lg:col-span-3 space-y-4">
+              {!isReadOnly && (
+                <AISynthesisPanel
+                  patientData={{
+                    patient: { nom: patient.nom, prenom: patient.prenom, date_naissance: patient.date_naissance, sexe: patient.sexe, poids: patient.poids, allergies: patient.allergies, antecedents: patient.antecedents, medecin_traitant: patient.medecin_traitant },
+                    encounter: { motif_sfmu: encounter.motif_sfmu, ccmu: encounter.ccmu, cimu: encounter.cimu, zone: encounter.zone, arrival_time: encounter.arrival_time },
+                    vitals: vitals.map(v => ({ fc: v.fc, pa_systolique: v.pa_systolique, pa_diastolique: v.pa_diastolique, spo2: v.spo2, temperature: v.temperature, frequence_respiratoire: v.frequence_respiratoire, gcs: v.gcs, eva_douleur: v.eva_douleur, recorded_at: v.recorded_at })),
+                    prescriptions: prescriptions.map(rx => ({ medication_name: rx.medication_name, dosage: rx.dosage, route: rx.route, status: rx.status })),
+                    results: results.map(r => ({ title: r.title, category: r.category, content: r.content, is_critical: r.is_critical })),
+                    timeline: timeline.map(t => ({ item_type: t.item_type, content: t.content })),
+                  }}
+                  onCRHGenerated={interop.handleSetAICRH}
+                  className="animate-in fade-in duration-300"
+                />
+              )}
 
-            {!isReadOnly && (
-              <Card className="animate-in fade-in duration-300" style={{ animationDelay: '25ms', animationFillMode: 'both' }}>
-                <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="flex gap-2">
-                    <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)} placeholder="Diagnostic CIM-10 (ex: J18.9 — Pneumonie)" className="flex-1" />
-                    <Button onClick={handleSaveDiagnostic} disabled={!diagnosticContent.trim() || savingDiag}><Send className="h-4 w-4" /></Button>
-                  </div>
-                  {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
-                    <div className="mt-3 space-y-1.5">
-                      {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
-                        <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
-                          <Microscope className="h-3.5 w-3.5 text-primary" />
-                          <span className="text-sm font-medium">{d.content}</span>
-                          <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
-                        </div>
+              {!isReadOnly && (
+                <Card className="animate-in fade-in duration-300">
+                  <CardHeader className="pb-2"><CardTitle className="text-lg">Notes médicales</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Observation clinique, hypothèse diagnostique..." rows={3} className="flex-1" />
+                      <Button onClick={handleSaveNote} disabled={!noteContent.trim() || savingNote} className="self-end"><Send className="h-4 w-4" /></Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {!isReadOnly && (
+                <Card className="animate-in fade-in duration-300" style={{ animationDelay: '25ms', animationFillMode: 'both' }}>
+                  <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><Microscope className="h-5 w-5 text-primary" /> Diagnostic</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Input value={diagnosticContent} onChange={e => setDiagnosticContent(e.target.value)} placeholder="Diagnostic CIM-10 (ex: J18.9 — Pneumonie)" className="flex-1" />
+                      <Button onClick={handleSaveDiagnostic} disabled={!diagnosticContent.trim() || savingDiag}><Send className="h-4 w-4" /></Button>
+                    </div>
+                    {timeline.filter(t => t.item_type === 'diagnostic').length > 0 && (
+                      <div className="mt-3 space-y-1.5">
+                        {timeline.filter(t => t.item_type === 'diagnostic').map(d => (
+                          <div key={d.id} className="flex items-center gap-2 p-2 rounded-lg border bg-primary/5">
+                            <Microscope className="h-3.5 w-3.5 text-primary" />
+                            <span className="text-sm font-medium">{d.content}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">{d.source_date}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* SIH Timeline */}
+              {sihTimelineEntries.length > 0 && (
+                <Card className="animate-in fade-in duration-300" style={{ animationDelay: '40ms', animationFillMode: 'both' }}>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg flex items-center gap-2"><History className="h-5 w-5 text-primary" /> Fil chronologique SIH</CardTitle>
+                    {!isReadOnly && patient && (
+                      <CommunicationEntryButton
+                        patientId={patient.id} patientIpp={generateIPP(patient.id)} encounterId={encounterId!}
+                        authorId={user?.id || 'demo'} authorName={medecinName || user?.email || 'Clinicien'}
+                        onSubmit={(comm) => {
+                          const newEntry: TimelineEntry = {
+                            id: `comm-${Date.now()}`, encounter_id: encounterId!, patient_id: patient.id,
+                            patient_ipp: generateIPP(patient.id),
+                            entry_type: comm.type === 'prescription_orale' ? 'prescription_orale' : comm.type === 'appel_labo' ? 'alerte_labo' : 'communication',
+                            content: comm.content, author_id: comm.author_id, author_name: comm.author_name,
+                            validation_status: comm.type === 'appel_labo' ? 'critique' : 'en_attente',
+                            created_at: new Date().toISOString(), lab_result_value: comm.lab_result_value, lab_interlocutor: comm.lab_interlocutor,
+                          };
+                          setSihTimelineEntries(prev => [newEntry, ...prev]);
+                          toast.success('Communication enregistree dans le fil');
+                        }}
+                      />
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <SIHTimeline entries={sihTimelineEntries}
+                      onValidateOralPrescription={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const, validated_at: new Date().toISOString() } : e)); toast.success('Prescription orale validee'); }}
+                      onAcknowledgeLabAlert={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const } : e)); toast.success('Alerte labo acquittee'); }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-lg">Timeline patient</CardTitle>
+                  <Button variant="ghost" size="sm" onClick={() => setTimelineEssential(!timelineEssential)}>
+                    {timelineEssential ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+                    {timelineEssential ? 'Essentiel' : 'Voir tout'}
+                  </Button>
+                </CardHeader>
+                <CardContent><PatientTimeline items={timeline} showEssentialOnly={timelineEssential} /></CardContent>
+              </Card>
+            </div>
+
+            {/* Right column — 2 cols */}
+            <div className="lg:col-span-2 space-y-4">
+              {dossierContext !== 'default' && (
+                <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium',
+                  dossierContext === 'sortie' ? 'border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400' : 'border-primary/30 bg-primary/5 text-primary')}>
+                  <ScanLine className="h-3.5 w-3.5" /> {CONTEXT_LABELS[dossierContext]} — sections adaptees
+                </div>
+              )}
+
+              {dossierContext === 'sortie' && !isReadOnly && (
+                <Card className="animate-in fade-in duration-300 border-green-500/30">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-3"><DoorOpen className="h-4 w-4 text-green-600" /><span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Actions de sortie</span></div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={interop.handleGenerateCRH} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10"><FileText className="h-4 w-4 mr-1" /> Generer CRH</Button>
+                      <Button size="sm" variant="outline" onClick={interop.handleGenerateOrdonnance} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10"><FileDown className="h-4 w-4 mr-1" /> Ordonnance</Button>
+                      {encounter.status !== 'finished' && <Button size="sm" onClick={() => setDischargeOpen(true)} className="bg-green-600 hover:bg-green-700 text-white"><DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie</Button>}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Allergies + antecedents */}
+              {(patient.antecedents?.length > 0 || patient.allergies?.length > 0) && (
+                <Card className="animate-in fade-in duration-300">
+                  <CardContent className="p-4 space-y-3">
+                    {patient.allergies?.length > 0 && (
+                      <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
+                        <div className="flex items-center gap-2 mb-1.5"><AlertTriangle className="h-4 w-4 text-medical-critical" /><span className="text-xs font-semibold text-medical-critical uppercase tracking-wide">Allergies</span></div>
+                        <div className="flex flex-wrap gap-1.5">{patient.allergies.map((a: string, i: number) => <Badge key={i} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">{a}</Badge>)}</div>
+                      </div>
+                    )}
+                    {patient.antecedents?.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-1.5"><History className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Antécédents</span></div>
+                        <div className="flex flex-wrap gap-1.5">{patient.antecedents.map((a: string, i: number) => <Badge key={i} variant="secondary" className="text-xs">{a}</Badge>)}</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Traitements en cours */}
+              {patient.traitements_actuels && (Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels.length > 0 : Object.keys(patient.traitements_actuels).length > 0) && (
+                <Card className="animate-in fade-in duration-300">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2"><Pill className="h-4 w-4 text-medical-warning" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Traitements en cours</span></div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels : Object.entries(patient.traitements_actuels).map(([k, v]) => `${k}: ${v}`)).map((t: any, i: number) => (
+                        <Badge key={i} variant="outline" className="text-xs border-medical-warning/30 text-medical-warning">{typeof t === 'object' ? JSON.stringify(t) : String(t)}</Badge>
                       ))}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
+                  </CardContent>
+                </Card>
+              )}
 
-            {/* SIH Timeline */}
-            {sihTimelineEntries.length > 0 && (
-              <Card className="animate-in fade-in duration-300" style={{ animationDelay: '40ms', animationFillMode: 'both' }}>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2"><History className="h-5 w-5 text-primary" /> Fil chronologique SIH</CardTitle>
-                  {!isReadOnly && patient && (
-                    <CommunicationEntryButton
-                      patientId={patient.id} patientIpp={generateIPP(patient.id)} encounterId={encounterId!}
-                      authorId={user?.id || 'demo'} authorName={medecinName || user?.email || 'Clinicien'}
-                      onSubmit={(comm) => {
-                        const newEntry: TimelineEntry = {
-                          id: `comm-${Date.now()}`, encounter_id: encounterId!, patient_id: patient.id,
-                          patient_ipp: generateIPP(patient.id),
-                          entry_type: comm.type === 'prescription_orale' ? 'prescription_orale' : comm.type === 'appel_labo' ? 'alerte_labo' : 'communication',
-                          content: comm.content, author_id: comm.author_id, author_name: comm.author_name,
-                          validation_status: comm.type === 'appel_labo' ? 'critique' : 'en_attente',
-                          created_at: new Date().toISOString(), lab_result_value: comm.lab_result_value, lab_interlocutor: comm.lab_interlocutor,
-                        };
-                        setSihTimelineEntries(prev => [newEntry, ...prev]);
-                        toast.success('Communication enregistree dans le fil');
-                      }}
-                    />
-                  )}
-                </CardHeader>
-                <CardContent>
-                  <SIHTimeline entries={sihTimelineEntries}
-                    onValidateOralPrescription={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const, validated_at: new Date().toISOString() } : e)); toast.success('Prescription orale validee'); }}
-                    onAcknowledgeLabAlert={(entryId) => { setSihTimelineEntries(prev => prev.map(e => e.id === entryId ? { ...e, validation_status: 'valide' as const } : e)); toast.success('Alerte labo acquittee'); }}
-                  />
-                </CardContent>
-              </Card>
-            )}
+              {patient.medecin_traitant && (
+                <Card className="animate-in fade-in duration-300">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2"><Stethoscope className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Médecin traitant</span></div>
+                    <p className="text-sm font-medium mt-1">{patient.medecin_traitant}</p>
+                  </CardContent>
+                </Card>
+              )}
 
-            <Card className="animate-in fade-in duration-300" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">Timeline patient</CardTitle>
-                <Button variant="ghost" size="sm" onClick={() => setTimelineEssential(!timelineEssential)}>
-                  {timelineEssential ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
-                  {timelineEssential ? 'Essentiel' : 'Voir tout'}
-                </Button>
-              </CardHeader>
-              <CardContent><PatientTimeline items={timeline} showEssentialOnly={timelineEssential} /></CardContent>
-            </Card>
+              <VitalsPanel vitals={vitals} orderedVitalKeys={orderedVitalKeys} contextPriorityVitals={contextPriorityVitals} />
+
+              {showResultsFirst && !isReadOnly && <ResultsPanel results={results} showResultsFirst={showResultsFirst} fetchAll={fetchAll} />}
+
+              {!isReadOnly && (
+                <PrescriptionPanel
+                  prescriptions={prescriptions} encounter={encounter} vitals={vitals}
+                  {...rx}
+                />
+              )}
+
+              {!showResultsFirst && !isReadOnly && <ResultsPanel results={results} showResultsFirst={showResultsFirst} fetchAll={fetchAll} />}
+            </div>
           </div>
-
-          {/* Right column — 2 cols */}
-          <div className="lg:col-span-2 space-y-4">
-            {dossierContext !== 'default' && (
-              <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium',
-                dossierContext === 'sortie' ? 'border-green-500/30 bg-green-500/5 text-green-700 dark:text-green-400' : 'border-primary/30 bg-primary/5 text-primary')}>
-                <ScanLine className="h-3.5 w-3.5" /> {CONTEXT_LABELS[dossierContext]} — sections adaptees
-              </div>
-            )}
-
-            {dossierContext === 'sortie' && !isReadOnly && (
-              <Card className="animate-in fade-in duration-300 border-green-500/30">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-3"><DoorOpen className="h-4 w-4 text-green-600" /><span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Actions de sortie</span></div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" onClick={interop.handleGenerateCRH} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10"><FileText className="h-4 w-4 mr-1" /> Generer CRH</Button>
-                    <Button size="sm" variant="outline" onClick={interop.handleGenerateOrdonnance} className="border-green-500/30 text-green-700 dark:text-green-400 hover:bg-green-500/10"><FileDown className="h-4 w-4 mr-1" /> Ordonnance</Button>
-                    {encounter.status !== 'finished' && <Button size="sm" onClick={() => setDischargeOpen(true)} className="bg-green-600 hover:bg-green-700 text-white"><DoorOpen className="h-4 w-4 mr-1" /> Preparer sortie</Button>}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Allergies + antecedents */}
-            {(patient.antecedents?.length > 0 || patient.allergies?.length > 0) && (
-              <Card className="animate-in fade-in duration-300">
-                <CardContent className="p-4 space-y-3">
-                  {patient.allergies?.length > 0 && (
-                    <div className="p-3 rounded-lg border border-medical-critical/30 bg-medical-critical/5">
-                      <div className="flex items-center gap-2 mb-1.5"><AlertTriangle className="h-4 w-4 text-medical-critical" /><span className="text-xs font-semibold text-medical-critical uppercase tracking-wide">Allergies</span></div>
-                      <div className="flex flex-wrap gap-1.5">{patient.allergies.map((a: string, i: number) => <Badge key={i} variant="outline" className="border-medical-critical/30 text-medical-critical text-xs">{a}</Badge>)}</div>
-                    </div>
-                  )}
-                  {patient.antecedents?.length > 0 && (
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5"><History className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Antécédents</span></div>
-                      <div className="flex flex-wrap gap-1.5">{patient.antecedents.map((a: string, i: number) => <Badge key={i} variant="secondary" className="text-xs">{a}</Badge>)}</div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Traitements en cours */}
-            {patient.traitements_actuels && (Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels.length > 0 : Object.keys(patient.traitements_actuels).length > 0) && (
-              <Card className="animate-in fade-in duration-300">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2"><Pill className="h-4 w-4 text-medical-warning" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Traitements en cours</span></div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(Array.isArray(patient.traitements_actuels) ? patient.traitements_actuels : Object.entries(patient.traitements_actuels).map(([k, v]) => `${k}: ${v}`)).map((t: any, i: number) => (
-                      <Badge key={i} variant="outline" className="text-xs border-medical-warning/30 text-medical-warning">{typeof t === 'object' ? JSON.stringify(t) : String(t)}</Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {patient.medecin_traitant && (
-              <Card className="animate-in fade-in duration-300">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2"><Stethoscope className="h-4 w-4 text-muted-foreground" /><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Médecin traitant</span></div>
-                  <p className="text-sm font-medium mt-1">{patient.medecin_traitant}</p>
-                </CardContent>
-              </Card>
-            )}
-
-            <VitalsPanel vitals={vitals} orderedVitalKeys={orderedVitalKeys} contextPriorityVitals={contextPriorityVitals} />
-
-            {showResultsFirst && !isReadOnly && <ResultsPanel results={results} showResultsFirst={showResultsFirst} fetchAll={fetchAll} />}
-
-            {!isReadOnly && (
-              <PrescriptionPanel
-                prescriptions={prescriptions} encounter={encounter} vitals={vitals}
-                {...rx}
-              />
-            )}
-
-            {!showResultsFirst && !isReadOnly && <ResultsPanel results={results} showResultsFirst={showResultsFirst} fetchAll={fetchAll} />}
-          </div>
-        </div>
+        )}
       </div>
 
       {encounterId && <RecapDrawer encounterId={encounterId} />}
