@@ -30,11 +30,13 @@ interface ZoneGridProps {
   resultCounts: ResultCount[];
   highlightedIds?: Set<string>;
   hasActiveFilter?: boolean;
+  selectedEncounterId?: string | null;
   onClickEncounter: (encounter: Encounter) => void;
   onDropToZone?: (encounterId: string, zone: string, boxNumber?: number) => void;
+  onSelectEncounter?: (encounter: Encounter) => void;
 }
 
-export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasActiveFilter, onClickEncounter, onDropToZone }: ZoneGridProps) {
+export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasActiveFilter, selectedEncounterId, onClickEncounter, onDropToZone, onSelectEncounter }: ZoneGridProps) {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(true);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -55,7 +57,6 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasAc
   };
 
   const handleZoneDragLeave = (e: DragEvent) => {
-    // Only if leaving the zone container itself
     if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
       setIsDragOver(false);
       setDragOverBox(null);
@@ -85,22 +86,19 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasAc
   const content = (
     <div
       className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-2 mt-3"
-      onDragOver={(e) => {
-        e.preventDefault();
-        // Detect which box we're over based on target
-      }}
+      onDragOver={!isMobile ? (e) => { e.preventDefault(); } : undefined}
     >
       {Array.from({ length: zone.boxCount }, (_, i) => i + 1).map(num => {
         const enc = encounterByBox.get(num);
         return (
           <div
             key={num}
-            onDragEnter={() => setDragOverBox(num)}
-            onDragLeave={(e) => {
+            onDragEnter={!isMobile ? () => setDragOverBox(num) : undefined}
+            onDragLeave={!isMobile ? (e) => {
               if (!(e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
                 setDragOverBox(null);
               }
-            }}
+            } : undefined}
           >
             <BoxCell
               boxNumber={num}
@@ -109,9 +107,11 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasAc
               resultCount={enc ? getResultCount(enc.id) : undefined}
               isHighlighted={enc ? highlightedIds?.has(enc.id) : false}
               hasActiveFilter={hasActiveFilter}
+              isSelected={enc ? enc.id === selectedEncounterId : false}
               isDragOver={dragOverBox === num && !enc}
               onClick={enc ? () => onClickEncounter(enc) : undefined}
-              onDropEncounter={(eid) => handleDropToBox(eid, num)}
+              onLongPress={enc && onSelectEncounter ? () => onSelectEncounter(enc) : undefined}
+              onDropEncounter={!isMobile ? (eid) => handleDropToBox(eid, num) : undefined}
             />
           </div>
         );
@@ -126,9 +126,9 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasAc
         zone.bgColor,
         isDragOver && 'ring-2 ring-primary shadow-lg scale-[1.01]',
       )}
-      onDragOver={handleZoneDragOver}
-      onDragLeave={handleZoneDragLeave}
-      onDrop={handleZoneDrop}
+      onDragOver={!isMobile ? handleZoneDragOver : undefined}
+      onDragLeave={!isMobile ? handleZoneDragLeave : undefined}
+      onDrop={!isMobile ? handleZoneDrop : undefined}
     >
       <div className="flex items-center gap-2">
         <div className={cn('h-3 w-3 rounded-full', zone.color)} />
@@ -154,11 +154,7 @@ export function ZoneGrid({ zone, encounters, resultCounts, highlightedIds, hasAc
               className={cn(
                 'rounded-xl p-3 flex items-center transition-all duration-200',
                 zone.bgColor,
-                isDragOver && 'ring-2 ring-primary shadow-lg',
               )}
-              onDragOver={handleZoneDragOver}
-              onDragLeave={handleZoneDragLeave}
-              onDrop={handleZoneDrop}
             >
               <div className="flex items-center gap-2 flex-1">
                 <div className={cn('h-3 w-3 rounded-full', zone.color)} />
