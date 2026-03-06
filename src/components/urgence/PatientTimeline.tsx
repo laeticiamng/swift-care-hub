@@ -42,6 +42,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   prescription: <Syringe className="h-4 w-4 text-medical-info" />,
   acte: <Activity className="h-4 w-4 text-medical-success" />,
   consultation: <Stethoscope className="h-4 w-4 text-primary" />,
+  deplacement: <ArrowRightLeft className="h-4 w-4 text-medical-info" />,
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -54,6 +55,7 @@ const TYPE_LABELS: Record<string, string> = {
   prescription: 'Prescription',
   acte: 'Acte',
   consultation: 'Consultation',
+  deplacement: 'Deplacement',
 };
 
 const ESSENTIAL_TYPES = ['allergie', 'crh', 'diagnostic'];
