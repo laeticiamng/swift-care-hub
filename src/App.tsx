@@ -44,6 +44,9 @@ const B2BPage = lazy(() => import("./pages/B2BPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ── Loading fallback ──
