@@ -16,7 +16,7 @@ export default function MentionsLegalesPage() {
             <li><strong className="text-foreground">Raison sociale :</strong> EmotionsCare SASU</li>
             <li><strong className="text-foreground">SIREN :</strong> 944 505 445</li>
             <li><strong className="text-foreground">Forme juridique :</strong> Société par Actions Simplifiée Unipersonnelle</li>
-            <li><strong className="text-foreground">Capital social :</strong> En cours de constitution</li>
+            <li><strong className="text-foreground">Capital social :</strong> 1 000 €</li>
             <li><strong className="text-foreground">Siège social :</strong> France</li>
             <li><strong className="text-foreground">Directeur de la publication :</strong> Le président de la SASU EmotionsCare</li>
             <li><strong className="text-foreground">Contact :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a></li>
