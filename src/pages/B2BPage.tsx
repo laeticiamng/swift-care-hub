@@ -293,7 +293,7 @@ export default function B2BPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="establishment">Établissement *</Label>
-                    <Input id="establishment" placeholder="CH de Exemple" required />
+                    <Input id="establishment" name="establishment" placeholder="CH de Exemple" required maxLength={300} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Fonction *</Label>
