@@ -203,6 +203,7 @@ const App = () => (
           <BrowserRouter>
             <AuthProvider>
               <DemoProvider>
+                <DemoBanner />
                 <AppRoutes />
                 <BottomNav />
                 <MedicalDisclaimer />
