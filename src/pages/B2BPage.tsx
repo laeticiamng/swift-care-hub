@@ -302,14 +302,15 @@ export default function B2BPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="passages">Volume de passages/an (estimation)</Label>
-                  <Input id="passages" placeholder="ex: 35 000" />
+                  <Input id="passages" name="passages" placeholder="ex: 35 000" maxLength={100} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="message">Contexte et enjeux (optionnel)</Label>
-                  <Textarea id="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} />
+                  <Textarea id="message" name="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} maxLength={2000} />
                 </div>
-                <Button type="submit" className="w-full" size="lg">
-                  <Send className="h-4 w-4 mr-2" /> Demander un pilote
+                {submitError && <p className="text-sm text-medical-critical text-center">{submitError}</p>}
+                <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un pilote'}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}
