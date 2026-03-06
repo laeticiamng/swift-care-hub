@@ -32,6 +32,7 @@ interface FloorPlanViewProps {
   highlightedIds?: Set<string>;
   hasActiveFilter?: boolean;
   onClickEncounter: (encounter: Encounter) => void;
+  onDropToZone?: (encounterId: string, zone: string, boxNumber?: number) => void;
 }
 
 const ccmuBorderColors: Record<number, string> = {
