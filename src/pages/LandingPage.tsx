@@ -33,6 +33,9 @@ export default function LandingPage() {
       {/* BLOC 1 — Hero */}
       <HeroSection />
 
+      {/* BLOC 1b — Preuve sociale */}
+      <SocialProofSection />
+
       {/* BLOC 2 — Problème : dette opérationnelle */}
       <ProblemSection />
 
