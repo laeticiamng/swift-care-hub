@@ -27,6 +27,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { addToOfflineQueue } from '@/lib/offline-db';
 import { DechocageConfirmDialog } from '@/components/urgence/DechocageConfirmDialog';
+import { MobileMoveBar } from '@/components/urgence/MobileMoveBar';
 
 interface EncounterWithPatient {
   id: string;
