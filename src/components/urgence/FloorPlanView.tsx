@@ -246,6 +246,7 @@ export function FloorPlanView({
           hasActiveFilter={hasActiveFilter}
           onClickEncounter={onClickEncounter}
           getResultCount={getResultCount}
+          onDropToZone={onDropToZone}
         />
 
         {/* Right column: UHCD + Déchocage stacked */}
@@ -258,6 +259,7 @@ export function FloorPlanView({
             hasActiveFilter={hasActiveFilter}
             onClickEncounter={onClickEncounter}
             getResultCount={getResultCount}
+            onDropToZone={onDropToZone}
           />
           <ZoneSection
             zoneKey="dechocage"
@@ -267,6 +269,7 @@ export function FloorPlanView({
             hasActiveFilter={hasActiveFilter}
             onClickEncounter={onClickEncounter}
             getResultCount={getResultCount}
+            onDropToZone={onDropToZone}
           />
         </div>
       </div>
