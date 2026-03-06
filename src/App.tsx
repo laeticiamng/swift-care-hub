@@ -122,6 +122,9 @@ function AppRoutes() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={user ? <Navigate to="/select-role" replace /> : <LoginPage />} />
+        <Route path="/signup" element={user ? <Navigate to="/select-role" replace /> : <SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/demo" element={<DemoPage />} />
         <Route path="/demo/live" element={<DemoLivePage />} />
         <Route path="/sih-validation" element={<SIHValidationPage />} />
