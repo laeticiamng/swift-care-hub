@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { addToOfflineQueue } from '@/lib/offline-db';
+import { DechocageConfirmDialog } from '@/components/urgence/DechocageConfirmDialog';
 
 interface EncounterWithPatient {
   id: string;
