@@ -68,7 +68,7 @@ export default function B2BPage() {
         '@type': 'WebPage',
         name: 'UrgenceOS — Établissements hospitaliers',
         description: 'Reprenez le contrôle de votre SI hospitalier. Socle interne possédé par l\'hôpital, modules urgences, interopérabilité FHIR R4.',
-        url: 'https://flow-pulse-assist.lovable.app/b2b',
+        url: 'https://urgenceos.fr/b2b',
       }} />
       <SiteHeader />
 
