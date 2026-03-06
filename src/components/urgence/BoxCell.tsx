@@ -124,7 +124,7 @@ export function BoxCell({ boxNumber, zoneKey, encounter, resultCount, isHighligh
             {rc && rc.unread > 0 && rc.critical === 0 && (
               <FlaskConical className="h-3 w-3 text-muted-foreground" />
             )}
-            <GripVertical className="h-3 w-3 text-muted-foreground/40" />
+            {!isMobile && <GripVertical className="h-3 w-3 text-muted-foreground/40" />}
           </div>
         </div>
         <p className="font-semibold text-sm leading-tight truncate mt-0.5">
