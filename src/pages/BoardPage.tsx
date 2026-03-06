@@ -20,6 +20,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList } from 'lucide-react';
 import { FloorPlanView } from '@/components/urgence/FloorPlanView';
+import { BoardEmptyState } from '@/components/urgence/BoardEmptyState';
 import { ChatPanel } from '@/components/urgence/ChatPanel';
 import type { ChatChannel } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
