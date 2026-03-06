@@ -27,6 +27,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { addToOfflineQueue } from '@/lib/offline-db';
 import { DechocageConfirmDialog } from '@/components/urgence/DechocageConfirmDialog';
+import { MobileMoveBar } from '@/components/urgence/MobileMoveBar';
 
 interface EncounterWithPatient {
   id: string;
@@ -72,6 +73,7 @@ export default function BoardPage() {
     return SIH_LAB_ALERTS.map(a => acked.includes(a.id) ? { ...a, acknowledged: true } : a);
   });
   const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
+  const [mobileSelectedEncounter, setMobileSelectedEncounter] = useState<EncounterWithPatient | null>(null);
 
   useEffect(() => { localStorage.setItem(`urgenceos_myOnly${userKey}`, String(myOnly)); }, [myOnly, userKey]);
   useEffect(() => { localStorage.setItem(`urgenceos_viewMode${userKey}`, viewMode); }, [viewMode, userKey]);
@@ -523,8 +525,16 @@ export default function BoardPage() {
                 resultCounts={resultCounts}
                 highlightedIds={highlightedIds}
                 hasActiveFilter={myOnly}
-                onClickEncounter={navigateToPatient}
+                selectedEncounterId={mobileSelectedEncounter?.id || null}
+                onClickEncounter={(enc) => {
+                  // If an encounter is selected for move and we tap another, navigate instead
+                  if (mobileSelectedEncounter) {
+                    setMobileSelectedEncounter(null);
+                  }
+                  navigateToPatient(enc);
+                }}
                 onDropToZone={handleDropToZone}
+                onSelectEncounter={(enc) => setMobileSelectedEncounter(enc as EncounterWithPatient)}
               />
             ))}
           </div>
@@ -555,6 +565,19 @@ export default function BoardPage() {
           </div>
         )}
       </div>
+
+      {/* Mobile move bar — appears on long-press */}
+      {isMobile && mobileSelectedEncounter && (
+        <MobileMoveBar
+          patientName={`${mobileSelectedEncounter.patients.nom.toUpperCase()} ${mobileSelectedEncounter.patients.prenom}`}
+          currentZone={mobileSelectedEncounter.zone}
+          onMoveToZone={(newZone) => {
+            handleMoveZone(mobileSelectedEncounter.id, newZone);
+            setMobileSelectedEncounter(null);
+          }}
+          onCancel={() => setMobileSelectedEncounter(null)}
+        />
+      )}
     </div>
   );
 }
