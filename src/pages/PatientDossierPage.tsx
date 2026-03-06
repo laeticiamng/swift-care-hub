@@ -63,11 +63,13 @@ export default function PatientDossierPage() {
   const interop = useInterop(encounter, patient, vitals, prescriptions, results, timeline, medecinName);
 
   // Local UI state
+  const isMobile = useIsMobile();
   const [dischargeOpen, setDischargeOpen] = useState(false);
   const [timelineEssential, setTimelineEssential] = useState(false);
   const [noteContent, setNoteContent] = useState('');
   const [savingNote, setSavingNote] = useState(false);
   const [diagnosticContent, setDiagnosticContent] = useState('');
+  const [mobileTab, setMobileTab] = useState('synthese');
   const [savingDiag, setSavingDiag] = useState(false);
 
   const handleSaveNote = async () => {
