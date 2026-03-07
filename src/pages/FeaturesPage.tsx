@@ -9,6 +9,7 @@ import {
   Database, Eye, Users, Key, FileText, Server,
 } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export default function FeaturesPage() {
   const navigate = useNavigate();
