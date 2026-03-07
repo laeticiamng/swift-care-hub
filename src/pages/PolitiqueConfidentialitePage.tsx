@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom';
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { PageMeta, webPageSchema, JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export default function PolitiqueConfidentialitePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="Politique de confidentialité — UrgenceOS | RGPD Santé"
+        description="Politique de confidentialité UrgenceOS : données collectées, finalités, base légale RGPD, durée de conservation, droits des utilisateurs, sécurité HDS."
+      />
+      <JsonLd id="privacy-webpage" data={webPageSchema({
+        name: 'Politique de confidentialité — UrgenceOS',
+        description: 'RGPD santé : données collectées, finalités de traitement, droits des utilisateurs, sécurité des données de santé.',
+        url: 'https://urgenceos.fr/politique-confidentialite',
+        breadcrumb: ['Accueil', 'Politique de confidentialité'],
+      })} />
       <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Politique de confidentialité' },
+        ]} />
         <h1 className="text-3xl font-bold">Politique de confidentialité</h1>
         <p className="text-muted-foreground">Dernière mise à jour : 1er février 2026</p>
 
@@ -18,8 +34,8 @@ export default function PolitiqueConfidentialitePage() {
           </p>
           <ul className="space-y-1 text-muted-foreground leading-relaxed">
             <li><strong className="text-foreground">Siège social :</strong> France</li>
-            <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline">dpo@emotionscare.com</a></li>
-            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a></li>
+            <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a></li>
+            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
           </ul>
         </section>
 
@@ -106,7 +122,7 @@ export default function PolitiqueConfidentialitePage() {
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-primary">7. Transferts de données</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Les données sont hébergées exclusivement au sein de l'Union Européenne (infrastructure Supabase, datacenter AWS Frankfurt). Aucun transfert de données hors de l'UE n'est effectué.
+            Les données sont hébergées exclusivement au sein de l'Union Européenne (infrastructure cloud européenne, datacenter AWS Frankfurt). Aucun transfert de données hors de l'UE n'est effectué.
           </p>
         </section>
 
@@ -141,7 +157,7 @@ export default function PolitiqueConfidentialitePage() {
             <li><strong className="text-foreground">Directives post-mortem</strong> (article 85 loi Informatique et Libertés) : définir des directives relatives au sort de vos données après votre décès</li>
           </ul>
           <p className="text-muted-foreground leading-relaxed">
-            Pour exercer ces droits, contactez notre DPO à <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline">dpo@emotionscare.com</a>. Nous nous engageons à répondre dans un délai d'un mois. Vous pouvez également introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>).
+            Pour exercer ces droits, contactez notre DPO à <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a>. Nous nous engageons à répondre dans un délai d'un mois. Vous pouvez également introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>).
           </p>
         </section>
 

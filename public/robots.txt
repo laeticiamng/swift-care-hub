@@ -1,19 +1,11 @@
 # UrgenceOS — robots.txt
-# GEO-optimized: explicit allow for AI crawlers
+# GEO-optimized: explicit allow for AI crawlers + standard search engines
 
-# ── AI Engine Crawlers — explicitly allowed ──
-User-agent: GPTBot
+# ── Google (Search + AI) ──
+User-agent: Googlebot
 Allow: /
-Allow: /features
-Allow: /tarifs
-Allow: /b2b
-Allow: /securite
-Allow: /about
-Allow: /faq
-Allow: /glossaire
-Allow: /blog
-Allow: /demo
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -31,6 +23,88 @@ Disallow: /garde
 Disallow: /audit
 Disallow: /demo/live
 Disallow: /sih-validation
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /admin/
+
+User-agent: Google-Extended
+Allow: /
+
+# ── Bing / Microsoft ──
+User-agent: Bingbot
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+Disallow: /as
+Disallow: /constantes
+Disallow: /accueil
+Disallow: /admission
+Disallow: /ioa-queue
+Disallow: /prescriptions
+Disallow: /recap/
+Disallow: /interop
+Disallow: /garde
+Disallow: /audit
+Disallow: /demo/live
+Disallow: /sih-validation
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /admin/
+
+# ── AI Engine Crawlers — explicitly allowed ──
+User-agent: GPTBot
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /glossaire
+Allow: /demo
+Disallow: /login
+Disallow: /signup
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+Disallow: /triage
+Disallow: /pancarte/
+Disallow: /as
+Disallow: /constantes
+Disallow: /accueil
+Disallow: /admission
+Disallow: /ioa-queue
+Disallow: /prescriptions
+Disallow: /recap/
+Disallow: /interop
+Disallow: /garde
+Disallow: /audit
+Disallow: /demo/live
+Disallow: /sih-validation
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /admin/
+
+User-agent: OAI-SearchBot
+Allow: /
+Allow: /features
+Allow: /tarifs
+Allow: /b2b
+Allow: /securite
+Allow: /about
+Allow: /faq
+Allow: /glossaire
+Allow: /demo
+Disallow: /login
+Disallow: /signup
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
 
 User-agent: ChatGPT-User
 Allow: /
@@ -40,9 +114,10 @@ Allow: /b2b
 Allow: /securite
 Allow: /about
 Allow: /faq
-Allow: /blog
+Allow: /glossaire
 Allow: /demo
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -57,9 +132,10 @@ Allow: /b2b
 Allow: /securite
 Allow: /about
 Allow: /faq
-Allow: /blog
+Allow: /glossaire
 Allow: /demo
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -74,9 +150,10 @@ Allow: /b2b
 Allow: /securite
 Allow: /about
 Allow: /faq
-Allow: /blog
+Allow: /glossaire
 Allow: /demo
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -86,6 +163,7 @@ Disallow: /pancarte/
 User-agent: Amazonbot
 Allow: /
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -93,6 +171,23 @@ Disallow: /patient/
 User-agent: anthropic-ai
 Allow: /
 Disallow: /login
+Disallow: /signup
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+
+User-agent: Applebot
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /select-role
+Disallow: /board
+Disallow: /patient/
+
+User-agent: Bytespider
+Allow: /
+Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -106,13 +201,14 @@ Allow: /b2b
 Allow: /securite
 Allow: /about
 Allow: /faq
-Allow: /blog
+Allow: /glossaire
 Allow: /demo
 Allow: /mentions-legales
 Allow: /politique-confidentialite
 Allow: /cgu
 
 Disallow: /login
+Disallow: /signup
 Disallow: /select-role
 Disallow: /board
 Disallow: /patient/
@@ -130,5 +226,9 @@ Disallow: /garde
 Disallow: /audit
 Disallow: /demo/live
 Disallow: /sih-validation
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /admin/
+Disallow: /statistics
 
 Sitemap: https://urgenceos.fr/sitemap.xml
