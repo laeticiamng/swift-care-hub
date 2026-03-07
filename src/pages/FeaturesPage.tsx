@@ -28,7 +28,11 @@ export default function FeaturesPage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Fonctionnalités' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4">Architecture produit</Badge>
