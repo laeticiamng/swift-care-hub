@@ -260,6 +260,16 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PageMeta
+        title="Démo interactive UrgenceOS — Interface par rôle soignant"
+        description="Découvrez UrgenceOS en 5 écrans : médecin urgentiste, IOA, IDE, aide-soignant, secrétaire. Interface adaptée à chaque rôle soignant aux urgences."
+      />
+      <JsonLd id="demo-webpage" data={webPageSchema({
+        name: 'Démo interactive UrgenceOS',
+        description: 'Découvrez l\'interface UrgenceOS par rôle soignant : médecin, IOA, IDE, aide-soignant, secrétaire.',
+        url: 'https://urgenceos.fr/demo',
+        breadcrumb: ['Accueil', 'Démo'],
+      })} />
       {/* Header */}
       <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur-lg">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 py-3">

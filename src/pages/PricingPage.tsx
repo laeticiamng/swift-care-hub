@@ -267,7 +267,7 @@ export default function PricingPage() {
             UrgenceOS ne constitue pas un dispositif médical certifié.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>
