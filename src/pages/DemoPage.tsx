@@ -11,6 +11,7 @@ import {
   Heart, Layout, LogIn, Play, Shield, Stethoscope, Timer,
   UserPlus, Users, Wifi, WifiOff, Zap,
 } from 'lucide-react';
+import { PageMeta, JsonLd, webPageSchema } from '@/components/seo/JsonLd';
 
 interface DemoStep {
   role: string;
