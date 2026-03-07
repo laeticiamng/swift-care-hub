@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom';
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { PageMeta, webPageSchema, JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export default function MentionsLegalesPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="Mentions légales — UrgenceOS | EmotionsCare SASU"
+        description="Mentions légales d'UrgenceOS, édité par EmotionsCare SASU (SIREN 944 505 445). Éditeur, hébergement, propriété intellectuelle, responsabilité."
+      />
+      <JsonLd id="mentions-webpage" data={webPageSchema({
+        name: 'Mentions légales — UrgenceOS',
+        description: 'Informations légales obligatoires : éditeur EmotionsCare SASU, hébergement, propriété intellectuelle.',
+        url: 'https://urgenceos.fr/mentions-legales',
+        breadcrumb: ['Accueil', 'Mentions légales'],
+      })} />
       <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Mentions légales' },
+        ]} />
         <h1 className="text-3xl font-bold">Mentions légales</h1>
 
         <section className="space-y-3">
@@ -19,8 +35,8 @@ export default function MentionsLegalesPage() {
             <li><strong className="text-foreground">Capital social :</strong> 1 000 €</li>
             <li><strong className="text-foreground">Siège social :</strong> 75000 Paris, France</li>
             <li><strong className="text-foreground">Directeur de la publication :</strong> Le président de la SASU EmotionsCare</li>
-            <li><strong className="text-foreground">Contact :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a></li>
-            <li><strong className="text-foreground">Délégué à la Protection des Données (DPO) :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline">dpo@emotionscare.com</a></li>
+            <li><strong className="text-foreground">Contact :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
+            <li><strong className="text-foreground">Délégué à la Protection des Données (DPO) :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a></li>
           </ul>
         </section>
 

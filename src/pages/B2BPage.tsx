@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { JsonLd } from '@/components/seo/JsonLd';
+import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import {
   ArrowRight, Building2, Check, CheckCircle, Send, Shield,
   Clock, Users, Layers, RefreshCcw, Eye, Target,
@@ -49,30 +50,26 @@ export default function B2BPage() {
     }
   };
 
-  useEffect(() => {
-    document.title = 'UrgenceOS — Établissements hospitaliers | Autonomie logicielle SI';
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', 'Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4.');
-    else {
-      const m = document.createElement('meta');
-      m.name = 'description';
-      m.content = 'Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4.';
-      document.head.appendChild(m);
-    }
-  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <JsonLd data={{
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
+      <PageMeta
+        title="UrgenceOS — Établissements hospitaliers | Autonomie logicielle SI"
+        description="Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4."
+      />
+      <JsonLd id="b2b-webpage" data={webPageSchema({
         name: 'UrgenceOS — Établissements hospitaliers',
         description: 'Reprenez le contrôle de votre SI hospitalier. Socle interne possédé par l\'hôpital, modules urgences, interopérabilité FHIR R4.',
         url: 'https://urgenceos.fr/b2b',
-      }} />
+        breadcrumb: ['Accueil', 'Établissements'],
+      })} />
       <SiteHeader />
 
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <main className="max-w-6xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Établissements' },
+        ]} />
         {/* Hero — Positionnement stratégique */}
         <div className="text-center mb-20">
           <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
@@ -305,7 +302,7 @@ export default function B2BPage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>

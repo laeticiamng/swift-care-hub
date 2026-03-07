@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom';
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { PageMeta, webPageSchema, JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export default function CGUPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PageMeta
+        title="CGU — Conditions Générales d'Utilisation UrgenceOS"
+        description="Conditions générales d'utilisation de la plateforme UrgenceOS : accès, rôles RBAC, obligations utilisateur, propriété intellectuelle, mode hors ligne, responsabilité."
+      />
+      <JsonLd id="cgu-webpage" data={webPageSchema({
+        name: 'Conditions Générales d\'Utilisation — UrgenceOS',
+        description: 'CGU de la plateforme UrgenceOS : accès, rôles, obligations, propriété intellectuelle, responsabilité.',
+        url: 'https://urgenceos.fr/cgu',
+        breadcrumb: ['Accueil', 'CGU'],
+      })} />
       <SiteHeader />
 
       <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'CGU' },
+        ]} />
         <h1 className="text-3xl font-bold">Conditions Générales d'Utilisation</h1>
         <p className="text-muted-foreground">Dernière mise à jour : 1er février 2026</p>
 
@@ -78,9 +94,7 @@ export default function CGUPage() {
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold text-primary">5. Obligations de l'utilisateur</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            L'utilisateur s'engage à :
-          </p>
+          <p className="text-muted-foreground leading-relaxed">L'utilisateur s'engage à :</p>
           <ul className="list-disc list-inside text-muted-foreground leading-relaxed space-y-1">
             <li>Utiliser la plateforme conformément à sa finalité et dans le respect de la réglementation</li>
             <li>Saisir des informations exactes et complètes</li>
