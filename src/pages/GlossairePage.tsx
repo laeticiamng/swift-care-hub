@@ -201,6 +201,7 @@ export default function GlossairePage() {
       <PageMeta
         title="Glossaire UrgenceOS — CIMU, RPU, FHIR, RBAC, HDS et 13 autres termes métier"
         description="Définitions de référence des termes métier des urgences hospitalières : CIMU, RPU, FHIR R4, HL7v2, RBAC, RLS, HDS, DPI, SIH, INS, GHT, MSSanté, DMP, CI-SIS, Hospital-Owned Software."
+        canonical="https://urgenceos.fr/glossaire"
       />
       <JsonLd id="glossaire-termset" data={definedTermSetSchema(GLOSSARY_TERMS)} />
       <JsonLd id="glossaire-webpage" data={webPageSchema({

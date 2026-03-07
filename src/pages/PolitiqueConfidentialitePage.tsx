@@ -10,6 +10,7 @@ export default function PolitiqueConfidentialitePage() {
       <PageMeta
         title="Politique de confidentialité — UrgenceOS | RGPD Santé"
         description="Politique de confidentialité UrgenceOS : données collectées, finalités, base légale RGPD, durée de conservation, droits des utilisateurs, sécurité HDS."
+        canonical="https://urgenceos.fr/politique-confidentialite"
       />
       <JsonLd id="privacy-webpage" data={webPageSchema({
         name: 'Politique de confidentialité — UrgenceOS',
