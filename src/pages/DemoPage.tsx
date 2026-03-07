@@ -263,6 +263,7 @@ export default function DemoPage() {
       <PageMeta
         title="Démo interactive UrgenceOS — Interface par rôle soignant"
         description="Découvrez UrgenceOS en 5 écrans : médecin urgentiste, IOA, IDE, aide-soignant, secrétaire. Interface adaptée à chaque rôle soignant aux urgences."
+        canonical="https://urgenceos.fr/demo"
       />
       <JsonLd id="demo-webpage" data={webPageSchema({
         name: 'Démo interactive UrgenceOS',

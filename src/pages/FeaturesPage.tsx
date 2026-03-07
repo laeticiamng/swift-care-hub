@@ -19,6 +19,7 @@ export default function FeaturesPage() {
       <PageMeta
         title="Architecture UrgenceOS — Socle Hospital-Owned + Modules urgences"
         description="Architecture produit UrgenceOS : socle interne (RBAC, audit, FHIR), modules urgences à ROI (récap parcours, traçabilité temps réel), intégration DPI sans refonte."
+        canonical="https://urgenceos.fr/features"
       />
       <JsonLd id="features-webpage" data={webPageSchema({
         name: 'Architecture UrgenceOS — Fonctionnalités',

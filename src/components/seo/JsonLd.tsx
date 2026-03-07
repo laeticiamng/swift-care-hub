@@ -42,7 +42,7 @@ export function JsonLd({ data, id }: JsonLdProps) {
  * Sets document title and meta description dynamically.
  * Essential for GEO: each page needs unique, keyword-rich metadata.
  */
-export function PageMeta({ title, description }: { title: string; description: string }) {
+export function PageMeta({ title, description, canonical }: { title: string; description: string; canonical?: string }) {
   useEffect(() => {
     document.title = title;
     
@@ -61,7 +61,20 @@ export function PageMeta({ title, description }: { title: string; description: s
     if (ogTitle) ogTitle.setAttribute('content', title);
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', description);
-  }, [title, description]);
+
+    // Set canonical
+    if (canonical) {
+      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (link) {
+        link.href = canonical;
+      } else {
+        link = document.createElement('link');
+        link.rel = 'canonical';
+        link.href = canonical;
+        document.head.appendChild(link);
+      }
+    }
+  }, [title, description, canonical]);
 
   return null;
 }

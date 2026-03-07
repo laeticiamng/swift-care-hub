@@ -10,6 +10,7 @@ export default function MentionsLegalesPage() {
       <PageMeta
         title="Mentions légales — UrgenceOS | EmotionsCare SASU"
         description="Mentions légales d'UrgenceOS, édité par EmotionsCare SASU (SIREN 944 505 445). Éditeur, hébergement, propriété intellectuelle, responsabilité."
+        canonical="https://urgenceos.fr/mentions-legales"
       />
       <JsonLd id="mentions-webpage" data={webPageSchema({
         name: 'Mentions légales — UrgenceOS',

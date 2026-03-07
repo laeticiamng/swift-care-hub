@@ -20,6 +20,7 @@ export default function LandingPage() {
       <PageMeta
         title="UrgenceOS — Logiciel urgences hospitalières Hospital-Owned Software"
         description="Socle logiciel Hospital-Owned pour urgences hospitalières. Interface par rôle (médecin, IOA, IDE, AS, secrétaire). Interopérabilité FHIR R4/HL7v2. Pilote 10 semaines. HDS France."
+        canonical="https://urgenceos.fr/"
       />
       <JsonLd id="landing-howto" data={howToSchema()} />
       <JsonLd id="landing-webpage" data={webPageSchema({

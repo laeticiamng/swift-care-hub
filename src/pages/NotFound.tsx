@@ -2,6 +2,7 @@ import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageMeta } from "@/components/seo/JsonLd";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,6 +13,10 @@ const NotFound = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted">
+      <PageMeta
+        title="Page introuvable — UrgenceOS"
+        description="La page demandée n'existe pas ou a été déplacée. Retournez à l'accueil d'UrgenceOS."
+      />
       <div className="text-center space-y-4">
         <h1 className="text-6xl font-extrabold text-foreground">404</h1>
         <p className="text-xl text-muted-foreground">Page introuvable</p>

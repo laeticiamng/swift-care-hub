@@ -56,6 +56,7 @@ export default function B2BPage() {
       <PageMeta
         title="UrgenceOS — Établissements hospitaliers | Autonomie logicielle SI"
         description="Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4."
+        canonical="https://urgenceos.fr/b2b"
       />
       <JsonLd id="b2b-webpage" data={webPageSchema({
         name: 'UrgenceOS — Établissements hospitaliers',

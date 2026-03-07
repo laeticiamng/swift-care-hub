@@ -10,6 +10,7 @@ export default function CGUPage() {
       <PageMeta
         title="CGU — Conditions Générales d'Utilisation UrgenceOS"
         description="Conditions générales d'utilisation de la plateforme UrgenceOS : accès, rôles RBAC, obligations utilisateur, propriété intellectuelle, mode hors ligne, responsabilité."
+        canonical="https://urgenceos.fr/cgu"
       />
       <JsonLd id="cgu-webpage" data={webPageSchema({
         name: 'Conditions Générales d\'Utilisation — UrgenceOS',
