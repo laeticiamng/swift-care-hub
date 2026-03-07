@@ -175,7 +175,11 @@ export default function FAQPage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'FAQ' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">Centre d'aide</Badge>
