@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight, Building2, HelpCircle, Calculator } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema, faqPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 const PLANS = [
   {
