@@ -34,6 +34,7 @@ export function FooterSection() {
             <Link to="/tarifs" className="block text-xs hover:text-foreground transition-colors">Tarifs</Link>
             <Link to="/demo" className="block text-xs hover:text-foreground transition-colors">Démo</Link>
             <Link to="/securite" className="block text-xs hover:text-foreground transition-colors">Sécurité</Link>
+            <Link to="/statut" className="block text-xs hover:text-foreground transition-colors">Statut</Link>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Entreprise</p>

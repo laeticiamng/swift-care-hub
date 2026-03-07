@@ -140,6 +140,8 @@ function AppRoutes() {
         <Route path="/blog" element={<Navigate to="/" replace />} />
         <Route path="/securite" element={<SecurityPage />} />
         <Route path="/security" element={<Navigate to="/securite" replace />} />
+        <Route path="/statut" element={<StatutPage />} />
+        <Route path="/status" element={<Navigate to="/statut" replace />} />
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
         <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
         <Route path="/cgu" element={<CGUPage />} />
