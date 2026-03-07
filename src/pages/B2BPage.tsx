@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { JsonLd } from '@/components/seo/JsonLd';
+import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import {
   ArrowRight, Building2, Check, CheckCircle, Send, Shield,
   Clock, Users, Layers, RefreshCcw, Eye, Target,
