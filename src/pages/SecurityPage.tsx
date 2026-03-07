@@ -9,6 +9,7 @@ import {
   UserCheck, AlertTriangle,
 } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 const SECURITY_LAYERS = [
   {
