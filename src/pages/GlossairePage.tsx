@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, Search } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 interface GlossaryTerm {
   term: string;
