@@ -9,6 +9,7 @@ import {
   UserCheck, AlertTriangle,
 } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 const SECURITY_LAYERS = [
   {
@@ -141,7 +142,11 @@ export default function SecurityPage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <main className="max-w-5xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Sécurité' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4 gap-1.5">
@@ -259,7 +264,7 @@ export default function SecurityPage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>

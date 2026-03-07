@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { JsonLd, PageMeta, faqPageSchema, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import { useState } from 'react';
 
 interface FAQItem {
@@ -174,7 +175,11 @@ export default function FAQPage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'FAQ' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">Centre d'aide</Badge>
@@ -226,7 +231,7 @@ export default function FAQPage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>

@@ -30,7 +30,7 @@ export default function LandingPage() {
       })} />
       <SiteHeader />
 
-      {/* BLOC 1 — Hero */}
+      <main>
       <HeroSection />
 
       {/* BLOC 1b — Preuve sociale */}
@@ -228,6 +228,7 @@ export default function LandingPage() {
           </p>
         </div>
       </div>
+      </main>
 
       <FooterSection />
     </div>

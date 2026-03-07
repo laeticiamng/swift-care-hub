@@ -1,6 +1,7 @@
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
 import { JsonLd, PageMeta, webPageSchema, organizationSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +67,11 @@ export default function AboutPage() {
       <JsonLd id="about-org" data={organizationSchema()} />
       <SiteHeader />
 
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <main className="max-w-5xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'À propos' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">À propos</Badge>
@@ -223,7 +228,7 @@ export default function AboutPage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>

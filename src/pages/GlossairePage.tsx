@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, Search } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 interface GlossaryTerm {
   term: string;
@@ -210,7 +211,11 @@ export default function GlossairePage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Glossaire' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
@@ -332,7 +337,7 @@ export default function GlossairePage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>

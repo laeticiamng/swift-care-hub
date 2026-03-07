@@ -9,6 +9,7 @@ import {
   Database, Eye, Users, Key, FileText, Server,
 } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema } from '@/components/seo/JsonLd';
+import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 export default function FeaturesPage() {
   const navigate = useNavigate();
@@ -27,7 +28,11 @@ export default function FeaturesPage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Fonctionnalités' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4">Architecture produit</Badge>
@@ -359,7 +364,7 @@ export default function FeaturesPage() {
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
           </p>
         </div>
-      </div>
+      </main>
 
       <FooterSection />
     </div>
