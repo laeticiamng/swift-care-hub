@@ -135,7 +135,6 @@ export default function SecurityPage() {
         description="Architecture de sécurité UrgenceOS : RBAC serveur, audit immuable, chiffrement TLS 1.2+ et AES-256, hébergement HDS France, threat model 4 acteurs, conformité RGPD."
         canonical="https://urgenceos.fr/securite"
       />
-      />
       <JsonLd id="security-webpage" data={webPageSchema({
         name: 'Sécurité UrgenceOS — Architecture de protection des données de santé',
         description: 'RBAC strict vérifié côté serveur, audit immuable, chiffrement en transit et au repos, hébergement HDS France, conformité RGPD, threat model documenté.',

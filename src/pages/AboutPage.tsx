@@ -59,7 +59,6 @@ export default function AboutPage() {
         description="EmotionsCare conçoit UrgenceOS : socle Hospital-Owned pour urgences hospitalières. Autonomie SI, ROI mesurable, co-construction terrain, sécurité structurelle."
         canonical="https://urgenceos.fr/about"
       />
-      />
       <JsonLd id="about-webpage" data={webPageSchema({
         name: 'À propos d\'UrgenceOS — EmotionsCare SASU',
         description: 'EmotionsCare conçoit UrgenceOS : socle Hospital-Owned Software que l\'hôpital possède, modules urgences à ROI mesurable, architecture sécurité structurelle.',
