@@ -211,7 +211,11 @@ export default function GlossairePage() {
       })} />
       <SiteHeader />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-16">
+        <Breadcrumb items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Glossaire' },
+        ]} />
         {/* Hero */}
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
