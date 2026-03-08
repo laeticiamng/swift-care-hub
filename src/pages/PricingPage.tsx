@@ -165,7 +165,7 @@ export default function PricingPage() {
           ))}
         </div>
         <p className="text-sm text-muted-foreground text-center mb-20 -mt-14">
-          Le montant du pilote dépend de la complexité d'intégration avec votre SIH existant.{' '}
+          Le montant de l'essai dépend de la complexité d'intégration avec votre informatique existante.{' '}
           <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">Contactez-nous pour un devis personnalisé →</button>
         </p>
 
