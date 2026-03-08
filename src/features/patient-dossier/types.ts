@@ -24,7 +24,7 @@ const PRIORITY_VITAL_KEYS: Record<DossierContext, string[]> = {
 
 export function detectContext(encounter: any): DossierContext {
   if (encounter.status === 'ready_for_discharge' || encounter.status === 'finished') return 'sortie';
-  const motif = (encounter.motif_sfmu || '').toLowerCase();
+  const motif = (encounter.motif_sfmu || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   if (['douleur thoracique', 'dt', 'precordialgie', 'angor', 'infarctus', 'cardio'].some(k => motif.includes(k))) return 'cardio';
   if (['traumatisme', 'trauma', 'fracture', 'entorse', 'luxation', 'chute', 'plaie'].some(k => motif.includes(k))) return 'trauma';
   if (['dyspnee', 'asthme', 'detresse respiratoire', 'insuffisance respiratoire', 'bronchospasme'].some(k => motif.includes(k))) return 'respiratoire';

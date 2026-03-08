@@ -29,7 +29,7 @@ function MockBoardScreen() {
   const patients = [
     { name: 'DUPONT Jean', age: 72, motif: 'Douleur thoracique', ccmu: 2, zone: 'SAU', box: 3, status: 'in-progress' },
     { name: 'MARTIN Sophie', age: 45, motif: 'Chute', ccmu: 4, zone: 'SAU', box: 7, status: 'triaged' },
-    { name: 'BERNARD Luc', age: 88, motif: 'Dyspnee', ccmu: 2, zone: 'UHCD', box: 1, status: 'in-progress' },
+    { name: 'BERNARD Luc', age: 88, motif: 'Dyspnée', ccmu: 2, zone: 'UHCD', box: 1, status: 'in-progress' },
   ];
   const cimuColors = ['', 'bg-red-600', 'bg-red-400', 'bg-orange-400', 'bg-green-500', 'bg-green-600'];
   return (
