@@ -82,63 +82,22 @@ export function SocialProofSection() {
           ))}
         </div>
 
-        {/* Design Partners */}
-        <div className="text-center mb-8">
-          <motion.p
+        {/* Transparence */}
+        <div className="text-center">
+          <motion.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-sm font-semibold text-primary uppercase tracking-wider mb-3"
+            className="inline-block p-5 rounded-xl border bg-card max-w-lg"
           >
-            Phase d'amorçage
-          </motion.p>
-          <motion.h3
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="text-xl sm:text-2xl font-bold mb-2"
-          >
-            Co-construit avec des établissements hospitaliers.
-          </motion.h3>
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-muted-foreground text-sm max-w-lg mx-auto"
-          >
-            UrgenceOS se développe en partenariat direct avec des urgentistes, DSI et cadres de santé. Les noms seront publiés après accord des établissements.
-          </motion.p>
+            <p className="text-sm font-semibold mb-2">🏗️ Produit en phase pilote</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              UrgenceOS est co-construit avec des urgentistes, DSI et cadres de santé.
+              Premiers pilotes hospitaliers prévus en 2026. Les noms des établissements partenaires seront publiés après accord.
+            </p>
+          </motion.div>
         </div>
-
-        <div className="grid sm:grid-cols-3 gap-4">
-          {partners.map((p, i) => (
-            <motion.div
-              key={p.name}
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={cardVariants}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="flex items-center gap-4 rounded-xl border bg-card p-5 hover:shadow-lg hover:border-primary/20 transition-all duration-300"
-            >
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Handshake className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.status}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <p className="text-center text-xs text-muted-foreground mt-6 italic">
-          Phase pré-commerciale — premiers pilotes prévus en 2026.
-        </p>
       </div>
     </Section>
   );

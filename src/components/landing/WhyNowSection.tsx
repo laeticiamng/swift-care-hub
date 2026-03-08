@@ -38,7 +38,7 @@ export function WhyNowSection() {
           transition={{ duration: 0.5, delay: 0.05 }}
           className="text-2xl sm:text-3xl font-bold mb-6"
         >
-          Le statu quo coûte plus cher que le changement.
+          Chaque mois d'attente aggrave la situation.
         </motion.h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {urgencies.map((item, i) => (

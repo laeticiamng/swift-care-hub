@@ -7,12 +7,11 @@ import { useState, useCallback } from 'react';
 import { useDemo } from '@/contexts/DemoContext';
 
 const NAV_LINKS = [
-  { label: 'Produit', to: '/features' },
+  { label: 'Fonctionnalités', to: '/features' },
+  { label: 'Démo', to: '/demo' },
   { label: 'Tarifs', to: '/tarifs' },
   { label: 'Établissements', to: '/b2b' },
-  { label: 'Sécurité', to: '/securite' },
   { label: 'FAQ', to: '/faq' },
-  { label: 'Démo', to: '/demo' },
 ];
 
 export function SiteHeader() {

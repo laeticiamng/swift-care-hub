@@ -129,10 +129,10 @@ export function HeroSection() {
           className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground"
         >
           {[
-            'Socle possédé par l\'hôpital',
-            'Interopérabilité FHIR R4',
-            'Sécurité native',
-            'ROI mesurable en semaines',
+            'Compatible avec votre DPI existant',
+            'Un écran unique par rôle soignant',
+            'Données hébergées en France (HDS)',
+            'Résultats mesurables en 10 semaines',
           ].map((text) => (
             <span key={text} className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--medical-success))]" />
