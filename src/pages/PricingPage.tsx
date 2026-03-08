@@ -51,7 +51,7 @@ const PLANS = [
     target: 'Multi-établissements',
     price: 'Mutualisé',
     period: '',
-    description: 'Socle partagé. Modules communs. Coûts divisés. Gouvernance GHT.',
+    description: 'Plateforme partagée. Modules communs. Coûts divisés. Gouvernance commune.',
     features: [
       'Socle mutualisé multi-tenant',
       'Bibliothèque de modules partagés',
