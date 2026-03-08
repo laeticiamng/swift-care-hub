@@ -108,7 +108,7 @@ export default function B2BPage() {
               {
                 icon: Shield,
                 role: 'DSI',
-                message: 'Votre SI est une mosaïque de 15 à 40 applications connectées par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — identité, RBAC, audit, bus FHIR — que votre équipe gouverne. Le DPI reste en place. La surface d\'attaque diminue. La continuité de service augmente.',
+                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
               },
               {
                 icon: Eye,
