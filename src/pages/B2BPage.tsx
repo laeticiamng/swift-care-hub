@@ -235,9 +235,9 @@ export default function B2BPage() {
           <div className="max-w-2xl mx-auto p-8 rounded-2xl border bg-card">
             <div className="text-center mb-8">
               <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Demander un pilote</h2>
+              <h2 className="text-2xl font-bold mb-2">Demander un essai</h2>
               <p className="text-muted-foreground">
-                10 semaines, périmètre urgences, ROI mesuré. Notre équipe vous recontacte sous 48h.
+                10 semaines, périmètre urgences, résultats mesurés. Notre équipe vous recontacte sous 48h.
               </p>
             </div>
 
