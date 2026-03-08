@@ -116,11 +116,11 @@ export function SiteHeader() {
               </Button>
             ) : (
               <>
-                <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/signup'); }}>
-                  S'inscrire
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/demo'); }}>
+                  Voir la démo
                 </Button>
-                <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/login'); }}>
-                  Connexion
+                <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/b2b'); }}>
+                  Demander un pilote
                 </Button>
               </>
             )}
