@@ -3,6 +3,7 @@ import { ArrowRight, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { useI18n } from '@/i18n/I18nContext';
 
 const easing = [0.22, 1, 0.36, 1] as const;
 const fadeUp = (delay: number) => ({
@@ -13,6 +14,8 @@ const fadeUp = (delay: number) => ({
 
 export function HeroSection() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+
   return (
     <header className="relative overflow-hidden">
       {/* Dot grid pattern */}
@@ -39,7 +42,7 @@ export function HeroSection() {
         <motion.div {...fadeUp(0)}>
           <Badge variant="secondary" className="mb-6 gap-1.5 px-4 py-1.5 text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-default group">
             <Building2 className="h-3.5 w-3.5 group-hover:rotate-6 transition-transform" />
-            Logiciel possédé par l'hôpital
+            {t.hero.badgeLabel}
           </Badge>
         </motion.div>
 
@@ -47,9 +50,9 @@ export function HeroSection() {
           {...fadeUp(0.1)}
           className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.1]"
         >
-          Le logiciel des urgences<br />
+          {t.hero.title}<br />
           <span className="relative inline-block bg-gradient-to-r from-primary via-[hsl(207,67%,62%)] to-primary bg-[length:200%_auto] bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite]">
-            que votre hôpital contrôle.
+            {t.hero.titleHighlight}
           </span>
         </motion.h1>
 
@@ -57,14 +60,14 @@ export function HeroSection() {
           {...fadeUp(0.2)}
           className="mt-6 text-xl sm:text-2xl font-semibold text-foreground max-w-3xl mx-auto leading-snug"
         >
-          Un seul écran par soignant. Zéro ressaisie. Triage, prescriptions, résultats et coordination — tout réuni, en temps réel, adapté à chaque rôle.
+          {t.hero.subtitle}
         </motion.p>
 
         <motion.p
           {...fadeUp(0.3)}
           className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, compatible avec votre dossier patient informatisé existant. L'hôpital garde le contrôle total du logiciel et de ses données.
+          {t.hero.subtitleDetail}
         </motion.p>
 
         <motion.div
@@ -76,7 +79,7 @@ export function HeroSection() {
             onClick={() => navigate('/b2b')}
             className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
-            Demander un essai gratuit <ArrowRight className="h-4 w-4" />
+            {t.hero.cta} <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
             size="lg"
@@ -84,7 +87,7 @@ export function HeroSection() {
             className="px-8 h-12 text-base hover:bg-primary/5 hover:border-primary/30 active:scale-[0.98] transition-all duration-200"
             onClick={() => navigate('/demo')}
           >
-            Voir la démo
+            {t.hero.ctaDemo}
           </Button>
         </motion.div>
 
@@ -120,7 +123,7 @@ export function HeroSection() {
               ))}
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-3 text-center">Aperçu du board panoramique — données fictives</p>
+          <p className="text-xs text-muted-foreground mt-3 text-center">{t.hero.boardPreviewCaption}</p>
         </motion.div>
 
         {/* Trust indicators */}
@@ -129,10 +132,10 @@ export function HeroSection() {
           className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground"
         >
           {[
-            'Compatible avec votre dossier patient existant',
-            'Un écran unique par rôle soignant',
-            'Données hébergées en France',
-            'Résultats mesurables en 10 semaines',
+            t.hero.trustCompatible,
+            t.hero.trustOneScreen,
+            t.hero.trustHostedFrance,
+            t.hero.trustResults,
           ].map((text) => (
             <span key={text} className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--medical-success))]" />
