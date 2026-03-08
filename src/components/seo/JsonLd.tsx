@@ -177,7 +177,7 @@ export function howToSchema() {
         '@type': 'HowToStep',
         position: 1,
         name: 'Cadrage DSI',
-        text: 'Atelier technique de 2 heures avec la DSI. Audit du SI existant (DPI, LIS, PACS). Cartographie des connecteurs FHIR R4/HL7v2 nécessaires.',
+        text: 'Atelier technique de 2 heures avec la direction informatique. Audit du SI existant (DPI, LIS, PACS). Cartographie des connecteurs nécessaires.',
       },
       {
         '@type': 'HowToStep',
