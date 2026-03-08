@@ -50,8 +50,11 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <StatusBadgeHeader />
           <ThemeToggle />
-          <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
+          <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
+          </Button>
+          <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
+            S'inscrire
           </Button>
           <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
             Connexion
