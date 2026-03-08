@@ -47,9 +47,9 @@ export function HeroSection() {
           {...fadeUp(0.1)}
           className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.1]"
         >
-          L'hôpital reprend la main<br />
+          Le logiciel des urgences<br />
           <span className="relative inline-block bg-gradient-to-r from-primary via-[hsl(207,67%,62%)] to-primary bg-[length:200%_auto] bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite]">
-            sur son SI.
+            que votre hôpital contrôle.
           </span>
         </motion.h1>
 
@@ -57,14 +57,14 @@ export function HeroSection() {
           {...fadeUp(0.2)}
           className="mt-6 text-xl sm:text-2xl font-semibold text-foreground max-w-3xl mx-auto leading-snug"
         >
-          Un socle interne que votre hôpital possède, gouverne et fait évoluer — avec des modules urgences qui remboursent votre dette opérationnelle dès les premiers mois.
+          Un seul écran par soignant. Zéro ressaisie. Triage, prescriptions, résultats et coordination — tout réuni, en temps réel, adapté à chaque rôle.
         </motion.p>
 
         <motion.p
           {...fadeUp(0.3)}
           className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          UrgenceOS n'est pas un logiciel de plus. C'est un plan d'autonomie logicielle pour l'hôpital : plateforme interne + modules urgences à ROI + standards d'interopérabilité.
+          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, interopérable avec votre DPI existant. L'hôpital garde le contrôle total du logiciel et de ses données.
         </motion.p>
 
         <motion.div
