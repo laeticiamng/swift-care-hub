@@ -92,7 +92,7 @@ export function TestimonialsSection() {
           ))}
         </div>
         <p className="text-xs text-muted-foreground mt-6">
-          Verbatims anonymisés recueillis lors de sessions de co-conception. UrgenceOS est en phase pilote.
+          Verbatims anonymisés recueillis lors de sessions de co-conception. UrgenceOS est en phase d'essai.
         </p>
       </div>
     </Section>

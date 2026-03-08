@@ -99,7 +99,7 @@ export default function FeaturesPage() {
 
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès l'essai</h4>
               <ul className="space-y-2">
                 {[
                   'Bandeau patient persistant (identité, allergies, classification, zone)',
@@ -176,7 +176,7 @@ export default function FeaturesPage() {
 
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès l'essai</h4>
               <ul className="space-y-2">
                 {[
                   'Journal d\'événements horodaté par patient',
@@ -274,7 +274,7 @@ export default function FeaturesPage() {
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
+              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-essai (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
               { title: 'Laboratoire', items: ['Réception automatique des résultats', 'Détection automatique valeurs critiques', 'Alerte envoyée au médecin prescripteur'] },
               { title: 'Imagerie', items: ['Notification quand l\'examen est disponible', 'Lien direct vers la visionneuse d\'images', 'Aucun stockage d\'images dans UrgenceOS'] },
             ].map((sys) => (
@@ -323,7 +323,7 @@ export default function FeaturesPage() {
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
               Voir la démo

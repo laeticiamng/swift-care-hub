@@ -32,7 +32,7 @@ const PLANS = [
     target: 'Multi-services',
     price: 'Sur mesure',
     period: '',
-    description: 'Après validation pilote. Extension à d\'autres services + modules supplémentaires.',
+    description: 'Après validation de l\'essai. Extension à d\'autres services + modules supplémentaires.',
     features: [
       'Tout l\'essai initial +',
       'Modules supplémentaires (triage, prescriptions, sortie)',
@@ -69,8 +69,8 @@ const PLANS = [
 
 const FAQ_PRICING = [
   {
-    q: 'Pourquoi commencer par un pilote plutôt qu\'un déploiement complet ?',
-    a: 'Le pilote mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
+    q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
+    a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
   },
   {
     q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
@@ -81,8 +81,8 @@ const FAQ_PRICING = [
     a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
   },
   {
-    q: 'Quel est le coût d\'un pilote ?',
-    a: 'Le forfait pilote est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
+    q: 'Quel est le coût d\'un essai ?',
+    a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
   },
 ];
 
@@ -92,13 +92,13 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="Tarifs UrgenceOS — Pilote 10 semaines, Extension, Consortium GHT"
-        description="Modèle économique UrgenceOS : pilote cadré 10 semaines avec ROI mesuré, extension multi-services, consortium GHT mutualisé. Pas d'engagement pluriannuel."
+        title="Tarifs UrgenceOS — Essai 10 semaines, Extension, Consortium GHT"
+        description="Modèle économique UrgenceOS : essai cadré 10 semaines avec ROI mesuré, extension multi-services, consortium GHT mutualisé. Pas d'engagement pluriannuel."
         canonical="https://urgenceos.fr/tarifs"
       />
       <JsonLd id="pricing-webpage" data={webPageSchema({
         name: 'Tarifs UrgenceOS — Modèle économique Hospital-Owned Software',
-        description: 'Pilote 10 semaines avec ROI mesuré, extension multi-services, consortium GHT. Coûts prévisibles et décroissants.',
+        description: 'Essai 10 semaines avec ROI mesuré, extension multi-services, consortium GHT. Coûts prévisibles et décroissants.',
         url: 'https://urgenceos.fr/tarifs',
         breadcrumb: ['Accueil', 'Tarifs'],
       })} />
@@ -219,7 +219,7 @@ export default function PricingPage() {
               <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
               <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
               <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
-              <li>55-60 min — Prochaines étapes : go/no-go pilote, calendrier, périmètre</li>
+              <li>55-60 min — Prochaines étapes : go/no-go essai, calendrier, périmètre</li>
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
@@ -252,7 +252,7 @@ export default function PricingPage() {
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
               Voir la démo

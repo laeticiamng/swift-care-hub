@@ -38,12 +38,12 @@ const MILESTONES = [
   { year: '2024', event: 'Premiers prototypes co-conçus avec des urgentistes et DSI hospitaliers' },
   { year: '2025', event: 'Architecture socle validée : identité, droits d\'accès, audit, connecteurs dossier patient' },
   { year: '2025', event: 'Modules ROI #1 (récap parcours) et #2 (traçabilité temps réel) fonctionnels' },
-  { year: '2026', event: 'Lancement du premier pilote 10 semaines en établissement' },
+  { year: '2026', event: 'Lancement du premier essai 10 semaines en établissement' },
   { year: '2026', event: 'Ouverture du modèle consortium GHT — mutualisation multi-établissements' },
 ];
 
 const ECOSYSTEM = [
-  { icon: Building2, title: 'Établissements pilotes', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
+  { icon: Building2, title: 'Établissements partenaires', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
   { icon: Handshake, title: 'DSI hospitalières', desc: 'Co-construction de l\'architecture socle avec les DSI pour garantir l\'intégration DPI et la gouvernance interne.' },
   { icon: Layers, title: 'GHT & ARS', desc: 'Modèle de mutualisation conçu pour les groupements hospitaliers de territoire. Socle partagé, données isolées, coûts divisés.' },
   { icon: GitBranch, title: 'Standards ouverts', desc: 'Compatible avec les référentiels nationaux de santé. Échanges standardisés, pas propriétaires.' },
@@ -127,13 +127,13 @@ export default function AboutPage() {
 
         {/* Vision GHT */}
         <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-          <h2 className="text-2xl font-bold text-center mb-3">Vision : du pilote au territoire</h2>
+          <h2 className="text-2xl font-bold text-center mb-3">Vision : de l'essai au territoire</h2>
           <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
             Un hôpital valide. Un GHT mutualise. Un territoire standardise.
           </p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { step: 'Phase 1', title: 'Pilote', desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.' },
+              { step: 'Phase 1', title: 'Essai', desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.' },
               { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois établissements partagent le socle et les modules. Données isolées, coûts divisés.' },
               { step: 'Phase 3', title: 'Standardisation', desc: 'Le GHT standardise ses flux, ses connecteurs et ses indicateurs. ARS-ready.' },
             ].map((item) => (
@@ -246,7 +246,7 @@ export default function AboutPage() {
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
               Voir la démo
