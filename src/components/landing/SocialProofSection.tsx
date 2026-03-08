@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 const stats = [
   { value: '10', suffix: ' sem.', label: 'Pilote opérationnel', icon: Clock },
   { value: '5', suffix: ' rôles', label: 'Interfaces métier dédiées', icon: Users },
-  { value: '100', suffix: '%', label: 'Interop. FHIR R4 & HL7v2', icon: ShieldCheck },
-  { value: '0', suffix: ' refonte', label: 'Le DPI reste en place', icon: Building2 },
+  { value: '1', suffix: ' écran', label: 'Par rôle, tout est réuni', icon: ShieldCheck },
+  { value: '0', suffix: ' refonte DPI', label: 'Votre DPI reste en place', icon: Building2 },
 ];
 
 const partners = [
