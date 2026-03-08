@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const AI_CLINICAL_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-clinical`;
 
