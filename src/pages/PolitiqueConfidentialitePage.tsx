@@ -35,8 +35,8 @@ export default function PolitiqueConfidentialitePage() {
           </p>
           <ul className="space-y-1 text-muted-foreground leading-relaxed">
             <li><strong className="text-foreground">Siège social :</strong> Rue Caudron, Amiens (80000), France</li>
-            <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a></li>
-            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
+            <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@urgenceos.fr" className="text-primary hover:underline" rel="noopener noreferrer">dpo@urgenceos.fr</a></li>
+            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline" rel="noopener noreferrer">contact@urgenceos.fr</a></li>
           </ul>
         </section>
 
@@ -158,7 +158,7 @@ export default function PolitiqueConfidentialitePage() {
             <li><strong className="text-foreground">Directives post-mortem</strong> (article 85 loi Informatique et Libertés) : définir des directives relatives au sort de vos données après votre décès</li>
           </ul>
           <p className="text-muted-foreground leading-relaxed">
-            Pour exercer ces droits, contactez notre DPO à <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a>. Nous nous engageons à répondre dans un délai d'un mois. Vous pouvez également introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>).
+            Pour exercer ces droits, contactez notre DPO à <a href="mailto:dpo@urgenceos.fr" className="text-primary hover:underline" rel="noopener noreferrer">dpo@urgenceos.fr</a>. Nous nous engageons à répondre dans un délai d'un mois. Vous pouvez également introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>).
           </p>
         </section>
 

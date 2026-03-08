@@ -141,7 +141,7 @@ export default function SLAPage() {
           <div className="mt-6 p-4 rounded-lg border bg-muted/30">
             <p className="font-medium mb-1">Canal de signalement</p>
             <p className="text-muted-foreground">
-              Email : <strong>support@emotionscare.com</strong> — Astreinte 24/7 pour les incidents P1.
+              Email : <strong>support@urgenceos.fr</strong> — Astreinte 24/7 pour les incidents P1.
             </p>
           </div>
         </Section>
@@ -248,7 +248,7 @@ export default function SLAPage() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-12">
-            EmotionsCare SASU — SIREN 944 505 445 — Paris, France — support@emotionscare.com
+            EmotionsCare SASU — SIREN 944 505 445 — Amiens, France — support@urgenceos.fr
           </p>
         </div>
       </article>

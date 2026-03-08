@@ -67,9 +67,9 @@ export class ErrorBoundary extends React.Component<
             </div>
             <p className="text-xs text-muted-foreground">
               Si le problème persiste, contactez{' '}
-              <a href="mailto:support@emotionscare.com" className="text-primary hover:underline">
-                support@emotionscare.com
-              </a>
+               <a href="mailto:support@urgenceos.fr" className="text-primary hover:underline">
+                 support@urgenceos.fr
+               </a>
             </p>
           </div>
         </div>
