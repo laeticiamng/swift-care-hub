@@ -38,6 +38,9 @@ export default function LandingPage() {
       <main>
       <HeroSection />
 
+      {/* Trust marquee bar */}
+      <TrustMarquee />
+
       {/* BLOC 1b — Preuve sociale */}
       <SocialProofSection />
 
