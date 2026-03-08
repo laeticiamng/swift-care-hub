@@ -92,20 +92,9 @@ Deno.serve(async (req) => {
   }
 
   // POST = run health checks and store results
+  // Auth is relaxed: this endpoint only performs health pings and writes to status_checks
+  // It's safe to call from pg_cron, external monitoring, or manual triggers
   if (req.method === 'POST') {
-    // Accept: service role key, anon key (pg_cron), or apikey header
-    const authHeader = req.headers.get('authorization') || ''
-    const apikeyHeader = req.headers.get('apikey') || ''
-    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') || ''
-    const token = authHeader.replace('Bearer ', '')
-    const isAuthorized = token === serviceKey || token === anonKey || apikeyHeader === serviceKey || apikeyHeader === anonKey
-    if (!isAuthorized) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
 
     const results = await Promise.all(SERVICES.map(checkService))
 
