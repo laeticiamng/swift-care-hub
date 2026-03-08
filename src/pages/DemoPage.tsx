@@ -168,7 +168,7 @@ function MockSecretaireScreen() {
             <div className="h-7 rounded border bg-muted/30 px-2 flex items-center text-xs font-medium">LEFEVRE</div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-muted-foreground">Prenom</p>
+            <p className="text-[10px] text-muted-foreground">Prénom</p>
             <div className="h-7 rounded border bg-muted/30 px-2 flex items-center text-xs font-medium">Marie</div>
           </div>
         </div>
