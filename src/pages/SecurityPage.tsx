@@ -120,7 +120,7 @@ const CHECKLIST = [
   'Headers sécurité HTTP configurés (CSP, HSTS, X-Frame)',
   'Hébergement HDS confirmé avec contrat signé',
   'DPO informé, registre traitements mis à jour',
-  'Formation sécurité dispensée aux utilisateurs pilotes',
+  'Formation sécurité dispensée aux utilisateurs de l\'essai',
   'Plan de continuité documenté et testé',
   'Alerting sécurité configuré et testé',
 ];
