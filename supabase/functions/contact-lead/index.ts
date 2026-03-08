@@ -1,13 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("contact-lead");
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
 
 async function sendLeadNotification(leadData: Record<string, string | null>) {
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
@@ -57,6 +52,7 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
 
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === "OPTIONS") {
     end(204);
@@ -67,7 +63,6 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { lastName, firstName, email, establishment, roleFunction, passagesVolume, message } = body;
 
-    // Basic validation
     if (!lastName || !firstName || !email || !establishment || !roleFunction) {
       end(400);
       return new Response(JSON.stringify({ error: "Champs obligatoires manquants" }), {
@@ -76,7 +71,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       end(400);
@@ -101,7 +95,6 @@ Deno.serve(async (req) => {
       message: message?.trim().substring(0, 2000) || null,
     };
 
-    // Rate limit: max 1 submission per email per 24h
     const { data: recentLead } = await supabaseAdmin
       .from("contact_leads")
       .select("id")
@@ -131,8 +124,6 @@ Deno.serve(async (req) => {
     }
 
     log.info("Lead created", { establishment: leadData.establishment });
-
-    // Send email notification (non-blocking — doesn't fail the request)
     await sendLeadNotification(leadData);
 
     end(200);
@@ -141,6 +132,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    const corsHeaders = getCorsHeaders(req);
     log.error("Unexpected error", { error: String(err) });
     end(500);
     return new Response(JSON.stringify({ error: "Erreur serveur" }), {
