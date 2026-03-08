@@ -170,7 +170,7 @@ export function howToSchema() {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: 'Comment déployer UrgenceOS dans un service d\'urgences',
-    description: 'Guide de déploiement du socle Hospital-Owned Software UrgenceOS en 4 étapes, du cadrage au go-live pilote.',
+    description: 'Guide de déploiement du socle Hospital-Owned Software UrgenceOS en 4 étapes, du cadrage au go-live essai.',
     totalTime: 'P10W',
     step: [
       {
