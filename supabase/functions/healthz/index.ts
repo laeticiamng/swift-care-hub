@@ -9,7 +9,9 @@ const corsHeaders = {
 };
 
 const VERSION = "1.0.0";
+const BUILD = Deno.env.get("DENO_DEPLOYMENT_ID") || "local";
 const REGION = Deno.env.get("DENO_REGION") || "unknown";
+const BOOT_TIME = Date.now();
 
 Deno.serve(async (req) => {
   const end = log.start(req);
@@ -27,12 +29,16 @@ Deno.serve(async (req) => {
     });
   }
 
+  const uptime_seconds = Math.round((Date.now() - BOOT_TIME) / 1000);
+
   end(200);
   return new Response(
     JSON.stringify({
       status: "ok",
       version: VERSION,
+      build: BUILD,
       region: REGION,
+      uptime_seconds,
       timestamp: new Date().toISOString(),
     }),
     {

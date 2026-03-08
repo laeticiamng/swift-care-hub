@@ -42,8 +42,9 @@ function flush() {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          'X-Trace-Id': SESSION_TRACE_ID,
         },
-        body: JSON.stringify(report),
+        body: JSON.stringify({ ...report, trace_id: SESSION_TRACE_ID }),
       }).catch(() => {
         // Silent fail — we don't want error reporting to cause errors
       });
