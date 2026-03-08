@@ -184,18 +184,50 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Fondatrice */}
+        <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-3xl font-bold text-primary">
+              LM
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-1">Laeticia Motongane</h2>
+              <p className="text-primary font-medium mb-3">Fondatrice & Présidente — EmotionsCare SASU</p>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Convaincue que l'hôpital public mérite des outils numériques à la hauteur de sa mission,
+                Laeticia a créé EmotionsCare pour redonner aux établissements de santé la maîtrise de leur informatique.
+                UrgenceOS est né de cette conviction : un logiciel conçu avec les soignants, détenu par l'hôpital,
+                et mesuré sur des résultats concrets.
+              </p>
+              <div className="flex gap-3">
+                <a
+                  href="https://www.linkedin.com/company/emotionscare/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  LinkedIn →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Company info */}
         <div className="mb-20 p-8 rounded-2xl border bg-card">
           <h2 className="text-xl font-bold mb-4">EmotionsCare SASU</h2>
           <div className="grid sm:grid-cols-2 gap-6 text-sm">
             <div className="space-y-2">
               <p><span className="text-muted-foreground">Forme juridique :</span> SASU</p>
-              <p><span className="text-muted-foreground">Siège social :</span> Rue Caudron, Amiens (80000), France</p>
-              <p><span className="text-muted-foreground">Activité :</span> Édition de logiciels de santé — Hospital-Owned Software</p>
+              <p><span className="text-muted-foreground">SIREN :</span> 944 505 445</p>
+              <p><span className="text-muted-foreground">Capital social :</span> 1 000 €</p>
+              <p><span className="text-muted-foreground">Siège social :</span> Paris (75000), France</p>
+              <p><span className="text-muted-foreground">Présidente :</span> Laeticia Motongane</p>
             </div>
             <div className="space-y-2">
+              <p><span className="text-muted-foreground">Activité :</span> Édition de logiciels de santé</p>
               <p><span className="text-muted-foreground">Produit :</span> UrgenceOS (socle + modules urgences)</p>
-              <p><span className="text-muted-foreground">Marché :</span> SAU, GHT, établissements de santé publics</p>
+              <p><span className="text-muted-foreground">Marché :</span> Services d'urgences, GHT, hôpitaux publics</p>
               <p className="flex items-center gap-1">
                 <span className="text-muted-foreground">Contact :</span>
                 <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline inline-flex items-center gap-1">
