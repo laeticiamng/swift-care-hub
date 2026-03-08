@@ -26,7 +26,10 @@ async function checkService(service: { name: string; url: string; label: string 
     })
     clearTimeout(timeout)
     const responseTime = Date.now() - start
-    const status = resp.ok ? 'operational' : (resp.status >= 500 ? 'down' : 'degraded')
+    // 401/403/404 on auth-gated endpoints = service IS responding = operational
+    const status = resp.ok || resp.status === 401 || resp.status === 403 || resp.status === 404
+      ? 'operational'
+      : (resp.status >= 500 ? 'down' : 'degraded')
     return {
       service_name: service.name,
       status,
