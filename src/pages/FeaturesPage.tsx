@@ -62,12 +62,12 @@ export default function FeaturesPage() {
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                { icon: Key, title: 'Identité & SSO', desc: 'Authentification forte, gestion des sessions, compatibilité LDAP/ProSanté Connect.' },
-                { icon: Users, title: 'RBAC', desc: '7 rôles de base, permissions granulaires, vérification côté serveur systématique.' },
-                { icon: Eye, title: 'Audit logs', desc: 'Journalisation immuable de chaque action. Qui, quoi, quand, depuis où.' },
-                { icon: FileText, title: 'API documentée', desc: 'REST OpenAPI, versionnée, authentifiée, rate-limitée. Contrats testés automatiquement.' },
-                { icon: RefreshCcw, title: 'Bus d\'intégration', desc: 'Point unique d\'échange avec DPI/LIS/PACS. Connecteurs FHIR R4, HL7v2, HPRIM.' },
-                { icon: BarChart3, title: 'Observabilité', desc: 'Métriques techniques et métier, alerting configurable, dashboard opérationnel.' },
+                { icon: Key, title: 'Identité & connexion unique', desc: 'Authentification forte, gestion des sessions, compatible avec l\'annuaire de votre hôpital et ProSanté Connect.' },
+                { icon: Users, title: 'Droits d\'accès par rôle', desc: '5 rôles de base, permissions précises, vérification côté serveur systématique.' },
+                { icon: Eye, title: 'Journal d\'activité', desc: 'Journalisation non modifiable de chaque action. Qui, quoi, quand, depuis où.' },
+                { icon: FileText, title: 'API documentée', desc: 'Interface de programmation versionnée, authentifiée, avec limites de débit. Tests automatisés.' },
+                { icon: RefreshCcw, title: 'Bus d\'intégration', desc: 'Point unique d\'échange avec votre dossier patient, laboratoire et imagerie. Connecteurs standards.' },
+                { icon: BarChart3, title: 'Supervision', desc: 'Métriques techniques et métier, alertes configurables, tableau de bord opérationnel.' },
               ].map((item) => (
                 <div key={item.title} className="p-4 rounded-xl border bg-card space-y-2">
                   <div className="flex items-center gap-2">
