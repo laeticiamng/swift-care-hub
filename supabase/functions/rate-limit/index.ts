@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createLogger } from "../_shared/logger.ts";
+
+const log = createLogger("rate-limit");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,7 +22,10 @@ const ACTION_LIMITS: Record<string, { max: number; windowMs: number }> = {
 };
 
 Deno.serve(async (req) => {
+  const end = log.start(req);
+
   if (req.method === "OPTIONS") {
+    end(204);
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -27,6 +33,8 @@ Deno.serve(async (req) => {
     // Authenticate
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
+      log.warn("Missing or invalid auth header");
+      end(401);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -41,6 +49,8 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
+      log.warn("Auth failed", { error: userError?.message });
+      end(401);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -61,6 +71,7 @@ Deno.serve(async (req) => {
 
     if (!entry || now > entry.resetAt) {
       rateLimitStore.set(key, { count: 1, resetAt: now + limits.windowMs });
+      end(200, { action, allowed: true });
       return new Response(
         JSON.stringify({
           allowed: true,
@@ -83,6 +94,8 @@ Deno.serve(async (req) => {
     const resetIn = entry.resetAt - now;
 
     if (entry.count > limits.max) {
+      log.warn("Rate limit exceeded", { user_id: userId, action, count: entry.count, max: limits.max });
+
       // Log rate limit violation
       const adminClient = createClient(
         Deno.env.get("SUPABASE_URL")!,
@@ -100,6 +113,7 @@ Deno.serve(async (req) => {
         },
       });
 
+      end(429, { action, allowed: false });
       return new Response(
         JSON.stringify({
           allowed: false,
@@ -120,6 +134,7 @@ Deno.serve(async (req) => {
       );
     }
 
+    end(200, { action, allowed: true, remaining });
     return new Response(
       JSON.stringify({ allowed: true, remaining, resetIn }),
       {
@@ -132,8 +147,9 @@ Deno.serve(async (req) => {
       },
     );
   } catch (e) {
-    console.error("Rate limit error:", e);
+    log.error("Rate limit error", { error: String(e) });
     // Fail open — don't block if rate limiter errors
+    end(200, { fallback: true });
     return new Response(
       JSON.stringify({ allowed: true, error: "Rate limiter unavailable" }),
       {
