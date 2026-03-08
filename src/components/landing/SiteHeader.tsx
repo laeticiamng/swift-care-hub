@@ -60,11 +60,11 @@ export function SiteHeader() {
             </Button>
           ) : (
             <>
-              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
-                S'inscrire
+              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')} aria-label="Voir la démo UrgenceOS">
+                Démo
               </Button>
-              <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
-                Connexion
+              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un pilote UrgenceOS">
+                Demander un pilote
               </Button>
             </>
           )}
