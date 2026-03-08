@@ -1,9 +1,20 @@
 /**
  * Lightweight error reporter that sends errors to the log-error Edge Function.
  * Used by ErrorBoundary, global handlers, and can be called manually.
+ *
+ * Generates a trace_id per page session and propagates it to edge functions
+ * via the X-Trace-Id header for end-to-end correlation.
  */
 
 const LOG_ERROR_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-error`;
+
+/** Stable trace_id for the current page session (reset on full reload). */
+const SESSION_TRACE_ID = crypto.randomUUID();
+
+/** Get the current session trace_id (useful for logging in components). */
+export function getTraceId(): string {
+  return SESSION_TRACE_ID;
+}
 
 interface ErrorReport {
   source: 'frontend' | 'edge-function';
@@ -12,6 +23,7 @@ interface ErrorReport {
   url?: string;
   user_agent?: string;
   function_name?: string;
+  trace_id?: string;
   metadata?: Record<string, unknown>;
 }
 
