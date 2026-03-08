@@ -12,11 +12,11 @@ import {
 } from 'lucide-react';
 
 const ROLES: { role: AppRole; label: string; desc: string; icon: React.ReactNode; color: string; route: string }[] = [
-  { role: 'medecin', label: 'Medecin urgentiste', desc: 'Board panoramique, dossier patient, prescriptions', icon: <Stethoscope className="h-8 w-8" />, color: 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50', route: '/board' },
-  { role: 'ioa', label: 'IOA', desc: 'Triage en 5 etapes, classification CIMU, file d\'attente', icon: <ClipboardList className="h-8 w-8" />, color: 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 hover:bg-orange-100 dark:hover:bg-orange-950/50', route: '/ioa-queue' },
-  { role: 'ide', label: 'IDE', desc: 'Pancarte unifiee, administration medicaments, transmissions DAR', icon: <Heart className="h-8 w-8" />, color: 'border-pink-500 bg-pink-50 dark:bg-pink-950/30 hover:bg-pink-100 dark:hover:bg-pink-950/50', route: '/board' },
+  { role: 'medecin', label: 'Médecin urgentiste', desc: 'Board panoramique, dossier patient, prescriptions', icon: <Stethoscope className="h-8 w-8" />, color: 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50', route: '/board' },
+  { role: 'ioa', label: 'IOA', desc: 'Triage en 5 étapes, classification CIMU, file d\'attente', icon: <ClipboardList className="h-8 w-8" />, color: 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 hover:bg-orange-100 dark:hover:bg-orange-950/50', route: '/ioa-queue' },
+  { role: 'ide', label: 'IDE', desc: 'Pancarte unifiée, administration médicaments, transmissions DAR', icon: <Heart className="h-8 w-8" />, color: 'border-pink-500 bg-pink-50 dark:bg-pink-950/30 hover:bg-pink-100 dark:hover:bg-pink-950/50', route: '/board' },
   { role: 'as', label: 'Aide-soignant', desc: '4 gros boutons tactiles, saisie constantes, alertes', icon: <Activity className="h-8 w-8" />, color: 'border-green-500 bg-green-50 dark:bg-green-950/30 hover:bg-green-100 dark:hover:bg-green-950/50', route: '/as' },
-  { role: 'secretaire', label: 'Secretaire', desc: 'Admission rapide < 90s, recherche patient, attribution box', icon: <UserPlus className="h-8 w-8" />, color: 'border-purple-500 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-950/50', route: '/accueil' },
+  { role: 'secretaire', label: 'Secrétaire', desc: 'Admission rapide < 90s, recherche patient, attribution box', icon: <UserPlus className="h-8 w-8" />, color: 'border-purple-500 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-950/50', route: '/accueil' },
 ];
 
 export default function DemoLivePage() {
