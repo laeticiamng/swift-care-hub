@@ -151,7 +151,7 @@ export default function SecurityPage() {
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4 gap-1.5">
-            <Shield className="h-3 w-3" /> Security-first
+            <Shield className="h-3 w-3" /> Sécurité intégrée
           </Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             La sécurité n'est pas une option. C'est l'architecture.
