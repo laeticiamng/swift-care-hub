@@ -176,7 +176,7 @@ export default function FeaturesPage() {
 
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès l'essai</h4>
               <ul className="space-y-2">
                 {[
                   'Journal d\'événements horodaté par patient',
