@@ -69,8 +69,8 @@ const PLANS = [
 
 const FAQ_PRICING = [
   {
-    q: 'Pourquoi commencer par un pilote plutôt qu\'un déploiement complet ?',
-    a: 'Le pilote mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
+    q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
+    a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
   },
   {
     q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
