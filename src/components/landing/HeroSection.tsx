@@ -39,7 +39,7 @@ export function HeroSection() {
         <motion.div {...fadeUp(0)}>
           <Badge variant="secondary" className="mb-6 gap-1.5 px-4 py-1.5 text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-default group">
             <Building2 className="h-3.5 w-3.5 group-hover:rotate-6 transition-transform" />
-            Hospital-Owned Software
+            Logiciel possédé par l'hôpital
           </Badge>
         </motion.div>
 
