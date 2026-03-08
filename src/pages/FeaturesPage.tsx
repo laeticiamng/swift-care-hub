@@ -97,19 +97,19 @@ export default function FeaturesPage() {
             C'est l'interface centrale d'UrgenceOS — celle que cliniciens et décideurs comprennent immédiatement.
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">MUST HAVE</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
               <ul className="space-y-2">
                 {[
-                  'Bandeau patient persistant (identité, allergies, CIMU, zone)',
+                  'Bandeau patient persistant (identité, allergies, classification, zone)',
                   'Timeline horodatée unifiée (admission → sortie)',
-                  'Filtrage automatique par rôle (RBAC)',
+                  'Affichage adapté selon votre rôle',
                   'Alertes labo critiques avec valeur et seuil',
-                  'Statut prescriptions temps réel',
+                  'Statut prescriptions en temps réel',
                   'Synthèse de sortie pré-remplie',
-                  'Intégration DPI lecture (FHIR R4/HL7v2)',
-                  'Chargement < 2 secondes',
+                  'Connexion avec votre DPI existant',
+                  'Chargement en moins de 2 secondes',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
@@ -119,7 +119,7 @@ export default function FeaturesPage() {
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-3">SHOULD HAVE</h4>
+              <h4 className="font-semibold text-sm text-muted-foreground mb-3">Prévu en extension</h4>
               <ul className="space-y-2">
                 {[
                   'Recherche textuelle dans la timeline',
@@ -127,26 +127,13 @@ export default function FeaturesPage() {
                   'Notifications push événements critiques',
                   'Mini-graphiques de constantes',
                   'Annotations médicales sur événements',
+                  'Écriture bidirectionnelle vers le DPI',
+                  'Reconnaissance vocale notes cliniques',
+                  'Synthèse IA du compte-rendu de sortie',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
                     <span className="text-muted-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground/60 mb-3">LATER</h4>
-              <ul className="space-y-2">
-                {[
-                  'Intégration bidirectionnelle DPI (écriture)',
-                  'Reconnaissance vocale notes cliniques',
-                  'Synthèse IA compte-rendu de sortie',
-                  'Connexion DMP enrichissement dossier',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-xs">
-                    <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground/70">{item}</span>
                   </li>
                 ))}
               </ul>
