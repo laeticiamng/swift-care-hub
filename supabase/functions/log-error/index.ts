@@ -1,16 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("log-error");
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === "OPTIONS") {
     end(204);
@@ -34,7 +30,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Try to extract user_id from auth header if present
     let userId: string | null = null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
@@ -76,7 +71,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check for error spike (>10 errors in 5 minutes)
     const windowStart = new Date(Date.now() - 5 * 60_000).toISOString();
     const { count } = await adminClient
       .from("error_logs")
@@ -84,7 +78,6 @@ Deno.serve(async (req) => {
       .gte("created_at", windowStart);
 
     if ((count ?? 0) > 10) {
-      // Check if alert already fired
       const { count: alertCount } = await adminClient
         .from("audit_logs")
         .select("id", { count: "exact", head: true })
@@ -105,13 +98,12 @@ Deno.serve(async (req) => {
         });
         log.warn("Error spike detected", { count });
 
-        // Send alert email for error spike
         try {
           await fetch(`${Deno.env.get("SUPABASE_URL")!}/functions/v1/send-alert`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")!}`,
+              "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!}`,
             },
             body: JSON.stringify({
               type: "error_spike",
@@ -121,7 +113,7 @@ Deno.serve(async (req) => {
             }),
           });
         } catch (alertErr) {
-          // Silent — don't let alerting break error logging
+          // Silent
         }
       }
     }

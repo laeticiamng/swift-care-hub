@@ -1,16 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("manage-roles");
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === "OPTIONS") {
     end(204);
@@ -31,7 +27,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify caller is a medecin
     const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -47,7 +42,6 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    // Check caller has medecin role
     const { data: callerRole } = await adminClient
       .from("user_roles")
       .select("role")
@@ -66,26 +60,20 @@ Deno.serve(async (req) => {
 
     const method = req.method;
 
-    // GET: list all users with their roles
     if (method === "GET") {
       const { data: profiles } = await adminClient
         .from("profiles")
         .select("id, email, full_name, created_at")
         .order("created_at", { ascending: false });
 
-      const { data: roles } = await adminClient
-        .from("user_roles")
-        .select("user_id, role");
+      const { data: roles } = await adminClient.from("user_roles").select("user_id, role");
 
       const roleMap = new Map<string, string>();
       for (const r of roles || []) {
         roleMap.set(r.user_id, r.role);
       }
 
-      const users = (profiles || []).map((p) => ({
-        ...p,
-        role: roleMap.get(p.id) || null,
-      }));
+      const users = (profiles || []).map((p) => ({ ...p, role: roleMap.get(p.id) || null }));
 
       log.info("Listed users", { count: users.length });
       end(200);
@@ -94,7 +82,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // POST: assign or update role
     if (method === "POST") {
       const { user_id, role } = await req.json();
 
@@ -116,11 +103,8 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Upsert: delete existing then insert
       await adminClient.from("user_roles").delete().eq("user_id", user_id);
-      const { error: insertError } = await adminClient
-        .from("user_roles")
-        .insert({ user_id, role });
+      const { error: insertError } = await adminClient.from("user_roles").insert({ user_id, role });
 
       if (insertError) {
         log.error("Role insert failed", { error: insertError.message });
@@ -131,7 +115,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Audit log
       await adminClient.from("audit_logs").insert({
         user_id: user.id,
         action: "role_assigned",

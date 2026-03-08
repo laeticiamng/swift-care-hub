@@ -1,19 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("csp-report");
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
 
 const ALERT_THRESHOLD = 10;
 const ALERT_WINDOW_MINUTES = 5;
 
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === "OPTIONS") {
     end(204);
@@ -38,7 +34,6 @@ Deno.serve(async (req) => {
 
     log.info("CSP violation received", { blocked_uri: blockedUri, directive: violatedDirective, document: documentUri });
 
-    // Log the violation
     const { error: insertErr } = await supabase.from("audit_logs").insert({
       action: "csp_violation",
       resource_type: "security",
@@ -57,7 +52,6 @@ Deno.serve(async (req) => {
       log.error("Insert error", { error: insertErr.message });
     }
 
-    // ── DB-based attack pattern detection ──
     const windowStart = new Date(Date.now() - ALERT_WINDOW_MINUTES * 60_000).toISOString();
 
     const { count: recentCount, error: countErr } = await supabase

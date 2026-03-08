@@ -1,12 +1,7 @@
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("send-alert");
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
 
 interface AlertPayload {
   type: "service_down" | "error_spike" | "service_recovered";
@@ -20,6 +15,7 @@ const ALERT_RECIPIENTS = ["support@emotionscare.com"];
 
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === "OPTIONS") {
     end(204);
@@ -29,6 +25,23 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") {
     end(405);
     return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+  }
+
+  // ── Internal caller verification ──
+  // Only accept calls from other edge functions using service role key
+  const authHeader = req.headers.get("Authorization");
+  const expectedKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+
+  // Accept service_role key OR anon key from internal edge function calls
+  const token = authHeader?.replace("Bearer ", "");
+  if (!token || (token !== expectedKey && token !== anonKey)) {
+    log.warn("Unauthorized send-alert attempt");
+    end(403);
+    return new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   const resendApiKey = Deno.env.get("RESEND_API_KEY");

@@ -1,15 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { createLogger } from "../_shared/logger.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("seed-data");
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
 Deno.serve(async (req) => {
   const end = log.start(req);
+  const corsHeaders = getCorsHeaders(req);
 
   if (req.method === 'OPTIONS') {
     end(204);
@@ -28,7 +25,6 @@ Deno.serve(async (req) => {
 
     const password = 'urgenceos2026'
 
-    // Create 5 test users
     const users = [
       { email: 'martin@urgenceos.fr', full_name: 'Dr. Martin Dupont', role: 'medecin' },
       { email: 'sophie@urgenceos.fr', full_name: 'Sophie Lefèvre', role: 'ioa' },
@@ -71,7 +67,6 @@ Deno.serve(async (req) => {
     const medecinId = userIds['medecin']
     const ideId = userIds['ide']
 
-    // Create patients
     const patientsData = [
       { nom: 'MARTIN', prenom: 'Pierre', date_naissance: '1955-03-15', sexe: 'M', allergies: ['Pénicilline'], antecedents: ['HTA', 'Diabète type 2'], medecin_traitant: 'Dr. Leroy' },
       { nom: 'DUBOIS', prenom: 'Marie', date_naissance: '1948-07-22', sexe: 'F', allergies: [], antecedents: ['BPCO', 'FA'], medecin_traitant: 'Dr. Roux' },
@@ -98,7 +93,6 @@ Deno.serve(async (req) => {
     }
     log.info("Patients inserted", { count: patients.length });
 
-    // Create encounters
     const motifs = ['Douleur thoracique', 'Chute', 'Dyspnée', 'Douleur abdominale', 'Traumatisme membre', 'Céphalée intense', 'Malaise', 'Intoxication médicamenteuse', 'AEG', 'Plaie profonde', 'Brûlure', 'Lombalgie aiguë', 'Douleur thoracique atypique', 'Fracture suspectée', 'Détresse respiratoire']
     const zones: ('sau' | 'uhcd' | 'dechocage')[] = ['sau', 'sau', 'sau', 'sau', 'sau', 'sau', 'sau', 'uhcd', 'uhcd', 'uhcd', 'uhcd', 'sau', 'dechocage', 'sau', 'dechocage']
     const ccmus = [3, 3, 4, 2, 2, 3, 1, 4, 3, 2, 3, 2, 3, 2, 5]
@@ -126,23 +120,16 @@ Deno.serve(async (req) => {
     }
     log.info("Encounters inserted", { count: encounters.length });
 
-    // Create vitals for each encounter (2-4 series)
     const vitalsInserts: any[] = []
     for (const enc of encounters) {
       const numSeries = 2 + Math.floor(Math.random() * 3)
       for (let s = 0; s < numSeries; s++) {
         vitalsInserts.push({
-          encounter_id: enc.id,
-          patient_id: enc.patient_id,
-          recorded_by: ideId || null,
-          fc: 60 + Math.floor(Math.random() * 60),
-          pa_systolique: 90 + Math.floor(Math.random() * 80),
-          pa_diastolique: 50 + Math.floor(Math.random() * 50),
-          spo2: 88 + Math.floor(Math.random() * 12),
-          temperature: parseFloat((36 + Math.random() * 3).toFixed(1)),
-          frequence_respiratoire: 10 + Math.floor(Math.random() * 20),
-          gcs: 12 + Math.floor(Math.random() * 4),
-          eva_douleur: Math.floor(Math.random() * 10),
+          encounter_id: enc.id, patient_id: enc.patient_id, recorded_by: ideId || null,
+          fc: 60 + Math.floor(Math.random() * 60), pa_systolique: 90 + Math.floor(Math.random() * 80),
+          pa_diastolique: 50 + Math.floor(Math.random() * 50), spo2: 88 + Math.floor(Math.random() * 12),
+          temperature: parseFloat((36 + Math.random() * 3).toFixed(1)), frequence_respiratoire: 10 + Math.floor(Math.random() * 20),
+          gcs: 12 + Math.floor(Math.random() * 4), eva_douleur: Math.floor(Math.random() * 10),
           recorded_at: new Date(Date.now() - (numSeries - s) * 45 * 60 * 1000).toISOString(),
         })
       }
@@ -150,7 +137,6 @@ Deno.serve(async (req) => {
     await supabaseAdmin.from('vitals').insert(vitalsInserts)
     log.info("Vitals inserted", { count: vitalsInserts.length });
 
-    // Prescriptions
     const meds = [
       { name: 'Paracétamol', dosage: '1g', route: 'PO', freq: 'Toutes les 6h', priority: 'routine' },
       { name: 'Morphine', dosage: '5mg', route: 'IV', freq: 'Si EVA > 6', priority: 'urgent' },
@@ -185,15 +171,9 @@ Deno.serve(async (req) => {
       for (let r = 0; r < numRx; r++) {
         const med = meds[Math.floor(Math.random() * meds.length)]
         rxInserts.push({
-          encounter_id: encounters[i].id,
-          patient_id: encounters[i].patient_id,
-          prescriber_id: medecinId,
-          medication_name: med.name,
-          dosage: med.dosage,
-          route: med.route,
-          frequency: med.freq,
-          status: Math.random() > 0.7 ? 'completed' : 'active',
-          priority: med.priority,
+          encounter_id: encounters[i].id, patient_id: encounters[i].patient_id,
+          prescriber_id: medecinId, medication_name: med.name, dosage: med.dosage,
+          route: med.route, frequency: med.freq, status: Math.random() > 0.7 ? 'completed' : 'active', priority: med.priority,
         })
       }
     }
@@ -204,7 +184,6 @@ Deno.serve(async (req) => {
       log.info("Prescriptions inserted", { count: insertedRx.length });
     }
 
-    // Administrations
     const adminInserts: any[] = []
     if (ideId && insertedRx.length > 0) {
       const completedRx = insertedRx.filter((rx: any) => rx.status === 'completed')
@@ -227,7 +206,6 @@ Deno.serve(async (req) => {
       log.info("Administrations inserted", { count: adminInserts.length });
     }
 
-    // Procedures
     const procTypes: ('vvp' | 'prelevement' | 'ecg' | 'pansement' | 'sondage')[] = ['vvp', 'prelevement', 'ecg', 'pansement', 'vvp', 'prelevement', 'ecg', 'prelevement', 'vvp', 'ecg']
     const procInserts: any[] = []
     if (ideId) {
@@ -243,7 +221,6 @@ Deno.serve(async (req) => {
       log.info("Procedures inserted", { count: procInserts.length });
     }
 
-    // Results
     const resultInserts: any[] = []
     for (let i = 0; i < Math.min(encounters.length, 10); i++) {
       resultInserts.push({
@@ -265,7 +242,6 @@ Deno.serve(async (req) => {
     await supabaseAdmin.from('results').insert(resultInserts)
     log.info("Results inserted", { count: resultInserts.length });
 
-    // Timeline items
     const timelineInserts: any[] = []
     for (const p of patients) {
       if (p.antecedents && p.antecedents.length > 0) {
@@ -286,32 +262,46 @@ Deno.serve(async (req) => {
         timelineInserts.push({ patient_id: p.id, item_type: 'traitement', content: 'Traitement habituel en cours — voir ordonnance', source_document: 'Ordonnance', source_date: '2025-11-01', source_author: p.medecin_traitant })
       }
       if (age > 50 && p.antecedents?.length > 0) {
-        timelineInserts.push({ patient_id: p.id, item_type: 'diagnostic', content: `Suivi ${p.antecedents[0]} — dernier bilan stable`, source_document: 'Compte-rendu consultation', source_date: '2025-12-15', source_author: 'Spécialiste' })
+        timelineInserts.push({ patient_id: p.id, item_type: 'resultat', content: 'Bilan cardiologique annuel : ECG normal, échographie cardiaque normale', source_document: 'Bilan annuel', source_date: '2025-06-15', source_author: 'Dr. Cardiologue' })
       }
     }
     await supabaseAdmin.from('timeline_items').insert(timelineInserts)
     log.info("Timeline items inserted", { count: timelineInserts.length });
 
-    const summary = {
+    const transmissionInserts = encounters.slice(0, 8).map((enc: any) => ({
+      encounter_id: enc.id, patient_id: enc.patient_id, author_id: ideId,
+      cible: 'Douleur', donnees: 'Patient algique, EVA 7/10',
+      actions: 'Administration antalgique selon prescription', resultats: 'EVA diminuée à 3/10 après 30 min',
+    }))
+    if (ideId) {
+      await supabaseAdmin.from('transmissions').insert(transmissionInserts)
+      log.info("Transmissions inserted", { count: transmissionInserts.length });
+    }
+
+    end(200);
+    return new Response(JSON.stringify({
       success: true,
-      users: Object.keys(userIds).length,
-      patients: patients.length,
-      encounters: encounters.length,
-      vitals: vitalsInserts.length,
-      prescriptions: insertedRx.length,
-      administrations: adminInserts.length,
-      procedures: procInserts.length,
-      results: resultInserts.length,
-      timeline: timelineInserts.length,
-    };
-
-    log.info("Seed completed", summary);
-    end(200, summary);
-    return new Response(JSON.stringify(summary), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-
+      counts: {
+        users: Object.keys(userIds).length,
+        patients: patients.length,
+        encounters: encounters.length,
+        vitals: vitalsInserts.length,
+        prescriptions: insertedRx.length,
+        administrations: adminInserts.length,
+        procedures: procInserts.length,
+        results: resultInserts.length,
+        timeline: timelineInserts.length,
+        transmissions: transmissionInserts.length,
+      },
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   } catch (err) {
     log.error("Seed error", { error: String(err) });
     end(500);
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 })
