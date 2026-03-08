@@ -20,7 +20,7 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
       },
       body: JSON.stringify({
         from: "UrgenceOS <leads@urgenceos.fr>",
-        to: ["contact@emotionscare.com"],
+        to: ["contact@urgenceos.fr"],
         subject: `🏥 Nouveau lead UrgenceOS — ${leadData.establishment}`,
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px">
