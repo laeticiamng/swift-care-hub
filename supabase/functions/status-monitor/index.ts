@@ -1,4 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createLogger } from "../_shared/logger.ts";
+
+const log = createLogger("status-monitor");
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,7 +29,6 @@ async function checkService(service: { name: string; url: string; label: string 
     })
     clearTimeout(timeout)
     const responseTime = Date.now() - start
-    // 401/403/404 on auth-gated endpoints = service IS responding = operational
     const status = resp.ok || resp.status === 401 || resp.status === 403 || resp.status === 404
       ? 'operational'
       : (resp.status >= 500 ? 'down' : 'degraded')
@@ -47,7 +49,10 @@ async function checkService(service: { name: string; url: string; label: string 
 }
 
 Deno.serve(async (req) => {
+  const end = log.start(req);
+
   if (req.method === 'OPTIONS') {
+    end(204);
     return new Response(null, { headers: corsHeaders })
   }
 
@@ -58,21 +63,18 @@ Deno.serve(async (req) => {
 
   // GET = return current status as JSON (public status.json)
   if (req.method === 'GET') {
-    // Fetch latest check per service
     const { data: checks } = await supabase
       .from('status_checks')
       .select('*')
       .order('checked_at', { ascending: false })
       .limit(20)
 
-    // Fetch active/recent incidents
     const { data: incidents } = await supabase
       .from('incident_logs')
       .select('*')
       .order('started_at', { ascending: false })
       .limit(20)
 
-    // Dedupe to latest per service
     const latestByService: Record<string, any> = {}
     for (const c of checks || []) {
       if (!latestByService[c.service_name]) latestByService[c.service_name] = c
@@ -81,9 +83,10 @@ Deno.serve(async (req) => {
     const services = Object.values(latestByService)
     const allOperational = services.every((s: any) => s.status === 'operational')
     const anyDown = services.some((s: any) => s.status === 'down')
-
     const overall = anyDown ? 'down' : allOperational ? 'operational' : 'degraded'
 
+    log.info("Status check GET", { overall, service_count: services.length });
+    end(200);
     return new Response(JSON.stringify({
       status: overall,
       services: latestByService,
@@ -95,10 +98,7 @@ Deno.serve(async (req) => {
   }
 
   // POST = run health checks and store results
-  // Auth is relaxed: this endpoint only performs health pings and writes to status_checks
-  // It's safe to call from pg_cron, external monitoring, or manual triggers
   if (req.method === 'POST') {
-
     const results = await Promise.all(SERVICES.map(checkService))
 
     // DB check via a simple query
@@ -111,7 +111,6 @@ Deno.serve(async (req) => {
       details: { error: dbError?.message || null, label: 'Base de données' },
     })
 
-    // Insert all results
     const { error: insertError } = await supabase
       .from('status_checks')
       .insert(results.map(r => ({
@@ -122,6 +121,8 @@ Deno.serve(async (req) => {
       })))
 
     if (insertError) {
+      log.error("Status insert failed", { error: insertError.message });
+      end(500);
       return new Response(JSON.stringify({ error: insertError.message }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -131,7 +132,6 @@ Deno.serve(async (req) => {
     // Auto-create incident if any service is down
     const downServices = results.filter(r => r.status === 'down')
     for (const ds of downServices) {
-      // Check if there's already an open incident for this component
       const { data: existing } = await supabase
         .from('incident_logs')
         .select('id')
@@ -147,6 +147,7 @@ Deno.serve(async (req) => {
           status: 'investigating',
           severity: 'major',
         })
+        log.warn("Incident created", { service: ds.service_name });
       }
     }
 
@@ -167,8 +168,13 @@ Deno.serve(async (req) => {
             updated_at: new Date().toISOString(),
           }).eq('id', incident.id)
         }
+        log.info("Incident resolved", { service: os.service_name });
       }
     }
+
+    const downCount = downServices.length;
+    log.info("Health check completed", { total: results.length, down: downCount });
+    end(200, { checked: results.length, down: downCount });
 
     return new Response(JSON.stringify({
       success: true,
@@ -179,5 +185,6 @@ Deno.serve(async (req) => {
     })
   }
 
+  end(405);
   return new Response('Method not allowed', { status: 405, headers: corsHeaders })
 })

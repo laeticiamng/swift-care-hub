@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createLogger } from "../_shared/logger.ts";
+
+const log = createLogger("contact-lead");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,7 +12,7 @@ const corsHeaders = {
 async function sendLeadNotification(leadData: Record<string, string | null>) {
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
   if (!RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY not configured — skipping email notification");
+    log.warn("RESEND_API_KEY not configured — skipping email notification");
     return;
   }
 
@@ -43,17 +46,20 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
 
     if (!resp.ok) {
       const err = await resp.text();
-      console.error("Resend error:", resp.status, err);
+      log.error("Resend error", { status: resp.status, body: err.slice(0, 200) });
     } else {
-      console.log("✅ Email notification sent successfully");
+      log.info("Email notification sent");
     }
   } catch (err) {
-    console.error("Email send failed:", err);
+    log.error("Email send failed", { error: String(err) });
   }
 }
 
 Deno.serve(async (req) => {
+  const end = log.start(req);
+
   if (req.method === "OPTIONS") {
+    end(204);
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -63,6 +69,7 @@ Deno.serve(async (req) => {
 
     // Basic validation
     if (!lastName || !firstName || !email || !establishment || !roleFunction) {
+      end(400);
       return new Response(JSON.stringify({ error: "Champs obligatoires manquants" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -72,6 +79,7 @@ Deno.serve(async (req) => {
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      end(400);
       return new Response(JSON.stringify({ error: "Email invalide" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -103,6 +111,8 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (recentLead) {
+      log.warn("Duplicate lead attempt", { email: leadData.email });
+      end(429);
       return new Response(JSON.stringify({ error: "Demande déjà envoyée. Réessayez dans 24h." }), {
         status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -112,22 +122,27 @@ Deno.serve(async (req) => {
     const { error } = await supabaseAdmin.from("contact_leads").insert(leadData);
 
     if (error) {
-      console.error("Insert error:", error);
+      log.error("Insert error", { error: error.message });
+      end(500);
       return new Response(JSON.stringify({ error: "Erreur serveur" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    log.info("Lead created", { establishment: leadData.establishment });
+
     // Send email notification (non-blocking — doesn't fail the request)
     await sendLeadNotification(leadData);
 
+    end(200);
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("Unexpected error:", err);
+    log.error("Unexpected error", { error: String(err) });
+    end(500);
     return new Response(JSON.stringify({ error: "Erreur serveur" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

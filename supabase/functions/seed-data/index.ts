@@ -1,4 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createLogger } from "../_shared/logger.ts";
+
+const log = createLogger("seed-data");
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -6,14 +9,16 @@ const corsHeaders = {
 }
 
 Deno.serve(async (req) => {
+  const end = log.start(req);
+
   if (req.method === 'OPTIONS') {
+    end(204);
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Log caller info if auth header present (optional for seed)
     const authHeader = req.headers.get('Authorization')
-    console.log(`Seed called, auth present: ${!!authHeader}`)
+    log.info("Seed called", { auth_present: !!authHeader });
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -35,13 +40,12 @@ Deno.serve(async (req) => {
     const userIds: Record<string, string> = {}
 
     for (const u of users) {
-      // Check if user exists
       const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers()
       const existing = existingUsers?.users?.find(eu => eu.email === u.email)
       
       if (existing) {
         userIds[u.role] = existing.id
-        console.log(`User ${u.email} already exists: ${existing.id}`)
+        log.info("User exists", { email: u.email });
       } else {
         const { data, error } = await supabaseAdmin.auth.admin.createUser({
           email: u.email,
@@ -50,19 +54,18 @@ Deno.serve(async (req) => {
           user_metadata: { full_name: u.full_name },
         })
         if (error) {
-          console.error(`Error creating user ${u.email}:`, error.message)
+          log.error("User creation failed", { email: u.email, error: error.message });
           continue
         }
         userIds[u.role] = data.user.id
-        console.log(`Created user ${u.email}: ${data.user.id}`)
+        log.info("User created", { email: u.email });
       }
 
-      // Ensure role exists
       const { error: roleErr } = await supabaseAdmin.from('user_roles').upsert(
         { user_id: userIds[u.role], role: u.role },
         { onConflict: 'user_id,role' }
       )
-      if (roleErr) console.error(`Role error for ${u.role}:`, roleErr.message)
+      if (roleErr) log.error("Role error", { role: u.role, error: roleErr.message });
     }
 
     const medecinId = userIds['medecin']
@@ -89,10 +92,11 @@ Deno.serve(async (req) => {
 
     const { data: patients, error: patErr } = await supabaseAdmin.from('patients').insert(patientsData).select()
     if (patErr) {
-      console.error('Patients insert error:', patErr.message)
+      log.error("Patients insert failed", { error: patErr.message });
+      end(500);
       return new Response(JSON.stringify({ error: patErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
-    console.log(`Inserted ${patients.length} patients`)
+    log.info("Patients inserted", { count: patients.length });
 
     // Create encounters
     const motifs = ['Douleur thoracique', 'Chute', 'Dyspnée', 'Douleur abdominale', 'Traumatisme membre', 'Céphalée intense', 'Malaise', 'Intoxication médicamenteuse', 'AEG', 'Plaie profonde', 'Brûlure', 'Lombalgie aiguë', 'Douleur thoracique atypique', 'Fracture suspectée', 'Détresse respiratoire']
@@ -116,10 +120,11 @@ Deno.serve(async (req) => {
 
     const { data: encounters, error: encErr } = await supabaseAdmin.from('encounters').insert(encountersData).select()
     if (encErr) {
-      console.error('Encounters insert error:', encErr.message)
+      log.error("Encounters insert failed", { error: encErr.message });
+      end(500);
       return new Response(JSON.stringify({ error: encErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
-    console.log(`Inserted ${encounters.length} encounters`)
+    log.info("Encounters inserted", { count: encounters.length });
 
     // Create vitals for each encounter (2-4 series)
     const vitalsInserts: any[] = []
@@ -143,11 +148,10 @@ Deno.serve(async (req) => {
       }
     }
     await supabaseAdmin.from('vitals').insert(vitalsInserts)
-    console.log(`Inserted ${vitalsInserts.length} vitals`)
+    log.info("Vitals inserted", { count: vitalsInserts.length });
 
-    // Prescriptions — enriched with soins, examens, traitements
+    // Prescriptions
     const meds = [
-      // Traitements
       { name: 'Paracétamol', dosage: '1g', route: 'PO', freq: 'Toutes les 6h', priority: 'routine' },
       { name: 'Morphine', dosage: '5mg', route: 'IV', freq: 'Si EVA > 6', priority: 'urgent' },
       { name: 'NaCl 0.9%', dosage: '500ml', route: 'IV', freq: 'En 2h', priority: 'routine' },
@@ -160,17 +164,14 @@ Deno.serve(async (req) => {
       { name: 'Salbutamol', dosage: '5mg', route: 'INH', freq: 'Toutes les 4h', priority: 'urgent' },
       { name: 'Morphine', dosage: '10mg', route: 'IV', freq: 'Titration', priority: 'stat' },
       { name: 'Adrénaline', dosage: '1mg', route: 'IV', freq: 'Si ACR', priority: 'stat' },
-      // Soins
       { name: 'Pansement plaie main droite', dosage: 'Compresses stériles', route: 'PO', freq: 'Toutes les 12h', priority: 'routine' },
       { name: 'Surveillance scope continue', dosage: 'Monitoring', route: 'PO', freq: 'Continu', priority: 'urgent' },
       { name: 'Soins de nursing', dosage: 'Toilette + mobilisation', route: 'PO', freq: 'Toutes les 8h', priority: 'routine' },
-      // Examens — Bilan biologique
       { name: 'Bilan NFS + Iono + CRP', dosage: '3 tubes', route: 'IV', freq: 'Ponctuel', priority: 'urgent' },
       { name: 'Bilan hépatique complet', dosage: '2 tubes', route: 'IV', freq: 'Ponctuel', priority: 'routine' },
       { name: 'Troponine H0 + H3', dosage: '1 tube', route: 'IV', freq: 'H0 puis H+3', priority: 'stat' },
       { name: 'Gaz du sang artériel', dosage: 'Seringue héparinée', route: 'IV', freq: 'Ponctuel', priority: 'urgent' },
       { name: 'Hémostase TP TCA', dosage: '1 tube citraté', route: 'IV', freq: 'Ponctuel', priority: 'routine' },
-      // Examens — Imagerie
       { name: 'Radio thorax face', dosage: 'Face debout', route: 'PO', freq: 'Ponctuel', priority: 'urgent' },
       { name: 'Scanner abdomino-pelvien', dosage: 'Avec injection', route: 'PO', freq: 'Ponctuel', priority: 'urgent' },
       { name: 'Écho abdominale', dosage: 'FAST écho', route: 'PO', freq: 'Ponctuel', priority: 'stat' },
@@ -200,15 +201,14 @@ Deno.serve(async (req) => {
     if (medecinId) {
       const { data: rxData } = await supabaseAdmin.from('prescriptions').insert(rxInserts).select()
       insertedRx = rxData || []
-      console.log(`Inserted ${insertedRx.length} prescriptions`)
+      log.info("Prescriptions inserted", { count: insertedRx.length });
     }
 
-    // Administrations — mark some prescriptions as administered
+    // Administrations
     const adminInserts: any[] = []
     if (ideId && insertedRx.length > 0) {
       const completedRx = insertedRx.filter((rx: any) => rx.status === 'completed')
       const activeRx = insertedRx.filter((rx: any) => rx.status === 'active')
-      // All completed + some active
       for (const rx of completedRx) {
         adminInserts.push({
           prescription_id: rx.id, encounter_id: rx.encounter_id, patient_id: rx.patient_id,
@@ -224,7 +224,7 @@ Deno.serve(async (req) => {
         })
       }
       await supabaseAdmin.from('administrations').insert(adminInserts)
-      console.log(`Inserted ${adminInserts.length} administrations`)
+      log.info("Administrations inserted", { count: adminInserts.length });
     }
 
     // Procedures
@@ -240,10 +240,10 @@ Deno.serve(async (req) => {
         })
       }
       await supabaseAdmin.from('procedures').insert(procInserts)
-      console.log(`Inserted ${procInserts.length} procedures`)
+      log.info("Procedures inserted", { count: procInserts.length });
     }
 
-    // Results — bio + imagerie
+    // Results
     const resultInserts: any[] = []
     for (let i = 0; i < Math.min(encounters.length, 10); i++) {
       resultInserts.push({
@@ -253,23 +253,19 @@ Deno.serve(async (req) => {
         is_critical: Math.random() > 0.7, is_read: Math.random() > 0.5,
       })
     }
-    // Troponin for chest pain
     resultInserts.push({ encounter_id: encounters[0].id, patient_id: encounters[0].patient_id, category: 'bio', title: 'Troponine', content: { troponine_us: '45', seuil: '14', unite: 'ng/L' }, is_critical: true, is_read: false })
-    // CRP/Lactates
     resultInserts.push({ encounter_id: encounters[3].id, patient_id: encounters[3].patient_id, category: 'bio', title: 'CRP + Lactates', content: { CRP: '85 mg/L', lactates: '1.2 mmol/L', procalcitonine: '0.8 ng/mL' }, is_critical: false, is_read: false })
     resultInserts.push({ encounter_id: encounters[7].id, patient_id: encounters[7].patient_id, category: 'bio', title: 'BNP', content: { BNP: '1200 pg/mL', seuil: '100', interpretation: 'Très élevé — insuffisance cardiaque probable' }, is_critical: true, is_read: false })
-    // Imagerie
     resultInserts.push({ encounter_id: encounters[2].id, patient_id: encounters[2].patient_id, category: 'imagerie', title: 'Radio thorax', content: { conclusion: 'Syndrome interstitiel bilatéral. Cardiomégalie modérée.', technique: 'Face debout' }, is_critical: true, is_read: false })
     resultInserts.push({ encounter_id: encounters[5].id, patient_id: encounters[5].patient_id, category: 'imagerie', title: 'Scanner cérébral', content: { conclusion: 'Pas de lésion hémorragique. Pas d\'effet de masse.', injection: 'Sans injection' }, is_critical: false, is_read: false })
     resultInserts.push({ encounter_id: encounters[9].id, patient_id: encounters[9].patient_id, category: 'imagerie', title: 'Radio poignet G', content: { conclusion: 'Fracture distale du radius sans déplacement.', technique: 'Face + profil' }, is_critical: false, is_read: true })
     resultInserts.push({ encounter_id: encounters[13].id, patient_id: encounters[13].patient_id, category: 'imagerie', title: 'Radio cheville D', content: { conclusion: 'Fracture malléole externe. Pas de luxation.', technique: 'Face + profil + mortaise' }, is_critical: false, is_read: false })
-    // ECG
     resultInserts.push({ encounter_id: encounters[1].id, patient_id: encounters[1].patient_id, category: 'ecg', title: 'ECG 12 dérivations', content: { rythme: 'FA rapide à 130/min', axe: 'Normal', ST: 'Pas de sus-décalage', conclusion: 'Fibrillation auriculaire rapide' }, is_critical: true, is_read: false })
 
     await supabaseAdmin.from('results').insert(resultInserts)
-    console.log(`Inserted ${resultInserts.length} results`)
+    log.info("Results inserted", { count: resultInserts.length });
 
-    // Timeline items — enriched
+    // Timeline items
     const timelineInserts: any[] = []
     for (const p of patients) {
       if (p.antecedents && p.antecedents.length > 0) {
@@ -286,19 +282,17 @@ Deno.serve(async (req) => {
       if (age > 60) {
         timelineInserts.push({ patient_id: p.id, item_type: 'crh', content: 'Hospitalisation pour décompensation cardiaque. Traitement adapté. Sortie à J5.', source_document: 'CRH CHU', source_date: '2025-09-20', source_author: 'Dr. Cardiologue' })
       }
-      // Add traitement items for patients with medecin_traitant
       if (p.medecin_traitant) {
         timelineInserts.push({ patient_id: p.id, item_type: 'traitement', content: 'Traitement habituel en cours — voir ordonnance', source_document: 'Ordonnance', source_date: '2025-11-01', source_author: p.medecin_traitant })
       }
-      // Add diagnostic for some patients
       if (age > 50 && p.antecedents?.length > 0) {
         timelineInserts.push({ patient_id: p.id, item_type: 'diagnostic', content: `Suivi ${p.antecedents[0]} — dernier bilan stable`, source_document: 'Compte-rendu consultation', source_date: '2025-12-15', source_author: 'Spécialiste' })
       }
     }
     await supabaseAdmin.from('timeline_items').insert(timelineInserts)
-    console.log(`Inserted ${timelineInserts.length} timeline items`)
+    log.info("Timeline items inserted", { count: timelineInserts.length });
 
-    return new Response(JSON.stringify({
+    const summary = {
       success: true,
       users: Object.keys(userIds).length,
       patients: patients.length,
@@ -309,10 +303,15 @@ Deno.serve(async (req) => {
       procedures: procInserts.length,
       results: resultInserts.length,
       timeline: timelineInserts.length,
-    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    };
+
+    log.info("Seed completed", summary);
+    end(200, summary);
+    return new Response(JSON.stringify(summary), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   } catch (err) {
-    console.error('Seed error:', err)
+    log.error("Seed error", { error: String(err) });
+    end(500);
     return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 })
