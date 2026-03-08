@@ -4,7 +4,7 @@ import { Building2, ShieldCheck, Clock, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const stats = [
-  { value: '10', suffix: ' sem.', label: 'Pilote opérationnel', icon: Clock },
+  { value: '10', suffix: ' sem.', label: 'Essai opérationnel', icon: Clock },
   { value: '5', suffix: ' rôles', label: 'Interfaces métier dédiées', icon: Users },
   { value: '1', suffix: ' écran', label: 'Par rôle, tout est réuni', icon: ShieldCheck },
   { value: '0', suffix: ' refonte DPI', label: 'Votre DPI reste en place', icon: Building2 },
