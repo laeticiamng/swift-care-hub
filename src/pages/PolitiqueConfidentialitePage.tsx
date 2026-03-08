@@ -34,7 +34,7 @@ export default function PolitiqueConfidentialitePage() {
             EmotionsCare SASU (SIREN 944 505 445), société par actions simplifiée unipersonnelle de droit français, est responsable du traitement des données personnelles collectées via la plateforme UrgenceOS.
           </p>
           <ul className="space-y-1 text-muted-foreground leading-relaxed">
-            <li><strong className="text-foreground">Siège social :</strong> France</li>
+            <li><strong className="text-foreground">Siège social :</strong> Paris (75000), France</li>
             <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a></li>
             <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
           </ul>

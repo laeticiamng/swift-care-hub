@@ -190,7 +190,7 @@ export default function AboutPage() {
           <div className="grid sm:grid-cols-2 gap-6 text-sm">
             <div className="space-y-2">
               <p><span className="text-muted-foreground">Forme juridique :</span> SASU</p>
-              <p><span className="text-muted-foreground">Siège social :</span> France</p>
+              <p><span className="text-muted-foreground">Siège social :</span> Paris (75000), France</p>
               <p><span className="text-muted-foreground">Activité :</span> Édition de logiciels de santé — Hospital-Owned Software</p>
             </div>
             <div className="space-y-2">
