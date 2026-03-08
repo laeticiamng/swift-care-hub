@@ -10,11 +10,6 @@ const stats = [
   { value: '0', suffix: ' refonte DPI', label: 'Votre DPI reste en place', icon: Building2 },
 ];
 
-const partners = [
-  { name: 'CHU universitaire', status: 'Co-conception en cours' },
-  { name: 'GHT multi-sites', status: 'Évaluation architecture' },
-  { name: 'CH de proximité', status: 'Cadrage pilote' },
-];
 
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.95 },
