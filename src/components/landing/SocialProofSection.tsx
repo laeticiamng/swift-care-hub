@@ -86,10 +86,10 @@ export function SocialProofSection() {
             transition={{ duration: 0.5 }}
             className="inline-block p-5 rounded-xl border bg-card max-w-lg"
           >
-            <p className="text-sm font-semibold mb-2">🏗️ Produit en phase pilote</p>
+            <p className="text-sm font-semibold mb-2">🏗️ Produit en phase d'essai</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              UrgenceOS est co-construit avec des urgentistes, DSI et cadres de santé.
-              Premiers pilotes hospitaliers prévus en 2026. Les noms des établissements partenaires seront publiés après accord.
+              UrgenceOS est co-construit avec des urgentistes, directions informatiques et cadres de santé.
+              Premiers essais hospitaliers prévus en 2026. Les noms des établissements partenaires seront publiés après accord.
             </p>
           </motion.div>
         </div>

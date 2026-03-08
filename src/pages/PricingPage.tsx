@@ -9,7 +9,7 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 const PLANS = [
   {
-    name: 'Pilote',
+    name: 'Essai',
     target: 'Un service d\'urgences',
     price: 'À partir de 15 000 €',
     period: '',

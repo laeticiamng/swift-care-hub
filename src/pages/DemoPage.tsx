@@ -415,11 +415,11 @@ export default function DemoPage() {
         <div className="mt-12 text-center py-10 px-6 rounded-2xl border bg-card">
           <h3 className="text-xl font-bold mb-2">Convaincu par ce que vous voyez ?</h3>
           <p className="text-muted-foreground text-sm mb-6 max-w-md mx-auto">
-            10 semaines de pilote, ROI mesuré, zéro engagement pluriannuel.
+            10 semaines d'essai, résultats mesurés, zéro engagement pluriannuel.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/contact')}>
               Nous contacter

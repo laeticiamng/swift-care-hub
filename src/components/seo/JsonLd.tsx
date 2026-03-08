@@ -194,8 +194,8 @@ export function howToSchema() {
       {
         '@type': 'HowToStep',
         position: 4,
-        name: 'Go-live pilote 10 semaines',
-        text: 'Mise en production sur un service d\'urgences. Mesure avant/après (temps reconstitution parcours, ressaisies, adoption). Rapport ROI pour DG/DAF/DSI.',
+        name: 'Go-live essai 10 semaines',
+        text: 'Mise en production sur un service d\'urgences. Mesure avant/après (temps reconstitution parcours, ressaisies, adoption). Rapport de résultats pour la direction.',
       },
     ],
   };

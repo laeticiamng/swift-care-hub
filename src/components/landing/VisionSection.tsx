@@ -2,7 +2,7 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const phases = [
-  { step: 'Phase 1', title: 'Pilote', desc: 'Un hôpital teste et mesure les résultats sur son service d\'urgences.' },
+  { step: 'Phase 1', title: 'Essai', desc: 'Un hôpital teste et mesure les résultats sur son service d\'urgences.' },
   { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois hôpitaux partagent le logiciel et les modules. Les coûts sont divisés.' },
   { step: 'Phase 3', title: 'Standardisation', desc: 'Le groupement hospitalier standardise ses pratiques et ses indicateurs.' },
 ];

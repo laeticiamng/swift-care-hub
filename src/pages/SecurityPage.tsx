@@ -253,7 +253,7 @@ export default function SecurityPage() {
               <Mail className="h-4 w-4 mr-2" /> Nous contacter
             </Button>
             <Button variant="outline" onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>
