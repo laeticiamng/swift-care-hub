@@ -111,7 +111,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "UrgenceOS Alerts <alerts@emotionscare.com>",
+        from: "UrgenceOS Alerts <alerts@urgenceos.fr>",
         to: ALERT_RECIPIENTS,
         subject: `[${severity.toUpperCase()}] ${title}`,
         html: htmlBody,
