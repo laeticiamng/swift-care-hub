@@ -77,12 +77,12 @@ export default function AboutPage() {
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">À propos</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            L'hôpital public mérite un SI qu'il contrôle.
+            L'hôpital public mérite un logiciel qu'il contrôle.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            EmotionsCare conçoit UrgenceOS : un socle logiciel que l'hôpital possède,
-            des modules urgences à ROI mesurable, et une architecture qui réduit la dette opérationnelle
-            au lieu de l'aggraver.
+            EmotionsCare conçoit UrgenceOS : un logiciel que l'hôpital possède,
+            des modules dédiés aux urgences avec des résultats mesurables, et une architecture qui réduit les coûts
+            au lieu de les aggraver.
           </p>
         </div>
 
