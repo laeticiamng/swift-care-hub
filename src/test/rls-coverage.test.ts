@@ -21,6 +21,11 @@ const EXPECTED_RLS_TABLES = [
   'patient_consents',
   'data_deletion_requests',
   'timeline_items',
+  'contact_leads',
+  'error_logs',
+  'incident_logs',
+  'messages',
+  'status_checks',
 ];
 
 describe('RLS Coverage — all public tables', () => {
