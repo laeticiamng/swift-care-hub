@@ -23,12 +23,25 @@ type TranslationTree = {
     signup: string;
     contact: string;
     requestTrial: string;
+    establishments: string;
+    faq: string;
+    about: string;
+    board: string;
+    seeDemo: string;
   };
   hero: {
     title: string;
+    titleHighlight: string;
     subtitle: string;
+    subtitleDetail: string;
     cta: string;
     ctaDemo: string;
+    badgeLabel: string;
+    boardPreviewCaption: string;
+    trustCompatible: string;
+    trustOneScreen: string;
+    trustHostedFrance: string;
+    trustResults: string;
   };
   triage: {
     title: string;
@@ -50,6 +63,8 @@ type TranslationTree = {
     confidence: string;
     reasoning: string;
     category: string;
+    complaintPlaceholder: string;
+    errorNoComplaint: string;
   };
   flow: {
     title: string;
@@ -103,6 +118,24 @@ type TranslationTree = {
     disclaimer: string;
     contactUs: string;
     backToTop: string;
+    features: string;
+    pricing: string;
+    demo: string;
+    security: string;
+    dashboard: string;
+    status: string;
+    sla: string;
+    about: string;
+    establishments: string;
+    faq: string;
+    contact: string;
+    legalNotices: string;
+    privacy: string;
+    terms: string;
+    hdsTarget: string;
+    isoTarget: string;
+    rgpdHealth: string;
+    ciSis: string;
   };
   common: {
     loading: string;
@@ -127,12 +160,25 @@ export const translations: Record<Locale, TranslationTree> = {
       signup: 'Inscription',
       contact: 'Contact',
       requestTrial: 'Demander un essai',
+      establishments: 'Établissements',
+      faq: 'FAQ',
+      about: 'À propos',
+      board: 'Board',
+      seeDemo: 'Voir la démo',
     },
     hero: {
-      title: 'Le logiciel des urgences que votre hôpital contrôle',
-      subtitle: 'UrgenceOS remplace les outils dispersés de votre service d\'urgences par une plateforme intégrée.',
-      cta: 'Demander un essai',
+      title: 'Le logiciel des urgences',
+      titleHighlight: 'que votre hôpital contrôle.',
+      subtitle: 'Un seul écran par soignant. Zéro ressaisie. Triage, prescriptions, résultats et coordination — tout réuni, en temps réel, adapté à chaque rôle.',
+      subtitleDetail: 'UrgenceOS remplace les outils dispersés de votre service d\'urgences par une plateforme intégrée, compatible avec votre dossier patient informatisé existant. L\'hôpital garde le contrôle total du logiciel et de ses données.',
+      cta: 'Demander un essai gratuit',
       ctaDemo: 'Voir la démo',
+      badgeLabel: 'Logiciel possédé par l\'hôpital',
+      boardPreviewCaption: 'Aperçu du board panoramique — données fictives',
+      trustCompatible: 'Compatible avec votre dossier patient existant',
+      trustOneScreen: 'Un écran unique par rôle soignant',
+      trustHostedFrance: 'Données hébergées en France',
+      trustResults: 'Résultats mesurables en 10 semaines',
     },
     triage: {
       title: 'Triage IA — Classification Manchester',
@@ -154,6 +200,8 @@ export const translations: Record<Locale, TranslationTree> = {
       confidence: 'Confiance',
       reasoning: 'Raisonnement',
       category: 'Catégorie',
+      complaintPlaceholder: 'Ex: Douleur thoracique depuis 2h, irradiation bras gauche...',
+      errorNoComplaint: 'Veuillez décrire le motif de consultation',
     },
     flow: {
       title: 'Tableau de bord temps réel',
@@ -207,6 +255,24 @@ export const translations: Record<Locale, TranslationTree> = {
       disclaimer: 'UrgenceOS est un outil d\'aide à la gestion des urgences hospitalières. Il ne constitue pas un dispositif médical certifié.',
       contactUs: 'Nous contacter',
       backToTop: '↑ Haut de page',
+      features: 'Fonctionnalités',
+      pricing: 'Tarifs',
+      demo: 'Démo',
+      security: 'Sécurité',
+      dashboard: 'Dashboard',
+      status: 'Statut',
+      sla: 'SLA',
+      about: 'À propos',
+      establishments: 'Établissements',
+      faq: 'FAQ',
+      contact: 'Contact',
+      legalNotices: 'Mentions légales',
+      privacy: 'Confidentialité',
+      terms: 'CGU',
+      hdsTarget: 'Objectif HDS',
+      isoTarget: 'Objectif ISO 27001',
+      rgpdHealth: 'RGPD Santé',
+      ciSis: 'CI-SIS / ANS',
     },
     common: {
       loading: 'Chargement…',
@@ -230,12 +296,25 @@ export const translations: Record<Locale, TranslationTree> = {
       signup: 'Sign up',
       contact: 'Contact',
       requestTrial: 'Request a trial',
+      establishments: 'Hospitals',
+      faq: 'FAQ',
+      about: 'About',
+      board: 'Board',
+      seeDemo: 'See the demo',
     },
     hero: {
-      title: 'The emergency software your hospital controls',
-      subtitle: 'UrgenceOS replaces scattered tools in your emergency department with an integrated platform.',
-      cta: 'Request a trial',
+      title: 'The emergency software',
+      titleHighlight: 'your hospital controls.',
+      subtitle: 'One screen per caregiver. Zero re-entry. Triage, prescriptions, results and coordination — all in one place, in real time, adapted to each role.',
+      subtitleDetail: 'UrgenceOS replaces the scattered tools of your emergency department with an integrated platform, compatible with your existing EHR. The hospital retains full control of the software and its data.',
+      cta: 'Request a free trial',
       ctaDemo: 'See the demo',
+      badgeLabel: 'Hospital-owned software',
+      boardPreviewCaption: 'Panoramic board preview — demo data',
+      trustCompatible: 'Compatible with your existing EHR',
+      trustOneScreen: 'One screen per caregiver role',
+      trustHostedFrance: 'Data hosted in France',
+      trustResults: 'Measurable results in 10 weeks',
     },
     triage: {
       title: 'AI Triage — Manchester Classification',
@@ -257,6 +336,8 @@ export const translations: Record<Locale, TranslationTree> = {
       confidence: 'Confidence',
       reasoning: 'Reasoning',
       category: 'Category',
+      complaintPlaceholder: 'E.g.: Chest pain for 2 hours, radiating to left arm...',
+      errorNoComplaint: 'Please describe the chief complaint',
     },
     flow: {
       title: 'Real-time Dashboard',
@@ -310,6 +391,24 @@ export const translations: Record<Locale, TranslationTree> = {
       disclaimer: 'UrgenceOS is a management tool for hospital emergency departments. It is not a certified medical device.',
       contactUs: 'Contact us',
       backToTop: '↑ Back to top',
+      features: 'Features',
+      pricing: 'Pricing',
+      demo: 'Demo',
+      security: 'Security',
+      dashboard: 'Dashboard',
+      status: 'Status',
+      sla: 'SLA',
+      about: 'About',
+      establishments: 'Hospitals',
+      faq: 'FAQ',
+      contact: 'Contact',
+      legalNotices: 'Legal notices',
+      privacy: 'Privacy',
+      terms: 'Terms of use',
+      hdsTarget: 'HDS Target',
+      isoTarget: 'ISO 27001 Target',
+      rgpdHealth: 'Health GDPR',
+      ciSis: 'CI-SIS / ANS',
     },
     common: {
       loading: 'Loading…',
@@ -333,12 +432,25 @@ export const translations: Record<Locale, TranslationTree> = {
       signup: 'Registrarse',
       contact: 'Contacto',
       requestTrial: 'Solicitar prueba',
+      establishments: 'Hospitales',
+      faq: 'FAQ',
+      about: 'Acerca de',
+      board: 'Board',
+      seeDemo: 'Ver demo',
     },
     hero: {
-      title: 'El software de urgencias que tu hospital controla',
-      subtitle: 'UrgenceOS reemplaza las herramientas dispersas de tu servicio de urgencias por una plataforma integrada.',
-      cta: 'Solicitar prueba',
+      title: 'El software de urgencias',
+      titleHighlight: 'que tu hospital controla.',
+      subtitle: 'Una sola pantalla por cuidador. Cero reentrada. Triaje, prescripciones, resultados y coordinación — todo en un solo lugar, en tiempo real, adaptado a cada rol.',
+      subtitleDetail: 'UrgenceOS reemplaza las herramientas dispersas de tu servicio de urgencias por una plataforma integrada, compatible con tu historia clínica electrónica existente. El hospital mantiene el control total del software y sus datos.',
+      cta: 'Solicitar prueba gratuita',
       ctaDemo: 'Ver demo',
+      badgeLabel: 'Software propiedad del hospital',
+      boardPreviewCaption: 'Vista previa del board panorámico — datos de demostración',
+      trustCompatible: 'Compatible con tu historia clínica existente',
+      trustOneScreen: 'Una pantalla por rol de cuidador',
+      trustHostedFrance: 'Datos alojados en Francia',
+      trustResults: 'Resultados medibles en 10 semanas',
     },
     triage: {
       title: 'Triaje IA — Clasificación Manchester',
@@ -360,6 +472,8 @@ export const translations: Record<Locale, TranslationTree> = {
       confidence: 'Confianza',
       reasoning: 'Razonamiento',
       category: 'Categoría',
+      complaintPlaceholder: 'Ej: Dolor torácico desde hace 2h, irradiación al brazo izquierdo...',
+      errorNoComplaint: 'Por favor describa el motivo de consulta',
     },
     flow: {
       title: 'Panel en tiempo real',
@@ -413,6 +527,24 @@ export const translations: Record<Locale, TranslationTree> = {
       disclaimer: 'UrgenceOS es una herramienta de gestión para servicios de urgencias hospitalarias. No es un dispositivo médico certificado.',
       contactUs: 'Contáctenos',
       backToTop: '↑ Volver arriba',
+      features: 'Funcionalidades',
+      pricing: 'Precios',
+      demo: 'Demo',
+      security: 'Seguridad',
+      dashboard: 'Dashboard',
+      status: 'Estado',
+      sla: 'SLA',
+      about: 'Acerca de',
+      establishments: 'Hospitales',
+      faq: 'FAQ',
+      contact: 'Contacto',
+      legalNotices: 'Aviso legal',
+      privacy: 'Privacidad',
+      terms: 'Términos de uso',
+      hdsTarget: 'Objetivo HDS',
+      isoTarget: 'Objetivo ISO 27001',
+      rgpdHealth: 'RGPD Salud',
+      ciSis: 'CI-SIS / ANS',
     },
     common: {
       loading: 'Cargando…',
@@ -436,12 +568,25 @@ export const translations: Record<Locale, TranslationTree> = {
       signup: 'Registrieren',
       contact: 'Kontakt',
       requestTrial: 'Test anfragen',
+      establishments: 'Krankenhäuser',
+      faq: 'FAQ',
+      about: 'Über uns',
+      board: 'Board',
+      seeDemo: 'Demo ansehen',
     },
     hero: {
-      title: 'Die Notaufnahme-Software, die Ihr Krankenhaus kontrolliert',
-      subtitle: 'UrgenceOS ersetzt verstreute Werkzeuge Ihrer Notaufnahme durch eine integrierte Plattform.',
-      cta: 'Test anfragen',
+      title: 'Die Notaufnahme-Software,',
+      titleHighlight: 'die Ihr Krankenhaus kontrolliert.',
+      subtitle: 'Ein Bildschirm pro Pflegekraft. Keine Doppeleingabe. Triage, Verordnungen, Ergebnisse und Koordination — alles an einem Ort, in Echtzeit, für jede Rolle angepasst.',
+      subtitleDetail: 'UrgenceOS ersetzt die verstreuten Werkzeuge Ihrer Notaufnahme durch eine integrierte Plattform, kompatibel mit Ihrem bestehenden KIS. Das Krankenhaus behält die volle Kontrolle über die Software und ihre Daten.',
+      cta: 'Kostenlos testen',
       ctaDemo: 'Demo ansehen',
+      badgeLabel: 'Krankenhauseigene Software',
+      boardPreviewCaption: 'Panorama-Board-Vorschau — Demodaten',
+      trustCompatible: 'Kompatibel mit Ihrem bestehenden KIS',
+      trustOneScreen: 'Ein Bildschirm pro Pflegerolle',
+      trustHostedFrance: 'Daten in Frankreich gehostet',
+      trustResults: 'Messbare Ergebnisse in 10 Wochen',
     },
     triage: {
       title: 'KI-Triage — Manchester-Klassifikation',
@@ -463,6 +608,8 @@ export const translations: Record<Locale, TranslationTree> = {
       confidence: 'Konfidenz',
       reasoning: 'Begründung',
       category: 'Kategorie',
+      complaintPlaceholder: 'Z.B.: Brustschmerzen seit 2 Stunden, Ausstrahlung in den linken Arm...',
+      errorNoComplaint: 'Bitte beschreiben Sie die Hauptbeschwerde',
     },
     flow: {
       title: 'Echtzeit-Dashboard',
@@ -516,6 +663,24 @@ export const translations: Record<Locale, TranslationTree> = {
       disclaimer: 'UrgenceOS ist ein Management-Tool für Notaufnahmen. Es ist kein zertifiziertes Medizinprodukt.',
       contactUs: 'Kontakt',
       backToTop: '↑ Nach oben',
+      features: 'Funktionen',
+      pricing: 'Preise',
+      demo: 'Demo',
+      security: 'Sicherheit',
+      dashboard: 'Dashboard',
+      status: 'Status',
+      sla: 'SLA',
+      about: 'Über uns',
+      establishments: 'Krankenhäuser',
+      faq: 'FAQ',
+      contact: 'Kontakt',
+      legalNotices: 'Impressum',
+      privacy: 'Datenschutz',
+      terms: 'AGB',
+      hdsTarget: 'HDS-Ziel',
+      isoTarget: 'ISO 27001-Ziel',
+      rgpdHealth: 'DSGVO Gesundheit',
+      ciSis: 'CI-SIS / ANS',
     },
     common: {
       loading: 'Laden…',

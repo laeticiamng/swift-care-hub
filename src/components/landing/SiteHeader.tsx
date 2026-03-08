@@ -7,19 +7,20 @@ import { useState, useCallback } from 'react';
 import { useDemo } from '@/contexts/DemoContext';
 import { useI18n } from '@/i18n/I18nContext';
 
-const NAV_LINKS = [
-  { label: 'Fonctionnalités', to: '/features' },
-  { label: 'Démo', to: '/demo' },
-  { label: 'Tarifs', to: '/tarifs' },
-  { label: 'Établissements', to: '/b2b' },
-  { label: 'FAQ', to: '/faq' },
-];
-
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isDemoMode } = useDemo();
+  const { t } = useI18n();
+
+  const NAV_LINKS = [
+    { label: t.nav.features, to: '/features' },
+    { label: t.nav.demo, to: '/demo' },
+    { label: t.nav.pricing, to: '/tarifs' },
+    { label: t.nav.establishments, to: '/b2b' },
+    { label: t.nav.faq, to: '/faq' },
+  ];
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
@@ -52,23 +53,23 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
-            À propos
+          <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')}>
+            {t.nav.about}
           </Button>
           {isDemoMode ? (
-            <Button size="sm" onClick={() => navigate('/board')} aria-label="Aller au board">
-              <LayoutGrid className="h-4 w-4 mr-1" /> Board
+            <Button size="sm" onClick={() => navigate('/board')}>
+              <LayoutGrid className="h-4 w-4 mr-1" /> {t.nav.board}
             </Button>
           ) : (
             <>
-              <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')} aria-label="Se connecter">
-                Connexion
+              <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')}>
+                {t.nav.login}
               </Button>
-              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')} aria-label="Voir la démo UrgenceOS">
-                Démo
+              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')}>
+                {t.nav.demo}
               </Button>
-              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un essai UrgenceOS">
-                Demander un essai
+              <Button size="sm" onClick={() => navigate('/b2b')}>
+                {t.nav.requestTrial}
               </Button>
             </>
           )}
@@ -105,34 +106,24 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <Link
-            to="/about"
-            role="menuitem"
-            onClick={closeMobile}
-            className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md"
-          >
-            À propos
+          <Link to="/about" role="menuitem" onClick={closeMobile} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md">
+            {t.nav.about}
           </Link>
-          <Link
-            to="/login"
-            role="menuitem"
-            onClick={closeMobile}
-            className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md"
-          >
-            Connexion
+          <Link to="/login" role="menuitem" onClick={closeMobile} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md">
+            {t.nav.login}
           </Link>
           <div className="border-t pt-2 mt-2 flex gap-2">
             {isDemoMode ? (
               <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/board'); }}>
-                <LayoutGrid className="h-4 w-4 mr-1" /> Board
+                <LayoutGrid className="h-4 w-4 mr-1" /> {t.nav.board}
               </Button>
             ) : (
               <>
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/demo'); }}>
-                  Voir la démo
+                  {t.nav.seeDemo}
                 </Button>
                 <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/b2b'); }}>
-                  Demander un essai
+                  {t.nav.requestTrial}
                 </Button>
               </>
             )}

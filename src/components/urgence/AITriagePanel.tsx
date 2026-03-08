@@ -46,7 +46,7 @@ export function AITriagePanel() {
 
   const handleAnalyze = async () => {
     if (!complaint.trim()) {
-      toast.error('Veuillez décrire le motif de consultation');
+      toast.error(t.triage.errorNoComplaint);
       return;
     }
     setLoading(true);
@@ -56,12 +56,7 @@ export function AITriagePanel() {
       const { data, error } = await supabase.functions.invoke('ai-clinical', {
         body: {
           mode: 'triage',
-          context: {
-            complaint,
-            symptoms: selectedSymptoms,
-            vitals,
-            arrivalMode,
-          },
+          context: { complaint, symptoms: selectedSymptoms, vitals, arrivalMode },
         },
       });
 
@@ -75,7 +70,6 @@ export function AITriagePanel() {
       });
     } catch (err) {
       console.error('Triage AI error:', err);
-      // Fallback demo result
       const demoLevel = vitals.hr && parseInt(vitals.hr) > 120 ? 'P2' : vitals.spo2 && parseInt(vitals.spo2) < 90 ? 'P1' : 'P3';
       setResult({
         level: demoLevel,
@@ -99,35 +93,27 @@ export function AITriagePanel() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Chief Complaint */}
           <div className="space-y-2">
             <Label>{t.triage.chiefComplaint}</Label>
             <Textarea
               value={complaint}
               onChange={(e) => setComplaint(e.target.value)}
-              placeholder="Ex: Douleur thoracique depuis 2h, irradiation bras gauche..."
+              placeholder={t.triage.complaintPlaceholder}
               className="min-h-[80px]"
             />
           </div>
 
-          {/* Symptom picker */}
           <div className="space-y-2">
             <Label>{t.triage.symptomPicker}</Label>
             <div className="flex flex-wrap gap-2">
               {SYMPTOMS.map((s) => (
-                <Badge
-                  key={s}
-                  variant={selectedSymptoms.includes(s) ? 'default' : 'outline'}
-                  className="cursor-pointer transition-all hover:scale-105"
-                  onClick={() => toggleSymptom(s)}
-                >
+                <Badge key={s} variant={selectedSymptoms.includes(s) ? 'default' : 'outline'} className="cursor-pointer transition-all hover:scale-105" onClick={() => toggleSymptom(s)}>
                   {s}
                 </Badge>
               ))}
             </div>
           </div>
 
-          {/* Vital signs */}
           <div className="space-y-2">
             <Label className="flex items-center gap-1.5">
               <Activity className="h-4 w-4" />
@@ -135,9 +121,7 @@ export function AITriagePanel() {
             </Label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div>
-                <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Heart className="h-3 w-3" /> {t.triage.heartRate}
-                </Label>
+                <Label className="text-xs text-muted-foreground flex items-center gap-1"><Heart className="h-3 w-3" /> {t.triage.heartRate}</Label>
                 <Input type="number" placeholder="bpm" value={vitals.hr} onChange={(e) => setVitals({ ...vitals, hr: e.target.value })} />
               </div>
               <div>
@@ -148,15 +132,11 @@ export function AITriagePanel() {
                 </div>
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Wind className="h-3 w-3" /> {t.triage.spo2}
-                </Label>
+                <Label className="text-xs text-muted-foreground flex items-center gap-1"><Wind className="h-3 w-3" /> {t.triage.spo2}</Label>
                 <Input type="number" placeholder="%" value={vitals.spo2} onChange={(e) => setVitals({ ...vitals, spo2: e.target.value })} />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Thermometer className="h-3 w-3" /> {t.triage.temperature}
-                </Label>
+                <Label className="text-xs text-muted-foreground flex items-center gap-1"><Thermometer className="h-3 w-3" /> {t.triage.temperature}</Label>
                 <Input type="number" step="0.1" placeholder="°C" value={vitals.temp} onChange={(e) => setVitals({ ...vitals, temp: e.target.value })} />
               </div>
               <div>
@@ -166,13 +146,10 @@ export function AITriagePanel() {
             </div>
           </div>
 
-          {/* Arrival mode */}
           <div className="space-y-2">
             <Label>{t.triage.arrivalMode}</Label>
             <Select value={arrivalMode} onValueChange={setArrivalMode}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="walk-in">{t.triage.walkIn}</SelectItem>
                 <SelectItem value="ambulance">{t.triage.ambulance}</SelectItem>
@@ -183,21 +160,14 @@ export function AITriagePanel() {
 
           <Button onClick={handleAnalyze} disabled={loading} className="w-full" size="lg">
             {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                {t.triage.analyzing}
-              </>
+              <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t.triage.analyzing}</>
             ) : (
-              <>
-                <Brain className="h-4 w-4 mr-2" />
-                {t.triage.analyze}
-              </>
+              <><Brain className="h-4 w-4 mr-2" />{t.triage.analyze}</>
             )}
           </Button>
         </CardContent>
       </Card>
 
-      {/* Result */}
       {result && matchedCategory && (
         <Card className={`border-2 ${matchedCategory.border} animate-in fade-in-0 slide-in-from-bottom-4 duration-500`}>
           <CardContent className="pt-6 space-y-4">
@@ -208,14 +178,12 @@ export function AITriagePanel() {
                 <span className="text-lg font-semibold">{matchedCategory.label}</span>
               </div>
             </div>
-
             <div className="flex justify-center">
               <div className="text-center">
                 <p className="text-xs text-muted-foreground">{t.triage.confidence}</p>
                 <p className="text-2xl font-bold">{Math.round(result.confidence * 100)}%</p>
               </div>
             </div>
-
             <div className="p-4 rounded-xl bg-muted/50">
               <p className="text-xs font-semibold text-muted-foreground mb-1">{t.triage.reasoning}</p>
               <p className="text-sm">{result.reasoning}</p>
