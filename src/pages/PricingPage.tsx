@@ -11,9 +11,9 @@ const PLANS = [
   {
     name: 'Pilote',
     target: 'Un service d\'urgences',
-    price: 'Forfait cadré — nous consulter',
+    price: 'À partir de 15 000 €',
     period: '',
-    description: '10 semaines. 2 modules. ROI mesuré. Intégration DPI lecture seule.',
+    description: '10 semaines d\'essai. 2 modules inclus. Résultats mesurés. Connexion à votre dossier patient existant.',
     features: [
       'Socle interne (identité, RBAC, audit, API)',
       'Module récap parcours patient par rôle',
