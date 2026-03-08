@@ -280,8 +280,8 @@ export default function DemoPage() {
           <div className="flex items-center gap-2">
             <Badge variant="secondary">Demo interactive</Badge>
             <ThemeToggle />
-            <Button size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-1" /> Essayer
+            <Button size="sm" onClick={() => navigate('/demo/live')}>
+              <Play className="h-4 w-4 mr-1" /> Essayer en live
             </Button>
           </div>
         </div>
