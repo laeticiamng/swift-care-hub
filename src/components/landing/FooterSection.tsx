@@ -10,9 +10,9 @@ export function FooterSection() {
             <p className="font-medium">
               Urgence<span className="text-primary">OS</span> — EmotionsCare SASU — {new Date().getFullYear()}
             </p>
-            <a href="mailto:contact@emotionscare.com" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1">
-              <Mail className="h-3 w-3" /> contact@emotionscare.com
-            </a>
+            <Link to="/contact" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1">
+              <Mail className="h-3 w-3" /> Nous contacter
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <button

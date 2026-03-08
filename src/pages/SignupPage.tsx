@@ -183,6 +183,10 @@ export default function SignupPage() {
                   <Link to="/cgu" className="text-primary hover:underline">CGU</Link> et notre{' '}
                   <Link to="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
                 </p>
+                <p className="text-sm text-muted-foreground text-center mt-3">
+                  Déjà un compte ?{' '}
+                  <Link to="/login" className="text-primary hover:underline font-medium">Se connecter</Link>
+                </p>
               </form>
             )}
           </CardContent>
