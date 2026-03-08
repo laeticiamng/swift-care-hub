@@ -40,7 +40,7 @@ export default function SLAPage() {
 
         {/* Parties */}
         <Section n="1" title="Parties">
-          <p><strong>Éditeur :</strong> EmotionsCare SASU — SIREN 944 505 445 — Capital social 1 000 € — Siège social : Paris 75000, France.</p>
+          <p><strong>Éditeur :</strong> EmotionsCare SASU — SIREN 944 505 445 — Capital social 1 000 € — Siège social : Rue Caudron, Amiens 80000, France.</p>
           <p className="mt-2"><strong>Client :</strong> L'établissement de santé signataire du contrat de licence UrgenceOS (ci-après « le Client »).</p>
         </Section>
 
