@@ -5,18 +5,18 @@ import { motion } from 'framer-motion';
 const solutions = [
   {
     icon: Layers,
-    title: 'Socle interne',
-    desc: 'Identité, droits, audit, échanges de données sécurisés (FHIR), monitoring complet. Un socle que l\'hôpital possède et gouverne.',
+    title: 'Un socle que vous possédez',
+    desc: 'Gestion des identités, des droits d\'accès, traçabilité et échanges de données sécurisés. Votre hôpital possède et contrôle le logiciel.',
   },
   {
     icon: MonitorSmartphone,
-    title: 'Modules urgences à ROI',
-    desc: 'Récap parcours patient par rôle + traçabilité temps réel. Déployables en 10 semaines, mesurables dès le premier mois.',
+    title: 'Des modules métier concrets',
+    desc: 'Vue synthétique du parcours patient par rôle + suivi en temps réel. Opérationnel en 10 semaines, résultats mesurables dès le premier mois.',
   },
   {
     icon: RefreshCcw,
-    title: 'Intégration sans refonte',
-    desc: 'Le DPI reste en place. Nous l\'encadrons via des connecteurs standards (FHIR R4, HL7v2). Zéro refonte inutile.',
+    title: 'Compatible avec votre existant',
+    desc: 'Votre dossier patient informatisé reste en place. UrgenceOS se connecte dessus via des standards ouverts. Aucune refonte requise.',
   },
 ];
 
