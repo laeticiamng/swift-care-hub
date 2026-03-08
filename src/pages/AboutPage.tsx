@@ -43,7 +43,7 @@ const MILESTONES = [
 ];
 
 const ECOSYSTEM = [
-  { icon: Building2, title: 'Établissements pilotes', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
+  { icon: Building2, title: 'Établissements partenaires', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
   { icon: Handshake, title: 'DSI hospitalières', desc: 'Co-construction de l\'architecture socle avec les DSI pour garantir l\'intégration DPI et la gouvernance interne.' },
   { icon: Layers, title: 'GHT & ARS', desc: 'Modèle de mutualisation conçu pour les groupements hospitaliers de territoire. Socle partagé, données isolées, coûts divisés.' },
   { icon: GitBranch, title: 'Standards ouverts', desc: 'Compatible avec les référentiels nationaux de santé. Échanges standardisés, pas propriétaires.' },
