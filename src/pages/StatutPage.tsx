@@ -23,7 +23,7 @@ const SERVICE_ICONS: Record<string, React.ElementType> = {
 
 const SERVICE_LABELS: Record<string, { name: string; description: string }> = {
   app: { name: 'Application Web (PWA)', description: 'Interface principale — board, dossier patient, triage, prescriptions' },
-  api: { name: 'API & Backend', description: 'API REST, Edge Functions, bus d\'intégration FHIR R4' },
+  api: { name: 'API & Backend', description: 'API REST, fonctions serveur, échanges avec votre dossier patient' },
   database: { name: 'Base de données', description: 'PostgreSQL — données patients, prescriptions, vitals, audit logs' },
   auth: { name: 'Authentification & RBAC', description: 'Login, MFA TOTP, vérification rôles, sessions sécurisées' },
   realtime: { name: 'Temps réel (Realtime)', description: 'Notifications, mises à jour board, alertes labo en temps réel' },
