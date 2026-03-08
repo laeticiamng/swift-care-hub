@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
+import { reportError } from '@/lib/error-reporter';
 
 interface ErrorBoundaryState {
   hasError: boolean;
