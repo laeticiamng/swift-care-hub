@@ -107,8 +107,8 @@ export default function B2BPage() {
               },
               {
                 icon: Shield,
-                role: 'DSI',
-                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
+                role: 'Direction informatique',
+                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose une plateforme interne standardisée — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
               },
               {
                 icon: Eye,
