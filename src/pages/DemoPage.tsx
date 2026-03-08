@@ -399,7 +399,7 @@ export default function DemoPage() {
           {[
             { icon: Shield, title: 'Secure-by-design', desc: 'RLS strict par rôle, chiffrement, audit trail complet. RGPD santé natif.' },
             { icon: WifiOff, title: 'Offline-first', desc: 'Mode hors connexion >4h. Synchronisation automatique au retour réseau.' },
-            { icon: Timer, title: 'Performance', desc: 'Chaque écran charge en <1 seconde. Zéro friction, zéro formation.' },
+            { icon: Timer, title: 'Performance', desc: 'Chaque écran charge en <1 seconde. Prise en main immédiate, formation minimale.' },
           ].map(item => (
             <div key={item.title} className="p-5 rounded-xl border bg-card text-center space-y-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
