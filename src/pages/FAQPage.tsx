@@ -150,7 +150,7 @@ export default function FAQPage() {
       <JsonLd id="faq-page" data={faqPageSchema(allFaqs)} />
       <JsonLd id="faq-webpage" data={webPageSchema({
         name: 'FAQ UrgenceOS',
-        description: 'Questions fréquentes sur le logiciel urgences hospitalières UrgenceOS — architecture, sécurité, intégration DPI, déploiement pilote.',
+        description: 'Questions fréquentes sur le logiciel urgences hospitalières UrgenceOS — architecture, sécurité, intégration DPI, déploiement essai.',
         url: 'https://urgenceos.fr/faq',
         breadcrumb: ['Accueil', 'FAQ'],
       })} />
@@ -200,7 +200,7 @@ export default function FAQPage() {
               Nous contacter <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/b2b')}>
-              Demander un pilote
+              Demander un essai
             </Button>
             <Button variant="ghost" onClick={() => navigate('/demo')}>
               Voir la démo

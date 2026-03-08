@@ -120,7 +120,7 @@ const CHECKLIST = [
   'Headers sécurité HTTP configurés (CSP, HSTS, X-Frame)',
   'Hébergement HDS confirmé avec contrat signé',
   'DPO informé, registre traitements mis à jour',
-  'Formation sécurité dispensée aux utilisateurs pilotes',
+  'Formation sécurité dispensée aux utilisateurs de l\'essai',
   'Plan de continuité documenté et testé',
   'Alerting sécurité configuré et testé',
 ];
@@ -211,7 +211,7 @@ export default function SecurityPage() {
         {/* Checklist go-live */}
         <div className="mb-20">
           <h2 className="text-2xl font-bold text-center mb-2">Checklist go-live sécurité</h2>
-          <p className="text-muted-foreground text-center mb-8">25 points vérifiés avant tout déploiement pilote</p>
+          <p className="text-muted-foreground text-center mb-8">25 points vérifiés avant tout déploiement</p>
           <div className="grid sm:grid-cols-2 gap-2">
             {CHECKLIST.map((item) => (
               <div key={item} className="flex items-start gap-2 text-sm p-2 rounded-lg">
@@ -253,7 +253,7 @@ export default function SecurityPage() {
               <Mail className="h-4 w-4 mr-2" /> Nous contacter
             </Button>
             <Button variant="outline" onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </div>

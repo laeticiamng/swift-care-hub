@@ -170,20 +170,20 @@ export function howToSchema() {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: 'Comment déployer UrgenceOS dans un service d\'urgences',
-    description: 'Guide de déploiement du socle Hospital-Owned Software UrgenceOS en 4 étapes, du cadrage au go-live pilote.',
+    description: 'Guide de déploiement du socle Hospital-Owned Software UrgenceOS en 4 étapes, du cadrage au go-live essai.',
     totalTime: 'P10W',
     step: [
       {
         '@type': 'HowToStep',
         position: 1,
         name: 'Cadrage DSI',
-        text: 'Atelier technique de 2 heures avec la DSI. Audit du SI existant (DPI, LIS, PACS). Cartographie des connecteurs FHIR R4/HL7v2 nécessaires.',
+        text: 'Atelier technique de 2 heures avec la direction informatique. Audit du SI existant (DPI, LIS, PACS). Cartographie des connecteurs nécessaires.',
       },
       {
         '@type': 'HowToStep',
         position: 2,
         name: 'Configuration et intégration',
-        text: 'Déploiement du socle sur infrastructure HDS. Connexion au DPI en lecture seule via FHIR R4/HL7v2. Configuration des rôles RBAC (médecin, IOA, IDE, AS, secrétaire).',
+        text: 'Déploiement du socle sur infrastructure HDS. Connexion au DPI en lecture seule via connecteurs standards. Configuration des rôles (médecin, IOA, IDE, AS, secrétaire).',
       },
       {
         '@type': 'HowToStep',
@@ -194,8 +194,8 @@ export function howToSchema() {
       {
         '@type': 'HowToStep',
         position: 4,
-        name: 'Go-live pilote 10 semaines',
-        text: 'Mise en production sur un service d\'urgences. Mesure avant/après (temps reconstitution parcours, ressaisies, adoption). Rapport ROI pour DG/DAF/DSI.',
+        name: 'Go-live essai 10 semaines',
+        text: 'Mise en production sur un service d\'urgences. Mesure avant/après (temps reconstitution parcours, ressaisies, adoption). Rapport de résultats pour la direction.',
       },
     ],
   };

@@ -4,7 +4,7 @@ import { Building2, ShieldCheck, Clock, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const stats = [
-  { value: '10', suffix: ' sem.', label: 'Pilote opérationnel', icon: Clock },
+  { value: '10', suffix: ' sem.', label: 'Essai opérationnel', icon: Clock },
   { value: '5', suffix: ' rôles', label: 'Interfaces métier dédiées', icon: Users },
   { value: '1', suffix: ' écran', label: 'Par rôle, tout est réuni', icon: ShieldCheck },
   { value: '0', suffix: ' refonte DPI', label: 'Votre DPI reste en place', icon: Building2 },
@@ -51,7 +51,7 @@ export function SocialProofSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-muted-foreground text-sm max-w-xl mx-auto"
           >
-            Chaque indicateur est vérifiable. Chaque résultat est mesurable dès le pilote.
+            Chaque indicateur est vérifiable. Chaque résultat est mesurable dès l'essai.
           </motion.p>
         </div>
 
@@ -86,10 +86,10 @@ export function SocialProofSection() {
             transition={{ duration: 0.5 }}
             className="inline-block p-5 rounded-xl border bg-card max-w-lg"
           >
-            <p className="text-sm font-semibold mb-2">🏗️ Produit en phase pilote</p>
+            <p className="text-sm font-semibold mb-2">🏗️ Produit en phase d'essai</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              UrgenceOS est co-construit avec des urgentistes, DSI et cadres de santé.
-              Premiers pilotes hospitaliers prévus en 2026. Les noms des établissements partenaires seront publiés après accord.
+              UrgenceOS est co-construit avec des urgentistes, directions informatiques et cadres de santé.
+              Premiers essais hospitaliers prévus en 2026. Les noms des établissements partenaires seront publiés après accord.
             </p>
           </motion.div>
         </div>

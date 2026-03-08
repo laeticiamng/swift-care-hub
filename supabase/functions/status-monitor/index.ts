@@ -67,12 +67,16 @@ Deno.serve(async (req) => {
   }
 
   if (req.method === 'POST') {
-    // Verify internal caller
+    // Verify internal caller — accept token from Authorization header OR apikey header
     const authHeader = req.headers.get("Authorization");
-    const token = authHeader?.replace("Bearer ", "");
+    const bearerToken = authHeader?.replace("Bearer ", "");
+    const apikeyToken = req.headers.get("apikey");
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    if (!token || (token !== serviceKey && token !== anonKey)) {
+    const validTokens = [serviceKey, anonKey].filter(Boolean);
+    const providedToken = bearerToken || apikeyToken;
+    if (!providedToken || !validTokens.includes(providedToken)) {
+      log.warn("POST auth failed", { hasBearerToken: !!bearerToken, hasApikeyToken: !!apikeyToken });
       end(403);
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }

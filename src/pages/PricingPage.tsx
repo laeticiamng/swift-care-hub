@@ -9,7 +9,7 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb';
 
 const PLANS = [
   {
-    name: 'Pilote',
+    name: 'Essai',
     target: 'Un service d\'urgences',
     price: 'À partir de 15 000 €',
     period: '',
@@ -24,7 +24,7 @@ const PLANS = [
       'Rapport de résultats pour la direction',
       'Critères de succès définis à l\'avance',
     ],
-    cta: 'Demander un pilote',
+    cta: 'Demander un essai',
     popular: true,
   },
   {
