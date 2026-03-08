@@ -58,8 +58,8 @@ export function CookieConsent() {
         <div className="bg-card/95 backdrop-blur-xl border-t shadow-lg">
           <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 min-w-0">
-              <Cookie className="h-4 w-4 text-primary shrink-0" />
-              <p className="text-xs text-muted-foreground truncate">
+              <Cookie className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
+              <p className="text-xs text-muted-foreground sm:truncate">
                 Cookies techniques uniquement (session, préférences).{' '}
                 <Link to="/politique-confidentialite" className="text-primary hover:underline">En savoir plus</Link>
               </p>
