@@ -219,7 +219,7 @@ export default function PricingPage() {
               <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
               <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
               <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
-              <li>55-60 min — Prochaines étapes : go/no-go pilote, calendrier, périmètre</li>
+              <li>55-60 min — Prochaines étapes : go/no-go essai, calendrier, périmètre</li>
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
