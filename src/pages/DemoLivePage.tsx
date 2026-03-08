@@ -119,8 +119,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Shield className="h-8 w-8 text-red-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Scénarios CDC SIH</h3>
-            <p className="text-sm text-muted-foreground">TV-01 à TV-08 — 8 scénarios de validation issus du Cahier des Charges</p>
+            <h3 className="font-bold text-lg mb-1">Scénarios de validation</h3>
+            <p className="text-sm text-muted-foreground">8 scénarios de test issus du cahier des charges hospitalier</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/garde'); }}

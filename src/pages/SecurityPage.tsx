@@ -24,7 +24,7 @@ const SECURITY_LAYERS = [
   },
   {
     icon: UserCheck,
-    title: 'Droits par rôle (RBAC)',
+    title: 'Droits par rôle',
     items: [
       '5 rôles opérationnels (médecin, IOA, IDE, aide-soignant, secrétaire)',
       'Vérification systématique côté serveur (pas de contrôle client seul)',

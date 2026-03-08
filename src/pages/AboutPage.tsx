@@ -36,7 +36,7 @@ const VALUES = [
 const MILESTONES = [
   { year: '2024', event: 'Création d\'EmotionsCare SASU — naissance du concept Hospital-Owned Software' },
   { year: '2024', event: 'Premiers prototypes co-conçus avec des urgentistes et DSI hospitaliers' },
-  { year: '2025', event: 'Architecture socle validée : identité, RBAC, audit, bus d\'intégration FHIR R4' },
+  { year: '2025', event: 'Architecture socle validée : identité, droits d\'accès, audit, connecteurs dossier patient' },
   { year: '2025', event: 'Modules ROI #1 (récap parcours) et #2 (traçabilité temps réel) fonctionnels' },
   { year: '2026', event: 'Lancement du premier pilote 10 semaines en établissement' },
   { year: '2026', event: 'Ouverture du modèle consortium GHT — mutualisation multi-établissements' },
