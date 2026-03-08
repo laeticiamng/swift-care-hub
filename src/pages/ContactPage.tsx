@@ -131,7 +131,7 @@ export default function ContactPage() {
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   Vous pouvez aussi nous écrire directement à{' '}
-                  <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a>
+                  <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
                 </p>
               </form>
             </CardContent>

@@ -487,12 +487,12 @@ export default function StatutPage() {
             Temps de réponse garanti : &lt; 30 min pour les incidents P1
           </p>
           <a
-            href="mailto:support@emotionscare.com"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline text-sm font-medium"
-          >
-            support@emotionscare.com
-          </a>
+             href="mailto:support@urgenceos.fr"
+             rel="noopener noreferrer"
+             className="text-primary hover:underline text-sm font-medium"
+           >
+             support@urgenceos.fr
+           </a>
         </div>
 
         {/* Disclaimer */}
