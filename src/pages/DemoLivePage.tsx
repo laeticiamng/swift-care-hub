@@ -76,7 +76,7 @@ export default function DemoLivePage() {
               {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
             </div>
             <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-              Demo interactive
+              Démo interactive
             </Badge>
           </div>
         </div>
