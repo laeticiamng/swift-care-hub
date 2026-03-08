@@ -45,8 +45,8 @@ export function VisionSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8"
         >
-          Le socle UrgenceOS est conçu pour être partagé entre établissements d'un même GHT.
-          Même infrastructure, données isolées, modules communs, coûts divisés.
+          Le logiciel UrgenceOS est conçu pour être partagé entre plusieurs hôpitaux d'un même territoire.
+          Même logiciel, données séparées, modules communs, coûts divisés.
         </motion.p>
         <div className="grid sm:grid-cols-3 gap-4">
           {phases.map((item, i) => (
