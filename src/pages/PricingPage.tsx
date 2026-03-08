@@ -92,8 +92,8 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="Tarifs UrgenceOS — Pilote 10 semaines, Extension, Consortium GHT"
-        description="Modèle économique UrgenceOS : pilote cadré 10 semaines avec ROI mesuré, extension multi-services, consortium GHT mutualisé. Pas d'engagement pluriannuel."
+        title="Tarifs UrgenceOS — Essai 10 semaines, Extension, Consortium GHT"
+        description="Modèle économique UrgenceOS : essai cadré 10 semaines avec ROI mesuré, extension multi-services, consortium GHT mutualisé. Pas d'engagement pluriannuel."
         canonical="https://urgenceos.fr/tarifs"
       />
       <JsonLd id="pricing-webpage" data={webPageSchema({
