@@ -114,12 +114,11 @@ export default function PricingPage() {
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">Modèle économique</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Pilote cadré, ROI mesuré, extension par la preuve.
+            Un essai de 10 semaines pour voir les résultats.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Pas d'engagement pluriannuel en première intention.
-            Un pilote de 10 semaines pour mesurer le ROI avec vos chiffres.
-            Si les résultats sont là, vous étendez. Si non, vous arrêtez.
+            Pas d'engagement pluriannuel. Un essai encadré de 10 semaines pour mesurer
+            les gains concrets avec vos propres chiffres. Si ça marche, vous continuez. Sinon, vous arrêtez.
           </p>
         </div>
 
