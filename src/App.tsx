@@ -51,6 +51,7 @@ const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const AdminRolesPage = lazy(() => import("./pages/AdminRolesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const OpsPage = lazy(() => import("./pages/OpsPage"));
 
 // ── Loading fallback ──
 function PageLoader() {
@@ -188,6 +189,7 @@ function AppRoutes() {
         <Route path="/garde" element={<ProtectedRoute><RoleGuard allowedRoles={CLINICAL_CORE}><GardePage /></RoleGuard></ProtectedRoute>} />
         <Route path="/audit" element={<ProtectedRoute><RoleGuard allowedRoles={PRESCRIBERS}><AuditPage /></RoleGuard></ProtectedRoute>} />
         <Route path="/admin/roles" element={<ProtectedRoute><RoleGuard allowedRoles={PRESCRIBERS}><AdminRolesPage /></RoleGuard></ProtectedRoute>} />
+        <Route path="/ops" element={<ProtectedRoute><RoleGuard allowedRoles={PRESCRIBERS}><OpsPage /></RoleGuard></ProtectedRoute>} />
 
         {/* Statistics — médecin + IOA */}
         <Route path="/statistics" element={<ProtectedRoute><RoleGuard allowedRoles={CLINICAL_CORE}><StatisticsPage /></RoleGuard></ProtectedRoute>} />
