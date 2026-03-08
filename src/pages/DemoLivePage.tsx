@@ -148,16 +148,22 @@ export default function DemoLivePage() {
           </button>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button variant="outline" onClick={() => navigate('/demo')}>
-            <ArrowLeft className="h-4 w-4 mr-1" /> Retour a la demo guidee
+            <ArrowLeft className="h-4 w-4 mr-1" /> Retour à la démo guidée
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/')}>
+            Retour à l'accueil
+          </Button>
+          <Button onClick={() => navigate('/login')}>
+            Créer un compte / Se connecter <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
 
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            Les donnees affichees sont fictives et generees pour la demonstration.
-            UrgenceOS ne constitue pas un dispositif medical certifie.
+            Les données affichées sont fictives et générées pour la démonstration.
+            UrgenceOS ne constitue pas un dispositif médical certifié.
           </p>
         </div>
       </div>
