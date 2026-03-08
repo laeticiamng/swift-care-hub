@@ -112,8 +112,8 @@ export default function B2BPage() {
               },
               {
                 icon: Eye,
-                role: 'ARS',
-                message: 'Un modèle de sobriété logicielle mutualisable à l\'échelle d\'un GHT. Un socle commun déployable entre établissements, des modules standardisés, une gouvernance d\'interopérabilité alignée sur les référentiels nationaux (INS, DMP, MSSanté, RPU ATIH).',
+                role: 'Tutelles / Agences régionales',
+                message: 'Un modèle de sobriété logicielle mutualisable à l\'échelle d\'un groupement hospitalier. Une plateforme commune déployable entre établissements, des modules standardisés, une interopérabilité alignée sur les référentiels nationaux.',
               },
               {
                 icon: Users,
