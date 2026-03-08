@@ -42,7 +42,7 @@ export function FooterSection() {
             <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
             <Link to="/glossaire" className="block text-xs hover:text-foreground transition-colors">Glossaire</Link>
             <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
-            <a href="mailto:contact@emotionscare.com" rel="noopener noreferrer" className="block text-xs hover:text-foreground transition-colors">Contact</a>
+            <Link to="/contact" className="block text-xs hover:text-foreground transition-colors">Contact</Link>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Légal</p>
