@@ -121,7 +121,24 @@
   }
 }
 
+/* Shimmer animation for gradient text */
+@keyframes shimmer {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+/* Marquee animation for trust bar */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Bottom nav spacing for mobile pages */
+@media (max-width: 767px) {
+  .has-bottom-nav {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
 @media (max-width: 767px) {
   .has-bottom-nav {
     padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
