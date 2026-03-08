@@ -98,7 +98,7 @@ export default function PricingPage() {
       />
       <JsonLd id="pricing-webpage" data={webPageSchema({
         name: 'Tarifs UrgenceOS — Modèle économique Hospital-Owned Software',
-        description: 'Pilote 10 semaines avec ROI mesuré, extension multi-services, consortium GHT. Coûts prévisibles et décroissants.',
+        description: 'Essai 10 semaines avec ROI mesuré, extension multi-services, consortium GHT. Coûts prévisibles et décroissants.',
         url: 'https://urgenceos.fr/tarifs',
         breadcrumb: ['Accueil', 'Tarifs'],
       })} />
