@@ -34,7 +34,7 @@ export default function MentionsLegalesPage() {
             <li><strong className="text-foreground">SIREN :</strong> 944 505 445</li>
             <li><strong className="text-foreground">Forme juridique :</strong> Société par Actions Simplifiée Unipersonnelle</li>
             <li><strong className="text-foreground">Capital social :</strong> 1 000 €</li>
-            <li><strong className="text-foreground">Siège social :</strong> Paris (75000), France</li>
+            <li><strong className="text-foreground">Siège social :</strong> Rue Caudron, Amiens (80000), France</li>
             <li><strong className="text-foreground">Directeur de la publication :</strong> Le président de la SASU EmotionsCare</li>
             <li><strong className="text-foreground">Contact :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
             <li><strong className="text-foreground">Délégué à la Protection des Données (DPO) :</strong> <a href="mailto:dpo@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">dpo@emotionscare.com</a></li>
