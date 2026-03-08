@@ -133,7 +133,7 @@ export default function AboutPage() {
           </p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { step: 'Phase 1', title: 'Pilote', desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.' },
+              { step: 'Phase 1', title: 'Essai', desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.' },
               { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois établissements partagent le socle et les modules. Données isolées, coûts divisés.' },
               { step: 'Phase 3', title: 'Standardisation', desc: 'Le GHT standardise ses flux, ses connecteurs et ses indicateurs. ARS-ready.' },
             ].map((item) => (
