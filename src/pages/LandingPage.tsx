@@ -12,7 +12,6 @@ import { FooterSection } from '@/components/landing/FooterSection';
 import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { AnnouncementBanner } from '@/components/landing/AnnouncementBanner';
 import { TrustMarquee } from '@/components/landing/TrustMarquee';
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { JsonLd, PageMeta, howToSchema, webPageSchema } from '@/components/seo/JsonLd';
 
 export default function LandingPage() {
@@ -171,8 +170,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <TestimonialsSection />
+      {/* BLOC 7 — Pilote + BLOC 8 — Vision (dans le CTA) */}
 
       {/* BLOC 7 — Pilote + BLOC 8 — Vision (dans le CTA) */}
       <CTASection />
