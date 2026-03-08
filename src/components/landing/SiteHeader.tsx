@@ -2,8 +2,9 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { StatusBadgeHeader } from '@/components/urgence/StatusBadgeHeader';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LayoutGrid } from 'lucide-react';
 import { useState, useCallback } from 'react';
+import { useDemo } from '@/contexts/DemoContext';
 
 const NAV_LINKS = [
   { label: 'Produit', to: '/features' },
@@ -18,6 +19,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isDemoMode } = useDemo();
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
@@ -53,12 +55,20 @@ export function SiteHeader() {
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
           </Button>
-          <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
-            S'inscrire
-          </Button>
-          <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
-            Connexion
-          </Button>
+          {isDemoMode ? (
+            <Button size="sm" onClick={() => navigate('/board')} aria-label="Aller au board">
+              <LayoutGrid className="h-4 w-4 mr-1" /> Board
+            </Button>
+          ) : (
+            <>
+              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
+                S'inscrire
+              </Button>
+              <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
+                Connexion
+              </Button>
+            </>
+          )}
 
           {/* Mobile hamburger */}
           <button
@@ -101,12 +111,20 @@ export function SiteHeader() {
             À propos
           </Link>
           <div className="border-t pt-2 mt-2 flex gap-2">
-            <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/signup'); }}>
-              S'inscrire
-            </Button>
-            <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/login'); }}>
-              Connexion
-            </Button>
+            {isDemoMode ? (
+              <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/board'); }}>
+                <LayoutGrid className="h-4 w-4 mr-1" /> Board
+              </Button>
+            ) : (
+              <>
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/signup'); }}>
+                  S'inscrire
+                </Button>
+                <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/login'); }}>
+                  Connexion
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
