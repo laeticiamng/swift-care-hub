@@ -6,6 +6,52 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function sendLeadNotification(leadData: Record<string, string | null>) {
+  const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+  if (!RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY not configured — skipping email notification");
+    return;
+  }
+
+  try {
+    const resp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Swift Care Hub <leads@swiftcarehub.com>",
+        to: ["contact@emotionscare.com"],
+        subject: `🏥 Nouveau lead B2B — ${leadData.establishment}`,
+        html: `
+          <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px">
+            <h2 style="color:#1a1a2e;border-bottom:2px solid #0ea5e9;padding-bottom:12px">Nouveau lead Swift Care Hub</h2>
+            <table style="width:100%;border-collapse:collapse;margin-top:16px">
+              <tr><td style="padding:8px 0;color:#666;width:140px">Nom</td><td style="padding:8px 0;font-weight:600">${leadData.last_name} ${leadData.first_name}</td></tr>
+              <tr><td style="padding:8px 0;color:#666">Email</td><td style="padding:8px 0"><a href="mailto:${leadData.email}">${leadData.email}</a></td></tr>
+              <tr><td style="padding:8px 0;color:#666">Établissement</td><td style="padding:8px 0;font-weight:600">${leadData.establishment}</td></tr>
+              <tr><td style="padding:8px 0;color:#666">Fonction</td><td style="padding:8px 0">${leadData.role_function}</td></tr>
+              <tr><td style="padding:8px 0;color:#666">Volume passages</td><td style="padding:8px 0">${leadData.passages_volume || "Non renseigné"}</td></tr>
+            </table>
+            ${leadData.message ? `<div style="margin-top:16px;padding:12px;background:#f8fafc;border-radius:8px"><strong>Message :</strong><br/>${leadData.message}</div>` : ""}
+            <p style="margin-top:24px;color:#94a3b8;font-size:12px">Envoyé automatiquement par Swift Care Hub — ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>
+          </div>
+        `,
+      }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.text();
+      console.error("Resend error:", resp.status, err);
+    } else {
+      console.log("✅ Email notification sent successfully");
+    }
+  } catch (err) {
+    console.error("Email send failed:", err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -32,7 +78,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Use service role to insert (bypasses RLS)
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -66,7 +111,6 @@ Deno.serve(async (req) => {
 
     const { error } = await supabaseAdmin.from("contact_leads").insert(leadData);
 
-
     if (error) {
       console.error("Insert error:", error);
       return new Response(JSON.stringify({ error: "Erreur serveur" }), {
@@ -75,16 +119,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Log lead details for notification visibility in edge function logs
-    // TODO: Intégrer un vrai service email (Resend, SendGrid) avant production clinique
-    console.log("=== NOUVEAU LEAD B2B ===");
-    console.log(`Nom: ${leadData.last_name} ${leadData.first_name}`);
-    console.log(`Email: ${leadData.email}`);
-    console.log(`Établissement: ${leadData.establishment}`);
-    console.log(`Fonction: ${leadData.role_function}`);
-    console.log(`Volume passages: ${leadData.passages_volume || 'Non renseigné'}`);
-    console.log(`Message: ${leadData.message || 'Aucun'}`);
-    console.log("========================");
+    // Send email notification (non-blocking — doesn't fail the request)
+    await sendLeadNotification(leadData);
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
