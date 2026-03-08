@@ -81,8 +81,8 @@ const FAQ_PRICING = [
     a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
   },
   {
-    q: 'Quel est le coût d\'un pilote ?',
-    a: 'Le forfait pilote est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
+    q: 'Quel est le coût d\'un essai ?',
+    a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
   },
 ];
 
