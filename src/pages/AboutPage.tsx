@@ -198,8 +198,8 @@ export default function AboutPage() {
               <p><span className="text-muted-foreground">Marché :</span> SAU, GHT, établissements de santé publics</p>
               <p className="flex items-center gap-1">
                 <span className="text-muted-foreground">Contact :</span>
-                <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline inline-flex items-center gap-1">
-                  <Mail className="h-3 w-3" /> contact@emotionscare.com
+                <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline inline-flex items-center gap-1">
+                  <Mail className="h-3 w-3" /> contact@urgenceos.fr
                 </a>
               </p>
             </div>
