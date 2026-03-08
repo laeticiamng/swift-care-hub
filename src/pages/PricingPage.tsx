@@ -11,18 +11,18 @@ const PLANS = [
   {
     name: 'Pilote',
     target: 'Un service d\'urgences',
-    price: 'Forfait cadré — nous consulter',
+    price: 'À partir de 15 000 €',
     period: '',
-    description: '10 semaines. 2 modules. ROI mesuré. Intégration DPI lecture seule.',
+    description: '10 semaines d\'essai. 2 modules inclus. Résultats mesurés. Connexion à votre dossier patient existant.',
     features: [
-      'Socle interne (identité, RBAC, audit, API)',
+      'Plateforme complète (identité, droits d\'accès, traçabilité)',
       'Module récap parcours patient par rôle',
       'Module traçabilité temps réel',
-      'Connecteur DPI lecture (FHIR R4 / HL7v2)',
-      'Connecteur LIS (réception résultats)',
+      'Connexion à votre dossier patient existant',
+      'Réception des résultats de laboratoire',
       'Formation par rôle (2h par profil)',
-      'Mesure avant/après + rapport DG/DAF/DSI',
-      'Critères go/no-go documentés',
+      'Rapport de résultats pour la direction',
+      'Critères de succès définis à l\'avance',
     ],
     cta: 'Demander un pilote',
     popular: true,
@@ -34,12 +34,12 @@ const PLANS = [
     period: '',
     description: 'Après validation pilote. Extension à d\'autres services + modules supplémentaires.',
     features: [
-      'Tout le pilote +',
+      'Tout l\'essai initial +',
       'Modules supplémentaires (triage, prescriptions, sortie)',
-      'Intégration bidirectionnelle DPI',
-      'SSO / LDAP institutionnel',
-      'Observabilité complète',
-      'Comité de pilotage trimestriel',
+      'Connexion bidirectionnelle au dossier patient',
+      'Authentification unique institutionnelle (SSO)',
+      'Supervision complète',
+      'Comité de suivi trimestriel',
       'Audit sécurité annuel inclus',
       'Coûts récurrents décroissants',
     ],
@@ -51,16 +51,16 @@ const PLANS = [
     target: 'Multi-établissements',
     price: 'Mutualisé',
     period: '',
-    description: 'Socle partagé. Modules communs. Coûts divisés. Gouvernance GHT.',
+    description: 'Plateforme partagée. Modules communs. Coûts divisés. Gouvernance commune.',
     features: [
-      'Socle mutualisé multi-tenant',
+      'Plateforme partagée multi-établissements',
       'Bibliothèque de modules partagés',
       'Connecteurs réutilisables entre établissements',
-      'Équipe plateforme mutualisée',
-      'Gouvernance d\'interopérabilité commune',
-      'Indicateurs consolidés ARS-ready',
+      'Équipe technique mutualisée',
+      'Interopérabilité commune',
+      'Indicateurs consolidés pour les tutelles',
       'Division des coûts par établissement',
-      'Standardisation des flux GHT',
+      'Standardisation des échanges',
     ],
     cta: 'Contacter l\'équipe',
     popular: false,
@@ -114,12 +114,11 @@ export default function PricingPage() {
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">Modèle économique</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Pilote cadré, ROI mesuré, extension par la preuve.
+            Un essai de 10 semaines pour voir les résultats.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Pas d'engagement pluriannuel en première intention.
-            Un pilote de 10 semaines pour mesurer le ROI avec vos chiffres.
-            Si les résultats sont là, vous étendez. Si non, vous arrêtez.
+            Pas d'engagement pluriannuel. Un essai encadré de 10 semaines pour mesurer
+            les gains concrets avec vos propres chiffres. Si ça marche, vous continuez. Sinon, vous arrêtez.
           </p>
         </div>
 
@@ -166,7 +165,7 @@ export default function PricingPage() {
           ))}
         </div>
         <p className="text-sm text-muted-foreground text-center mb-20 -mt-14">
-          Le montant du pilote dépend de la complexité d'intégration avec votre SIH existant.{' '}
+          Le montant de l'essai dépend de la complexité d'intégration avec votre informatique existante.{' '}
           <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">Contactez-nous pour un devis personnalisé →</button>
         </p>
 

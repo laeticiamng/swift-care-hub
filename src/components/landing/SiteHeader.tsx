@@ -1,6 +1,5 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
-import { StatusBadgeHeader } from '@/components/urgence/StatusBadgeHeader';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LayoutGrid } from 'lucide-react';
 import { useState, useCallback } from 'react';
@@ -49,7 +48,6 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <StatusBadgeHeader />
           <ThemeToggle />
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
@@ -60,11 +58,14 @@ export function SiteHeader() {
             </Button>
           ) : (
             <>
+              <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')} aria-label="Se connecter">
+                Connexion
+              </Button>
               <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')} aria-label="Voir la démo UrgenceOS">
                 Démo
               </Button>
-              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un pilote UrgenceOS">
-                Demander un pilote
+              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un essai pilote UrgenceOS">
+                Demander un essai
               </Button>
             </>
           )}
@@ -109,6 +110,14 @@ export function SiteHeader() {
           >
             À propos
           </Link>
+          <Link
+            to="/login"
+            role="menuitem"
+            onClick={closeMobile}
+            className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md"
+          >
+            Connexion
+          </Link>
           <div className="border-t pt-2 mt-2 flex gap-2">
             {isDemoMode ? (
               <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/board'); }}>
@@ -120,7 +129,7 @@ export function SiteHeader() {
                   Voir la démo
                 </Button>
                 <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/b2b'); }}>
-                  Demander un pilote
+                  Demander un essai
                 </Button>
               </>
             )}

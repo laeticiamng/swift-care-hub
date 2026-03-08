@@ -76,10 +76,10 @@ export function CTASection() {
             }}
           />
           <div className="relative">
-            <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Pilote cadré, ROI mesuré</p>
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">10 semaines pour prouver le modèle.</h2>
+            <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Essai encadré, résultats mesurés</p>
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">10 semaines pour voir les résultats.</h2>
             <p className="text-muted-foreground mb-10 max-w-lg mx-auto leading-relaxed">
-              Périmètre urgences. Deux modules. Intégration avec votre DPI existant.
+              Un essai de 10 semaines sur votre service d'urgences. Deux modules. Intégration avec votre dossier patient existant.
               Critères de succès définis avant le lancement. Si les résultats sont là, vous décidez de la suite.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -88,7 +88,7 @@ export function CTASection() {
                 onClick={() => navigate('/b2b')}
                 className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                Demander un pilote <ArrowRight className="h-4 w-4" />
+                Demander un essai gratuit <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"

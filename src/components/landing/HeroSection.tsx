@@ -76,7 +76,7 @@ export function HeroSection() {
             onClick={() => navigate('/b2b')}
             className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
-            Demander un pilote <ArrowRight className="h-4 w-4" />
+            Demander un essai gratuit <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
             size="lg"
@@ -129,9 +129,9 @@ export function HeroSection() {
           className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground"
         >
           {[
-            'Compatible avec votre DPI existant',
+            'Compatible avec votre dossier patient existant',
             'Un écran unique par rôle soignant',
-            'Données hébergées en France (HDS)',
+            'Données hébergées en France',
             'Résultats mesurables en 10 semaines',
           ].map((text) => (
             <span key={text} className="flex items-center gap-1.5">

@@ -4,11 +4,9 @@ import { TrustMarquee } from '@/components/landing/TrustMarquee';
 import { SocialProofSection } from '@/components/landing/SocialProofSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { SolutionSection } from '@/components/landing/SolutionSection';
-import { WhyNowSection } from '@/components/landing/WhyNowSection';
 import { BenefitsSection } from '@/components/landing/BenefitsSection';
-import { SecuritySection } from '@/components/landing/SecuritySection';
+import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { CTASection } from '@/components/landing/CTASection';
-import { VisionSection } from '@/components/landing/VisionSection';
 import { AntiFeatureSection } from '@/components/landing/AntiFeatureSection';
 import { FooterSection } from '@/components/landing/FooterSection';
 import { AnnouncementBanner } from '@/components/landing/AnnouncementBanner';
@@ -18,14 +16,14 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="UrgenceOS — Logiciel urgences hospitalières Hospital-Owned Software"
-        description="Socle logiciel Hospital-Owned pour urgences hospitalières. Interface par rôle (médecin, IOA, IDE, AS, secrétaire). Interopérabilité FHIR R4/HL7v2. Pilote 10 semaines. HDS France."
+        title="UrgenceOS — Le logiciel des urgences que votre hôpital contrôle"
+        description="UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, compatible avec votre dossier patient existant. Essai gratuit 10 semaines."
         canonical="https://urgenceos.fr/"
       />
       <JsonLd id="landing-howto" data={howToSchema()} />
       <JsonLd id="landing-webpage" data={webPageSchema({
-        name: 'UrgenceOS — Le système d\'exploitation des urgences hospitalières',
-        description: 'Socle Hospital-Owned Software avec interface par rôle, interopérabilité FHIR R4/HL7v2, audit immuable et hébergement HDS France.',
+        name: 'UrgenceOS — Le logiciel des urgences que votre hôpital contrôle',
+        description: 'Plateforme intégrée pour les urgences hospitalières. Un écran par rôle, compatible avec votre DPI, hébergement en France.',
         url: 'https://urgenceos.fr',
         breadcrumb: ['Accueil'],
       })} />
@@ -38,13 +36,10 @@ export default function LandingPage() {
         <SocialProofSection />
         <ProblemSection />
         <SolutionSection />
-        <WhyNowSection />
         <BenefitsSection />
-        <SecuritySection />
+        <TestimonialsSection />
         <CTASection />
-        <VisionSection />
         <AntiFeatureSection />
-
       </main>
 
       <FooterSection />
