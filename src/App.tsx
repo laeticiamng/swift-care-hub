@@ -41,7 +41,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const GlossairePage = lazy(() => import("./pages/GlossairePage"));
 const B2BPage = lazy(() => import("./pages/B2BPage"));
-// BlogPage removed — route redirects to /
+
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatutPage = lazy(() => import("./pages/StatutPage"));
 const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
