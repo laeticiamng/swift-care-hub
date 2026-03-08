@@ -130,8 +130,8 @@ export default function PricingPage() {
               key={plan.name}
               className={`relative rounded-2xl border p-8 flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                 plan.popular
-                  ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-1 ring-primary/20'
-                  : 'bg-card hover:border-primary/20'
+                  ? 'border-primary bg-primary/5 shadow-xl shadow-primary/15 ring-2 ring-primary/25'
+                  : 'bg-card hover:border-primary/20 hover:shadow-primary/5'
               }`}
             >
               {plan.popular && (

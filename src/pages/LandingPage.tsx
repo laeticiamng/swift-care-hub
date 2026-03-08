@@ -171,6 +171,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <TestimonialsSection />
+
       {/* BLOC 7 — Pilote + BLOC 8 — Vision (dans le CTA) */}
       <CTASection />
 
