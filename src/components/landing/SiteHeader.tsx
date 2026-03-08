@@ -48,6 +48,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <StatusBadgeHeader />
           <ThemeToggle />
           <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
