@@ -19,6 +19,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isDemoMode } = useDemo();
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
