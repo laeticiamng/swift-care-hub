@@ -88,7 +88,7 @@ export default function RoleSelector() {
             Votre compte n'a pas encore de rôle assigné. Contactez un administrateur pour obtenir l'accès à la plateforme.
           </p>
           <p className="text-xs text-muted-foreground">
-            Email de contact : <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a>
+            Email de contact : <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
           </p>
         </div>
       ) : (

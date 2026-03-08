@@ -16,7 +16,7 @@ export function MedicalDisclaimer() {
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs text-amber-800 dark:text-amber-200">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-          <span>UrgenceOS est un outil d'aide a la gestion des urgences hospitalieres. Il ne constitue pas un dispositif medical certifie.</span>
+          <span>UrgenceOS est un outil d'aide à la gestion des urgences hospitalières. Il ne constitue pas un dispositif médical certifié.</span>
         </div>
         <button onClick={() => setDismissed(true)} className="shrink-0 p-1 rounded hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors">
           <X className="h-3.5 w-3.5 text-amber-700 dark:text-amber-300" />
