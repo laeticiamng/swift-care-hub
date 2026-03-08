@@ -54,7 +54,7 @@ export default function DemoLivePage() {
                 Aller au board
               </Button>
               <Button variant="destructive" onClick={handleExit}>
-                <LogOut className="h-4 w-4 mr-1" /> Quitter la demo
+                <LogOut className="h-4 w-4 mr-1" /> Quitter la démo
               </Button>
             </div>
           </CardContent>

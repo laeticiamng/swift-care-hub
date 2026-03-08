@@ -411,8 +411,24 @@ export default function DemoPage() {
           ))}
         </div>
 
+        {/* CTA */}
+        <div className="mt-12 text-center py-10 px-6 rounded-2xl border bg-card">
+          <h3 className="text-xl font-bold mb-2">Convaincu par ce que vous voyez ?</h3>
+          <p className="text-muted-foreground text-sm mb-6 max-w-md mx-auto">
+            10 semaines de pilote, ROI mesuré, zéro engagement pluriannuel.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button onClick={() => navigate('/b2b')}>
+              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/contact')}>
+              Nous contacter
+            </Button>
+          </div>
+        </div>
+
         {/* Disclaimer */}
-        <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
+        <div className="mt-8 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
             UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
             Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
