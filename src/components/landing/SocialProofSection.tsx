@@ -1,6 +1,6 @@
 import { Section } from './Section';
 import { AnimatedCounter } from './AnimatedCounter';
-import { Building2, ShieldCheck, Clock, Users, Handshake } from 'lucide-react';
+import { Building2, ShieldCheck, Clock, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const stats = [
