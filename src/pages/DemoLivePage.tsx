@@ -91,7 +91,7 @@ export default function DemoLivePage() {
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
-            <span>10 patients simules — Donnees en temps reel</span>
+            <span>10 patients simulés — Données en temps réel</span>
           </div>
         </div>
 
