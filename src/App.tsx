@@ -44,6 +44,7 @@ const B2BPage = lazy(() => import("./pages/B2BPage"));
 
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatutPage = lazy(() => import("./pages/StatutPage"));
+const SLAPage = lazy(() => import("./pages/SLAPage"));
 const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
