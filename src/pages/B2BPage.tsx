@@ -103,7 +103,7 @@ export default function B2BPage() {
               {
                 icon: Building2,
                 role: 'Direction Générale / DAF',
-                message: 'Chaque année, 3 à 7 % du budget de fonctionnement part en licences non maîtrisées. Pendant ce temps, 45 à 90 minutes par poste sont perdues en friction logicielle. UrgenceOS rembourse cette dette : un socle que vous possédez, des modules à ROI mesurable, des coûts prévisibles et décroissants.',
+                message: 'Chaque année, 3 à 7 % du budget part en licences que vous ne maîtrisez pas. Pendant ce temps, 45 à 90 minutes par soignant sont perdues chaque jour sur des outils mal pensés. UrgenceOS inverse la tendance : un logiciel que vous possédez, des résultats mesurables, des coûts prévisibles et décroissants.',
               },
               {
                 icon: Shield,
