@@ -17,13 +17,13 @@ export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-background">
       <PageMeta
-        title="Architecture UrgenceOS — Socle Hospital-Owned + Modules urgences"
-        description="Architecture produit UrgenceOS : socle interne (RBAC, audit, FHIR), modules urgences à ROI (récap parcours, traçabilité temps réel), intégration DPI sans refonte."
+        title="Fonctionnalités UrgenceOS — Socle + Modules urgences hospitalières"
+        description="Fonctionnalités UrgenceOS : socle interne (droits d'accès, traçabilité, intégration dossier patient), modules urgences (récap parcours, traçabilité temps réel)."
         canonical="https://urgenceos.fr/features"
       />
       <JsonLd id="features-webpage" data={webPageSchema({
-        name: 'Architecture UrgenceOS — Fonctionnalités',
-        description: 'Socle Hospital-Owned + modules métier urgences : récap parcours patient, traçabilité temps réel, intégration DPI FHIR R4/HL7v2.',
+        name: 'Fonctionnalités UrgenceOS',
+        description: 'Socle logiciel possédé par l\'hôpital + modules métier urgences : récap parcours patient, traçabilité temps réel, intégration dossier patient.',
         url: 'https://urgenceos.fr/features',
         breadcrumb: ['Accueil', 'Fonctionnalités'],
       })} />
