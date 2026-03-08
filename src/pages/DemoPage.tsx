@@ -357,9 +357,6 @@ export default function DemoPage() {
                   <Play className="h-4 w-4 mr-1" /> Essayer en live
                 </Button>
               )}
-              <Button variant="ghost" size="sm" onClick={() => navigate('/demo/live')} className="text-xs text-primary">
-                Démo interactive
-              </Button>
             </div>
           </div>
 

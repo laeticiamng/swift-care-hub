@@ -289,7 +289,7 @@ export default function B2BPage() {
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}
-                  <a href="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</a>.
+                  <Link to="/politique-confidentialite" className="text-primary hover:underline">politique de confidentialité</Link>.
                 </p>
               </form>
             )}

@@ -155,8 +155,11 @@ export default function DemoLivePage() {
           <Button variant="outline" onClick={() => navigate('/')}>
             Retour à l'accueil
           </Button>
+          <Button variant="outline" onClick={() => navigate('/signup')}>
+            Créer un compte <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
           <Button onClick={() => navigate('/login')}>
-            Créer un compte / Se connecter <ArrowRight className="h-4 w-4 ml-1" />
+            Se connecter <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
 

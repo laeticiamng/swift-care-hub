@@ -249,8 +249,8 @@ export default function SecurityPage() {
             Transparence totale.
           </p>
           <div className="flex justify-center gap-3">
-            <Button onClick={() => window.location.href = 'mailto:security@emotionscare.com'}>
-              <Mail className="h-4 w-4 mr-2" /> security@emotionscare.com
+            <Button onClick={() => navigate('/contact')}>
+              <Mail className="h-4 w-4 mr-2" /> Nous contacter
             </Button>
             <Button variant="outline" onClick={() => navigate('/b2b')}>
               Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
