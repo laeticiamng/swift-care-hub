@@ -211,7 +211,7 @@ export default function SecurityPage() {
         {/* Checklist go-live */}
         <div className="mb-20">
           <h2 className="text-2xl font-bold text-center mb-2">Checklist go-live sécurité</h2>
-          <p className="text-muted-foreground text-center mb-8">25 points vérifiés avant tout déploiement pilote</p>
+          <p className="text-muted-foreground text-center mb-8">25 points vérifiés avant tout déploiement</p>
           <div className="grid sm:grid-cols-2 gap-2">
             {CHECKLIST.map((item) => (
               <div key={item} className="flex items-start gap-2 text-sm p-2 rounded-lg">
