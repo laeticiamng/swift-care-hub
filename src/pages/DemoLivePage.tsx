@@ -135,8 +135,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><FileText className="h-8 w-8 text-emerald-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Audit & Qualite</h3>
-            <p className="text-sm text-muted-foreground">Tableau de bord qualite, indicateurs automatises, export RMM/CREX</p>
+            <h3 className="font-bold text-lg mb-1">Audit & Qualité</h3>
+            <p className="text-sm text-muted-foreground">Tableau de bord qualité, indicateurs automatisés, export RMM/CREX</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/interop'); }}
