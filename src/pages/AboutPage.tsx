@@ -127,7 +127,7 @@ export default function AboutPage() {
 
         {/* Vision GHT */}
         <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-          <h2 className="text-2xl font-bold text-center mb-3">Vision : du pilote au territoire</h2>
+          <h2 className="text-2xl font-bold text-center mb-3">Vision : de l'essai au territoire</h2>
           <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
             Un hôpital valide. Un GHT mutualise. Un territoire standardise.
           </p>
