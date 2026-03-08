@@ -64,7 +64,7 @@ export function SiteHeader() {
               <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')} aria-label="Voir la démo UrgenceOS">
                 Démo
               </Button>
-              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un essai pilote UrgenceOS">
+              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un essai UrgenceOS">
                 Demander un essai
               </Button>
             </>
