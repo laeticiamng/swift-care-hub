@@ -128,7 +128,7 @@ export default function DemoLivePage() {
           >
             <div className="mb-3"><Users className="h-8 w-8 text-indigo-600" /></div>
             <h3 className="font-bold text-lg mb-1">Mode Garde</h3>
-            <p className="text-sm text-muted-foreground">Vue multi-services SAU + UHCD + Dechocage avec alertes et transmissions</p>
+            <p className="text-sm text-muted-foreground">Vue multi-services SAU + UHCD + Déchocage avec alertes et transmissions</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/audit'); }}
