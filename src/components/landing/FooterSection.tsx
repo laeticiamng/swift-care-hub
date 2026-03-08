@@ -14,19 +14,14 @@ export function FooterSection() {
               <Mail className="h-3 w-3" /> Nous contacter
             </Link>
           </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-primary hover:underline"
-            >
-              Haut de page
-            </button>
-            <span className="text-muted-foreground/40">|</span>
-            <span className="text-xs">Workflow urgences temps réel</span>
-          </div>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="text-primary hover:underline text-sm"
+          >
+            ↑ Haut de page
+          </button>
         </div>
 
-        {/* Navigation links - organized by section */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-t pt-6">
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Produit</p>
@@ -41,7 +36,6 @@ export function FooterSection() {
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Entreprise</p>
             <Link to="/about" className="block text-xs hover:text-foreground transition-colors">À propos</Link>
             <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">Établissements</Link>
-            <Link to="/glossaire" className="block text-xs hover:text-foreground transition-colors">Glossaire</Link>
             <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/contact" className="block text-xs hover:text-foreground transition-colors">Contact</Link>
           </div>
