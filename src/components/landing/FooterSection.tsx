@@ -29,6 +29,7 @@ export function FooterSection() {
             <Link to="/tarifs" className="block text-xs hover:text-foreground transition-colors">Tarifs</Link>
             <Link to="/demo" className="block text-xs hover:text-foreground transition-colors">Démo</Link>
             <Link to="/securite" className="block text-xs hover:text-foreground transition-colors">Sécurité</Link>
+            <Link to="/flow" className="block text-xs hover:text-foreground transition-colors">Dashboard</Link>
             <Link to="/statut" className="block text-xs hover:text-foreground transition-colors">Statut</Link>
             <Link to="/sla" className="block text-xs hover:text-foreground transition-colors">SLA</Link>
           </div>

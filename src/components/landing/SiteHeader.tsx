@@ -50,6 +50,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
