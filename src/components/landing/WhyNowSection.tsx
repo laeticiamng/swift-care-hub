@@ -64,7 +64,7 @@ export function WhyNowSection() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-8 text-sm text-muted-foreground"
         >
-          Chaque mois de statu quo est un mois de dette supplémentaire. Le pilote de 10 semaines ne demande pas une décision irréversible : il demande un test mesuré, cadré, avec critères de succès définis à l'avance.
+          Chaque mois sans changement coûte en temps soignant, en risques de sécurité et en opportunités manquées. Le pilote de 10 semaines n'est pas un engagement irréversible : c'est un test cadré, avec des critères de réussite définis à l'avance.
         </motion.p>
       </div>
     </Section>

@@ -208,9 +208,9 @@ export default function AboutPage() {
 
         {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-3">Prêt à reprendre le contrôle de votre SI ?</h2>
+          <h2 className="text-2xl font-bold mb-3">Prêt à reprendre le contrôle de votre informatique ?</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            10 semaines pour mesurer le ROI avec vos chiffres. Zéro engagement pluriannuel.
+            10 semaines pour mesurer les résultats concrets. Sans engagement pluriannuel.
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
