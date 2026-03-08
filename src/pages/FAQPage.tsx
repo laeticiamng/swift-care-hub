@@ -144,7 +144,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
         title="FAQ UrgenceOS — Questions fréquentes sur le logiciel urgences hospitalières"
-        description="Réponses aux questions des DSI, DAF et soignants sur UrgenceOS : architecture Hospital-Owned, interopérabilité FHIR R4, sécurité HDS, pilote 10 semaines, RBAC, RPU automatique."
+        description="Réponses aux questions fréquentes sur UrgenceOS : fonctionnement, intégration avec votre dossier patient, sécurité des données, essai 10 semaines, tarifs et déploiement."
         canonical="https://urgenceos.fr/faq"
       />
       <JsonLd id="faq-page" data={faqPageSchema(allFaqs)} />

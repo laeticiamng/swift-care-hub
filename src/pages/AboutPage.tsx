@@ -36,7 +36,7 @@ const VALUES = [
 const MILESTONES = [
   { year: '2024', event: 'Création d\'EmotionsCare SASU — naissance du concept Hospital-Owned Software' },
   { year: '2024', event: 'Premiers prototypes co-conçus avec des urgentistes et DSI hospitaliers' },
-  { year: '2025', event: 'Architecture socle validée : identité, RBAC, audit, bus d\'intégration FHIR R4' },
+  { year: '2025', event: 'Architecture socle validée : identité, droits d\'accès, audit, connecteurs dossier patient' },
   { year: '2025', event: 'Modules ROI #1 (récap parcours) et #2 (traçabilité temps réel) fonctionnels' },
   { year: '2026', event: 'Lancement du premier pilote 10 semaines en établissement' },
   { year: '2026', event: 'Ouverture du modèle consortium GHT — mutualisation multi-établissements' },
@@ -46,7 +46,7 @@ const ECOSYSTEM = [
   { icon: Building2, title: 'Établissements pilotes', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
   { icon: Handshake, title: 'DSI hospitalières', desc: 'Co-construction de l\'architecture socle avec les DSI pour garantir l\'intégration DPI et la gouvernance interne.' },
   { icon: Layers, title: 'GHT & ARS', desc: 'Modèle de mutualisation conçu pour les groupements hospitaliers de territoire. Socle partagé, données isolées, coûts divisés.' },
-  { icon: GitBranch, title: 'Standards ouverts', desc: 'Conformité CI-SIS, FHIR R4, HL7v2, INS, MSSanté. Interopérabilité native, pas propriétaire.' },
+  { icon: GitBranch, title: 'Standards ouverts', desc: 'Compatible avec les référentiels nationaux de santé. Échanges standardisés, pas propriétaires.' },
 ];
 
 export default function AboutPage() {

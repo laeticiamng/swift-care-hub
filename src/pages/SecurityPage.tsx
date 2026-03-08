@@ -24,7 +24,7 @@ const SECURITY_LAYERS = [
   },
   {
     icon: UserCheck,
-    title: 'Droits par rôle (RBAC)',
+    title: 'Droits par rôle',
     items: [
       '5 rôles opérationnels (médecin, IOA, IDE, aide-soignant, secrétaire)',
       'Vérification systématique côté serveur (pas de contrôle client seul)',
@@ -131,8 +131,8 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="Sécurité UrgenceOS — RBAC, audit immuable, HDS, chiffrement AES-256"
-        description="Architecture de sécurité UrgenceOS : RBAC serveur, audit immuable, chiffrement TLS 1.2+ et AES-256, hébergement HDS France, threat model 4 acteurs, conformité RGPD."
+        title="Sécurité UrgenceOS — Droits d'accès, audit immuable, hébergement France"
+        description="Sécurité UrgenceOS : droits d'accès par rôle vérifiés côté serveur, journal d'audit non modifiable, chiffrement des données, hébergement en France, conformité RGPD."
         canonical="https://urgenceos.fr/securite"
       />
       <JsonLd id="security-webpage" data={webPageSchema({
@@ -151,7 +151,7 @@ export default function SecurityPage() {
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4 gap-1.5">
-            <Shield className="h-3 w-3" /> Security-first
+            <Shield className="h-3 w-3" /> Sécurité intégrée
           </Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             La sécurité n'est pas une option. C'est l'architecture.

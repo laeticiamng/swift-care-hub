@@ -64,7 +64,7 @@ export default function ContactPage() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">Parlons de votre projet</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Une question sur UrgenceOS, un pilote à planifier, ou simplement envie d'en savoir plus ? Remplissez le formulaire ci-dessous.
+            Une question sur UrgenceOS, un essai à planifier, ou simplement envie d'en savoir plus ? Remplissez le formulaire ci-dessous.
           </p>
         </div>
 

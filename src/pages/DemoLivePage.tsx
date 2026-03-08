@@ -119,8 +119,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Shield className="h-8 w-8 text-red-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Scénarios CDC SIH</h3>
-            <p className="text-sm text-muted-foreground">TV-01 à TV-08 — 8 scénarios de validation issus du Cahier des Charges</p>
+            <h3 className="font-bold text-lg mb-1">Scénarios de validation</h3>
+            <p className="text-sm text-muted-foreground">8 scénarios de test issus du cahier des charges hospitalier</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/garde'); }}
@@ -143,8 +143,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-950/30 hover:bg-cyan-100 dark:hover:bg-cyan-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Activity className="h-8 w-8 text-cyan-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Interopérabilité</h3>
-            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSanté — CRH et ordonnance export</p>
+            <h3 className="font-bold text-lg mb-1">Échanges dossier patient</h3>
+            <p className="text-sm text-muted-foreground">Connexion avec votre DPI — export compte-rendu et ordonnance</p>
           </button>
         </div>
 
