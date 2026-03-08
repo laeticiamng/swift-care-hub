@@ -2,7 +2,7 @@ import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
