@@ -75,21 +75,21 @@ export default function B2BPage() {
         <div className="text-center mb-20">
           <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Reprenez le contrôle de votre SI hospitalier.
+            Reprenez le contrôle de votre informatique hospitalière.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-2">
-            UrgenceOS n'est pas un logiciel à acheter. C'est un plan d'autonomie logicielle :
-            un socle interne possédé par l'hôpital + des modules urgences à ROI mesurable + des standards d'interopérabilité ouverts.
+            UrgenceOS n'est pas un logiciel de plus à acheter. C'est un plan d'autonomie :
+            un logiciel que votre hôpital possède, des modules urgences aux résultats mesurables, et une compatibilité totale avec votre existant.
           </p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Le DPI reste en place. Les outils satellites disparaissent. La dette opérationnelle se rembourse.
+            Votre dossier patient reste en place. Les outils dispersés disparaissent. Les coûts diminuent.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/features')}>
-              Voir l'architecture
+              Voir les fonctionnalités
             </Button>
           </div>
         </div>
