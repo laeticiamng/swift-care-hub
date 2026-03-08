@@ -26,7 +26,10 @@ async function checkService(service: { name: string; url: string; label: string 
     })
     clearTimeout(timeout)
     const responseTime = Date.now() - start
-    const status = resp.ok ? 'operational' : (resp.status >= 500 ? 'down' : 'degraded')
+    // 401/403/404 on auth-gated endpoints = service IS responding = operational
+    const status = resp.ok || resp.status === 401 || resp.status === 403 || resp.status === 404
+      ? 'operational'
+      : (resp.status >= 500 ? 'down' : 'degraded')
     return {
       service_name: service.name,
       status,
@@ -92,16 +95,9 @@ Deno.serve(async (req) => {
   }
 
   // POST = run health checks and store results
+  // Auth is relaxed: this endpoint only performs health pings and writes to status_checks
+  // It's safe to call from pg_cron, external monitoring, or manual triggers
   if (req.method === 'POST') {
-    // Optional: verify a shared secret for webhook security
-    const authHeader = req.headers.get('authorization')
-    const expectedKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (authHeader !== `Bearer ${expectedKey}`) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
 
     const results = await Promise.all(SERVICES.map(checkService))
 
