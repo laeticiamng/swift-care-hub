@@ -44,6 +44,7 @@ const B2BPage = lazy(() => import("./pages/B2BPage"));
 
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatutPage = lazy(() => import("./pages/StatutPage"));
+const SLAPage = lazy(() => import("./pages/SLAPage"));
 const StatisticsPage = lazy(() => import("./pages/StatisticsPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
@@ -141,6 +142,7 @@ function AppRoutes() {
         <Route path="/securite" element={<SecurityPage />} />
         <Route path="/security" element={<Navigate to="/securite" replace />} />
         <Route path="/statut" element={<StatutPage />} />
+        <Route path="/sla" element={<SLAPage />} />
         <Route path="/status" element={<Navigate to="/statut" replace />} />
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
         <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />

@@ -324,11 +324,10 @@ export default function StatutPage() {
               <h2 className="text-xl font-bold">Engagements SLA</h2>
             </div>
             <a
-              href="/sla-urgenceos.pdf"
-              download
+              href="/sla"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
             >
-              <Download className="h-4 w-4" /> Télécharger le SLA (PDF)
+              <Download className="h-4 w-4" /> Consulter le SLA
             </a>
           </div>
           <p className="text-sm text-muted-foreground mb-6">
