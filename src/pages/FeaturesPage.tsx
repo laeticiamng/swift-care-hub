@@ -36,13 +36,12 @@ export default function FeaturesPage() {
         ]} />
         {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">Architecture produit</Badge>
+          <Badge variant="outline" className="mb-4">Fonctionnalités</Badge>
           <h1 className="text-4xl font-bold mb-4">
-            Plateforme interne + Modules urgences à ROI.
+            Tout ce dont vos urgences ont besoin, sur un seul écran.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Un socle que l'hôpital possède. Des modules qui remboursent la dette opérationnelle.
-            Le DPI reste en place — on l'encadre, on ne le refait pas.
+            Une plateforme adaptée à chaque rôle soignant, connectée à votre DPI existant, avec traçabilité complète et alertes en temps réel.
           </p>
         </div>
 
