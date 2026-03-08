@@ -1,5 +1,6 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { StatusBadgeHeader } from '@/components/urgence/StatusBadgeHeader';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useState, useCallback } from 'react';
@@ -47,6 +48,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <StatusBadgeHeader />
           <ThemeToggle />
           <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
