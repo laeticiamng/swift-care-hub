@@ -76,7 +76,7 @@ export function HeroSection() {
             onClick={() => navigate('/b2b')}
             className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
-            Demander un pilote <ArrowRight className="h-4 w-4" />
+            Demander un essai gratuit <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
             size="lg"

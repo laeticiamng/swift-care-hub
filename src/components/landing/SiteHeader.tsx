@@ -110,6 +110,14 @@ export function SiteHeader() {
           >
             À propos
           </Link>
+          <Link
+            to="/login"
+            role="menuitem"
+            onClick={closeMobile}
+            className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md"
+          >
+            Connexion
+          </Link>
           <div className="border-t pt-2 mt-2 flex gap-2">
             {isDemoMode ? (
               <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/board'); }}>
@@ -121,7 +129,7 @@ export function SiteHeader() {
                   Voir la démo
                 </Button>
                 <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/b2b'); }}>
-                  Demander un pilote
+                  Demander un essai
                 </Button>
               </>
             )}
