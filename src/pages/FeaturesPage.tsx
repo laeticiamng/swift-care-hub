@@ -274,7 +274,7 @@ export default function FeaturesPage() {
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
+              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-essai (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
               { title: 'Laboratoire', items: ['Réception automatique des résultats', 'Détection automatique valeurs critiques', 'Alerte envoyée au médecin prescripteur'] },
               { title: 'Imagerie', items: ['Notification quand l\'examen est disponible', 'Lien direct vers la visionneuse d\'images', 'Aucun stockage d\'images dans UrgenceOS'] },
             ].map((sys) => (
