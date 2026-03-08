@@ -70,16 +70,16 @@ export const CCMU_CODES: Record<string, { display: string; color: string }> = {
 
 // ── Thesaurus motifs SFMU ──
 export const MOTIFS_SFMU = [
-  'Douleur thoracique', 'Dyspnee', 'Douleur abdominale', 'Cephalee',
-  'Malaise / Syncope', 'Traumatisme cranien', 'Traumatisme membre superieur',
-  'Traumatisme membre inferieur', 'Traumatisme rachis', 'Plaie',
-  'Brulure', 'Intoxication medicamenteuse', 'Intoxication ethylique',
-  'Alteration etat general', 'Fievre', 'Trouble conscience',
-  'Deficit neurologique', 'Convulsions', 'Agitation / Trouble comportement',
-  'Allergie / Anaphylaxie', 'Hemorragie digestive', 'Douleur lombaire',
-  'Retention aigue urine', 'Vertige', 'Eruption cutanee',
-  'Douleur oculaire', 'Epistaxis', 'Corps etranger',
-  'Pathologie obstetricale', 'Arret cardio-respiratoire',
+  'Douleur thoracique', 'Dyspnée', 'Douleur abdominale', 'Céphalée',
+  'Malaise / Syncope', 'Traumatisme crânien', 'Traumatisme membre supérieur',
+  'Traumatisme membre inférieur', 'Traumatisme rachis', 'Plaie',
+  'Brûlure', 'Intoxication médicamenteuse', 'Intoxication éthylique',
+  'Altération état général', 'Fièvre', 'Trouble conscience',
+  'Déficit neurologique', 'Convulsions', 'Agitation / Trouble comportement',
+  'Allergie / Anaphylaxie', 'Hémorragie digestive', 'Douleur lombaire',
+  'Rétention aiguë urine', 'Vertige', 'Éruption cutanée',
+  'Douleur oculaire', 'Épistaxis', 'Corps étranger',
+  'Pathologie obstétricale', 'Arrêt cardio-respiratoire',
 ] as const;
 
 // ── FHIR Encounter status mapping ──
