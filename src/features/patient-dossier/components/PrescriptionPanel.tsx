@@ -100,7 +100,7 @@ export function PrescriptionPanel(props: PrescriptionPanelProps) {
                 if (motifKey) matchedPacks.push(motifKey);
                 for (const [packKey, keywords] of Object.entries(MOTIF_KEYWORDS)) {
                   if (matchedPacks.includes(packKey)) continue;
-                  if (keywords.some(kw => motifLower.includes(kw))) matchedPacks.push(packKey);
+                  if (keywords.some(kw => motifNorm.includes(kw))) matchedPacks.push(packKey);
                 }
                 if (matchedPacks.length === 0) return null;
                 return (
