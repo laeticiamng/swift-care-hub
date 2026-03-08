@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { cn } from '@/lib/utils';
 import {
   Activity, ArrowLeft, ArrowRight, ChevronRight, ClipboardList,
-  Heart, Layout, LogIn, Play, Shield, Stethoscope, Timer,
+  Heart, Layout, Play, Shield, Stethoscope, Timer,
   UserPlus, Users, Wifi, WifiOff, Zap,
 } from 'lucide-react';
 import { PageMeta, JsonLd, webPageSchema } from '@/components/seo/JsonLd';
