@@ -49,7 +49,6 @@ export function createLogger(functionName: string) {
           Deno.env.get("SUPABASE_URL")!,
           Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
         );
-        // Fire-and-forget — don't await to avoid slowing down the response
         adminClient.from("error_logs").insert({
           source: "edge-function",
           function_name: functionName,
@@ -64,13 +63,18 @@ export function createLogger(functionName: string) {
       }
     },
 
-    /** Call at request start. Returns a finalizer `end(statusCode)` that logs duration. */
+    /**
+     * Call at request start. Returns a finalizer `end(statusCode)`.
+     * Extracts X-Trace-Id from the request for end-to-end correlation.
+     */
     start(req: Request) {
       const rid = requestId();
+      const traceId = req.headers.get("x-trace-id") || crypto.randomUUID().slice(0, 16);
       const t0 = performance.now();
       const url = new URL(req.url);
       emit("info", functionName, "request_start", {
         request_id: rid,
+        trace_id: traceId,
         method: req.method,
         path: url.pathname,
       });
@@ -79,6 +83,7 @@ export function createLogger(functionName: string) {
         const duration_ms = Math.round(performance.now() - t0);
         emit("info", functionName, "request_end", {
           request_id: rid,
+          trace_id: traceId,
           status,
           duration_ms,
           ...extra,
