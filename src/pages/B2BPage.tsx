@@ -281,7 +281,7 @@ export default function B2BPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="message">Contexte et enjeux (optionnel)</Label>
-                  <Textarea id="message" name="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} maxLength={2000} />
+                  <Textarea id="message" name="message" placeholder="Dossier patient en place, nombre de services, problèmes principaux..." rows={4} maxLength={2000} />
                 </div>
                 {submitError && <p className="text-sm text-medical-critical text-center">{submitError}</p>}
                 <Button type="submit" className="w-full" size="lg" disabled={submitting}>
