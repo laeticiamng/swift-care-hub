@@ -285,7 +285,7 @@ export default function B2BPage() {
                 </div>
                 {submitError && <p className="text-sm text-medical-critical text-center">{submitError}</p>}
                 <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un pilote'}
+                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un essai'}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}
