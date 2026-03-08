@@ -28,6 +28,23 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const passwordStrength = (() => {
+    if (password.length === 0) return { label: '', color: '', percent: 0 };
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (score <= 1) return { label: 'Faible', color: 'bg-medical-critical', percent: 20 };
+    if (score <= 2) return { label: 'Moyen', color: 'bg-medical-warning', percent: 40 };
+    if (score <= 3) return { label: 'Correct', color: 'bg-yellow-500', percent: 60 };
+    if (score <= 4) return { label: 'Fort', color: 'bg-medical-success', percent: 80 };
+    return { label: 'Très fort', color: 'bg-medical-success', percent: 100 };
+  })();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
