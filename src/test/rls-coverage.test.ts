@@ -32,7 +32,7 @@ describe('RLS Coverage — all public tables', () => {
   it('should have a complete whitelist of all known tables', () => {
     // This test ensures the whitelist is maintained.
     // When adding a new table, you MUST add it here.
-    expect(EXPECTED_RLS_TABLES.length).toBeGreaterThanOrEqual(14);
+    expect(EXPECTED_RLS_TABLES.length).toBeGreaterThanOrEqual(19);
   });
 
   it('every table in whitelist should be unique', () => {
