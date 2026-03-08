@@ -47,8 +47,8 @@ export default function FeaturesPage() {
 
         {/* Architecture : Socle + Modules */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Architecture cible</h2>
-          <p className="text-muted-foreground text-center mb-10">Socle transversal + modules métier déployables indépendamment</p>
+          <h2 className="text-2xl font-bold text-center mb-2">Comment c'est construit</h2>
+          <p className="text-muted-foreground text-center mb-10">Un socle commun + des modules métier que vous activez selon vos besoins</p>
 
           {/* Socle interne */}
           <div className="p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent mb-8">
