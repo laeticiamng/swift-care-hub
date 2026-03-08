@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import type { AppRole } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
-  Activity, ArrowLeft, ClipboardList, Heart, LogOut,
+  Activity, ArrowLeft, ArrowRight, ClipboardList, Heart, LogOut,
   Stethoscope, Timer, UserPlus, Users, Shield, FileText,
 } from 'lucide-react';
 

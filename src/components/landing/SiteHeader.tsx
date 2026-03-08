@@ -100,6 +100,14 @@ export function SiteHeader() {
           >
             À propos
           </Link>
+          <div className="border-t pt-2 mt-2 flex gap-2">
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/signup'); }}>
+              S'inscrire
+            </Button>
+            <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/login'); }}>
+              Connexion
+            </Button>
+          </div>
         </div>
       )}
     </nav>
