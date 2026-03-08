@@ -248,7 +248,7 @@ export default function FeaturesPage() {
               { icon: Bell, title: 'Alertes structurées', desc: 'Labo critiques, examens en attente, anomalies de constantes. Cliquables.' },
               { icon: ClipboardList, title: 'Tâches & responsabilités', desc: 'Qui fait quoi, statut, escalades. Bouton d\'escalade en un clic.' },
               { icon: Eye, title: 'Synthèse par rôle', desc: 'Le contenu s\'adapte : médecin, IDE, IOA, AS, secrétaire. Chacun voit ce dont il a besoin.' },
-              { icon: Shield, title: 'RBAC + temps réel', desc: 'Données filtrées par droits, mises à jour en continu. Aucune donnée inventée.' },
+              { icon: Shield, title: 'Droits + temps réel', desc: 'Données filtrées par droits d\'accès, mises à jour en continu. Aucune donnée inventée.' },
             ].map((item) => (
               <div key={item.title} className="p-4 rounded-xl border bg-background space-y-2">
                 <div className="flex items-center gap-2">
