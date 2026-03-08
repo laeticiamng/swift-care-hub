@@ -32,7 +32,7 @@ const PLANS = [
     target: 'Multi-services',
     price: 'Sur mesure',
     period: '',
-    description: 'Après validation pilote. Extension à d\'autres services + modules supplémentaires.',
+    description: 'Après validation de l\'essai. Extension à d\'autres services + modules supplémentaires.',
     features: [
       'Tout l\'essai initial +',
       'Modules supplémentaires (triage, prescriptions, sortie)',
