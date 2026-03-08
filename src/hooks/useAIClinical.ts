@@ -14,11 +14,19 @@ export function useAIClinical() {
     setError(null);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        setError('Vous devez être connecté pour utiliser l\'IA clinique');
+        setIsLoading(false);
+        return '';
+      }
+
       const resp = await fetch(AI_CLINICAL_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ action, patientData }),
       });
