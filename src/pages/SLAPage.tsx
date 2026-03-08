@@ -32,7 +32,7 @@ export default function SLAPage() {
           <div className="mt-6 inline-flex gap-6 text-xs text-muted-foreground">
             <span>Version 1.0</span>
             <span>•</span>
-            <span>Date d'effet : 1er janvier 2025</span>
+            <span>Date d'effet : 1er janvier 2026</span>
             <span>•</span>
             <span>Révision annuelle</span>
           </div>

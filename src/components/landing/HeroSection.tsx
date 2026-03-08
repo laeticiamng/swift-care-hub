@@ -104,10 +104,10 @@ export function HeroSection() {
             </div>
             <div className="p-4 grid grid-cols-3 sm:grid-cols-4 gap-3">
               {[
-                { box: 1, name: 'M. Dupont', ccmu: 3, time: '1h20', color: 'border-l-[hsl(var(--medical-warning))]' },
-                { box: 2, name: 'Mme Martin', ccmu: 2, time: '0h45', color: 'border-l-[hsl(var(--medical-success))]' },
-                { box: 3, name: 'M. Bernard', ccmu: 4, time: '2h10', color: 'border-l-[hsl(var(--medical-warning))]' },
-                { box: 5, name: 'Mme Petit', ccmu: 1, time: '0h15', color: 'border-l-[hsl(var(--medical-success))]' },
+                { box: 1, name: 'M. Dupont', ccmu: 2, time: '1h20', color: 'border-l-[hsl(var(--medical-warning))]' },
+                { box: 2, name: 'Mme Martin', ccmu: 4, time: '0h45', color: 'border-l-[hsl(var(--medical-success))]' },
+                { box: 3, name: 'M. Bernard', ccmu: 1, time: '0h15', color: 'border-l-destructive' },
+                { box: 5, name: 'Mme Petit', ccmu: 3, time: '2h10', color: 'border-l-[hsl(var(--medical-warning))]' },
               ].map((p) => (
                 <div key={p.box} className={`rounded-lg border border-l-4 ${p.color} bg-background p-3 text-left hover:bg-accent/50 transition-colors`}>
                   <div className="text-[10px] text-muted-foreground font-medium">Box {p.box}</div>

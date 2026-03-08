@@ -45,7 +45,7 @@ export default function DemoLivePage() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <Card className="max-w-md w-full">
           <CardContent className="p-6 text-center space-y-4">
-            <Badge variant="secondary">Mode Demo</Badge>
+            <Badge variant="secondary">Mode Démo</Badge>
             <p className="text-sm text-muted-foreground">
               Vous êtes connecté en tant que <strong>{currentRole?.label}</strong>
             </p>
