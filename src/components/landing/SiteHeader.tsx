@@ -1,9 +1,11 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
+import { LanguageSwitcher } from '@/components/urgence/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LayoutGrid } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useDemo } from '@/contexts/DemoContext';
+import { useI18n } from '@/i18n/I18nContext';
 
 const NAV_LINKS = [
   { label: 'Fonctionnalités', to: '/features' },
@@ -48,6 +50,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos

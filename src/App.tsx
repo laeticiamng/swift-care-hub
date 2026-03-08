@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider, useAuth, type AppRole } from "@/contexts/AuthContext";
 import { DemoProvider, useDemo } from "@/contexts/DemoContext";
+import { I18nProvider } from "@/i18n/I18nContext";
 import { Loader2 } from "lucide-react";
 import { CookieConsent } from "./components/urgence/CookieConsent";
 import { MedicalDisclaimer } from "./components/urgence/MedicalDisclaimer";
@@ -41,6 +42,7 @@ const FAQPage = lazy(() => import("./pages/FAQPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const GlossairePage = lazy(() => import("./pages/GlossairePage"));
 const B2BPage = lazy(() => import("./pages/B2BPage"));
+const FlowDashboardPage = lazy(() => import("./pages/FlowDashboardPage"));
 
 const SecurityPage = lazy(() => import("./pages/SecurityPage"));
 const StatutPage = lazy(() => import("./pages/StatutPage"));
@@ -67,9 +69,9 @@ function PageLoader() {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 10_000, // 10s — medical context needs fresher data
+      staleTime: 10_000,
       retry: 2,
-      refetchOnWindowFocus: true, // Re-fetch when clinician returns to tab
+      refetchOnWindowFocus: true,
     },
     mutations: {
       retry: 1,
@@ -77,7 +79,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// ── Auth guard — redirects unauthenticated users ──
+// ── Auth guard ──
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const { isDemoMode } = useDemo();
@@ -87,7 +89,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// ── Granular role guard — checks specific allowed roles ──
+// ── Granular role guard ──
 function RoleGuard({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: AppRole[] }) {
   const { role, loading } = useAuth();
   const { isDemoMode, demoRole } = useDemo();
@@ -150,6 +152,7 @@ function AppRoutes() {
         <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
         <Route path="/politique-confidentialite" element={<PolitiqueConfidentialitePage />} />
         <Route path="/cgu" element={<CGUPage />} />
+        <Route path="/flow" element={<FlowDashboardPage />} />
         <Route path="/landing" element={user ? <Navigate to="/select-role" replace /> : <LandingPage />} />
         <Route path="/" element={user && !isDemoMode ? <Navigate to="/select-role" replace /> : <LandingPage />} />
 
@@ -207,23 +210,25 @@ function AppRoutes() {
 const App = () => (
   <ErrorBoundary>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AuthProvider>
-              <DemoProvider>
-                <DemoBanner />
-                <AppRoutes />
-                <BottomNav />
-                <MedicalDisclaimer />
-                <CookieConsent />
-              </DemoProvider>
-            </AuthProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <I18nProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AuthProvider>
+                <DemoProvider>
+                  <DemoBanner />
+                  <AppRoutes />
+                  <BottomNav />
+                  <MedicalDisclaimer />
+                  <CookieConsent />
+                </DemoProvider>
+              </AuthProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </I18nProvider>
     </ThemeProvider>
   </ErrorBoundary>
 );
