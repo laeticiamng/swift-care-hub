@@ -128,10 +128,10 @@ export default function PricingPage() {
           {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl border p-8 flex flex-col ${
+              className={`relative rounded-2xl border p-8 flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                 plan.popular
-                  ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                  : 'bg-card'
+                  ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-1 ring-primary/20'
+                  : 'bg-card hover:border-primary/20'
               }`}
             >
               {plan.popular && (
