@@ -49,7 +49,7 @@ export default function CGUPage() {
             L'utilisateur s'engage à :
           </p>
           <ul className="list-disc list-inside text-muted-foreground leading-relaxed space-y-1">
-            <li>Utiliser un mot de passe robuste (minimum 6 caractères, incluant lettres et chiffres)</li>
+            <li>Utiliser un mot de passe robuste (minimum 8 caractères, incluant lettres et chiffres)</li>
             <li>Ne pas partager ses identifiants avec des tiers</li>
             <li>Signaler immédiatement toute utilisation non autorisée de son compte</li>
             <li>Se déconnecter après chaque session sur un poste partagé</li>
