@@ -1,6 +1,5 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/urgence/ThemeToggle';
-import { StatusBadgeHeader } from '@/components/urgence/StatusBadgeHeader';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LayoutGrid } from 'lucide-react';
 import { useState, useCallback } from 'react';
