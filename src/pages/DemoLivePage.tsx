@@ -143,8 +143,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-950/30 hover:bg-cyan-100 dark:hover:bg-cyan-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Activity className="h-8 w-8 text-cyan-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Interoperabilite</h3>
-            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSante — CRH et ordonnance export</p>
+            <h3 className="font-bold text-lg mb-1">Interopérabilité</h3>
+            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSanté — CRH et ordonnance export</p>
           </button>
         </div>
 
