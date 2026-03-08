@@ -51,7 +51,7 @@ export function SocialProofSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-muted-foreground text-sm max-w-xl mx-auto"
           >
-            Chaque indicateur est vérifiable. Chaque résultat est mesurable dès le pilote.
+            Chaque indicateur est vérifiable. Chaque résultat est mesurable dès l'essai.
           </motion.p>
         </div>
 
