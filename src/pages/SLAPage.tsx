@@ -156,7 +156,7 @@ export default function SLAPage() {
               ['Row Level Security', 'Isolation stricte des données par établissement'],
               ['Authentification', 'MFA (TOTP) obligatoire pour les comptes administrateurs'],
               ['Audit trail', 'Logs immutables de toutes les actions critiques'],
-              ['Hébergement', 'Infrastructure européenne (Francfort) — certification HDS en cours'],
+              ['Hébergement', 'Infrastructure européenne (Francfort) — objectif certification HDS'],
               ['Tests de sécurité', 'Audits de sécurité réguliers, scans de vulnérabilités automatisés'],
             ].map(([label, detail]) => (
               <div key={label} className="p-3 rounded-lg border">

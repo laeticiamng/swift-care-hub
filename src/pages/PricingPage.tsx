@@ -24,7 +24,7 @@ const PLANS = [
       'Rapport de résultats pour la direction',
       'Critères de succès définis à l\'avance',
     ],
-    cta: 'Demander un pilote',
+    cta: 'Demander un essai',
     popular: true,
   },
   {

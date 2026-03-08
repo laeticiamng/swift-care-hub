@@ -331,7 +331,7 @@ export default function StatutPage() {
             </a>
           </div>
           <p className="text-sm text-muted-foreground mb-6">
-            Ces engagements s'appliquent aux établissements en phase pilote et en production.
+            Ces engagements s'appliquent aux établissements en phase d'essai et en production.
             Les SLA sont contractualisés et mesurés mensuellement.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
