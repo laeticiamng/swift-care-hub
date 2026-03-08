@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 
+const easing = [0.22, 1, 0.36, 1] as const;
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay },
+  transition: { duration: 0.6, ease: easing as unknown as [number, number, number, number], delay },
 });
 
 export function HeroSection() {
