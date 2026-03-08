@@ -246,7 +246,7 @@ export default function AboutPage() {
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
               Voir la démo
