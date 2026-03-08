@@ -3,10 +3,10 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const items = [
-  { title: 'Pas de refonte DPI', desc: 'Le DPI cœur reste en place. UrgenceOS encadre, structure et complète — il ne remplace pas.' },
-  { title: 'Pas un logiciel de plus', desc: 'UrgenceOS est une méthode, une architecture, un socle et des modules. Pas un énième outil à empiler.' },
-  { title: 'Pas de révolution immédiate', desc: 'Un wedge concret (urgences), un ROI mesuré, une extension si les résultats sont là.' },
-  { title: 'Pas d\'IA cosmétique', desc: 'L\'aide à la décision repose sur des scores validés (CIMU, NEWS, qSOFA), pas sur des promesses algorithmiques.' },
+  { title: 'Pas de refonte de votre existant', desc: 'Votre dossier patient reste en place. UrgenceOS se branche dessus — il ne le remplace pas.' },
+  { title: 'Pas un logiciel de plus', desc: 'UrgenceOS est un socle intégré avec des modules par rôle. Pas un énième outil à empiler.' },
+  { title: 'Pas de promesse irréaliste', desc: 'On commence par un pilote de 10 semaines sur vos urgences. Si les résultats sont là, vous étendez.' },
+  { title: 'Pas d\'IA gadget', desc: 'L\'aide à la décision repose sur des scores médicaux validés, pas sur des promesses algorithmiques.' },
 ];
 
 const cardVariants = {

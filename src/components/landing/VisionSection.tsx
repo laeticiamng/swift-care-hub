@@ -2,9 +2,9 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const phases = [
-  { step: 'Phase 1', title: 'Pilote', desc: 'Un établissement prouve le ROI sur le périmètre urgences.' },
-  { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois établissements partagent le socle et les modules.' },
-  { step: 'Phase 3', title: 'Standardisation', desc: 'Le GHT standardise ses flux et divise ses coûts.' },
+  { step: 'Phase 1', title: 'Pilote', desc: 'Un hôpital teste et mesure les résultats sur son service d\'urgences.' },
+  { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois hôpitaux partagent le logiciel et les modules. Les coûts sont divisés.' },
+  { step: 'Phase 3', title: 'Standardisation', desc: 'Le groupement hospitalier standardise ses pratiques et ses indicateurs.' },
 ];
 
 const cardVariants = {
@@ -45,8 +45,8 @@ export function VisionSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8"
         >
-          Le socle UrgenceOS est conçu pour être partagé entre établissements d'un même GHT.
-          Même infrastructure, données isolées, modules communs, coûts divisés.
+          Le logiciel UrgenceOS est conçu pour être partagé entre plusieurs hôpitaux d'un même territoire.
+          Même logiciel, données séparées, modules communs, coûts divisés.
         </motion.p>
         <div className="grid sm:grid-cols-3 gap-4">
           {phases.map((item, i) => (

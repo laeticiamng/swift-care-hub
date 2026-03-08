@@ -5,34 +5,34 @@ import { motion } from 'framer-motion';
 const debts = [
   {
     icon: DollarSign,
-    title: 'Dette fournisseur',
+    title: 'Coûts qui augmentent',
     value: '3-7 %',
-    label: 'du budget SI en licences non maîtrisées',
-    desc: 'L\'hôpital dépend d\'éditeurs qui contrôlent le calendrier, les tarifs et les conditions de sortie.',
+    label: 'du budget informatique en licences subies',
+    desc: 'Votre hôpital paie des éditeurs qui décident seuls des tarifs, du calendrier et des conditions.',
     accent: 'text-[hsl(var(--medical-critical))]',
   },
   {
     icon: Link2,
-    title: 'Dette d\'intégration',
+    title: 'Trop d\'outils',
     value: '15-40',
-    label: 'applications connectées par des interfaces fragiles',
-    desc: 'Chaque connecteur est un point de fragilité. Chaque mise à jour est un risque de régression.',
+    label: 'logiciels différents mal connectés entre eux',
+    desc: 'Chaque logiciel supplémentaire crée de la complexité. Chaque mise à jour risque de casser les liens.',
     accent: 'text-[hsl(var(--medical-warning))]',
   },
   {
     icon: Clock,
-    title: 'Dette de temps',
+    title: 'Temps perdu',
     value: '45-90 min',
-    label: 'perdues par poste en friction logicielle',
-    desc: 'Navigation entre écrans, ressaisies, attentes, coordination manuelle : autant de temps clinique perdu.',
+    label: 'perdues par soignant chaque jour',
+    desc: 'Changer d\'écran, ressaisir les mêmes infos, attendre, se coordonner à la main : du temps en moins pour les patients.',
     accent: 'text-primary',
   },
   {
     icon: Shield,
-    title: 'Dette de sécurité',
+    title: 'Risques de sécurité',
     value: '×3',
-    label: 'surface d\'attaque par rapport à un socle unifié',
-    desc: 'Chaque application exposée, chaque connecteur non chiffré : autant de vecteurs d\'attaque.',
+    label: 'plus de failles qu\'avec un système unifié',
+    desc: 'Chaque logiciel ouvert sur le réseau est une porte d\'entrée potentielle pour les cyberattaques.',
     accent: 'text-[hsl(var(--medical-critical))]',
   },
 ];
@@ -66,7 +66,7 @@ export function ProblemSection() {
           transition={{ duration: 0.5, delay: 0.05 }}
           className="text-3xl sm:text-4xl font-bold mb-3"
         >
-          Votre hôpital accumule une dette invisible.
+          Votre service d'urgences perd du temps chaque jour.
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -75,10 +75,10 @@ export function ProblemSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed"
         >
-          Pas seulement financière. Opérationnelle. Chaque jour, cette dette se paie en capacité de soin perdue, en incidents de sécurité, en surcoûts de maintenance, en incapacité à évoluer.
+          Trop de logiciels, trop de ressaisies, trop de clics. Vos soignants perdent du temps sur l'informatique au lieu de le consacrer aux patients.
         </motion.p>
         <p className="text-sm text-muted-foreground/80 mb-12 max-w-xl mx-auto">
-          Le statu quo coûte plus cher que le changement.
+          Ne rien changer coûte plus cher que d'agir.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {debts.map((d, i) => (

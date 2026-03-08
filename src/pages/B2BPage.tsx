@@ -75,21 +75,21 @@ export default function B2BPage() {
         <div className="text-center mb-20">
           <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Reprenez le contrôle de votre SI hospitalier.
+            Reprenez le contrôle de votre informatique hospitalière.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-2">
-            UrgenceOS n'est pas un logiciel à acheter. C'est un plan d'autonomie logicielle :
-            un socle interne possédé par l'hôpital + des modules urgences à ROI mesurable + des standards d'interopérabilité ouverts.
+            UrgenceOS n'est pas un logiciel de plus à acheter. C'est un plan d'autonomie :
+            un logiciel que votre hôpital possède, des modules urgences aux résultats mesurables, et une compatibilité totale avec votre existant.
           </p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Le DPI reste en place. Les outils satellites disparaissent. La dette opérationnelle se rembourse.
+            Votre dossier patient reste en place. Les outils dispersés disparaissent. Les coûts diminuent.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/features')}>
-              Voir l'architecture
+              Voir les fonctionnalités
             </Button>
           </div>
         </div>
@@ -103,12 +103,12 @@ export default function B2BPage() {
               {
                 icon: Building2,
                 role: 'Direction Générale / DAF',
-                message: 'Chaque année, 3 à 7 % du budget de fonctionnement part en licences non maîtrisées. Pendant ce temps, 45 à 90 minutes par poste sont perdues en friction logicielle. UrgenceOS rembourse cette dette : un socle que vous possédez, des modules à ROI mesurable, des coûts prévisibles et décroissants.',
+                message: 'Chaque année, 3 à 7 % du budget part en licences que vous ne maîtrisez pas. Pendant ce temps, 45 à 90 minutes par soignant sont perdues chaque jour sur des outils mal pensés. UrgenceOS inverse la tendance : un logiciel que vous possédez, des résultats mesurables, des coûts prévisibles et décroissants.',
               },
               {
                 icon: Shield,
                 role: 'DSI',
-                message: 'Votre SI est une mosaïque de 15 à 40 applications connectées par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — identité, RBAC, audit, bus FHIR — que votre équipe gouverne. Le DPI reste en place. La surface d\'attaque diminue. La continuité de service augmente.',
+                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
               },
               {
                 icon: Eye,

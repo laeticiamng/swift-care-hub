@@ -119,7 +119,7 @@ export default function PricingPage() {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Pas d'engagement pluriannuel en première intention.
             Un pilote de 10 semaines pour mesurer le ROI avec vos chiffres.
-            Si les résultats sont là, vous scalez. Si non, vous arrêtez.
+            Si les résultats sont là, vous étendez. Si non, vous arrêtez.
           </p>
         </div>
 
@@ -247,9 +247,9 @@ export default function PricingPage() {
         {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
           <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">Prêt à mesurer votre dette opérationnelle ?</h2>
+          <h2 className="text-2xl font-bold mb-3">Prêt à évaluer les gains pour votre service ?</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            60 minutes pour remplir le business case avec vos chiffres. Zéro engagement.
+            60 minutes pour estimer vos économies avec vos propres chiffres. Sans engagement.
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>

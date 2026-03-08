@@ -39,7 +39,7 @@ export function HeroSection() {
         <motion.div {...fadeUp(0)}>
           <Badge variant="secondary" className="mb-6 gap-1.5 px-4 py-1.5 text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-default group">
             <Building2 className="h-3.5 w-3.5 group-hover:rotate-6 transition-transform" />
-            Hospital-Owned Software
+            Logiciel possédé par l'hôpital
           </Badge>
         </motion.div>
 
@@ -64,7 +64,7 @@ export function HeroSection() {
           {...fadeUp(0.3)}
           className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, interopérable avec votre DPI existant. L'hôpital garde le contrôle total du logiciel et de ses données.
+          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, compatible avec votre dossier patient informatisé existant. L'hôpital garde le contrôle total du logiciel et de ses données.
         </motion.p>
 
         <motion.div

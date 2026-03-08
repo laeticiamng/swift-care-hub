@@ -3,10 +3,10 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const urgencies = [
-  { icon: AlertTriangle, text: 'Cyberattaques en hausse : chaque hôpital est une cible.' },
-  { icon: Building2, text: 'Coûts éditeurs croissants, sans corrélation avec la valeur.' },
-  { icon: Clock, text: 'Soignants épuisés par la friction logicielle quotidienne.' },
-  { icon: Eye, text: 'ARS exigeant des indicateurs que vos SI ne produisent pas.' },
+  { icon: AlertTriangle, text: 'Les cyberattaques contre les hôpitaux se multiplient chaque année.' },
+  { icon: Building2, text: 'Les éditeurs augmentent leurs tarifs sans que le logiciel s\'améliore.' },
+  { icon: Clock, text: 'Vos soignants perdent chaque jour du temps sur des outils mal pensés.' },
+  { icon: Eye, text: 'Les autorités de santé demandent des indicateurs que vos outils ne produisent pas.' },
 ];
 
 const cardVariants = {
@@ -64,7 +64,7 @@ export function WhyNowSection() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-8 text-sm text-muted-foreground"
         >
-          Chaque mois de statu quo est un mois de dette supplémentaire. Le pilote de 10 semaines ne demande pas une décision irréversible : il demande un test mesuré, cadré, avec critères de succès définis à l'avance.
+          Chaque mois sans changement coûte en temps soignant, en risques de sécurité et en opportunités manquées. Le pilote de 10 semaines n'est pas un engagement irréversible : c'est un test cadré, avec des critères de réussite définis à l'avance.
         </motion.p>
       </div>
     </Section>
