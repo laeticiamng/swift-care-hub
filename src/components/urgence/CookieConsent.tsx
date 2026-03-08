@@ -56,15 +56,15 @@ export function CookieConsent() {
     return (
       <div className="fixed bottom-0 inset-x-0 z-50 animate-in slide-in-from-bottom-2 duration-300">
         <div className="bg-card/95 backdrop-blur-xl border-t shadow-lg">
-          <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <Cookie className="h-4 w-4 text-primary shrink-0 hidden sm:block" />
-              <p className="text-xs text-muted-foreground sm:truncate">
-                Cookies techniques uniquement (session, préférences).{' '}
-                <Link to="/politique-confidentialite" className="text-primary hover:underline">En savoir plus</Link>
+          <div className="max-w-6xl mx-auto px-4 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 min-w-0">
+              <Cookie className="h-4 w-4 text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Cookies techniques uniquement.{' '}
+                <Link to="/politique-confidentialite" className="text-primary hover:underline whitespace-nowrap">En savoir plus</Link>
               </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 justify-end">
               <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs" onClick={() => setExpanded(true)}>
                 Personnaliser
               </Button>
