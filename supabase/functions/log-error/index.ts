@@ -104,6 +104,25 @@ Deno.serve(async (req) => {
           },
         });
         log.warn("Error spike detected", { count });
+
+        // Send alert email for error spike
+        try {
+          await fetch(`${Deno.env.get("SUPABASE_URL")!}/functions/v1/send-alert`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")!}`,
+            },
+            body: JSON.stringify({
+              type: "error_spike",
+              title: `Pic d'erreurs frontend — ${count} erreurs en 5 min`,
+              details: `${count} erreurs détectées sur les 5 dernières minutes. Dernière erreur : "${String(message).slice(0, 200)}"`,
+              severity: "high",
+            }),
+          });
+        } catch (alertErr) {
+          // Silent — don't let alerting break error logging
+        }
       }
     }
 

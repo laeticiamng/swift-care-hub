@@ -189,6 +189,25 @@ Deno.serve(async (req) => {
           }).eq('id', incident.id)
         }
         log.info("Incident resolved", { service: os.service_name });
+
+        // Send recovery alert email
+        try {
+          await fetch(`${Deno.env.get('SUPABASE_URL')!}/functions/v1/send-alert`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')!}`,
+            },
+            body: JSON.stringify({
+              type: 'service_recovered',
+              title: `${os.service_name} — Service rétabli`,
+              details: `Le service "${os.service_name}" est de nouveau opérationnel (temps de réponse : ${os.response_time_ms}ms).`,
+              severity: 'warning',
+            }),
+          });
+        } catch (alertErr) {
+          log.error("Failed to send recovery email", { error: String(alertErr) });
+        }
       }
     }
 
