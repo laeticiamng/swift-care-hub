@@ -36,13 +36,12 @@ export default function FeaturesPage() {
         ]} />
         {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">Architecture produit</Badge>
+          <Badge variant="outline" className="mb-4">Fonctionnalités</Badge>
           <h1 className="text-4xl font-bold mb-4">
-            Plateforme interne + Modules urgences à ROI.
+            Tout ce dont vos urgences ont besoin, sur un seul écran.
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Un socle que l'hôpital possède. Des modules qui remboursent la dette opérationnelle.
-            Le DPI reste en place — on l'encadre, on ne le refait pas.
+            Une plateforme adaptée à chaque rôle soignant, connectée à votre DPI existant, avec traçabilité complète et alertes en temps réel.
           </p>
         </div>
 
@@ -98,19 +97,19 @@ export default function FeaturesPage() {
             C'est l'interface centrale d'UrgenceOS — celle que cliniciens et décideurs comprennent immédiatement.
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">MUST HAVE</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
               <ul className="space-y-2">
                 {[
-                  'Bandeau patient persistant (identité, allergies, CIMU, zone)',
+                  'Bandeau patient persistant (identité, allergies, classification, zone)',
                   'Timeline horodatée unifiée (admission → sortie)',
-                  'Filtrage automatique par rôle (RBAC)',
+                  'Affichage adapté selon votre rôle',
                   'Alertes labo critiques avec valeur et seuil',
-                  'Statut prescriptions temps réel',
+                  'Statut prescriptions en temps réel',
                   'Synthèse de sortie pré-remplie',
-                  'Intégration DPI lecture (FHIR R4/HL7v2)',
-                  'Chargement < 2 secondes',
+                  'Connexion avec votre DPI existant',
+                  'Chargement en moins de 2 secondes',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
@@ -120,7 +119,7 @@ export default function FeaturesPage() {
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-3">SHOULD HAVE</h4>
+              <h4 className="font-semibold text-sm text-muted-foreground mb-3">Prévu en extension</h4>
               <ul className="space-y-2">
                 {[
                   'Recherche textuelle dans la timeline',
@@ -128,26 +127,13 @@ export default function FeaturesPage() {
                   'Notifications push événements critiques',
                   'Mini-graphiques de constantes',
                   'Annotations médicales sur événements',
+                  'Écriture bidirectionnelle vers le DPI',
+                  'Reconnaissance vocale notes cliniques',
+                  'Synthèse IA du compte-rendu de sortie',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
                     <span className="text-muted-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground/60 mb-3">LATER</h4>
-              <ul className="space-y-2">
-                {[
-                  'Intégration bidirectionnelle DPI (écriture)',
-                  'Reconnaissance vocale notes cliniques',
-                  'Synthèse IA compte-rendu de sortie',
-                  'Connexion DMP enrichissement dossier',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-xs">
-                    <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground/70">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -188,9 +174,9 @@ export default function FeaturesPage() {
             est horodaté, attribué, et consultable. Plus jamais "qui a appelé le labo et quand ?".
           </p>
 
-          <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-primary mb-3">MUST HAVE</h4>
+              <h4 className="font-semibold text-sm text-primary mb-3">Inclus dès le pilote</h4>
               <ul className="space-y-2">
                 {[
                   'Journal d\'événements horodaté par patient',
@@ -198,9 +184,9 @@ export default function FeaturesPage() {
                   'Traçabilité des appels (labo, imagerie, spécialistes)',
                   'Notifications structurées routées par rôle',
                   'Escalades formalisées avec traçabilité',
-                  'Dashboard service temps réel',
-                  'Audit log immuable complet',
-                  'RBAC sur le journal',
+                  'Tableau de bord du service en temps réel',
+                  'Journal d\'audit complet et non modifiable',
+                  'Accès filtré selon votre rôle',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
@@ -210,34 +196,21 @@ export default function FeaturesPage() {
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground mb-3">SHOULD HAVE</h4>
+              <h4 className="font-semibold text-sm text-muted-foreground mb-3">Prévu en extension</h4>
               <ul className="space-y-2">
                 {[
                   'Alertes de dépassement de délai configurables',
                   'Rapports d\'activité par période',
                   'Indicateurs de performance par poste',
-                  'Export logs pour audit externe',
+                  'Export des journaux pour audit externe',
                   'Notifications multi-canal (écran + push + son)',
+                  'Analyse prédictive des délais',
+                  'Détection d\'anomalies de flux',
+                  'Tableau de bord ARS-ready RPU consolidé',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
                     <span className="text-muted-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm text-muted-foreground/60 mb-3">LATER</h4>
-              <ul className="space-y-2">
-                {[
-                  'Analyse prédictive des délais',
-                  'Détection d\'anomalies de flux',
-                  'Interfaçage gestion des lits',
-                  'Dashboard ARS-ready RPU consolidé',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-xs">
-                    <CheckCircle className="h-3.5 w-3.5 text-muted-foreground/30 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground/70">{item}</span>
                   </li>
                 ))}
               </ul>
