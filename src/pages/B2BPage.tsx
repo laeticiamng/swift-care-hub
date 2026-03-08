@@ -73,7 +73,7 @@ export default function B2BPage() {
         ]} />
         {/* Hero — Positionnement stratégique */}
         <div className="text-center mb-20">
-          <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
+          <Badge variant="secondary" className="mb-4">Direction Générale / Direction financière / Informatique</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Reprenez le contrôle de votre informatique hospitalière.
           </h1>
