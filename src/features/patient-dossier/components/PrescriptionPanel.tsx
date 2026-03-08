@@ -83,7 +83,8 @@ export function PrescriptionPanel(props: PrescriptionPanelProps) {
             <div className="space-y-3">
               {/* Pack suggestions */}
               {encounter.motif_sfmu && (() => {
-                const motifLower = (encounter.motif_sfmu || '').toLowerCase();
+                const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+                const motifNorm = normalize(encounter.motif_sfmu || '');
                 const MOTIF_KEYWORDS: Record<string, string[]> = {
                   'Douleur thoracique': ['douleur thoracique', 'dt', 'precordialgie', 'thorax', 'cardio', 'angor', 'infarctus'],
                   'Traumatisme membre': ['traumatisme', 'trauma', 'fracture', 'entorse', 'luxation', 'chute'],
@@ -94,7 +95,9 @@ export function PrescriptionPanel(props: PrescriptionPanelProps) {
                   'Malaise / syncope': ['malaise', 'syncope', 'perte connaissance', 'lipothymie'],
                 };
                 const matchedPacks: string[] = [];
-                if (PRESCRIPTION_PACKS[encounter.motif_sfmu]) matchedPacks.push(encounter.motif_sfmu);
+                // Match by normalized motif against pack keys
+                const motifKey = Object.keys(PRESCRIPTION_PACKS).find(k => normalize(k) === motifNorm);
+                if (motifKey) matchedPacks.push(motifKey);
                 for (const [packKey, keywords] of Object.entries(MOTIF_KEYWORDS)) {
                   if (matchedPacks.includes(packKey)) continue;
                   if (keywords.some(kw => motifLower.includes(kw))) matchedPacks.push(packKey);
