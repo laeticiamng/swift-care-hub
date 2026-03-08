@@ -51,6 +51,7 @@ const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const AdminRolesPage = lazy(() => import("./pages/AdminRolesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const OpsPage = lazy(() => import("./pages/OpsPage"));
 
 // ── Loading fallback ──
 function PageLoader() {
