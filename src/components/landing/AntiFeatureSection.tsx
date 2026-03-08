@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const items = [
   { title: 'Pas de refonte de votre existant', desc: 'Votre dossier patient reste en place. UrgenceOS se branche dessus — il ne le remplace pas.' },
   { title: 'Pas un logiciel de plus', desc: 'UrgenceOS est un socle intégré avec des modules par rôle. Pas un énième outil à empiler.' },
-  { title: 'Pas de promesse irréaliste', desc: 'On commence par un pilote de 10 semaines sur vos urgences. Si les résultats sont là, vous étendez.' },
+  { title: 'Pas de promesse irréaliste', desc: 'On commence par un essai de 10 semaines sur vos urgences. Si les résultats sont là, vous continuez.' },
   { title: 'Pas d\'IA gadget', desc: 'L\'aide à la décision repose sur des scores médicaux validés, pas sur des promesses algorithmiques.' },
 ];
 

@@ -15,119 +15,99 @@ interface FAQItem {
 
 const FAQ_CATEGORIES: { title: string; items: FAQItem[] }[] = [
   {
-    title: 'Général',
+    title: 'Comprendre UrgenceOS',
     items: [
       {
         question: 'Qu\'est-ce qu\'UrgenceOS ?',
-        answer: 'UrgenceOS est un socle logiciel que l\'hôpital possède et gouverne (Hospital-Owned Software), sur lequel se branchent des modules métier interopérables dédiés aux urgences. Ce n\'est pas un outil de plus à empiler : c\'est une architecture qui remplace progressivement les outils satellites par des modules intégrés, réduisant la dette opérationnelle au lieu de l\'aggraver.',
+        answer: 'UrgenceOS est un logiciel pour les services d\'urgences hospitalières. Il regroupe sur un seul écran tout ce dont chaque soignant a besoin : vue des patients, prescriptions, résultats, coordination. Au lieu d\'utiliser 15 logiciels différents mal connectés, votre équipe utilise une seule plateforme intégrée. Et surtout : c\'est votre hôpital qui possède et contrôle le logiciel, pas un éditeur externe.',
       },
       {
-        question: 'Qu\'est-ce que le Hospital-Owned Software ?',
-        answer: 'C\'est un modèle dans lequel l\'hôpital possède son socle logiciel interne — identité, droits, audit, bus d\'intégration — au lieu de le louer à un éditeur. Les modules métier se branchent sur ce socle via des standards ouverts (FHIR R4, HL7v2). L\'hôpital décide des priorités d\'évolution, maîtrise les coûts sur 5 ans, et n\'est plus dépendant d\'un fournisseur unique.',
+        question: 'Pourquoi "que votre hôpital contrôle" ?',
+        answer: 'Aujourd\'hui, la plupart des hôpitaux louent leurs logiciels à des éditeurs qui fixent seuls les prix, le calendrier et les conditions. Avec UrgenceOS, votre hôpital possède la plateforme. Vous décidez des évolutions, vous maîtrisez les coûts, et vous n\'êtes plus dépendant d\'un fournisseur unique.',
       },
       {
-        question: 'Qu\'est-ce que la dette opérationnelle ?',
-        answer: 'La dette opérationnelle est le coût cumulé de quatre facteurs : la dépendance fournisseur (licences croissantes sans corrélation avec la valeur), la fragmentation du SI (15 à 40 applications mal intégrées), le temps clinique perdu (45 à 90 minutes par poste par jour en friction logicielle), et la surface d\'attaque croissante (chaque outil supplémentaire est un vecteur de compromission). UrgenceOS est conçu pour réduire cette dette, pas pour l\'aggraver.',
-      },
-      {
-        question: 'UrgenceOS remplace-t-il le DPI ?',
-        answer: 'Non. Le DPI cœur reste en place. UrgenceOS l\'encadre via des connecteurs standards (FHIR R4, HL7v2) et remplace progressivement les outils satellites — pas le DPI lui-même. L\'objectif est de structurer et compléter, pas de refondre.',
+        question: 'Est-ce que ça remplace notre dossier patient actuel ?',
+        answer: 'Non. Votre dossier patient informatisé reste en place. UrgenceOS se connecte dessus pour récupérer et afficher les informations utiles. Il remplace les petits outils annexes (tableaux Excel, fiches papier, logiciels satellites) par des modules intégrés — pas votre système principal.',
       },
       {
         question: 'UrgenceOS est-il un dispositif médical ?',
-        answer: 'Non. UrgenceOS est un outil d\'aide à la gestion et à l\'organisation des urgences hospitalières. Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur (MDR 2017/745). Les décisions cliniques restent de la responsabilité exclusive des professionnels de santé.',
+        answer: 'Non. C\'est un outil d\'aide à la gestion et à l\'organisation des urgences. Les décisions cliniques restent de la responsabilité exclusive des professionnels de santé.',
       },
     ],
   },
   {
-    title: 'Architecture & Technique',
+    title: 'Comment ça marche',
     items: [
       {
-        question: 'Quelle est l\'architecture d\'UrgenceOS ?',
-        answer: 'UrgenceOS repose sur un socle interne (identité/SSO, RBAC, audit immuable, API gateway, bus d\'intégration FHIR, observabilité) sur lequel se branchent des modules métier. Les deux premiers modules sont le récap parcours patient par rôle et la traçabilité temps réel. L\'architecture est conçue pour être extensible sans refonte.',
+        question: 'Comment ça s\'intègre avec notre informatique existante ?',
+        answer: 'UrgenceOS se connecte à votre dossier patient en lecture via des standards ouverts utilisés dans tous les hôpitaux. Il reçoit aussi les résultats de laboratoire automatiquement. Aucune modification de votre infrastructure existante n\'est nécessaire.',
       },
       {
-        question: 'Comment fonctionne l\'intégration avec le SIH existant ?',
-        answer: 'UrgenceOS se connecte au DPI en lecture seule via des connecteurs FHIR R4 et HL7v2 (ADT, ORM, ORU). Le bus d\'intégration gère les flux avec le LIS (réception résultats), la GAP, et MSSanté. L\'intégration bidirectionnelle est disponible en phase Extension. Aucune modification de votre infrastructure existante n\'est requise.',
+        question: 'Quels rôles sont concernés ?',
+        answer: 'Chaque professionnel a un écran adapté : médecin urgentiste, infirmier d\'accueil et d\'orientation (IOA), infirmier (IDE), aide-soignant, secrétaire. Chacun voit uniquement ce dont il a besoin.',
       },
       {
-        question: 'Quels standards d\'interopérabilité sont supportés ?',
-        answer: 'FHIR R4, HL7v2 (ADT, ORM, ORU), HPRIM, INS (Identité Nationale de Santé), MSSanté, DMP, RPU ATIH (format FEDORU). UrgenceOS suit le cadre CI-SIS de l\'ANS et les référentiels d\'interopérabilité en vigueur.',
+        question: 'Les résumés de passage aux urgences (RPU) sont-ils générés automatiquement ?',
+        answer: 'Oui. Le résumé est créé automatiquement à partir des informations saisies pendant la prise en charge, dans le format réglementaire.',
       },
       {
-        question: 'Les RPU sont-ils générés automatiquement ?',
-        answer: 'Oui. Le Résumé de Passage aux Urgences est généré automatiquement à partir des données saisies durant le parcours patient, conformément au format normalisé de la FEDORU/ATIH.',
-      },
-      {
-        question: 'Le socle est-il multi-tenant pour les GHT ?',
-        answer: 'Oui. Le socle est conçu pour être mutualisé entre établissements d\'un même GHT : même infrastructure, données isolées par établissement, modules communs, connecteurs réutilisables, coûts divisés. La gouvernance d\'interopérabilité est commune.',
+        question: 'Peut-on l\'utiliser sur plusieurs établissements ?',
+        answer: 'Oui. La plateforme est conçue pour être partagée entre plusieurs hôpitaux d\'un même groupement : même outil, données séparées par établissement, coûts divisés.',
       },
     ],
   },
   {
-    title: 'Sécurité & Conformité',
+    title: 'Sécurité et données',
     items: [
       {
         question: 'Où sont hébergées les données ?',
-        answer: 'Toutes les données sont hébergées en France sur une infrastructure certifiée HDS (Hébergement de Données de Santé), conformément à l\'article L.1111-8 du Code de la santé publique. Monitoring 24/7, disponibilité cible 99,9%.',
+        answer: 'Toutes les données sont hébergées en France, sur une infrastructure certifiée pour l\'hébergement de données de santé (HDS). Surveillance 24h/24, disponibilité cible de 99,9%.',
       },
       {
-        question: 'Quels sont les principes de sécurité d\'UrgenceOS ?',
-        answer: 'Six principes structurels : minimisation des accès (moindre privilège, zéro compte générique), RBAC strict vérifié côté serveur, traçabilité complète (logs immuables append-only, rétention 5 ans), séparation des environnements (dev/préprod/prod), chiffrement en transit (TLS 1.2+) et au repos (AES-256), journalisation et alerting centralisés.',
+        question: 'Comment la sécurité est-elle assurée ?',
+        answer: 'Chaque utilisateur n\'accède qu\'aux données dont il a besoin. Toutes les actions sont tracées et horodatées. Les données sont chiffrées en permanence. Un audit de sécurité est réalisé avant chaque mise en service.',
       },
       {
-        question: 'Comment les menaces sont-elles prises en compte ?',
-        answer: 'Le threat model couvre quatre acteurs : attaquant externe (ransomware, vol de données), utilisateur interne malveillant (export massif, accès non autorisé), utilisateur négligent (phishing, session ouverte), et fournisseur compromis (supply chain). Chaque risque est associé à des parades déployées.',
-      },
-      {
-        question: 'UrgenceOS est-il conforme au RGPD ?',
-        answer: 'Oui. Privacy-by-design : collecte minimale, durée de conservation définie, anonymisation des données non-cliniques, registre des traitements, DPO informé. Les données de production ne sont jamais utilisées en développement (anonymisation obligatoire).',
-      },
-      {
-        question: 'Un test d\'intrusion est-il réalisé ?',
-        answer: 'Oui. Un test d\'intrusion et un scan de vulnérabilités (infra + application) sont réalisés ou planifiés avant chaque go-live pilote. Audit sécurité annuel inclus dans l\'offre Extension. Objectif : aucune CVE critique connue non corrigée en production.',
+        question: 'Est-ce conforme au RGPD ?',
+        answer: 'Oui. Le logiciel est conçu dès le départ pour respecter la réglementation : collecte minimale de données, durée de conservation définie, possibilité de suppression sur demande.',
       },
     ],
   },
   {
-    title: 'Pilote & Déploiement',
+    title: 'Essai et déploiement',
     items: [
       {
-        question: 'Comment fonctionne le pilote ?',
-        answer: 'Le pilote dure 10 semaines sur un service d\'urgences. Il inclut 2 modules (récap parcours + traçabilité temps réel), l\'intégration DPI en lecture seule, la formation par rôle (2h par profil), et un rapport de mesure avant/après pour DG/DAF/DSI. Les critères go/no-go sont définis à l\'avance.',
+        question: 'Comment fonctionne l\'essai ?',
+        answer: 'L\'essai dure 10 semaines sur un service d\'urgences. Il inclut 2 modules, la connexion à votre dossier patient, la formation de vos équipes (2h par profil), et un rapport de résultats pour votre direction. Les critères de succès sont définis ensemble avant le lancement.',
       },
       {
-        question: 'Quel est le coût d\'un pilote ?',
-        answer: 'Le forfait pilote est calibré sur le périmètre (un service, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Pas d\'engagement pluriannuel en première intention.',
+        question: 'Combien ça coûte ?',
+        answer: 'L\'essai démarre à partir de 15 000 €, selon la complexité de connexion avec votre informatique existante. Ce forfait inclut le déploiement, la formation et le rapport de mesure. Pas d\'engagement pluriannuel.',
       },
       {
-        question: 'Que se passe-t-il après le pilote ?',
-        answer: 'Si les critères go/no-go sont atteints, vous décidez de la suite : extension à d\'autres services, modules supplémentaires (triage, prescriptions, sortie), intégration bidirectionnelle DPI, SSO institutionnel. Si les résultats ne sont pas là, vous arrêtez. Pas d\'engagement automatique.',
+        question: 'Que se passe-t-il après l\'essai ?',
+        answer: 'Si les résultats sont positifs, vous décidez de continuer : extension à d\'autres services, modules supplémentaires, connexion bidirectionnelle. Si les résultats ne sont pas là, vous arrêtez. Pas d\'engagement automatique.',
       },
       {
         question: 'Combien de temps prend la formation ?',
-        answer: 'La formation est dispensée par rôle : 2 heures par profil (médecin, IOA, IDE, AS, secrétaire). L\'interface est conçue pour une prise en main rapide — un écran par rôle, zéro ressaisie, ergonomie validée par le terrain.',
+        answer: '2 heures par profil (médecin, infirmier, aide-soignant, secrétaire). L\'interface est conçue pour être intuitive : un seul écran par rôle, pas de ressaisie.',
       },
       {
-        question: 'Peut-on tester UrgenceOS avant de s\'engager ?',
-        answer: 'Oui. Une démo interactive est accessible librement. Pour aller plus loin, le pilote de 10 semaines permet de mesurer le ROI sur vos données réelles avant tout engagement d\'extension.',
+        question: 'Peut-on tester avant de s\'engager ?',
+        answer: 'Oui. Une démo interactive est accessible librement sur ce site. Pour aller plus loin, l\'essai de 10 semaines permet de mesurer les gains concrets avant tout engagement.',
       },
     ],
   },
   {
-    title: 'Modèle économique',
+    title: 'Tarifs',
     items: [
       {
-        question: 'Comment le modèle diffère-t-il d\'un éditeur classique ?',
-        answer: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale. L\'hôpital garde le contrôle.',
+        question: 'Comment le modèle économique fonctionne-t-il ?',
+        answer: 'Votre hôpital possède le logiciel. Pas de licence qui augmente chaque année. Les coûts portent sur le déploiement, la formation et la maintenance. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
       },
       {
-        question: 'Comment construire le business case ?',
-        answer: 'Nous fournissons un modèle de business case TCO 5 ans à remplir avec les données de votre établissement. Réunion de 60 minutes avec le DAF. Les formules ROI/payback sont transparentes. Les chiffres sont les vôtres, pas les nôtres.',
-      },
-      {
-        question: 'Comment fonctionne le modèle GHT / consortium ?',
-        answer: 'Le socle est mutualisé entre établissements : même infrastructure, données isolées, modules communs, connecteurs réutilisables. Les coûts sont divisés par établissement. La gouvernance d\'interopérabilité est commune. Les indicateurs sont consolidés et ARS-ready.',
+        question: 'Comment estimer les économies pour mon établissement ?',
+        answer: 'Nous proposons une réunion de 60 minutes avec votre direction financière. On remplit ensemble un modèle de calcul avec vos propres chiffres (coûts actuels des logiciels, temps perdu, incidents). Les résultats sont les vôtres, pas les nôtres.',
       },
     ],
   },

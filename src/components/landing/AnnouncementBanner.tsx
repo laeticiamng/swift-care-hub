@@ -29,7 +29,7 @@ export function AnnouncementBanner() {
               className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors group bg-primary/5 rounded-full px-4 py-1 border border-primary/15 hover:border-primary/30 hover:bg-primary/10"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="font-medium text-xs sm:text-sm">Premiers pilotes hospitaliers ouverts pour 2026</span>
+              <span className="font-medium text-xs sm:text-sm">Premiers essais hospitaliers ouverts pour 2026</span>
               <ArrowRight className="h-3.5 w-3.5 text-primary group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <button

@@ -54,13 +54,13 @@ export default function B2BPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="UrgenceOS — Établissements hospitaliers | Autonomie logicielle SI"
-        description="Reprenez le contrôle de votre SI hospitalier avec UrgenceOS. Socle interne, modules urgences à ROI mesurable, interopérabilité FHIR R4."
+        title="UrgenceOS — Établissements hospitaliers | Reprenez le contrôle"
+        description="Reprenez le contrôle de votre informatique hospitalière avec UrgenceOS. Un logiciel que votre hôpital possède, des résultats mesurables en 10 semaines."
         canonical="https://urgenceos.fr/b2b"
       />
       <JsonLd id="b2b-webpage" data={webPageSchema({
         name: 'UrgenceOS — Établissements hospitaliers',
-        description: 'Reprenez le contrôle de votre SI hospitalier. Socle interne possédé par l\'hôpital, modules urgences, interopérabilité FHIR R4.',
+        description: 'Un logiciel que votre hôpital possède, des modules urgences aux résultats mesurables, compatible avec votre existant.',
         url: 'https://urgenceos.fr/b2b',
         breadcrumb: ['Accueil', 'Établissements'],
       })} />
@@ -73,7 +73,7 @@ export default function B2BPage() {
         ]} />
         {/* Hero — Positionnement stratégique */}
         <div className="text-center mb-20">
-          <Badge variant="secondary" className="mb-4">Direction Générale / DAF / DSI / ARS</Badge>
+          <Badge variant="secondary" className="mb-4">Direction Générale / Direction financière / Informatique</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Reprenez le contrôle de votre informatique hospitalière.
           </h1>
@@ -86,7 +86,7 @@ export default function B2BPage() {
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
-              Demander un pilote <ArrowRight className="h-4 w-4 ml-1" />
+              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/features')}>
               Voir les fonctionnalités
@@ -102,18 +102,18 @@ export default function B2BPage() {
             {[
               {
                 icon: Building2,
-                role: 'Direction Générale / DAF',
+                role: 'Direction Générale / Finances',
                 message: 'Chaque année, 3 à 7 % du budget part en licences que vous ne maîtrisez pas. Pendant ce temps, 45 à 90 minutes par soignant sont perdues chaque jour sur des outils mal pensés. UrgenceOS inverse la tendance : un logiciel que vous possédez, des résultats mesurables, des coûts prévisibles et décroissants.',
               },
               {
                 icon: Shield,
-                role: 'DSI',
-                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose un socle interne standardisé — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
+                role: 'Direction informatique',
+                message: 'Votre système d\'information est une mosaïque de 15 à 40 logiciels connectés par des interfaces artisanales. UrgenceOS propose une plateforme interne standardisée — gestion des identités, droits d\'accès, traçabilité, échanges sécurisés — que votre équipe contrôle. Le dossier patient reste en place. Les risques diminuent.',
               },
               {
                 icon: Eye,
-                role: 'ARS',
-                message: 'Un modèle de sobriété logicielle mutualisable à l\'échelle d\'un GHT. Un socle commun déployable entre établissements, des modules standardisés, une gouvernance d\'interopérabilité alignée sur les référentiels nationaux (INS, DMP, MSSanté, RPU ATIH).',
+                role: 'Tutelles / Agences régionales',
+                message: 'Un modèle de sobriété logicielle mutualisable à l\'échelle d\'un groupement hospitalier. Une plateforme commune déployable entre établissements, des modules standardisés, une interopérabilité alignée sur les référentiels nationaux.',
               },
               {
                 icon: Users,
@@ -139,7 +139,7 @@ export default function B2BPage() {
           <div className="flex items-start gap-4 mb-6">
             <Layers className="h-6 w-6 text-primary shrink-0 mt-1" />
             <div>
-              <h2 className="text-2xl font-bold mb-2">Hospital-Owned Software</h2>
+              <h2 className="text-2xl font-bold mb-2">Un logiciel que votre hôpital possède</h2>
               <p className="text-muted-foreground leading-relaxed">
                 L'établissement détient, gouverne et priorise un socle logiciel interne. Le code est accessible.
                 Les données restent sous gouvernance hospitalière. Les priorités d'évolution sont décidées par l'hôpital, pas par un éditeur.
@@ -205,18 +205,18 @@ export default function B2BPage() {
           </div>
         </div>
 
-        {/* Pilote 10 semaines */}
+        {/* Essai 10 semaines */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Pilote DG/DSI ready : 10 semaines.</h2>
+          <h2 className="text-2xl font-bold text-center mb-2">Essai encadré : 10 semaines pour voir les résultats.</h2>
           <p className="text-muted-foreground text-center mb-8">
-            Périmètre strict. ROI mesuré. Critères go/no-go définis avant le lancement.
+            Périmètre défini. Résultats mesurés. Critères de succès fixés avant le lancement.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { step: 'S1-S2', title: 'Cadrage & baseline', desc: 'Audit technique, cartographie des flux, chronométrage terrain, mesure de l\'état initial.' },
-              { step: 'S3-S5', title: 'Déploiement', desc: 'Socle + 2 modules urgences. Connecteurs DPI/LIS. Tests d\'intégration.' },
-              { step: 'S6-S8', title: 'Formation & terrain', desc: 'Formation par rôle. Lancement progressif. Présence physique. Quick wins visibles.' },
-              { step: 'S9-S10', title: 'Mesure & rapport', desc: 'Chronométrage post-déploiement. Rapport DG/DAF + DSI + terrain. Décision go/no-go.' },
+              { step: 'S1-S2', title: 'Cadrage', desc: 'Analyse de votre informatique existante, cartographie des échanges de données, état des lieux terrain.' },
+              { step: 'S3-S5', title: 'Mise en place', desc: 'Installation de la plateforme + 2 modules urgences. Connexion à votre dossier patient. Tests.' },
+              { step: 'S6-S8', title: 'Formation', desc: 'Formation par rôle. Lancement progressif. Accompagnement sur site. Premiers résultats visibles.' },
+              { step: 'S9-S10', title: 'Bilan', desc: 'Mesure des résultats. Rapport pour la direction et les équipes terrain. Décision de suite.' },
             ].map((s) => (
               <div key={s.step} className="p-5 rounded-xl border bg-card">
                 <span className="text-xs font-semibold text-primary">{s.step}</span>
@@ -235,9 +235,9 @@ export default function B2BPage() {
           <div className="max-w-2xl mx-auto p-8 rounded-2xl border bg-card">
             <div className="text-center mb-8">
               <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Demander un pilote</h2>
+              <h2 className="text-2xl font-bold mb-2">Demander un essai</h2>
               <p className="text-muted-foreground">
-                10 semaines, périmètre urgences, ROI mesuré. Notre équipe vous recontacte sous 48h.
+                10 semaines, périmètre urgences, résultats mesurés. Notre équipe vous recontacte sous 48h.
               </p>
             </div>
 
@@ -272,7 +272,7 @@ export default function B2BPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Fonction *</Label>
-                    <Input id="role" name="role" placeholder="DG, DAF, DSI, Chef de service..." required maxLength={200} />
+                    <Input id="role" name="role" placeholder="Directeur, DSI, Chef de service..." required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -281,11 +281,11 @@ export default function B2BPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="message">Contexte et enjeux (optionnel)</Label>
-                  <Textarea id="message" name="message" placeholder="DPI en place, nombre de services, irritants principaux..." rows={4} maxLength={2000} />
+                  <Textarea id="message" name="message" placeholder="Dossier patient en place, nombre de services, problèmes principaux..." rows={4} maxLength={2000} />
                 </div>
                 {submitError && <p className="text-sm text-medical-critical text-center">{submitError}</p>}
                 <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un pilote'}
+                  <Send className="h-4 w-4 mr-2" /> {submitting ? 'Envoi en cours...' : 'Demander un essai'}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   En soumettant ce formulaire, vous acceptez notre{' '}
