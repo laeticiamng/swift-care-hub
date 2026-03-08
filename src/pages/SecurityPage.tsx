@@ -131,8 +131,8 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
-        title="Sécurité UrgenceOS — RBAC, audit immuable, HDS, chiffrement AES-256"
-        description="Architecture de sécurité UrgenceOS : RBAC serveur, audit immuable, chiffrement TLS 1.2+ et AES-256, hébergement HDS France, threat model 4 acteurs, conformité RGPD."
+        title="Sécurité UrgenceOS — Droits d'accès, audit immuable, hébergement France"
+        description="Sécurité UrgenceOS : droits d'accès par rôle vérifiés côté serveur, journal d'audit non modifiable, chiffrement des données, hébergement en France, conformité RGPD."
         canonical="https://urgenceos.fr/securite"
       />
       <JsonLd id="security-webpage" data={webPageSchema({
