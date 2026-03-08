@@ -55,12 +55,20 @@ export function SiteHeader() {
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
           </Button>
-          <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
-            S'inscrire
-          </Button>
-          <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
-            Connexion
-          </Button>
+          {isDemoMode ? (
+            <Button size="sm" onClick={() => navigate('/board')} aria-label="Aller au board">
+              <LayoutGrid className="h-4 w-4 mr-1" /> Board
+            </Button>
+          ) : (
+            <>
+              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/signup')} aria-label="Créer un compte UrgenceOS">
+                S'inscrire
+              </Button>
+              <Button size="sm" onClick={() => navigate('/login')} aria-label="Se connecter à UrgenceOS">
+                Connexion
+              </Button>
+            </>
+          )}
 
           {/* Mobile hamburger */}
           <button
