@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Auto-create incident if any service is down
+    // Auto-create incident if any service is down + send alert email
     const downServices = results.filter(r => r.status === 'down')
     for (const ds of downServices) {
       const { data: existing } = await supabase
@@ -140,14 +140,34 @@ Deno.serve(async (req) => {
         .limit(1)
 
       if (!existing || existing.length === 0) {
+        const incidentTitle = `${(ds.details as any)?.label || ds.service_name} — Indisponibilité détectée`;
         await supabase.from('incident_logs').insert({
           component: ds.service_name,
-          title: `${(ds.details as any)?.label || ds.service_name} — Indisponibilité détectée`,
+          title: incidentTitle,
           description: `Le service ${ds.service_name} ne répond pas. Investigation en cours.`,
           status: 'investigating',
           severity: 'major',
         })
         log.warn("Incident created", { service: ds.service_name });
+
+        // Send alert email
+        try {
+          await fetch(`${Deno.env.get('SUPABASE_URL')!}/functions/v1/send-alert`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')!}`,
+            },
+            body: JSON.stringify({
+              type: 'service_down',
+              title: incidentTitle,
+              details: `Le service "${ds.service_name}" ne répond pas (temps de réponse : ${ds.response_time_ms}ms). Une investigation automatique a été ouverte.`,
+              severity: 'critical',
+            }),
+          });
+        } catch (alertErr) {
+          log.error("Failed to send alert email", { error: String(alertErr) });
+        }
       }
     }
 
