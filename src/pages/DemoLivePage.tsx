@@ -84,10 +84,10 @@ export default function DemoLivePage() {
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-10 space-y-3">
-          <h1 className="text-3xl font-bold">Choisissez votre role</h1>
+          <h1 className="text-3xl font-bold">Choisissez votre rôle</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Selectionnez un profil pour explorer l'interface correspondante avec des donnees fictives.
-            Aucun compte necessaire.
+            Sélectionnez un profil pour explorer l'interface correspondante avec des données fictives.
+            Aucun compte nécessaire.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
