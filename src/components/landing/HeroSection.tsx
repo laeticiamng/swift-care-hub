@@ -129,9 +129,9 @@ export function HeroSection() {
           className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground"
         >
           {[
-            'Compatible avec votre DPI existant',
+            'Compatible avec votre dossier patient existant',
             'Un écran unique par rôle soignant',
-            'Données hébergées en France (HDS)',
+            'Données hébergées en France',
             'Résultats mesurables en 10 semaines',
           ].map((text) => (
             <span key={text} className="flex items-center gap-1.5">
