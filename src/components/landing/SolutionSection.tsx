@@ -49,7 +49,7 @@ export function SolutionSection() {
           transition={{ duration: 0.5, delay: 0.05 }}
           className="text-3xl sm:text-4xl font-bold text-center mb-4"
         >
-          La solution n'est pas un nouvel outil. C'est un changement de modèle.
+          Un seul logiciel au lieu de dizaines d'outils dispersés.
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -58,7 +58,7 @@ export function SolutionSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted-foreground text-center max-w-3xl mx-auto mb-12 leading-relaxed"
         >
-          Hospital-Owned Software : votre hôpital possède un socle logiciel interne sur lequel se branchent des modules métier interopérables. Le DPI reste en place. Les outils satellites disparaissent un par un.
+          Votre hôpital possède un socle logiciel sur lequel se branchent des modules adaptés à chaque rôle soignant. Votre dossier patient reste en place. Les outils satellites disparaissent un par un.
         </motion.p>
 
         <div className="grid sm:grid-cols-3 gap-6 mb-12">

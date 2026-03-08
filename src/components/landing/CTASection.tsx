@@ -7,18 +7,18 @@ import { motion } from 'framer-motion';
 const PILLARS = [
   {
     icon: Building2,
-    title: 'Contrôle total',
-    desc: 'L\'hôpital possède le socle, gouverne les priorités, et maîtrise les coûts sur 5 ans.',
+    title: 'Vous êtes propriétaire',
+    desc: 'Votre hôpital possède le logiciel, décide de ses évolutions et maîtrise son budget sur 5 ans.',
   },
   {
     icon: Shield,
-    title: 'Sécurité structurelle',
-    desc: 'Moins d\'applications exposées, droits par rôle, traçabilité complète. La surface d\'attaque diminue.',
+    title: 'Plus sûr par conception',
+    desc: 'Moins de logiciels exposés, droits d\'accès par rôle, traçabilité complète de chaque action.',
   },
   {
     icon: Clock,
-    title: 'Temps clinique récupéré',
-    desc: 'Un seul écran par rôle. Zéro ressaisie. 30 à 50 % de friction logicielle en moins aux urgences.',
+    title: 'Vos soignants gagnent du temps',
+    desc: 'Un seul écran par rôle. Zéro ressaisie. Jusqu\'à 50 % de temps administratif en moins aux urgences.',
   },
 ];
 

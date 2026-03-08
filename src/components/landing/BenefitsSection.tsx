@@ -3,12 +3,12 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const benefits = [
-  { title: 'Contrôle', desc: 'Vous décidez des priorités d\'évolution de votre SI, pas un éditeur.' },
-  { title: 'Temps clinique', desc: 'Vos équipes urgences récupèrent 30 à 50 % du temps perdu en friction logicielle.' },
-  { title: 'Résilience', desc: 'Moins d\'applications exposées, moins de surface d\'attaque, moins de dépendance fournisseur.' },
-  { title: 'Interopérabilité', desc: 'Standards ouverts (FHIR, HL7v2) au lieu d\'interfaces propriétaires fragiles.' },
-  { title: 'Traçabilité', desc: 'Chaque action horodatée, attribuée, auditable. Couverture médico-légale renforcée.' },
-  { title: 'Économies structurelles', desc: 'Outils satellites remplacés par des modules intégrés : moins cher à maintenir, sécuriser, évoluer.' },
+  { title: 'Vous gardez le contrôle', desc: 'C\'est vous qui décidez des évolutions du logiciel, pas un éditeur externe.' },
+  { title: 'Plus de temps pour les patients', desc: 'Vos soignants récupèrent 30 à 50 % du temps perdu à naviguer entre les logiciels.' },
+  { title: 'Moins de risques', desc: 'Moins de logiciels ouverts sur le réseau = moins de portes d\'entrée pour les cyberattaques.' },
+  { title: 'Compatible avec tout', desc: 'UrgenceOS communique avec vos logiciels existants grâce aux standards ouverts du secteur.' },
+  { title: 'Tout est tracé', desc: 'Chaque action est enregistrée avec l\'heure et l\'auteur. Utile en cas d\'audit ou de litige.' },
+  { title: 'Des économies réelles', desc: 'Les logiciels satellites sont remplacés par des modules intégrés : moins cher à maintenir et plus sûr.' },
 ];
 
 const cardVariants = {

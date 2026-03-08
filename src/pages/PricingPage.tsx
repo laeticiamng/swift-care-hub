@@ -119,7 +119,7 @@ export default function PricingPage() {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Pas d'engagement pluriannuel en première intention.
             Un pilote de 10 semaines pour mesurer le ROI avec vos chiffres.
-            Si les résultats sont là, vous scalez. Si non, vous arrêtez.
+            Si les résultats sont là, vous étendez. Si non, vous arrêtez.
           </p>
         </div>
 

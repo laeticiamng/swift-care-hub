@@ -64,7 +64,7 @@ export function HeroSection() {
           {...fadeUp(0.3)}
           className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, interopérable avec votre DPI existant. L'hôpital garde le contrôle total du logiciel et de ses données.
+          UrgenceOS remplace les outils dispersés de votre service d'urgences par une plateforme intégrée, compatible avec votre dossier patient informatisé existant. L'hôpital garde le contrôle total du logiciel et de ses données.
         </motion.p>
 
         <motion.div

@@ -5,10 +5,10 @@ import { Section } from './Section';
 import { motion } from 'framer-motion';
 
 const points = [
-  'Le socle réduit la surface d\'attaque en réduisant le nombre d\'applications exposées',
-  'Chaque échange DPI passe par un bus d\'intégration documenté, testé, surveillé',
+  'Moins de logiciels ouverts = moins de portes d\'entrée pour les cyberattaques',
+  'Chaque échange avec votre dossier patient est documenté, testé et surveillé',
   'Pas de comptes partagés. Pas de données non chiffrées. Pas de données orphelines.',
-  'Traçabilité complète : qui a vu quoi, fait quoi, quand — immuable',
+  'Traçabilité complète : qui a vu quoi, fait quoi, quand — enregistrement non modifiable',
 ];
 
 const cardVariants = {

@@ -66,7 +66,7 @@ export function ProblemSection() {
           transition={{ duration: 0.5, delay: 0.05 }}
           className="text-3xl sm:text-4xl font-bold mb-3"
         >
-          Votre hôpital accumule une dette invisible.
+          Votre service d'urgences perd du temps chaque jour.
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -75,10 +75,10 @@ export function ProblemSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed"
         >
-          Pas seulement financière. Opérationnelle. Chaque jour, cette dette se paie en capacité de soin perdue, en incidents de sécurité, en surcoûts de maintenance, en incapacité à évoluer.
+          Trop de logiciels, trop de ressaisies, trop de clics. Vos soignants perdent du temps sur l'informatique au lieu de le consacrer aux patients.
         </motion.p>
         <p className="text-sm text-muted-foreground/80 mb-12 max-w-xl mx-auto">
-          Le statu quo coûte plus cher que le changement.
+          Ne rien changer coûte plus cher que d'agir.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {debts.map((d, i) => (
