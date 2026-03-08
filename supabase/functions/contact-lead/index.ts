@@ -19,12 +19,12 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Swift Care Hub <leads@swiftcarehub.com>",
+        from: "UrgenceOS <leads@urgenceos.fr>",
         to: ["contact@emotionscare.com"],
-        subject: `🏥 Nouveau lead B2B — ${leadData.establishment}`,
+        subject: `🏥 Nouveau lead UrgenceOS — ${leadData.establishment}`,
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px">
-            <h2 style="color:#1a1a2e;border-bottom:2px solid #0ea5e9;padding-bottom:12px">Nouveau lead Swift Care Hub</h2>
+            <h2 style="color:#1a1a2e;border-bottom:2px solid #0ea5e9;padding-bottom:12px">Nouveau lead UrgenceOS</h2>
             <table style="width:100%;border-collapse:collapse;margin-top:16px">
               <tr><td style="padding:8px 0;color:#666;width:140px">Nom</td><td style="padding:8px 0;font-weight:600">${leadData.last_name} ${leadData.first_name}</td></tr>
               <tr><td style="padding:8px 0;color:#666">Email</td><td style="padding:8px 0"><a href="mailto:${leadData.email}">${leadData.email}</a></td></tr>
@@ -33,7 +33,7 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
               <tr><td style="padding:8px 0;color:#666">Volume passages</td><td style="padding:8px 0">${leadData.passages_volume || "Non renseigné"}</td></tr>
             </table>
             ${leadData.message ? `<div style="margin-top:16px;padding:12px;background:#f8fafc;border-radius:8px"><strong>Message :</strong><br/>${leadData.message}</div>` : ""}
-            <p style="margin-top:24px;color:#94a3b8;font-size:12px">Envoyé automatiquement par Swift Care Hub — ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>
+            <p style="margin-top:24px;color:#94a3b8;font-size:12px">Envoyé automatiquement par UrgenceOS — ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>
           </div>
         `,
       }),

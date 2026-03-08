@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/urgence/ThemeToggle';
 import { cn } from '@/lib/utils';
 import {
   Activity, ArrowLeft, ArrowRight, ChevronRight, ClipboardList,
-  Heart, Layout, LogIn, Play, Shield, Stethoscope, Timer,
+  Heart, Layout, Play, Shield, Stethoscope, Timer,
   UserPlus, Users, Wifi, WifiOff, Zap,
 } from 'lucide-react';
 import { PageMeta, JsonLd, webPageSchema } from '@/components/seo/JsonLd';
@@ -280,8 +280,8 @@ export default function DemoPage() {
           <div className="flex items-center gap-2">
             <Badge variant="secondary">Demo interactive</Badge>
             <ThemeToggle />
-            <Button size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-1" /> Essayer
+            <Button size="sm" onClick={() => navigate('/demo/live')}>
+              <Play className="h-4 w-4 mr-1" /> Essayer en live
             </Button>
           </div>
         </div>

@@ -32,11 +32,11 @@ export default function ContactPage() {
     try {
       const { error } = await supabase.functions.invoke('contact-lead', {
         body: {
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           email: email.trim(),
           establishment: establishment.trim(),
-          role_function: roleFunction.trim(),
+          roleFunction: roleFunction.trim(),
           message: message.trim() || null,
         },
       });
