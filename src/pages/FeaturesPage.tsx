@@ -268,15 +268,15 @@ export default function FeaturesPage() {
             <div>
               <h2 className="text-2xl font-bold mb-2">Intégration : encadrer sans remplacer</h2>
               <p className="text-muted-foreground">
-                Le DPI reste le système de référence. UrgenceOS le consomme et le complète via des connecteurs standards.
+                Votre dossier patient reste le système de référence. UrgenceOS le lit et le complète via des connecteurs standards.
               </p>
             </div>
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: 'DPI', items: ['Lecture FHIR R4 / HL7v2 (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'DPI = référence admin, UrgenceOS = référence temps réel urgences'] },
-              { title: 'LIS (Laboratoire)', items: ['Réception résultats via HL7v2/HPRIM', 'Détection automatique valeurs critiques', 'Routage alerte vers médecin prescripteur'] },
-              { title: 'PACS (Imagerie)', items: ['Notification disponibilité examen via HL7v2', 'Lien contextuel vers viewer PACS', 'Pas de stockage d\'images dans UrgenceOS'] },
+              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
+              { title: 'Laboratoire', items: ['Réception automatique des résultats', 'Détection automatique valeurs critiques', 'Alerte envoyée au médecin prescripteur'] },
+              { title: 'Imagerie', items: ['Notification quand l\'examen est disponible', 'Lien direct vers la visionneuse d\'images', 'Aucun stockage d\'images dans UrgenceOS'] },
             ].map((sys) => (
               <div key={sys.title} className="p-4 rounded-xl border bg-background">
                 <h4 className="font-semibold text-sm mb-3">{sys.title}</h4>
