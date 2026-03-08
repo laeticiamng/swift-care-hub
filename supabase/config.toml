@@ -25,3 +25,6 @@ verify_jwt = false
 
 [functions.status-monitor]
 verify_jwt = false
+
+[functions.send-alert]
+verify_jwt = false
