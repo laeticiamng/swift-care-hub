@@ -17,13 +17,13 @@ export default function FeaturesPage() {
   return (
     <div className="min-h-screen bg-background">
       <PageMeta
-        title="Architecture UrgenceOS — Socle Hospital-Owned + Modules urgences"
-        description="Architecture produit UrgenceOS : socle interne (RBAC, audit, FHIR), modules urgences à ROI (récap parcours, traçabilité temps réel), intégration DPI sans refonte."
+        title="Fonctionnalités UrgenceOS — Socle + Modules urgences hospitalières"
+        description="Fonctionnalités UrgenceOS : socle interne (droits d'accès, traçabilité, intégration dossier patient), modules urgences (récap parcours, traçabilité temps réel)."
         canonical="https://urgenceos.fr/features"
       />
       <JsonLd id="features-webpage" data={webPageSchema({
-        name: 'Architecture UrgenceOS — Fonctionnalités',
-        description: 'Socle Hospital-Owned + modules métier urgences : récap parcours patient, traçabilité temps réel, intégration DPI FHIR R4/HL7v2.',
+        name: 'Fonctionnalités UrgenceOS',
+        description: 'Socle logiciel possédé par l\'hôpital + modules métier urgences : récap parcours patient, traçabilité temps réel, intégration dossier patient.',
         url: 'https://urgenceos.fr/features',
         breadcrumb: ['Accueil', 'Fonctionnalités'],
       })} />
@@ -47,8 +47,8 @@ export default function FeaturesPage() {
 
         {/* Architecture : Socle + Modules */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Architecture cible</h2>
-          <p className="text-muted-foreground text-center mb-10">Socle transversal + modules métier déployables indépendamment</p>
+          <h2 className="text-2xl font-bold text-center mb-2">Comment c'est construit</h2>
+          <p className="text-muted-foreground text-center mb-10">Un socle commun + des modules métier que vous activez selon vos besoins</p>
 
           {/* Socle interne */}
           <div className="p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent mb-8">
@@ -62,12 +62,12 @@ export default function FeaturesPage() {
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                { icon: Key, title: 'Identité & SSO', desc: 'Authentification forte, gestion des sessions, compatibilité LDAP/ProSanté Connect.' },
-                { icon: Users, title: 'RBAC', desc: '7 rôles de base, permissions granulaires, vérification côté serveur systématique.' },
-                { icon: Eye, title: 'Audit logs', desc: 'Journalisation immuable de chaque action. Qui, quoi, quand, depuis où.' },
-                { icon: FileText, title: 'API documentée', desc: 'REST OpenAPI, versionnée, authentifiée, rate-limitée. Contrats testés automatiquement.' },
-                { icon: RefreshCcw, title: 'Bus d\'intégration', desc: 'Point unique d\'échange avec DPI/LIS/PACS. Connecteurs FHIR R4, HL7v2, HPRIM.' },
-                { icon: BarChart3, title: 'Observabilité', desc: 'Métriques techniques et métier, alerting configurable, dashboard opérationnel.' },
+                { icon: Key, title: 'Identité & connexion unique', desc: 'Authentification forte, gestion des sessions, compatible avec l\'annuaire de votre hôpital et ProSanté Connect.' },
+                { icon: Users, title: 'Droits d\'accès par rôle', desc: '5 rôles de base, permissions précises, vérification côté serveur systématique.' },
+                { icon: Eye, title: 'Journal d\'activité', desc: 'Journalisation non modifiable de chaque action. Qui, quoi, quand, depuis où.' },
+                { icon: FileText, title: 'API documentée', desc: 'Interface de programmation versionnée, authentifiée, avec limites de débit. Tests automatisés.' },
+                { icon: RefreshCcw, title: 'Bus d\'intégration', desc: 'Point unique d\'échange avec votre dossier patient, laboratoire et imagerie. Connecteurs standards.' },
+                { icon: BarChart3, title: 'Supervision', desc: 'Métriques techniques et métier, alertes configurables, tableau de bord opérationnel.' },
               ].map((item) => (
                 <div key={item.title} className="p-4 rounded-xl border bg-card space-y-2">
                   <div className="flex items-center gap-2">
@@ -237,9 +237,9 @@ export default function FeaturesPage() {
 
         {/* L'écran iconique — La Freebox */}
         <div className="mb-20 p-8 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-2">L'écran iconique : la "Freebox" d'UrgenceOS</h2>
+          <h2 className="text-2xl font-bold mb-2">L'écran central d'UrgenceOS</h2>
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            L'écran qui vend en 10 secondes. Quand un médecin, un IDE ou un DG voit cet écran, il comprend ce qui change.
+            En un coup d'œil, le soignant voit tout ce qu'il doit savoir sur un patient. Plus besoin de naviguer entre 4 écrans.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
@@ -248,7 +248,7 @@ export default function FeaturesPage() {
               { icon: Bell, title: 'Alertes structurées', desc: 'Labo critiques, examens en attente, anomalies de constantes. Cliquables.' },
               { icon: ClipboardList, title: 'Tâches & responsabilités', desc: 'Qui fait quoi, statut, escalades. Bouton d\'escalade en un clic.' },
               { icon: Eye, title: 'Synthèse par rôle', desc: 'Le contenu s\'adapte : médecin, IDE, IOA, AS, secrétaire. Chacun voit ce dont il a besoin.' },
-              { icon: Shield, title: 'RBAC + temps réel', desc: 'Données filtrées par droits, mises à jour en continu. Aucune donnée inventée.' },
+              { icon: Shield, title: 'Droits + temps réel', desc: 'Données filtrées par droits d\'accès, mises à jour en continu. Aucune donnée inventée.' },
             ].map((item) => (
               <div key={item.title} className="p-4 rounded-xl border bg-background space-y-2">
                 <div className="flex items-center gap-2">
@@ -268,15 +268,15 @@ export default function FeaturesPage() {
             <div>
               <h2 className="text-2xl font-bold mb-2">Intégration : encadrer sans remplacer</h2>
               <p className="text-muted-foreground">
-                Le DPI reste le système de référence. UrgenceOS le consomme et le complète via des connecteurs standards.
+                Votre dossier patient reste le système de référence. UrgenceOS le lit et le complète via des connecteurs standards.
               </p>
             </div>
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: 'DPI', items: ['Lecture FHIR R4 / HL7v2 (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'DPI = référence admin, UrgenceOS = référence temps réel urgences'] },
-              { title: 'LIS (Laboratoire)', items: ['Réception résultats via HL7v2/HPRIM', 'Détection automatique valeurs critiques', 'Routage alerte vers médecin prescripteur'] },
-              { title: 'PACS (Imagerie)', items: ['Notification disponibilité examen via HL7v2', 'Lien contextuel vers viewer PACS', 'Pas de stockage d\'images dans UrgenceOS'] },
+              { title: 'Dossier patient', items: ['Lecture automatique (identité, antécédents, allergies)', 'Écriture post-pilote (observations, prescriptions)', 'Votre dossier patient = référence admin, UrgenceOS = référence temps réel urgences'] },
+              { title: 'Laboratoire', items: ['Réception automatique des résultats', 'Détection automatique valeurs critiques', 'Alerte envoyée au médecin prescripteur'] },
+              { title: 'Imagerie', items: ['Notification quand l\'examen est disponible', 'Lien direct vers la visionneuse d\'images', 'Aucun stockage d\'images dans UrgenceOS'] },
             ].map((sys) => (
               <div key={sys.title} className="p-4 rounded-xl border bg-background">
                 <h4 className="font-semibold text-sm mb-3">{sys.title}</h4>

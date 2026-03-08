@@ -21,13 +21,18 @@ const EXPECTED_RLS_TABLES = [
   'patient_consents',
   'data_deletion_requests',
   'timeline_items',
+  'contact_leads',
+  'error_logs',
+  'incident_logs',
+  'messages',
+  'status_checks',
 ];
 
 describe('RLS Coverage — all public tables', () => {
   it('should have a complete whitelist of all known tables', () => {
     // This test ensures the whitelist is maintained.
     // When adding a new table, you MUST add it here.
-    expect(EXPECTED_RLS_TABLES.length).toBeGreaterThanOrEqual(14);
+    expect(EXPECTED_RLS_TABLES.length).toBeGreaterThanOrEqual(19);
   });
 
   it('every table in whitelist should be unique', () => {
@@ -41,14 +46,19 @@ describe('RLS Coverage — all public tables', () => {
     const typesTableNames = [
       'administrations',
       'audit_logs',
+      'contact_leads',
       'data_deletion_requests',
       'encounters',
+      'error_logs',
+      'incident_logs',
+      'messages',
       'patient_consents',
       'patients',
       'prescriptions',
       'procedures',
       'profiles',
       'results',
+      'status_checks',
       'timeline_items',
       'transmissions',
       'user_roles',
