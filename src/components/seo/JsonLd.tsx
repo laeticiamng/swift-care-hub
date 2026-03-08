@@ -183,7 +183,7 @@ export function howToSchema() {
         '@type': 'HowToStep',
         position: 2,
         name: 'Configuration et intégration',
-        text: 'Déploiement du socle sur infrastructure HDS. Connexion au DPI en lecture seule via FHIR R4/HL7v2. Configuration des rôles RBAC (médecin, IOA, IDE, AS, secrétaire).',
+        text: 'Déploiement du socle sur infrastructure HDS. Connexion au DPI en lecture seule via connecteurs standards. Configuration des rôles (médecin, IOA, IDE, AS, secrétaire).',
       },
       {
         '@type': 'HowToStep',
