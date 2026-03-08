@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Activity, ArrowLeft, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
 
 const signupSchema = z.object({
@@ -28,6 +28,23 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const passwordStrength = (() => {
+    if (password.length === 0) return { label: '', color: '', percent: 0 };
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (score <= 1) return { label: 'Faible', color: 'bg-medical-critical', percent: 20 };
+    if (score <= 2) return { label: 'Moyen', color: 'bg-medical-warning', percent: 40 };
+    if (score <= 3) return { label: 'Correct', color: 'bg-yellow-500', percent: 60 };
+    if (score <= 4) return { label: 'Fort', color: 'bg-medical-success', percent: 80 };
+    return { label: 'Très fort', color: 'bg-medical-success', percent: 100 };
+  })();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,11 +144,35 @@ export default function SignupPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Mot de passe</Label>
-                  <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 caractères" required />
+                  <div className="relative">
+                    <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 caractères" required className="pr-10" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {password.length > 0 && (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-300 ${passwordStrength.color}`} style={{ width: `${passwordStrength.percent}%` }} />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground font-medium">{passwordStrength.label}</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">Utilisez majuscules, chiffres et caractères spéciaux</p>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-                  <Input id="confirmPassword" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répétez le mot de passe" required />
+                  <div className="relative">
+                    <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répétez le mot de passe" required className="pr-10" />
+                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1} aria-label={showConfirm ? 'Masquer' : 'Afficher'}>
+                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {confirmPassword.length > 0 && password !== confirmPassword && (
+                    <p className="text-[10px] text-medical-critical">Les mots de passe ne correspondent pas</p>
+                  )}
                 </div>
                 {error && <p className="text-sm text-medical-critical animate-in fade-in duration-200">{error}</p>}
                 <Button type="submit" className="w-full touch-target" disabled={loading}>

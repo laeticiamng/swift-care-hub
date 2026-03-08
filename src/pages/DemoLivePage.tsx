@@ -7,16 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import type { AppRole } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
-  Activity, ArrowLeft, ClipboardList, Heart, LogOut,
+  Activity, ArrowLeft, ArrowRight, ClipboardList, Heart, LogOut,
   Stethoscope, Timer, UserPlus, Users, Shield, FileText,
 } from 'lucide-react';
 
 const ROLES: { role: AppRole; label: string; desc: string; icon: React.ReactNode; color: string; route: string }[] = [
-  { role: 'medecin', label: 'Medecin urgentiste', desc: 'Board panoramique, dossier patient, prescriptions', icon: <Stethoscope className="h-8 w-8" />, color: 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50', route: '/board' },
-  { role: 'ioa', label: 'IOA', desc: 'Triage en 5 etapes, classification CIMU, file d\'attente', icon: <ClipboardList className="h-8 w-8" />, color: 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 hover:bg-orange-100 dark:hover:bg-orange-950/50', route: '/ioa-queue' },
-  { role: 'ide', label: 'IDE', desc: 'Pancarte unifiee, administration medicaments, transmissions DAR', icon: <Heart className="h-8 w-8" />, color: 'border-pink-500 bg-pink-50 dark:bg-pink-950/30 hover:bg-pink-100 dark:hover:bg-pink-950/50', route: '/board' },
+  { role: 'medecin', label: 'Médecin urgentiste', desc: 'Board panoramique, dossier patient, prescriptions', icon: <Stethoscope className="h-8 w-8" />, color: 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/50', route: '/board' },
+  { role: 'ioa', label: 'IOA', desc: 'Triage en 5 étapes, classification CIMU, file d\'attente', icon: <ClipboardList className="h-8 w-8" />, color: 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 hover:bg-orange-100 dark:hover:bg-orange-950/50', route: '/ioa-queue' },
+  { role: 'ide', label: 'IDE', desc: 'Pancarte unifiée, administration médicaments, transmissions DAR', icon: <Heart className="h-8 w-8" />, color: 'border-pink-500 bg-pink-50 dark:bg-pink-950/30 hover:bg-pink-100 dark:hover:bg-pink-950/50', route: '/board' },
   { role: 'as', label: 'Aide-soignant', desc: '4 gros boutons tactiles, saisie constantes, alertes', icon: <Activity className="h-8 w-8" />, color: 'border-green-500 bg-green-50 dark:bg-green-950/30 hover:bg-green-100 dark:hover:bg-green-950/50', route: '/as' },
-  { role: 'secretaire', label: 'Secretaire', desc: 'Admission rapide < 90s, recherche patient, attribution box', icon: <UserPlus className="h-8 w-8" />, color: 'border-purple-500 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-950/50', route: '/accueil' },
+  { role: 'secretaire', label: 'Secrétaire', desc: 'Admission rapide < 90s, recherche patient, attribution box', icon: <UserPlus className="h-8 w-8" />, color: 'border-purple-500 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-950/50', route: '/accueil' },
 ];
 
 export default function DemoLivePage() {
@@ -47,7 +47,7 @@ export default function DemoLivePage() {
           <CardContent className="p-6 text-center space-y-4">
             <Badge variant="secondary">Mode Demo</Badge>
             <p className="text-sm text-muted-foreground">
-              Vous etes connecte en tant que <strong>{currentRole?.label}</strong>
+              Vous êtes connecté en tant que <strong>{currentRole?.label}</strong>
             </p>
             <div className="flex gap-3 justify-center">
               <Button variant="outline" onClick={() => navigate(currentRole?.route || '/board')}>
@@ -76,7 +76,7 @@ export default function DemoLivePage() {
               {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
             </div>
             <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-              Demo interactive
+              Démo interactive
             </Badge>
           </div>
         </div>
@@ -84,14 +84,14 @@ export default function DemoLivePage() {
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="text-center mb-10 space-y-3">
-          <h1 className="text-3xl font-bold">Choisissez votre role</h1>
+          <h1 className="text-3xl font-bold">Choisissez votre rôle</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Selectionnez un profil pour explorer l'interface correspondante avec des donnees fictives.
-            Aucun compte necessaire.
+            Sélectionnez un profil pour explorer l'interface correspondante avec des données fictives.
+            Aucun compte nécessaire.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Users className="h-4 w-4" />
-            <span>10 patients simules — Donnees en temps reel</span>
+            <span>10 patients simulés — Données en temps réel</span>
           </div>
         </div>
 
@@ -119,8 +119,8 @@ export default function DemoLivePage() {
             className="p-6 rounded-xl border-2 border-red-500 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Shield className="h-8 w-8 text-red-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Scenarios CDC SIH</h3>
-            <p className="text-sm text-muted-foreground">TV-01 a TV-08 — 8 scenarios de validation issus du Cahier des Charges</p>
+            <h3 className="font-bold text-lg mb-1">Scénarios CDC SIH</h3>
+            <p className="text-sm text-muted-foreground">TV-01 à TV-08 — 8 scénarios de validation issus du Cahier des Charges</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/garde'); }}
@@ -128,36 +128,42 @@ export default function DemoLivePage() {
           >
             <div className="mb-3"><Users className="h-8 w-8 text-indigo-600" /></div>
             <h3 className="font-bold text-lg mb-1">Mode Garde</h3>
-            <p className="text-sm text-muted-foreground">Vue multi-services SAU + UHCD + Dechocage avec alertes et transmissions</p>
+            <p className="text-sm text-muted-foreground">Vue multi-services SAU + UHCD + Déchocage avec alertes et transmissions</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/audit'); }}
             className="p-6 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><FileText className="h-8 w-8 text-emerald-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Audit & Qualite</h3>
-            <p className="text-sm text-muted-foreground">Tableau de bord qualite, indicateurs automatises, export RMM/CREX</p>
+            <h3 className="font-bold text-lg mb-1">Audit & Qualité</h3>
+            <p className="text-sm text-muted-foreground">Tableau de bord qualité, indicateurs automatisés, export RMM/CREX</p>
           </button>
           <button
             onClick={() => { enterDemo('medecin'); navigate('/interop'); }}
             className="p-6 rounded-xl border-2 border-cyan-500 bg-cyan-50 dark:bg-cyan-950/30 hover:bg-cyan-100 dark:hover:bg-cyan-950/50 text-left transition-all hover:shadow-md"
           >
             <div className="mb-3"><Activity className="h-8 w-8 text-cyan-600" /></div>
-            <h3 className="font-bold text-lg mb-1">Interoperabilite</h3>
-            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSante — CRH et ordonnance export</p>
+            <h3 className="font-bold text-lg mb-1">Interopérabilité</h3>
+            <p className="text-sm text-muted-foreground">FHIR R4, HL7v2, MSSanté — CRH et ordonnance export</p>
           </button>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button variant="outline" onClick={() => navigate('/demo')}>
-            <ArrowLeft className="h-4 w-4 mr-1" /> Retour a la demo guidee
+            <ArrowLeft className="h-4 w-4 mr-1" /> Retour à la démo guidée
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/')}>
+            Retour à l'accueil
+          </Button>
+          <Button onClick={() => navigate('/login')}>
+            Créer un compte / Se connecter <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
 
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            Les donnees affichees sont fictives et generees pour la demonstration.
-            UrgenceOS ne constitue pas un dispositif medical certifie.
+            Les données affichées sont fictives et générées pour la démonstration.
+            UrgenceOS ne constitue pas un dispositif médical certifié.
           </p>
         </div>
       </div>

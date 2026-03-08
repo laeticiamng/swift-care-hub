@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, ArrowLeft, Play } from 'lucide-react';
+import { Activity, ArrowLeft, Eye, EyeOff, Play } from 'lucide-react';
 import { z } from 'zod';
 import { checkRateLimit } from '@/lib/server-role-guard';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // MFA Challenge after login
   if (mfaRequired) {
@@ -115,7 +116,12 @@ export default function LoginPage() {
                   <Label htmlFor="password">Mot de passe</Label>
                   <Link to="/forgot-password" className="text-xs text-primary hover:underline">Mot de passe oublié ?</Link>
                 </div>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••" required />
+                <div className="relative">
+                  <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••" required className="pr-10" />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               {error && <p className="text-sm text-medical-critical animate-in fade-in duration-200">{error}</p>}
               <Button type="submit" className="w-full touch-target" disabled={loading}>
