@@ -113,9 +113,19 @@ export async function guardAdmin(): Promise<RoleCheckResult> {
   return verifyServerRole(['medecin']);
 }
 
-// ── Rate Limiter simple ──
-// WARNING: Client-side rate limit uniquement (Map en mémoire navigateur).
-// À remplacer par un rate limit serveur (edge function) avant production clinique.
+// ── Rate Limiter simple (UX hardening UNIQUEMENT) ──
+// ⚠️  ATTENTION — CECI N'EST PAS UNE PROTECTION SERVEUR ⚠️
+// Ce rate limiter fonctionne côté navigateur (Map en mémoire JS).
+// Il est trivial à contourner (reload page, curl, script).
+// Son rôle est strictement UX : éviter les doubles-clics / soumissions
+// accidentelles et offrir un feedback immédiat à l'utilisateur.
+//
+// Pour tout contexte clinique ou production réelle, un rate limit
+// serveur (Edge Function, pg_cron, ou reverse proxy) est OBLIGATOIRE.
+// Le flux B2B (contact-lead) dispose déjà d'un rate limit serveur
+// (1 lead/email/24h) dans supabase/functions/contact-lead/index.ts.
+//
+// Ne jamais considérer ce mécanisme comme suffisant pour la sécurité.
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
