@@ -47,7 +47,7 @@ export default function DemoLivePage() {
           <CardContent className="p-6 text-center space-y-4">
             <Badge variant="secondary">Mode Demo</Badge>
             <p className="text-sm text-muted-foreground">
-              Vous etes connecte en tant que <strong>{currentRole?.label}</strong>
+              Vous êtes connecté en tant que <strong>{currentRole?.label}</strong>
             </p>
             <div className="flex gap-3 justify-center">
               <Button variant="outline" onClick={() => navigate(currentRole?.route || '/board')}>
