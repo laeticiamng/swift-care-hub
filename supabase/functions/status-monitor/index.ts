@@ -93,10 +93,13 @@ Deno.serve(async (req) => {
 
   // POST = run health checks and store results
   if (req.method === 'POST') {
-    // Optional: verify a shared secret for webhook security
+    // Accept: service role key OR internal cron secret
     const authHeader = req.headers.get('authorization')
-    const expectedKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (authHeader !== `Bearer ${expectedKey}`) {
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')
+    const isServiceRole = authHeader === `Bearer ${serviceKey}`
+    const isAnonCron = authHeader === `Bearer ${anonKey}` // pg_cron uses anon key
+    if (!isServiceRole && !isAnonCron) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
