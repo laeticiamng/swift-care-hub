@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Activity, ArrowLeft, Play } from 'lucide-react';
+import { Activity, ArrowLeft, Eye, EyeOff, Play } from 'lucide-react';
 import { z } from 'zod';
 import { checkRateLimit } from '@/lib/server-role-guard';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
