@@ -6,6 +6,10 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import App from "./App.tsx";
 import "./index.css";
+import { installGlobalErrorHandlers } from "./lib/error-reporter";
+
+// Install global error tracking before rendering
+installGlobalErrorHandlers();
 
 createRoot(document.getElementById("root")!).render(<App />);
 

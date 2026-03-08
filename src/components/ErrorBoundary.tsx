@@ -22,6 +22,10 @@ export class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('[UrgenceOS] Erreur non interceptée :', error, errorInfo);
+    reportError(error, {
+      type: 'react_error_boundary',
+      componentStack: errorInfo.componentStack ?? undefined,
+    });
   }
 
   render() {
