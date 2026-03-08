@@ -205,18 +205,18 @@ export default function B2BPage() {
           </div>
         </div>
 
-        {/* Pilote 10 semaines */}
+        {/* Essai 10 semaines */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Pilote DG/DSI ready : 10 semaines.</h2>
+          <h2 className="text-2xl font-bold text-center mb-2">Essai encadré : 10 semaines pour voir les résultats.</h2>
           <p className="text-muted-foreground text-center mb-8">
-            Périmètre strict. ROI mesuré. Critères go/no-go définis avant le lancement.
+            Périmètre défini. Résultats mesurés. Critères de succès fixés avant le lancement.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { step: 'S1-S2', title: 'Cadrage & baseline', desc: 'Audit technique, cartographie des flux, chronométrage terrain, mesure de l\'état initial.' },
-              { step: 'S3-S5', title: 'Déploiement', desc: 'Socle + 2 modules urgences. Connecteurs DPI/LIS. Tests d\'intégration.' },
-              { step: 'S6-S8', title: 'Formation & terrain', desc: 'Formation par rôle. Lancement progressif. Présence physique. Quick wins visibles.' },
-              { step: 'S9-S10', title: 'Mesure & rapport', desc: 'Chronométrage post-déploiement. Rapport DG/DAF + DSI + terrain. Décision go/no-go.' },
+              { step: 'S1-S2', title: 'Cadrage', desc: 'Analyse de votre informatique existante, cartographie des échanges de données, état des lieux terrain.' },
+              { step: 'S3-S5', title: 'Mise en place', desc: 'Installation de la plateforme + 2 modules urgences. Connexion à votre dossier patient. Tests.' },
+              { step: 'S6-S8', title: 'Formation', desc: 'Formation par rôle. Lancement progressif. Accompagnement sur site. Premiers résultats visibles.' },
+              { step: 'S9-S10', title: 'Bilan', desc: 'Mesure des résultats. Rapport pour la direction et les équipes terrain. Décision de suite.' },
             ].map((s) => (
               <div key={s.step} className="p-5 rounded-xl border bg-card">
                 <span className="text-xs font-semibold text-primary">{s.step}</span>
