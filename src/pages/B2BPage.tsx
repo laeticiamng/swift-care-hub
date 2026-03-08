@@ -139,7 +139,7 @@ export default function B2BPage() {
           <div className="flex items-start gap-4 mb-6">
             <Layers className="h-6 w-6 text-primary shrink-0 mt-1" />
             <div>
-              <h2 className="text-2xl font-bold mb-2">Hospital-Owned Software</h2>
+              <h2 className="text-2xl font-bold mb-2">Un logiciel que votre hôpital possède</h2>
               <p className="text-muted-foreground leading-relaxed">
                 L'établissement détient, gouverne et priorise un socle logiciel interne. Le code est accessible.
                 Les données restent sous gouvernance hospitalière. Les priorités d'évolution sont décidées par l'hôpital, pas par un éditeur.
