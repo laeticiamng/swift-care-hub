@@ -49,7 +49,6 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <StatusBadgeHeader />
           <ThemeToggle />
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')} aria-label="À propos d'UrgenceOS">
             À propos
@@ -60,11 +59,14 @@ export function SiteHeader() {
             </Button>
           ) : (
             <>
+              <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')} aria-label="Se connecter">
+                Connexion
+              </Button>
               <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')} aria-label="Voir la démo UrgenceOS">
                 Démo
               </Button>
-              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un pilote UrgenceOS">
-                Demander un pilote
+              <Button size="sm" onClick={() => navigate('/b2b')} aria-label="Demander un essai pilote UrgenceOS">
+                Demander un essai
               </Button>
             </>
           )}
