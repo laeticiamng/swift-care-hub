@@ -237,9 +237,9 @@ export default function FeaturesPage() {
 
         {/* L'écran iconique — La Freebox */}
         <div className="mb-20 p-8 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-2">L'écran iconique : la "Freebox" d'UrgenceOS</h2>
+          <h2 className="text-2xl font-bold mb-2">L'écran central d'UrgenceOS</h2>
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            L'écran qui vend en 10 secondes. Quand un médecin, un IDE ou un DG voit cet écran, il comprend ce qui change.
+            En un coup d'œil, le soignant voit tout ce qu'il doit savoir sur un patient. Plus besoin de naviguer entre 4 écrans.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
