@@ -491,6 +491,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'À propos',
       board: 'Board',
       seeDemo: 'Voir la démo',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'Le logiciel des urgences',
