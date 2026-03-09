@@ -1712,6 +1712,8 @@ export const translations: Record<Locale, TranslationTree> = {
       backHome: 'Volver al inicio',
     },
   },
+
+  de: {
     nav: {
       features: 'Funktionen',
       pricing: 'Preise',
