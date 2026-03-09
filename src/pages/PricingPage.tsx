@@ -6,88 +6,87 @@ import { Badge } from '@/components/ui/badge';
 import { Check, ArrowRight, Building2, HelpCircle, Calculator } from 'lucide-react';
 import { JsonLd, PageMeta, webPageSchema, faqPageSchema } from '@/components/seo/JsonLd';
 import { Breadcrumb } from '@/components/seo/Breadcrumb';
-
-const PLANS = [
-  {
-    name: 'Essai',
-    target: 'Un service d\'urgences',
-    price: 'À partir de 15 000 €',
-    period: '',
-    description: '10 semaines d\'essai. 2 modules inclus. Résultats mesurés. Connexion à votre dossier patient existant.',
-    features: [
-      'Plateforme complète (identité, droits d\'accès, traçabilité)',
-      'Module récap parcours patient par rôle',
-      'Module traçabilité temps réel',
-      'Connexion à votre dossier patient existant',
-      'Réception des résultats de laboratoire',
-      'Formation par rôle (2h par profil)',
-      'Rapport de résultats pour la direction',
-      'Critères de succès définis à l\'avance',
-    ],
-    cta: 'Demander un essai',
-    popular: true,
-  },
-  {
-    name: 'Extension',
-    target: 'Multi-services',
-    price: 'Sur mesure',
-    period: '',
-    description: 'Après validation de l\'essai. Extension à d\'autres services + modules supplémentaires.',
-    features: [
-      'Tout l\'essai initial +',
-      'Modules supplémentaires (triage, prescriptions, sortie)',
-      'Connexion bidirectionnelle au dossier patient',
-      'Authentification unique institutionnelle (SSO)',
-      'Supervision complète',
-      'Comité de suivi trimestriel',
-      'Audit sécurité annuel inclus',
-      'Coûts récurrents décroissants',
-    ],
-    cta: 'Contacter l\'équipe',
-    popular: false,
-  },
-  {
-    name: 'Consortium GHT',
-    target: 'Multi-établissements',
-    price: 'Mutualisé',
-    period: '',
-    description: 'Plateforme partagée. Modules communs. Coûts divisés. Gouvernance commune.',
-    features: [
-      'Plateforme partagée multi-établissements',
-      'Bibliothèque de modules partagés',
-      'Connecteurs réutilisables entre établissements',
-      'Équipe technique mutualisée',
-      'Interopérabilité commune',
-      'Indicateurs consolidés pour les tutelles',
-      'Division des coûts par établissement',
-      'Standardisation des échanges',
-    ],
-    cta: 'Contacter l\'équipe',
-    popular: false,
-  },
-];
-
-const FAQ_PRICING = [
-  {
-    q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
-    a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
-  },
-  {
-    q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
-    a: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
-  },
-  {
-    q: 'Comment construire le business case pour mon établissement ?',
-    a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
-  },
-  {
-    q: 'Quel est le coût d\'un essai ?',
-    a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
-  },
-];
+import { useI18n } from '@/i18n/I18nContext';
 
 export default function PricingPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+
+  const PLANS = [
+    {
+      name: t.pricing.trialName,
+      target: t.pricing.trialTarget,
+      price: t.pricing.trialPrice,
+      description: t.pricing.trialDescription,
+      features: [
+        'Plateforme complète (identité, droits d\'accès, traçabilité)',
+        'Module récap parcours patient par rôle',
+        'Module traçabilité temps réel',
+        'Connexion à votre dossier patient existant',
+        'Réception des résultats de laboratoire',
+        'Formation par rôle (2h par profil)',
+        'Rapport de résultats pour la direction',
+        'Critères de succès définis à l\'avance',
+      ],
+      cta: t.pricing.trialCta,
+      popular: true,
+    },
+    {
+      name: t.pricing.extensionName,
+      target: t.pricing.extensionTarget,
+      price: t.pricing.extensionPrice,
+      description: t.pricing.extensionDescription,
+      features: [
+        'Tout l\'essai initial +',
+        'Modules supplémentaires (triage, prescriptions, sortie)',
+        'Connexion bidirectionnelle au dossier patient',
+        'Authentification unique institutionnelle (SSO)',
+        'Supervision complète',
+        'Comité de suivi trimestriel',
+        'Audit sécurité annuel inclus',
+        'Coûts récurrents décroissants',
+      ],
+      cta: t.pricing.extensionCta,
+      popular: false,
+    },
+    {
+      name: t.pricing.consortiumName,
+      target: t.pricing.consortiumTarget,
+      price: t.pricing.consortiumPrice,
+      description: t.pricing.consortiumDescription,
+      features: [
+        'Plateforme partagée multi-établissements',
+        'Bibliothèque de modules partagés',
+        'Connecteurs réutilisables entre établissements',
+        'Équipe technique mutualisée',
+        'Interopérabilité commune',
+        'Indicateurs consolidés pour les tutelles',
+        'Division des coûts par établissement',
+        'Standardisation des échanges',
+      ],
+      cta: t.pricing.consortiumCta,
+      popular: false,
+    },
+  ];
+
+  const FAQ_PRICING = [
+    {
+      q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
+      a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
+    },
+    {
+      q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
+      a: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
+    },
+    {
+      q: 'Comment construire le business case pour mon établissement ?',
+      a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
+    },
+    {
+      q: 'Quel est le coût d\'un essai ?',
+      a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -107,22 +106,19 @@ export default function PricingPage() {
 
       <main className="max-w-6xl mx-auto px-6 py-16">
         <Breadcrumb items={[
-          { label: 'Accueil', to: '/' },
-          { label: 'Tarifs' },
+          { label: t.pricing.breadcrumbHome, to: '/' },
+          { label: t.pricing.breadcrumbPricing },
         ]} />
-        {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4">Modèle économique</Badge>
+          <Badge variant="secondary" className="mb-4">{t.pricing.badge}</Badge>
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Un essai de 10 semaines pour voir les résultats.
+            {t.pricing.title}
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Pas d'engagement pluriannuel. Un essai encadré de 10 semaines pour mesurer
-            les gains concrets avec vos propres chiffres. Si ça marche, vous continuez. Sinon, vous arrêtez.
+            {t.pricing.subtitle}
           </p>
         </div>
 
-        {/* Plans */}
         <div className="grid md:grid-cols-3 gap-6 mb-20">
           {PLANS.map((plan) => (
             <div
@@ -135,7 +131,7 @@ export default function PricingPage() {
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                  Recommandé
+                  {t.pricing.recommended}
                 </Badge>
               )}
               <div className="mb-6">
@@ -165,25 +161,23 @@ export default function PricingPage() {
           ))}
         </div>
         <p className="text-sm text-muted-foreground text-center mb-20 -mt-14">
-          Le montant de l'essai dépend de la complexité d'intégration avec votre informatique existante.{' '}
-          <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">Contactez-nous pour un devis personnalisé →</button>
+          {t.pricing.pricingNote}{' '}
+          <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">{t.pricing.contactForQuote}</button>
         </p>
 
-        {/* Business case */}
         <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <div className="flex items-start gap-4 mb-6">
             <Calculator className="h-6 w-6 text-primary shrink-0 mt-1" />
             <div>
-              <h2 className="text-2xl font-bold mb-2">Business case : vos chiffres, pas les nôtres.</h2>
+              <h2 className="text-2xl font-bold mb-2">{t.pricing.businessCaseTitle}</h2>
               <p className="text-muted-foreground leading-relaxed">
-                Nous fournissons un modèle de business case TCO 5 ans à remplir avec les données de votre établissement.
-                Aucun chiffre inventé. Les formules ROI/payback sont transparentes.
+                {t.pricing.businessCaseSubtitle}
               </p>
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 mt-6">
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm mb-2 text-foreground">Coûts actuels (à mesurer)</h4>
+              <h4 className="font-semibold text-sm mb-2 text-foreground">{t.pricing.currentCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
                 <li>Licences outils satellites urgences</li>
                 <li>Maintenance et support éditeurs</li>
@@ -193,7 +187,7 @@ export default function PricingPage() {
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
-              <h4 className="font-semibold text-sm mb-2 text-primary">Coûts cible (avec UrgenceOS)</h4>
+              <h4 className="font-semibold text-sm mb-2 text-primary">{t.pricing.targetCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
                 <li>Investissement initial (socle + modules + formation)</li>
                 <li>Équipe plateforme interne (part ETP DSI)</li>
@@ -204,7 +198,7 @@ export default function PricingPage() {
             </div>
           </div>
           <div className="mt-6 p-4 rounded-xl border bg-card">
-            <h4 className="font-semibold text-sm mb-3">Formules ROI / Payback</h4>
+            <h4 className="font-semibold text-sm mb-3">{t.pricing.roiFormulas}</h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li><strong className="text-foreground">Économie annuelle nette</strong> = coûts actuels (A) - coûts cible (B)</li>
               <li><strong className="text-foreground">ROI année 1</strong> = (A - B - investissement initial) / investissement × 100</li>
@@ -213,7 +207,7 @@ export default function PricingPage() {
             </ul>
           </div>
           <div className="mt-4 p-4 rounded-xl border bg-card">
-            <h4 className="font-semibold text-sm mb-3">Méthode : réunion DAF 60 minutes</h4>
+            <h4 className="font-semibold text-sm mb-3">{t.pricing.dafMethod}</h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
               <li>0-10 min — Contexte : combien d'outils, combien de licences, combien d'interfaces</li>
               <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
@@ -223,13 +217,12 @@ export default function PricingPage() {
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
-            Transparence totale. ROI calculé sur vos données réelles. Aucun chiffre présélectionné.
+            {t.pricing.transparency}
           </p>
         </div>
 
-        {/* FAQ pricing */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Questions fréquentes</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{t.pricing.faqTitle}</h2>
           <div className="max-w-3xl mx-auto space-y-4">
             {FAQ_PRICING.map((item) => (
               <div key={item.q} className="p-5 rounded-xl border bg-card">
@@ -243,28 +236,25 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
           <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">Prêt à évaluer les gains pour votre service ?</h2>
+          <h2 className="text-2xl font-bold mb-3">{t.pricing.ctaTitle}</h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            60 minutes pour estimer vos économies avec vos propres chiffres. Sans engagement.
+            {t.pricing.ctaSubtitle}
           </p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
+              {t.pricing.requestTrial} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
-              Voir la démo
+              {t.pricing.seeDemo}
             </Button>
           </div>
         </div>
 
-        {/* Disclaimer */}
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
           <p className="text-xs text-muted-foreground">
-            Les tarifs dépendent du périmètre de déploiement et de la complexité d'intégration.
-            UrgenceOS ne constitue pas un dispositif médical certifié.
+            {t.pricing.disclaimer}
           </p>
         </div>
       </main>

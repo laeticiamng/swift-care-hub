@@ -8,11 +8,13 @@ import { Label } from '@/components/ui/label';
 import { SiteHeader } from '@/components/landing/SiteHeader';
 import { FooterSection } from '@/components/landing/FooterSection';
 import { Breadcrumb } from '@/components/seo/Breadcrumb';
-import { Mail, Send, CheckCircle, Building2, User, MessageSquare } from 'lucide-react';
+import { Send, CheckCircle, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 export default function ContactPage() {
+  const { t } = useI18n();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +27,7 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !email.trim() || !establishment.trim() || !roleFunction.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires.');
+      toast.error(t.contact.fillRequired);
       return;
     }
     setLoading(true);
@@ -43,7 +45,7 @@ export default function ContactPage() {
       if (error) throw error;
       setSuccess(true);
     } catch {
-      toast.error('Une erreur est survenue. Réessayez ou contactez-nous par email.');
+      toast.error(t.contact.errorGeneric);
     } finally {
       setLoading(false);
     }
@@ -54,17 +56,17 @@ export default function ContactPage() {
       <SiteHeader />
       <main className="max-w-3xl mx-auto px-6 py-12">
         <Breadcrumb items={[
-          { label: 'Accueil', to: '/' },
-          { label: 'Contact' },
+          { label: t.contact.breadcrumbHome, to: '/' },
+          { label: t.contact.breadcrumbContact },
         ]} />
 
         <div className="text-center mb-10 mt-6">
           <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
-            Nous contacter
+            {t.contact.badge}
           </span>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Parlons de votre projet</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{t.contact.title}</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Une question sur UrgenceOS, un essai à planifier, ou simplement envie d'en savoir plus ? Remplissez le formulaire ci-dessous.
+            {t.contact.subtitle}
           </p>
         </div>
 
@@ -72,12 +74,12 @@ export default function ContactPage() {
           <Card className="max-w-md mx-auto">
             <CardContent className="text-center py-10 space-y-4">
               <CheckCircle className="h-12 w-12 text-medical-success mx-auto" />
-              <h2 className="text-xl font-bold">Message envoyé !</h2>
+              <h2 className="text-xl font-bold">{t.contact.successTitle}</h2>
               <p className="text-sm text-muted-foreground">
-                Nous reviendrons vers vous sous 48h ouvrées.
+                {t.contact.successText}
               </p>
               <Button variant="outline" asChild>
-                <Link to="/">Retour à l'accueil</Link>
+                <Link to="/">{t.contact.backToHome}</Link>
               </Button>
             </CardContent>
           </Card>
@@ -86,51 +88,51 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5 text-primary" />
-                Formulaire de contact
+                {t.contact.formTitle}
               </CardTitle>
               <CardDescription>
-                Tous les champs marqués * sont obligatoires.
+                {t.contact.formDescription}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">Prénom *</Label>
-                    <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Marie" required maxLength={100} />
+                    <Label htmlFor="firstName">{t.contact.firstName}</Label>
+                    <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={t.contact.firstNamePlaceholder} required maxLength={100} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Nom *</Label>
-                    <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" required maxLength={100} />
+                    <Label htmlFor="lastName">{t.contact.lastName}</Label>
+                    <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={t.contact.lastNamePlaceholder} required maxLength={100} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email professionnel *</Label>
-                  <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="marie.dupont@hopital.fr" required maxLength={255} />
+                  <Label htmlFor="email">{t.contact.professionalEmail}</Label>
+                  <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t.contact.emailPlaceholder} required maxLength={255} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="establishment">Établissement *</Label>
-                    <Input id="establishment" value={establishment} onChange={e => setEstablishment(e.target.value)} placeholder="CHU de Lyon" required maxLength={200} />
+                    <Label htmlFor="establishment">{t.contact.establishment}</Label>
+                    <Input id="establishment" value={establishment} onChange={e => setEstablishment(e.target.value)} placeholder={t.contact.establishmentPlaceholder} required maxLength={200} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role">Fonction *</Label>
-                    <Input id="role" value={roleFunction} onChange={e => setRoleFunction(e.target.value)} placeholder="DSI, Médecin urgentiste..." required maxLength={200} />
+                    <Label htmlFor="role">{t.contact.role}</Label>
+                    <Input id="role" value={roleFunction} onChange={e => setRoleFunction(e.target.value)} placeholder={t.contact.rolePlaceholder} required maxLength={200} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message (optionnel)</Label>
-                  <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder="Décrivez votre besoin, la taille de votre service, vos contraintes..." rows={4} maxLength={2000} />
+                  <Label htmlFor="message">{t.contact.message}</Label>
+                  <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder={t.contact.messagePlaceholder} rows={4} maxLength={2000} />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Envoi...' : (
+                  {loading ? t.contact.sending : (
                     <>
-                      <Send className="h-4 w-4 mr-2" /> Envoyer le message
+                      <Send className="h-4 w-4 mr-2" /> {t.contact.send}
                     </>
                   )}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  Vous pouvez aussi nous écrire directement à{' '}
+                  {t.contact.directEmail}{' '}
                   <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
                 </p>
               </form>
