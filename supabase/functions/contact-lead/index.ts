@@ -14,6 +14,7 @@ function escapeHtml(str: string | null): string {
     .replace(/'/g, "&#039;");
 }
 
+async function sendLeadNotification(leadData: Record<string, string | null>) {
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
   if (!RESEND_API_KEY) {
     log.warn("RESEND_API_KEY not configured — skipping email notification");
