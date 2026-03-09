@@ -61,7 +61,17 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { lastName, firstName, email, establishment, roleFunction, passagesVolume, message } = body;
+    const { lastName, firstName, email, establishment, roleFunction, passagesVolume, message, website } = body;
+
+    // Honeypot: if filled, silently accept
+    if (website) {
+      log.info("Honeypot triggered", { email });
+      end(200);
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!lastName || !firstName || !email || !establishment || !roleFunction) {
       end(400);

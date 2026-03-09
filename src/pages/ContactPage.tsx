@@ -130,6 +130,10 @@ export default function ContactPage() {
                   <Label htmlFor="message">{t.contact.message}</Label>
                   <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder={t.contact.messagePlaceholder} rows={4} maxLength={2000} />
                 </div>
+                <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input id="website" name="website" type="text" value={website} onChange={e => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" />
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? t.contact.sending : (
                     <>

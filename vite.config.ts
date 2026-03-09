@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  esbuild: mode === "production" ? { drop: ["console", "debugger"] } : undefined,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
