@@ -2019,6 +2019,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'Über uns',
       board: 'Board',
       seeDemo: 'Demo ansehen',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'Die Notaufnahme-Software,',
