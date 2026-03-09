@@ -1492,6 +1492,7 @@ export const translations: Record<Locale, TranslationTree> = {
       ],
     },
   },
+  es: {
     nav: {
       features: 'Funcionalidades',
       pricing: 'Precios',
