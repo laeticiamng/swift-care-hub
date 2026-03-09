@@ -73,7 +73,7 @@ export function CRHPreview({ htmlContent, status, onSign, onSendMSSante, onDownl
       <div className="flex-1 overflow-auto bg-white">
         {viewMode === 'preview' ? (
           <iframe
-            srcDoc={htmlContent}
+            srcDoc={sanitizeHtml(htmlContent)}
             className="w-full h-full border-0"
             title="CRH Preview"
             sandbox=""
