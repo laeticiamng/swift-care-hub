@@ -442,6 +442,37 @@ type TranslationTree = {
     detail: string;
     backHome: string;
   };
+  cookieConsent: {
+    technicalOnly: string;
+    learnMore: string;
+    customize: string;
+    refuse: string;
+    accept: string;
+    settingsTitle: string;
+    essential: string;
+    essentialDesc: string;
+    preferences: string;
+    preferencesDesc: string;
+    refuseAll: string;
+    save: string;
+  };
+  pricingFeatures: {
+    trial: string[];
+    extension: string[];
+    consortium: string[];
+  };
+  pricingFaq: {
+    q1: string; a1: string;
+    q2: string; a2: string;
+    q3: string; a3: string;
+    q4: string; a4: string;
+  };
+  pricingBusinessCase: {
+    currentItems: string[];
+    targetItems: string[];
+    roiItems: string[];
+    dafItems: string[];
+  };
 };
 
 export const translations: Record<Locale, TranslationTree> = {
@@ -867,9 +898,92 @@ export const translations: Record<Locale, TranslationTree> = {
       detail: 'L\'adresse demandée n\'existe pas ou a été déplacée.',
       backHome: 'Retour à l\'accueil',
     },
+    cookieConsent: {
+      technicalOnly: 'Cookies techniques uniquement.',
+      learnMore: 'En savoir plus',
+      customize: 'Personnaliser',
+      refuse: 'Refuser',
+      accept: 'Accepter',
+      settingsTitle: 'Paramètres cookies',
+      essential: 'Essentiels',
+      essentialDesc: 'Session d\'authentification',
+      preferences: 'Préférences',
+      preferencesDesc: 'Thème, onboarding',
+      refuseAll: 'Refuser tout',
+      save: 'Enregistrer',
+    },
+    pricingFeatures: {
+      trial: [
+        'Plateforme complète (identité, droits d\'accès, traçabilité)',
+        'Module récap parcours patient par rôle',
+        'Module traçabilité temps réel',
+        'Connexion à votre dossier patient existant',
+        'Réception des résultats de laboratoire',
+        'Formation par rôle (2h par profil)',
+        'Rapport de résultats pour la direction',
+        'Critères de succès définis à l\'avance',
+      ],
+      extension: [
+        'Tout l\'essai initial +',
+        'Modules supplémentaires (triage, prescriptions, sortie)',
+        'Connexion bidirectionnelle au dossier patient',
+        'Authentification unique institutionnelle (SSO)',
+        'Supervision complète',
+        'Comité de suivi trimestriel',
+        'Audit sécurité annuel inclus',
+        'Coûts récurrents décroissants',
+      ],
+      consortium: [
+        'Plateforme partagée multi-établissements',
+        'Bibliothèque de modules partagés',
+        'Connecteurs réutilisables entre établissements',
+        'Équipe technique mutualisée',
+        'Interopérabilité commune',
+        'Indicateurs consolidés pour les tutelles',
+        'Division des coûts par établissement',
+        'Standardisation des échanges',
+      ],
+    },
+    pricingFaq: {
+      q1: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
+      a1: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
+      q2: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
+      a2: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
+      q3: 'Comment construire le business case pour mon établissement ?',
+      a3: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
+      q4: 'Quel est le coût d\'un essai ?',
+      a4: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
+    },
+    pricingBusinessCase: {
+      currentItems: [
+        'Licences outils satellites urgences',
+        'Maintenance et support éditeurs',
+        'Coûts d\'interfaces et connecteurs',
+        'Incidents d\'intégration (heures DSI)',
+        'Temps clinique perdu (min/poste x postes x 365j)',
+      ],
+      targetItems: [
+        'Investissement initial (socle + modules + formation)',
+        'Équipe plateforme interne (part ETP DSI)',
+        'Hébergement HDS',
+        'MCO et audit sécurité annuel',
+        'Voir les formules détaillées ci-dessous',
+      ],
+      roiItems: [
+        'Économie annuelle nette = coûts actuels (A) - coûts cible (B)',
+        'ROI année 1 = (A - B - investissement initial) / investissement × 100',
+        'Payback = investissement initial / (A - B) en mois',
+        'ROI cumulé 5 ans = ((A - B) × 5 - investissement) / investissement × 100',
+      ],
+      dafItems: [
+        '0-10 min — Contexte : combien d\'outils, combien de licences, combien d\'interfaces',
+        '10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO',
+        '30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé',
+        '45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées',
+        '55-60 min — Prochaines étapes : go/no-go essai, calendrier, périmètre',
+      ],
+    },
   },
-
-  en: {
     nav: {
       features: 'Features',
       pricing: 'Pricing',
@@ -1291,9 +1405,92 @@ export const translations: Record<Locale, TranslationTree> = {
       detail: 'The requested page does not exist or has been moved.',
       backHome: 'Back to home',
     },
+    cookieConsent: {
+      technicalOnly: 'Technical cookies only.',
+      learnMore: 'Learn more',
+      customize: 'Customize',
+      refuse: 'Refuse',
+      accept: 'Accept',
+      settingsTitle: 'Cookie settings',
+      essential: 'Essential',
+      essentialDesc: 'Authentication session',
+      preferences: 'Preferences',
+      preferencesDesc: 'Theme, onboarding',
+      refuseAll: 'Refuse all',
+      save: 'Save',
+    },
+    pricingFeatures: {
+      trial: [
+        'Full platform (identity, access control, traceability)',
+        'Patient journey recap module by role',
+        'Real-time traceability module',
+        'Connection to your existing EHR',
+        'Lab result reception',
+        'Role-based training (2h per profile)',
+        'Results report for management',
+        'Success criteria defined upfront',
+      ],
+      extension: [
+        'Everything from the initial trial +',
+        'Additional modules (triage, prescriptions, discharge)',
+        'Bidirectional EHR connection',
+        'Institutional single sign-on (SSO)',
+        'Full supervision',
+        'Quarterly steering committee',
+        'Annual security audit included',
+        'Decreasing recurring costs',
+      ],
+      consortium: [
+        'Multi-facility shared platform',
+        'Shared module library',
+        'Reusable connectors between facilities',
+        'Shared technical team',
+        'Common interoperability',
+        'Consolidated indicators for regulators',
+        'Cost sharing per facility',
+        'Exchange standardization',
+      ],
+    },
+    pricingFaq: {
+      q1: 'Why start with a trial rather than a full deployment?',
+      a1: 'The trial measures ROI on your real data before any commitment. 10 weeks, emergency scope, go/no-go criteria defined upfront. If results are there, you decide to continue. If not, you stop. No multi-year commitment initially.',
+      q2: 'How does the pricing model differ from a traditional vendor?',
+      a2: 'The foundation is owned by the hospital. No recurring license on the foundation. Costs cover deployment, training, maintenance, and evolutions. They are predictable and decreasing — no unilateral increase.',
+      q3: 'How to build the business case for my facility?',
+      a3: 'We provide a blank business case template (5-year TCO, ROI/payback formulas) that we fill together during a 60-minute meeting with the CFO. The numbers are yours, not ours.',
+      q4: 'What does a trial cost?',
+      a4: 'The trial package is calibrated to the scope (one emergency department, 2 modules, 10 weeks). It includes scoping, deployment, training, and measurement report. The exact amount depends on integration complexity with your EHR. Request a quote.',
+    },
+    pricingBusinessCase: {
+      currentItems: [
+        'Emergency satellite tool licenses',
+        'Vendor maintenance and support',
+        'Interface and connector costs',
+        'Integration incidents (IT hours)',
+        'Lost clinical time (min/station x stations x 365d)',
+      ],
+      targetItems: [
+        'Initial investment (foundation + modules + training)',
+        'Internal platform team (IT FTE share)',
+        'Health data hosting',
+        'Maintenance and annual security audit',
+        'See detailed formulas below',
+      ],
+      roiItems: [
+        'Net annual savings = current costs (A) - target costs (B)',
+        'Year 1 ROI = (A - B - initial investment) / investment × 100',
+        'Payback = initial investment / (A - B) in months',
+        '5-year cumulative ROI = ((A - B) × 5 - investment) / investment × 100',
+      ],
+      dafItems: [
+        '0-10 min — Context: how many tools, licenses, interfaces',
+        '10-30 min — Collaborative fill: your numbers in our TCO model',
+        '30-45 min — Live ROI calc: current vs target costs, estimated payback',
+        '45-55 min — "Lost clinical time" dimension: valuation of recovered minutes',
+        '55-60 min — Next steps: go/no-go trial, timeline, scope',
+      ],
+    },
   },
-
-  es: {
     nav: {
       features: 'Funcionalidades',
       pricing: 'Precios',
@@ -1714,6 +1911,91 @@ export const translations: Record<Locale, TranslationTree> = {
       subtitle: 'Página no encontrada',
       detail: 'La dirección solicitada no existe o ha sido movida.',
       backHome: 'Volver al inicio',
+    },
+    cookieConsent: {
+      technicalOnly: 'Solo cookies técnicas.',
+      learnMore: 'Más información',
+      customize: 'Personalizar',
+      refuse: 'Rechazar',
+      accept: 'Aceptar',
+      settingsTitle: 'Configuración de cookies',
+      essential: 'Esenciales',
+      essentialDesc: 'Sesión de autenticación',
+      preferences: 'Preferencias',
+      preferencesDesc: 'Tema, onboarding',
+      refuseAll: 'Rechazar todo',
+      save: 'Guardar',
+    },
+    pricingFeatures: {
+      trial: [
+        'Plataforma completa (identidad, control de acceso, trazabilidad)',
+        'Módulo de resumen del recorrido del paciente por rol',
+        'Módulo de trazabilidad en tiempo real',
+        'Conexión a su HCE existente',
+        'Recepción de resultados de laboratorio',
+        'Formación por rol (2h por perfil)',
+        'Informe de resultados para la dirección',
+        'Criterios de éxito definidos de antemano',
+      ],
+      extension: [
+        'Todo el ensayo inicial +',
+        'Módulos adicionales (triaje, prescripciones, alta)',
+        'Conexión bidireccional a la HCE',
+        'Autenticación única institucional (SSO)',
+        'Supervisión completa',
+        'Comité de seguimiento trimestral',
+        'Auditoría de seguridad anual incluida',
+        'Costes recurrentes decrecientes',
+      ],
+      consortium: [
+        'Plataforma compartida multi-centro',
+        'Biblioteca de módulos compartidos',
+        'Conectores reutilizables entre centros',
+        'Equipo técnico compartido',
+        'Interoperabilidad común',
+        'Indicadores consolidados para las autoridades',
+        'División de costes por centro',
+        'Estandarización de intercambios',
+      ],
+    },
+    pricingFaq: {
+      q1: '¿Por qué empezar con una prueba en lugar de un despliegue completo?',
+      a1: 'La prueba mide el ROI con sus datos reales antes de cualquier compromiso. 10 semanas, perímetro de urgencias, criterios go/no-go definidos de antemano.',
+      q2: '¿Cómo difiere el modelo económico de un editor clásico?',
+      a2: 'La base es propiedad del hospital. Sin licencia recurrente sobre la base. Los costes cubren despliegue, formación, mantenimiento y evoluciones. Previsibles y decrecientes.',
+      q3: '¿Cómo construir el business case para mi establecimiento?',
+      a3: 'Proporcionamos un modelo de business case en blanco (TCO 5 años, fórmulas ROI/payback) que rellenamos juntos en una reunión de 60 minutos con el DAF.',
+      q4: '¿Cuánto cuesta una prueba?',
+      a4: 'El paquete de prueba se calibra según el perímetro (un servicio de urgencias, 2 módulos, 10 semanas). Incluye el alcance, despliegue, formación e informe de medición.',
+    },
+    pricingBusinessCase: {
+      currentItems: [
+        'Licencias de herramientas satélite de urgencias',
+        'Mantenimiento y soporte de editores',
+        'Costes de interfaces y conectores',
+        'Incidentes de integración (horas DSI)',
+        'Tiempo clínico perdido (min/puesto x puestos x 365d)',
+      ],
+      targetItems: [
+        'Inversión inicial (base + módulos + formación)',
+        'Equipo de plataforma interno (parte ETP DSI)',
+        'Alojamiento HDS',
+        'MCO y auditoría de seguridad anual',
+        'Ver fórmulas detalladas abajo',
+      ],
+      roiItems: [
+        'Ahorro anual neto = costes actuales (A) - costes objetivo (B)',
+        'ROI año 1 = (A - B - inversión inicial) / inversión × 100',
+        'Payback = inversión inicial / (A - B) en meses',
+        'ROI acumulado 5 años = ((A - B) × 5 - inversión) / inversión × 100',
+      ],
+      dafItems: [
+        '0-10 min — Contexto: cuántas herramientas, licencias, interfaces',
+        '10-30 min — Relleno colaborativo: sus cifras en nuestro modelo TCO',
+        '30-45 min — Cálculo ROI en directo: costes actuales vs objetivo, payback estimado',
+        '45-55 min — Dimensión "tiempo clínico perdido": valorización de minutos recuperados',
+        '55-60 min — Próximos pasos: go/no-go prueba, calendario, perímetro',
+      ],
     },
   },
 
@@ -2138,6 +2420,91 @@ export const translations: Record<Locale, TranslationTree> = {
       subtitle: 'Seite nicht gefunden',
       detail: 'Die angeforderte Adresse existiert nicht oder wurde verschoben.',
       backHome: 'Zurück zur Startseite',
+    },
+    cookieConsent: {
+      technicalOnly: 'Nur technische Cookies.',
+      learnMore: 'Mehr erfahren',
+      customize: 'Anpassen',
+      refuse: 'Ablehnen',
+      accept: 'Akzeptieren',
+      settingsTitle: 'Cookie-Einstellungen',
+      essential: 'Wesentlich',
+      essentialDesc: 'Authentifizierungssitzung',
+      preferences: 'Präferenzen',
+      preferencesDesc: 'Theme, Onboarding',
+      refuseAll: 'Alle ablehnen',
+      save: 'Speichern',
+    },
+    pricingFeatures: {
+      trial: [
+        'Vollständige Plattform (Identität, Zugriffskontrolle, Rückverfolgbarkeit)',
+        'Patientenpfad-Zusammenfassungsmodul nach Rolle',
+        'Echtzeit-Rückverfolgbarkeitsmodul',
+        'Anbindung an Ihr bestehendes KIS',
+        'Empfang von Laborergebnissen',
+        'Rollenbasierte Schulung (2h pro Profil)',
+        'Ergebnisbericht für die Leitung',
+        'Erfolgskriterien vorab definiert',
+      ],
+      extension: [
+        'Alles aus dem Ersttest +',
+        'Zusätzliche Module (Triage, Verordnungen, Entlassung)',
+        'Bidirektionale KIS-Anbindung',
+        'Institutionelles Single Sign-On (SSO)',
+        'Vollständige Supervision',
+        'Vierteljährliches Steuerungskomitee',
+        'Jährliches Sicherheitsaudit inklusive',
+        'Sinkende wiederkehrende Kosten',
+      ],
+      consortium: [
+        'Geteilte Multi-Einrichtungs-Plattform',
+        'Gemeinsame Modulbibliothek',
+        'Wiederverwendbare Konnektoren zwischen Einrichtungen',
+        'Geteiltes Technikteam',
+        'Gemeinsame Interoperabilität',
+        'Konsolidierte Indikatoren für Behörden',
+        'Kostenteilung pro Einrichtung',
+        'Standardisierung des Austauschs',
+      ],
+    },
+    pricingFaq: {
+      q1: 'Warum mit einem Test beginnen statt einer vollständigen Bereitstellung?',
+      a1: 'Der Test misst den ROI anhand Ihrer realen Daten vor jeglicher Verpflichtung. 10 Wochen, Notaufnahme-Umfang, Go/No-Go-Kriterien vorab definiert.',
+      q2: 'Wie unterscheidet sich das Preismodell von einem klassischen Anbieter?',
+      a2: 'Das Fundament gehört dem Krankenhaus. Keine wiederkehrende Lizenz auf das Fundament. Die Kosten decken Bereitstellung, Schulung, Wartung und Weiterentwicklungen. Vorhersehbar und sinkend.',
+      q3: 'Wie erstelle ich den Business Case für mein Haus?',
+      a3: 'Wir stellen eine leere Business-Case-Vorlage bereit (5-Jahres-TCO, ROI/Payback-Formeln), die wir in einem 60-Minuten-Meeting mit dem CFO gemeinsam ausfüllen.',
+      q4: 'Was kostet ein Test?',
+      a4: 'Das Testpaket ist auf den Umfang kalibriert (eine Notaufnahme, 2 Module, 10 Wochen). Es umfasst Scoping, Bereitstellung, Schulung und Messbericht.',
+    },
+    pricingBusinessCase: {
+      currentItems: [
+        'Lizenzen für Notaufnahme-Satellitentools',
+        'Anbieterwartung und Support',
+        'Schnittstellen- und Konnektorkosten',
+        'Integrationsvorfälle (IT-Stunden)',
+        'Verlorene klinische Zeit (Min/Station x Stationen x 365T)',
+      ],
+      targetItems: [
+        'Erstinvestition (Fundament + Module + Schulung)',
+        'Internes Plattformteam (IT-VZÄ-Anteil)',
+        'Gesundheitsdaten-Hosting',
+        'Wartung und jährliches Sicherheitsaudit',
+        'Siehe detaillierte Formeln unten',
+      ],
+      roiItems: [
+        'Jährliche Netto-Einsparung = aktuelle Kosten (A) - Zielkosten (B)',
+        'ROI Jahr 1 = (A - B - Erstinvestition) / Investition × 100',
+        'Payback = Erstinvestition / (A - B) in Monaten',
+        'Kumulierter ROI 5 Jahre = ((A - B) × 5 - Investition) / Investition × 100',
+      ],
+      dafItems: [
+        '0-10 Min — Kontext: wie viele Tools, Lizenzen, Schnittstellen',
+        '10-30 Min — Gemeinsames Ausfüllen: Ihre Zahlen in unserem TCO-Modell',
+        '30-45 Min — Live-ROI-Berechnung: aktuelle vs. Zielkosten, geschätzter Payback',
+        '45-55 Min — Dimension "verlorene klinische Zeit": Bewertung der gewonnenen Minuten',
+        '55-60 Min — Nächste Schritte: Go/No-Go-Test, Zeitplan, Umfang',
+      ],
     },
   },
 };

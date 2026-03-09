@@ -4,6 +4,16 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("contact-lead");
 
+function escapeHtml(str: string | null): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function sendLeadNotification(leadData: Record<string, string | null>) {
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
   if (!RESEND_API_KEY) {
@@ -32,7 +42,7 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
               <tr><td style="padding:8px 0;color:#666">Fonction</td><td style="padding:8px 0">${leadData.role_function}</td></tr>
               <tr><td style="padding:8px 0;color:#666">Volume passages</td><td style="padding:8px 0">${leadData.passages_volume || "Non renseigné"}</td></tr>
             </table>
-            ${leadData.message ? `<div style="margin-top:16px;padding:12px;background:#f8fafc;border-radius:8px"><strong>Message :</strong><br/>${leadData.message}</div>` : ""}
+            ${leadData.message ? `<div style="margin-top:16px;padding:12px;background:#f8fafc;border-radius:8px"><strong>Message :</strong><br/>${escapeHtml(leadData.message)}</div>` : ""}
             <p style="margin-top:24px;color:#94a3b8;font-size:12px">Envoyé automatiquement par UrgenceOS — ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>
           </div>
         `,

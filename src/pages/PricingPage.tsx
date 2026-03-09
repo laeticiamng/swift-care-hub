@@ -18,16 +18,7 @@ export default function PricingPage() {
       target: t.pricing.trialTarget,
       price: t.pricing.trialPrice,
       description: t.pricing.trialDescription,
-      features: [
-        'Plateforme complète (identité, droits d\'accès, traçabilité)',
-        'Module récap parcours patient par rôle',
-        'Module traçabilité temps réel',
-        'Connexion à votre dossier patient existant',
-        'Réception des résultats de laboratoire',
-        'Formation par rôle (2h par profil)',
-        'Rapport de résultats pour la direction',
-        'Critères de succès définis à l\'avance',
-      ],
+      features: t.pricingFeatures.trial,
       cta: t.pricing.trialCta,
       popular: true,
     },
@@ -36,16 +27,7 @@ export default function PricingPage() {
       target: t.pricing.extensionTarget,
       price: t.pricing.extensionPrice,
       description: t.pricing.extensionDescription,
-      features: [
-        'Tout l\'essai initial +',
-        'Modules supplémentaires (triage, prescriptions, sortie)',
-        'Connexion bidirectionnelle au dossier patient',
-        'Authentification unique institutionnelle (SSO)',
-        'Supervision complète',
-        'Comité de suivi trimestriel',
-        'Audit sécurité annuel inclus',
-        'Coûts récurrents décroissants',
-      ],
+      features: t.pricingFeatures.extension,
       cta: t.pricing.extensionCta,
       popular: false,
     },
@@ -54,38 +36,17 @@ export default function PricingPage() {
       target: t.pricing.consortiumTarget,
       price: t.pricing.consortiumPrice,
       description: t.pricing.consortiumDescription,
-      features: [
-        'Plateforme partagée multi-établissements',
-        'Bibliothèque de modules partagés',
-        'Connecteurs réutilisables entre établissements',
-        'Équipe technique mutualisée',
-        'Interopérabilité commune',
-        'Indicateurs consolidés pour les tutelles',
-        'Division des coûts par établissement',
-        'Standardisation des échanges',
-      ],
+      features: t.pricingFeatures.consortium,
       cta: t.pricing.consortiumCta,
       popular: false,
     },
   ];
 
   const FAQ_PRICING = [
-    {
-      q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
-      a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
-    },
-    {
-      q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
-      a: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
-    },
-    {
-      q: 'Comment construire le business case pour mon établissement ?',
-      a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
-    },
-    {
-      q: 'Quel est le coût d\'un essai ?',
-      a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
-    },
+    { q: t.pricingFaq.q1, a: t.pricingFaq.a1 },
+    { q: t.pricingFaq.q2, a: t.pricingFaq.a2 },
+    { q: t.pricingFaq.q3, a: t.pricingFaq.a3 },
+    { q: t.pricingFaq.q4, a: t.pricingFaq.a4 },
   ];
 
   return (
@@ -179,41 +140,29 @@ export default function PricingPage() {
             <div className="p-4 rounded-xl border bg-card">
               <h4 className="font-semibold text-sm mb-2 text-foreground">{t.pricing.currentCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>Licences outils satellites urgences</li>
-                <li>Maintenance et support éditeurs</li>
-                <li>Coûts d'interfaces et connecteurs</li>
-                <li>Incidents d'intégration (heures DSI)</li>
-                <li>Temps clinique perdu (min/poste x postes x 365j)</li>
+                {t.pricingBusinessCase.currentItems.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
               <h4 className="font-semibold text-sm mb-2 text-primary">{t.pricing.targetCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>Investissement initial (socle + modules + formation)</li>
-                <li>Équipe plateforme interne (part ETP DSI)</li>
-                <li>Hébergement HDS</li>
-                <li>MCO et audit sécurité annuel</li>
-                <li>Voir les formules détaillées ci-dessous</li>
+                {t.pricingBusinessCase.targetItems.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </div>
           </div>
           <div className="mt-6 p-4 rounded-xl border bg-card">
             <h4 className="font-semibold text-sm mb-3">{t.pricing.roiFormulas}</h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
-              <li><strong className="text-foreground">Économie annuelle nette</strong> = coûts actuels (A) - coûts cible (B)</li>
-              <li><strong className="text-foreground">ROI année 1</strong> = (A - B - investissement initial) / investissement × 100</li>
-              <li><strong className="text-foreground">Payback</strong> = investissement initial / (A - B) en mois</li>
-              <li><strong className="text-foreground">ROI cumulé 5 ans</strong> = ((A - B) × 5 - investissement) / investissement × 100</li>
+              {t.pricingBusinessCase.roiItems.map((item, i) => {
+                const [label, ...rest] = item.split(' = ');
+                return <li key={i}><strong className="text-foreground">{label}</strong> = {rest.join(' = ')}</li>;
+              })}
             </ul>
           </div>
           <div className="mt-4 p-4 rounded-xl border bg-card">
             <h4 className="font-semibold text-sm mb-3">{t.pricing.dafMethod}</h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
-              <li>0-10 min — Contexte : combien d'outils, combien de licences, combien d'interfaces</li>
-              <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
-              <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
-              <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
-              <li>55-60 min — Prochaines étapes : go/no-go essai, calendrier, périmètre</li>
+              {t.pricingBusinessCase.dafItems.map((item, i) => <li key={i}>{item}</li>)}
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
