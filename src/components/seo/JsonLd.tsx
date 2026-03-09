@@ -75,30 +75,8 @@ export function PageMeta({ title, description, canonical }: { title: string; des
       }
     }
 
-    // Inject hreflang tags for supported languages
-    const LANGS = ['fr', 'en', 'es', 'de'];
-    const baseUrl = canonical || window.location.href.split('?')[0].split('#')[0];
-    
-    // Remove existing hreflang links
-    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
-    
-    for (const lang of LANGS) {
-      const hreflang = document.createElement('link');
-      hreflang.rel = 'alternate';
-      hreflang.hreflang = lang;
-      hreflang.href = baseUrl;
-      document.head.appendChild(hreflang);
-    }
-    // x-default
-    const xDefault = document.createElement('link');
-    xDefault.rel = 'alternate';
-    xDefault.setAttribute('hreflang', 'x-default');
-    xDefault.href = baseUrl;
-    document.head.appendChild(xDefault);
-
-    return () => {
-      document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
-    };
+    // hreflang tags removed — no localized routes exist yet.
+    // Re-add when distinct /en/, /es/, /de/ routes are implemented.
   }, [title, description, canonical]);
 
   return null;

@@ -382,6 +382,66 @@ type TranslationTree = {
     breadcrumbHome: string;
     breadcrumbStatus: string;
   };
+  forgotPassword: {
+    backToLogin: string;
+    title: string;
+    subtitle: string;
+    email: string;
+    emailPlaceholder: string;
+    emailRequired: string;
+    sendError: string;
+    sending: string;
+    sendLink: string;
+    sentTitle: string;
+    sentText: string;
+    checkSpam: string;
+  };
+  resetPassword: {
+    title: string;
+    subtitle: string;
+    newPassword: string;
+    newPasswordPlaceholder: string;
+    confirm: string;
+    confirmPlaceholder: string;
+    minChars: string;
+    mismatch: string;
+    compromised: string;
+    updating: string;
+    update: string;
+    successTitle: string;
+    successRedirect: string;
+    invalidLink: string;
+    requestNew: string;
+  };
+  demoLive: {
+    chooseRole: string;
+    chooseRoleDesc: string;
+    simulatedPatients: string;
+    demoMode: string;
+    connectedAs: string;
+    goToBoard: string;
+    exitDemo: string;
+    interactiveDemo: string;
+    validationScenarios: string;
+    validationDesc: string;
+    guardMode: string;
+    guardDesc: string;
+    auditQuality: string;
+    auditDesc: string;
+    ehrExchange: string;
+    ehrDesc: string;
+    backGuidedDemo: string;
+    backHome: string;
+    createAccount: string;
+    login: string;
+    disclaimer: string;
+  };
+  notFound: {
+    title: string;
+    subtitle: string;
+    detail: string;
+    backHome: string;
+  };
 };
 
 export const translations: Record<Locale, TranslationTree> = {
@@ -747,6 +807,66 @@ export const translations: Record<Locale, TranslationTree> = {
       breadcrumbHome: 'Accueil',
       breadcrumbStatus: 'Statut',
     },
+    forgotPassword: {
+      backToLogin: 'Retour à la connexion',
+      title: 'Mot de passe oublié',
+      subtitle: 'Recevez un lien de réinitialisation par email',
+      email: 'Email',
+      emailPlaceholder: 'nom@hopital.fr',
+      emailRequired: 'Email requis',
+      sendError: 'Erreur lors de l\'envoi. Vérifiez votre email et réessayez.',
+      sending: 'Envoi...',
+      sendLink: 'Envoyer le lien',
+      sentTitle: 'Email envoyé',
+      sentText: 'Si un compte existe avec l\'adresse',
+      checkSpam: 'Vérifiez aussi vos courriers indésirables.',
+    },
+    resetPassword: {
+      title: 'Nouveau mot de passe',
+      subtitle: 'Choisissez un nouveau mot de passe sécurisé',
+      newPassword: 'Nouveau mot de passe',
+      newPasswordPlaceholder: 'Minimum 8 caractères',
+      confirm: 'Confirmer',
+      confirmPlaceholder: 'Répétez le mot de passe',
+      minChars: 'Le mot de passe doit contenir au moins 8 caractères.',
+      mismatch: 'Les mots de passe ne correspondent pas.',
+      compromised: 'Ce mot de passe a été compromis. Choisissez-en un autre.',
+      updating: 'Mise à jour...',
+      update: 'Mettre à jour le mot de passe',
+      successTitle: 'Mot de passe mis à jour',
+      successRedirect: 'Redirection vers la connexion...',
+      invalidLink: 'Ce lien est invalide ou a expiré.',
+      requestNew: 'Demander un nouveau lien',
+    },
+    demoLive: {
+      chooseRole: 'Choisissez votre rôle',
+      chooseRoleDesc: 'Sélectionnez un profil pour explorer l\'interface correspondante avec des données fictives. Aucun compte nécessaire.',
+      simulatedPatients: '10 patients simulés — Données en temps réel',
+      demoMode: 'Mode Démo',
+      connectedAs: 'Vous êtes connecté en tant que',
+      goToBoard: 'Aller au board',
+      exitDemo: 'Quitter la démo',
+      interactiveDemo: 'Démo interactive',
+      validationScenarios: 'Scénarios de validation',
+      validationDesc: '8 scénarios de test issus du cahier des charges hospitalier',
+      guardMode: 'Mode Garde',
+      guardDesc: 'Vue multi-services SAU + UHCD + Déchocage avec alertes et transmissions',
+      auditQuality: 'Audit & Qualité',
+      auditDesc: 'Tableau de bord qualité, indicateurs automatisés, export RMM/CREX',
+      ehrExchange: 'Échanges dossier patient',
+      ehrDesc: 'Connexion avec votre DPI — export compte-rendu et ordonnance',
+      backGuidedDemo: 'Retour à la démo guidée',
+      backHome: 'Retour à l\'accueil',
+      createAccount: 'Créer un compte',
+      login: 'Se connecter',
+      disclaimer: 'Les données affichées sont fictives et générées pour la démonstration. UrgenceOS ne constitue pas un dispositif médical certifié.',
+    },
+    notFound: {
+      title: '404',
+      subtitle: 'Page introuvable',
+      detail: 'L\'adresse demandée n\'existe pas ou a été déplacée.',
+      backHome: 'Retour à l\'accueil',
+    },
   },
 
   en: {
@@ -1110,6 +1230,66 @@ export const translations: Record<Locale, TranslationTree> = {
       infrastructure: 'Infrastructure',
       breadcrumbHome: 'Home',
       breadcrumbStatus: 'Status',
+    },
+    forgotPassword: {
+      backToLogin: 'Back to login',
+      title: 'Forgot password',
+      subtitle: 'Receive a reset link by email',
+      email: 'Email',
+      emailPlaceholder: 'name@hospital.com',
+      emailRequired: 'Email required',
+      sendError: 'Error sending. Check your email and try again.',
+      sending: 'Sending...',
+      sendLink: 'Send link',
+      sentTitle: 'Email sent',
+      sentText: 'If an account exists with the address',
+      checkSpam: 'Also check your spam folder.',
+    },
+    resetPassword: {
+      title: 'New password',
+      subtitle: 'Choose a new secure password',
+      newPassword: 'New password',
+      newPasswordPlaceholder: 'Minimum 8 characters',
+      confirm: 'Confirm',
+      confirmPlaceholder: 'Repeat password',
+      minChars: 'Password must be at least 8 characters.',
+      mismatch: 'Passwords do not match.',
+      compromised: 'This password has been compromised. Choose another.',
+      updating: 'Updating...',
+      update: 'Update password',
+      successTitle: 'Password updated',
+      successRedirect: 'Redirecting to login...',
+      invalidLink: 'This link is invalid or has expired.',
+      requestNew: 'Request a new link',
+    },
+    demoLive: {
+      chooseRole: 'Choose your role',
+      chooseRoleDesc: 'Select a profile to explore the corresponding interface with demo data. No account needed.',
+      simulatedPatients: '10 simulated patients — Real-time data',
+      demoMode: 'Demo Mode',
+      connectedAs: 'You are connected as',
+      goToBoard: 'Go to board',
+      exitDemo: 'Exit demo',
+      interactiveDemo: 'Interactive demo',
+      validationScenarios: 'Validation scenarios',
+      validationDesc: '8 test scenarios from hospital specifications',
+      guardMode: 'Guard Mode',
+      guardDesc: 'Multi-service view ED + SHTU + Resus with alerts and handovers',
+      auditQuality: 'Audit & Quality',
+      auditDesc: 'Quality dashboard, automated indicators, RMM/CREX export',
+      ehrExchange: 'EHR Exchange',
+      ehrDesc: 'Connection with your EHR — discharge summary and prescription export',
+      backGuidedDemo: 'Back to guided demo',
+      backHome: 'Back to home',
+      createAccount: 'Create account',
+      login: 'Log in',
+      disclaimer: 'Displayed data is fictitious and generated for demonstration. UrgenceOS is not a certified medical device.',
+    },
+    notFound: {
+      title: '404',
+      subtitle: 'Page not found',
+      detail: 'The requested page does not exist or has been moved.',
+      backHome: 'Back to home',
     },
   },
 
@@ -1475,6 +1655,66 @@ export const translations: Record<Locale, TranslationTree> = {
       breadcrumbHome: 'Inicio',
       breadcrumbStatus: 'Estado',
     },
+    forgotPassword: {
+      backToLogin: 'Volver al inicio de sesión',
+      title: 'Contraseña olvidada',
+      subtitle: 'Reciba un enlace de restablecimiento por email',
+      email: 'Email',
+      emailPlaceholder: 'nombre@hospital.es',
+      emailRequired: 'Email requerido',
+      sendError: 'Error al enviar. Verifique su email e inténtelo de nuevo.',
+      sending: 'Enviando...',
+      sendLink: 'Enviar enlace',
+      sentTitle: 'Email enviado',
+      sentText: 'Si existe una cuenta con la dirección',
+      checkSpam: 'Revise también su carpeta de spam.',
+    },
+    resetPassword: {
+      title: 'Nueva contraseña',
+      subtitle: 'Elija una nueva contraseña segura',
+      newPassword: 'Nueva contraseña',
+      newPasswordPlaceholder: 'Mínimo 8 caracteres',
+      confirm: 'Confirmar',
+      confirmPlaceholder: 'Repita la contraseña',
+      minChars: 'La contraseña debe tener al menos 8 caracteres.',
+      mismatch: 'Las contraseñas no coinciden.',
+      compromised: 'Esta contraseña ha sido comprometida. Elija otra.',
+      updating: 'Actualizando...',
+      update: 'Actualizar contraseña',
+      successTitle: 'Contraseña actualizada',
+      successRedirect: 'Redirigiendo al inicio de sesión...',
+      invalidLink: 'Este enlace es inválido o ha expirado.',
+      requestNew: 'Solicitar un nuevo enlace',
+    },
+    demoLive: {
+      chooseRole: 'Elija su rol',
+      chooseRoleDesc: 'Seleccione un perfil para explorar la interfaz correspondiente con datos ficticios. Sin necesidad de cuenta.',
+      simulatedPatients: '10 pacientes simulados — Datos en tiempo real',
+      demoMode: 'Modo Demo',
+      connectedAs: 'Está conectado como',
+      goToBoard: 'Ir al board',
+      exitDemo: 'Salir de la demo',
+      interactiveDemo: 'Demo interactiva',
+      validationScenarios: 'Escenarios de validación',
+      validationDesc: '8 escenarios de prueba del pliego de condiciones hospitalario',
+      guardMode: 'Modo Guardia',
+      guardDesc: 'Vista multi-servicio SU + UHCD + Reanimación con alertas y transmisiones',
+      auditQuality: 'Auditoría y Calidad',
+      auditDesc: 'Panel de calidad, indicadores automatizados, exportación RMM/CREX',
+      ehrExchange: 'Intercambio HCE',
+      ehrDesc: 'Conexión con su HCE — exportación de informes y recetas',
+      backGuidedDemo: 'Volver a la demo guiada',
+      backHome: 'Volver al inicio',
+      createAccount: 'Crear cuenta',
+      login: 'Iniciar sesión',
+      disclaimer: 'Los datos mostrados son ficticios y generados para la demostración. UrgenceOS no es un dispositivo médico certificado.',
+    },
+    notFound: {
+      title: '404',
+      subtitle: 'Página no encontrada',
+      detail: 'La dirección solicitada no existe o ha sido movida.',
+      backHome: 'Volver al inicio',
+    },
   },
 
   de: {
@@ -1838,6 +2078,66 @@ export const translations: Record<Locale, TranslationTree> = {
       infrastructure: 'Infrastruktur',
       breadcrumbHome: 'Startseite',
       breadcrumbStatus: 'Status',
+    },
+    forgotPassword: {
+      backToLogin: 'Zurück zur Anmeldung',
+      title: 'Passwort vergessen',
+      subtitle: 'Erhalten Sie einen Rücksetz-Link per E-Mail',
+      email: 'E-Mail',
+      emailPlaceholder: 'name@krankenhaus.de',
+      emailRequired: 'E-Mail erforderlich',
+      sendError: 'Fehler beim Senden. Überprüfen Sie Ihre E-Mail und versuchen Sie es erneut.',
+      sending: 'Senden...',
+      sendLink: 'Link senden',
+      sentTitle: 'E-Mail gesendet',
+      sentText: 'Wenn ein Konto mit der Adresse existiert',
+      checkSpam: 'Überprüfen Sie auch Ihren Spam-Ordner.',
+    },
+    resetPassword: {
+      title: 'Neues Passwort',
+      subtitle: 'Wählen Sie ein neues sicheres Passwort',
+      newPassword: 'Neues Passwort',
+      newPasswordPlaceholder: 'Mindestens 8 Zeichen',
+      confirm: 'Bestätigen',
+      confirmPlaceholder: 'Passwort wiederholen',
+      minChars: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
+      mismatch: 'Passwörter stimmen nicht überein.',
+      compromised: 'Dieses Passwort wurde kompromittiert. Wählen Sie ein anderes.',
+      updating: 'Aktualisieren...',
+      update: 'Passwort aktualisieren',
+      successTitle: 'Passwort aktualisiert',
+      successRedirect: 'Weiterleitung zur Anmeldung...',
+      invalidLink: 'Dieser Link ist ungültig oder abgelaufen.',
+      requestNew: 'Neuen Link anfordern',
+    },
+    demoLive: {
+      chooseRole: 'Wählen Sie Ihre Rolle',
+      chooseRoleDesc: 'Wählen Sie ein Profil, um die entsprechende Oberfläche mit Demodaten zu erkunden. Kein Konto erforderlich.',
+      simulatedPatients: '10 simulierte Patienten — Echtzeitdaten',
+      demoMode: 'Demo-Modus',
+      connectedAs: 'Sie sind verbunden als',
+      goToBoard: 'Zum Board',
+      exitDemo: 'Demo verlassen',
+      interactiveDemo: 'Interaktive Demo',
+      validationScenarios: 'Validierungsszenarien',
+      validationDesc: '8 Testszenarien aus dem Krankenhaus-Lastenheft',
+      guardMode: 'Bereitschaftsmodus',
+      guardDesc: 'Multi-Service-Ansicht NA + SHTU + Reanimation mit Alarmen und Übergaben',
+      auditQuality: 'Audit & Qualität',
+      auditDesc: 'Qualitäts-Dashboard, automatisierte Indikatoren, RMM/CREX-Export',
+      ehrExchange: 'KIS-Austausch',
+      ehrDesc: 'Anbindung an Ihr KIS — Arztbrief- und Rezept-Export',
+      backGuidedDemo: 'Zurück zur geführten Demo',
+      backHome: 'Zurück zur Startseite',
+      createAccount: 'Konto erstellen',
+      login: 'Anmelden',
+      disclaimer: 'Die angezeigten Daten sind fiktiv und für die Demonstration generiert. UrgenceOS ist kein zertifiziertes Medizinprodukt.',
+    },
+    notFound: {
+      title: '404',
+      subtitle: 'Seite nicht gefunden',
+      detail: 'Die angeforderte Adresse existiert nicht oder wurde verschoben.',
+      backHome: 'Zurück zur Startseite',
     },
   },
 };
