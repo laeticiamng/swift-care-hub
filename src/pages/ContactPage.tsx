@@ -31,6 +31,10 @@ export default function ContactPage() {
       toast.error(t.contact.fillRequired);
       return;
     }
+    if (website) {
+      setSuccess(true);
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.functions.invoke('contact-lead', {
@@ -41,6 +45,7 @@ export default function ContactPage() {
           establishment: establishment.trim(),
           roleFunction: roleFunction.trim(),
           message: message.trim() || null,
+          website: '',
         },
       });
       if (error) throw error;
