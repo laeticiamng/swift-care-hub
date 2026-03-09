@@ -39,6 +39,7 @@ export default function LandingPage() {
         <ProblemSection />
         <SolutionSection />
         <BenefitsSection />
+        <PlatformPreviewSection />
         <TestimonialsSection />
         <CTASection />
         <AntiFeatureSection />
