@@ -25,6 +25,7 @@ function getStoredConsent(): CookiePreferences | null {
 }
 
 export function CookieConsent() {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -52,7 +53,6 @@ export function CookieConsent() {
 
   if (!visible) return null;
 
-  // Slim mode (default)
   if (!expanded) {
     return (
       <div className="fixed bottom-0 inset-x-0 z-50 animate-in slide-in-from-bottom-2 duration-300">
@@ -61,19 +61,19 @@ export function CookieConsent() {
             <div className="flex items-center gap-2 min-w-0">
               <Cookie className="h-4 w-4 text-primary shrink-0" />
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Cookies techniques uniquement.{' '}
-                <Link to="/politique-confidentialite" className="text-primary hover:underline whitespace-nowrap">En savoir plus</Link>
+                {t.cookieConsent.technicalOnly}{' '}
+                <Link to="/politique-confidentialite" className="text-primary hover:underline whitespace-nowrap">{t.cookieConsent.learnMore}</Link>
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0 justify-end">
               <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs" onClick={() => setExpanded(true)}>
-                Personnaliser
+                {t.cookieConsent.customize}
               </Button>
               <Button variant="ghost" size="sm" className="h-7 px-2.5 text-xs" onClick={refuseAll}>
-                Refuser
+                {t.cookieConsent.refuse}
               </Button>
               <Button size="sm" className="h-7 px-3 text-xs" onClick={acceptAll}>
-                Accepter
+                {t.cookieConsent.accept}
               </Button>
             </div>
           </div>
