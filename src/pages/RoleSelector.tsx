@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import MFASetup from '@/components/urgence/MFASetup';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
+import { useI18n } from '@/i18n/I18nContext';
 
-const roleConfig: { role: AppRole; label: string; description: string; icon: React.ElementType; color: string }[] = [
-  { role: 'medecin', label: 'Médecin', description: 'Board panoramique & dossiers patients', icon: Stethoscope, color: 'text-medical-info' },
-  { role: 'ioa', label: 'IOA', description: 'File d\'attente & tri des patients', icon: ClipboardList, color: 'text-medical-warning' },
-  { role: 'ide', label: 'IDE', description: 'Pancarte unifiée & administrations', icon: Syringe, color: 'text-medical-success' },
-  { role: 'as', label: 'Aide-soignant', description: 'Constantes & surveillance', icon: Heart, color: 'text-medical-critical' },
-  { role: 'secretaire', label: 'Secrétaire', description: 'Admissions & accueil', icon: UserPlus, color: 'text-muted-foreground' },
-];
+const ROLE_ICONS: Record<AppRole, React.ElementType> = {
+  medecin: Stethoscope, ioa: ClipboardList, ide: Syringe, as: Heart, secretaire: UserPlus,
+};
+const ROLE_COLORS: Record<AppRole, string> = {
+  medecin: 'text-medical-info', ioa: 'text-medical-warning', ide: 'text-medical-success', as: 'text-medical-critical', secretaire: 'text-muted-foreground',
+};
 
 const roleRedirects: Record<AppRole, string> = {
   medecin: '/board',
@@ -28,6 +28,14 @@ export default function RoleSelector() {
   const { selectRole, availableRoles, role, signOut, user, loading, mfaRequired, mfaEnrollRequired, completeMFA, completeMFAEnroll } = useAuth();
   const navigate = useNavigate();
   const [assigning, setAssigning] = useState(false);
+  const { t } = useI18n();
+
+  const roleLabels: Record<AppRole, string> = {
+    medecin: t.roles.medecin, ioa: t.roles.ioa, ide: t.roles.ide, as: t.roles.as, secretaire: t.roles.secretaire,
+  };
+  const roleDescs: Record<AppRole, string> = {
+    medecin: t.roles.medecinDesc, ioa: t.roles.ioaDesc, ide: t.roles.ideDesc, as: t.roles.asDesc, secretaire: t.roles.secretaireDesc,
+  };
 
   useEffect(() => {
     if (!loading && role && availableRoles.length > 0) {
@@ -37,8 +45,7 @@ export default function RoleSelector() {
 
   const handleSelect = async (selectedRole: AppRole) => {
     if (availableRoles.length === 0 && user) {
-      // New users cannot self-assign roles — must be assigned by an administrator
-      toast.error('Aucun rôle attribué à votre compte. Contactez un administrateur pour obtenir un accès.');
+      toast.error(t.roles.noRoleToast);
       return;
     }
     await selectRole(selectedRole);
@@ -46,7 +53,7 @@ export default function RoleSelector() {
   };
 
   const isNewUser = !loading && availableRoles.length === 0;
-  const visibleRoles = roleConfig.filter(r => availableRoles.includes(r.role));
+  const visibleRoles = availableRoles.map(r => ({ role: r, label: roleLabels[r], description: roleDescs[r], icon: ROLE_ICONS[r], color: ROLE_COLORS[r] }));
 
   // MFA screens for medical roles
   if (mfaEnrollRequired) {
@@ -72,10 +79,10 @@ export default function RoleSelector() {
           <span className="text-2xl font-bold">Urgence<span className="text-primary">OS</span></span>
         </div>
         <h1 className="text-2xl font-bold">
-          {isNewUser ? 'En attente d\'attribution' : 'Sélection du rôle'}
+          {isNewUser ? t.roles.titleNewUser : t.roles.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          {isNewUser ? 'Un administrateur doit vous attribuer un rôle pour accéder à la plateforme' : 'Choisissez votre profil pour cette session'}
+          {isNewUser ? t.roles.subtitleNewUser : t.roles.subtitle}
         </p>
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
@@ -83,12 +90,10 @@ export default function RoleSelector() {
       {isNewUser ? (
         <div className="relative z-10 max-w-md w-full text-center p-8 rounded-2xl border bg-card shadow-sm animate-in fade-in duration-300">
           <AlertTriangle className="h-10 w-10 text-medical-warning mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Aucun rôle attribué</h2>
-          <p className="text-muted-foreground text-sm mb-4">
-            Votre compte n'a pas encore de rôle assigné. Contactez un administrateur pour obtenir l'accès à la plateforme.
-          </p>
+          <h2 className="text-xl font-bold mb-2">{t.roles.noRoleTitle}</h2>
+          <p className="text-muted-foreground text-sm mb-4">{t.roles.noRoleText}</p>
           <p className="text-xs text-muted-foreground">
-            Email de contact : <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
+            {t.roles.noRoleContact} <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
           </p>
         </div>
       ) : (
@@ -120,7 +125,7 @@ export default function RoleSelector() {
       )}
 
       <Button variant="ghost" onClick={signOut} className="mt-8 text-muted-foreground relative z-10">
-        <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+        <LogOut className="h-4 w-4 mr-2" /> {t.roles.logout}
       </Button>
     </div>
   );

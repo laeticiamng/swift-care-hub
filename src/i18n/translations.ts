@@ -299,6 +299,89 @@ type TranslationTree = {
     catTrial: string;
     catPricing: string;
   };
+  roles: {
+    title: string;
+    titleNewUser: string;
+    subtitle: string;
+    subtitleNewUser: string;
+    noRoleTitle: string;
+    noRoleText: string;
+    noRoleContact: string;
+    noRoleToast: string;
+    logout: string;
+    medecin: string;
+    medecinDesc: string;
+    ioa: string;
+    ioaDesc: string;
+    ide: string;
+    ideDesc: string;
+    as: string;
+    asDesc: string;
+    secretaire: string;
+    secretaireDesc: string;
+  };
+  about: {
+    badge: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    missionTitle: string;
+    missionP1: string;
+    missionP2: string;
+    principlesTitle: string;
+    visionTitle: string;
+    visionSubtitle: string;
+    phase1: string;
+    phase1Title: string;
+    phase1Desc: string;
+    phase2: string;
+    phase2Title: string;
+    phase2Desc: string;
+    phase3: string;
+    phase3Title: string;
+    phase3Desc: string;
+    timelineTitle: string;
+    ecosystemTitle: string;
+    ecosystemSubtitle: string;
+    founderRole: string;
+    founderBio: string;
+    companyTitle: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    ctaButton: string;
+    ctaDemo: string;
+    disclaimer: string;
+    breadcrumbHome: string;
+    breadcrumbAbout: string;
+  };
+  status: {
+    pageTitle: string;
+    monitoring: string;
+    title: string;
+    lastCheck: string;
+    waitingData: string;
+    refresh: string;
+    allOperational: string;
+    degraded: string;
+    incidentActive: string;
+    uptime90: string;
+    avgLatency: string;
+    resolvedIncidents: string;
+    uptimeLast90: string;
+    daysAgo: string;
+    today: string;
+    systemComponents: string;
+    slaTitle: string;
+    slaConsult: string;
+    slaNote: string;
+    securityTitle: string;
+    incidentHistory: string;
+    noIncidents: string;
+    noIncidentsDetail: string;
+    duration: string;
+    infrastructure: string;
+    breadcrumbHome: string;
+    breadcrumbStatus: string;
+  };
 };
 
 export const translations: Record<Locale, TranslationTree> = {
@@ -587,6 +670,83 @@ export const translations: Record<Locale, TranslationTree> = {
       catTrial: 'Essai et déploiement',
       catPricing: 'Tarifs',
     },
+    roles: {
+      title: 'Sélection du rôle',
+      titleNewUser: 'En attente d\'attribution',
+      subtitle: 'Choisissez votre profil pour cette session',
+      subtitleNewUser: 'Un administrateur doit vous attribuer un rôle pour accéder à la plateforme',
+      noRoleTitle: 'Aucun rôle attribué',
+      noRoleText: 'Votre compte n\'a pas encore de rôle assigné. Contactez un administrateur pour obtenir l\'accès à la plateforme.',
+      noRoleContact: 'Email de contact :',
+      noRoleToast: 'Aucun rôle attribué à votre compte. Contactez un administrateur pour obtenir un accès.',
+      logout: 'Déconnexion',
+      medecin: 'Médecin',
+      medecinDesc: 'Board panoramique & dossiers patients',
+      ioa: 'IOA',
+      ioaDesc: 'File d\'attente & tri des patients',
+      ide: 'IDE',
+      ideDesc: 'Pancarte unifiée & administrations',
+      as: 'Aide-soignant',
+      asDesc: 'Constantes & surveillance',
+      secretaire: 'Secrétaire',
+      secretaireDesc: 'Admissions & accueil',
+    },
+    about: {
+      badge: 'À propos',
+      heroTitle: 'L\'hôpital public mérite un logiciel qu\'il contrôle.',
+      heroSubtitle: 'EmotionsCare conçoit UrgenceOS : un logiciel que l\'hôpital possède, des modules dédiés aux urgences avec des résultats mesurables, et une architecture qui réduit les coûts au lieu de les aggraver.',
+      missionTitle: 'Notre conviction',
+      missionP1: 'Les hôpitaux accumulent une dette opérationnelle invisible : licences récurrentes en hausse, interfaces fragiles entre 15 à 40 applications, temps clinique perdu en friction logicielle, surface d\'attaque qui croît avec chaque outil supplémentaire. Le problème n\'est pas un manque de logiciels. C\'est un excès d\'outils non maîtrisés.',
+      missionP2: 'Hospital-Owned Software est notre réponse : un socle interne que l\'hôpital possède et gouverne, sur lequel se branchent des modules métier interopérables. Le DPI reste en place. Les outils satellites disparaissent un par un. La dette diminue au lieu de s\'accumuler.',
+      principlesTitle: 'Nos principes',
+      visionTitle: 'Vision : de l\'essai au territoire',
+      visionSubtitle: 'Un hôpital valide. Un GHT mutualise. Un territoire standardise.',
+      phase1: 'Phase 1', phase1Title: 'Essai', phase1Desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.',
+      phase2: 'Phase 2', phase2Title: 'Mutualisation', phase2Desc: 'Trois établissements partagent le socle et les modules. Données isolées, coûts divisés.',
+      phase3: 'Phase 3', phase3Title: 'Standardisation', phase3Desc: 'Le GHT standardise ses flux, ses connecteurs et ses indicateurs. ARS-ready.',
+      timelineTitle: 'Notre parcours',
+      ecosystemTitle: 'Écosystème',
+      ecosystemSubtitle: 'UrgenceOS se construit avec les acteurs du terrain',
+      founderRole: 'Fondatrice & Présidente — EmotionsCare SASU',
+      founderBio: 'Convaincue que l\'hôpital public mérite des outils numériques à la hauteur de sa mission, Laeticia a créé EmotionsCare pour redonner aux établissements de santé la maîtrise de leur informatique. UrgenceOS est né de cette conviction : un logiciel conçu avec les soignants, détenu par l\'hôpital, et mesuré sur des résultats concrets.',
+      companyTitle: 'EmotionsCare SASU',
+      ctaTitle: 'Prêt à reprendre le contrôle de votre informatique ?',
+      ctaSubtitle: '10 semaines pour mesurer les résultats concrets. Sans engagement pluriannuel.',
+      ctaButton: 'Demander un essai',
+      ctaDemo: 'Voir la démo',
+      disclaimer: 'UrgenceOS est un outil d\'aide à la gestion des urgences hospitalières. Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.',
+      breadcrumbHome: 'Accueil',
+      breadcrumbAbout: 'À propos',
+    },
+    status: {
+      pageTitle: 'Statut des services',
+      monitoring: 'Monitoring 24/7',
+      title: 'Statut des services',
+      lastCheck: 'Dernière vérification :',
+      waitingData: 'Données en attente du premier check automatique',
+      refresh: 'Actualiser',
+      allOperational: 'Tous les systèmes sont opérationnels',
+      degraded: 'Performances dégradées sur certains services',
+      incidentActive: 'Incident en cours',
+      uptime90: 'Uptime 90j',
+      avgLatency: 'Latence moyenne',
+      resolvedIncidents: 'Incidents résolus',
+      uptimeLast90: 'Uptime — 90 derniers jours',
+      daysAgo: '90 jours',
+      today: 'Aujourd\'hui',
+      systemComponents: 'Composants du système',
+      slaTitle: 'Engagements SLA',
+      slaConsult: 'Consulter le SLA',
+      slaNote: 'Ces engagements s\'appliquent aux établissements en phase d\'essai et en production. Les SLA sont contractualisés et mesurés mensuellement.',
+      securityTitle: 'Vérifications de sécurité',
+      incidentHistory: 'Historique des incidents',
+      noIncidents: 'Aucun incident signalé',
+      noIncidentsDetail: 'Aucun incident majeur enregistré sur les 90 derniers jours.',
+      duration: 'Durée :',
+      infrastructure: 'Infrastructure',
+      breadcrumbHome: 'Accueil',
+      breadcrumbStatus: 'Statut',
+    },
   },
 
   en: {
@@ -873,6 +1033,83 @@ export const translations: Record<Locale, TranslationTree> = {
       catSecurity: 'Security and data',
       catTrial: 'Trial and deployment',
       catPricing: 'Pricing',
+    },
+    roles: {
+      title: 'Role selection',
+      titleNewUser: 'Awaiting assignment',
+      subtitle: 'Choose your profile for this session',
+      subtitleNewUser: 'An administrator must assign you a role to access the platform',
+      noRoleTitle: 'No role assigned',
+      noRoleText: 'Your account does not have a role yet. Contact an administrator to get access to the platform.',
+      noRoleContact: 'Contact email:',
+      noRoleToast: 'No role assigned to your account. Contact an administrator for access.',
+      logout: 'Sign out',
+      medecin: 'Physician',
+      medecinDesc: 'Panoramic board & patient records',
+      ioa: 'Triage Nurse',
+      ioaDesc: 'Queue & patient triage',
+      ide: 'Nurse',
+      ideDesc: 'Unified chart & administrations',
+      as: 'Nursing assistant',
+      asDesc: 'Vitals & monitoring',
+      secretaire: 'Secretary',
+      secretaireDesc: 'Admissions & reception',
+    },
+    about: {
+      badge: 'About',
+      heroTitle: 'Public hospitals deserve software they control.',
+      heroSubtitle: 'EmotionsCare builds UrgenceOS: software the hospital owns, modules dedicated to emergency departments with measurable results, and an architecture that reduces costs instead of increasing them.',
+      missionTitle: 'Our belief',
+      missionP1: 'Hospitals accumulate invisible operational debt: rising recurring licenses, fragile interfaces between 15 to 40 applications, clinical time lost to software friction, attack surface that grows with each additional tool. The problem is not a lack of software. It\'s an excess of uncontrolled tools.',
+      missionP2: 'Hospital-Owned Software is our answer: an internal foundation that the hospital owns and governs, on which interoperable business modules plug in. The EHR stays in place. Satellite tools disappear one by one. Debt decreases instead of accumulating.',
+      principlesTitle: 'Our principles',
+      visionTitle: 'Vision: from trial to territory',
+      visionSubtitle: 'One hospital validates. A group shares. A territory standardizes.',
+      phase1: 'Phase 1', phase1Title: 'Trial', phase1Desc: 'One facility proves ROI on the emergency scope. 10 weeks, go/no-go criteria defined.',
+      phase2: 'Phase 2', phase2Title: 'Sharing', phase2Desc: 'Three facilities share the foundation and modules. Isolated data, shared costs.',
+      phase3: 'Phase 3', phase3Title: 'Standardization', phase3Desc: 'The group standardizes its flows, connectors and indicators. Regulator-ready.',
+      timelineTitle: 'Our journey',
+      ecosystemTitle: 'Ecosystem',
+      ecosystemSubtitle: 'UrgenceOS is built with field actors',
+      founderRole: 'Founder & President — EmotionsCare SASU',
+      founderBio: 'Convinced that public hospitals deserve digital tools worthy of their mission, Laeticia created EmotionsCare to give healthcare institutions back control of their IT. UrgenceOS was born from this conviction: software designed with caregivers, owned by the hospital, and measured on concrete results.',
+      companyTitle: 'EmotionsCare SASU',
+      ctaTitle: 'Ready to take back control of your IT?',
+      ctaSubtitle: '10 weeks to measure concrete results. No multi-year commitment.',
+      ctaButton: 'Request a trial',
+      ctaDemo: 'See the demo',
+      disclaimer: 'UrgenceOS is a management tool for hospital emergency departments. It is not a certified medical device under applicable regulations.',
+      breadcrumbHome: 'Home',
+      breadcrumbAbout: 'About',
+    },
+    status: {
+      pageTitle: 'Service Status',
+      monitoring: '24/7 Monitoring',
+      title: 'Service Status',
+      lastCheck: 'Last check:',
+      waitingData: 'Waiting for first automatic check',
+      refresh: 'Refresh',
+      allOperational: 'All systems operational',
+      degraded: 'Degraded performance on some services',
+      incidentActive: 'Active incident',
+      uptime90: '90-day Uptime',
+      avgLatency: 'Average latency',
+      resolvedIncidents: 'Resolved incidents',
+      uptimeLast90: 'Uptime — last 90 days',
+      daysAgo: '90 days',
+      today: 'Today',
+      systemComponents: 'System components',
+      slaTitle: 'SLA Commitments',
+      slaConsult: 'View SLA',
+      slaNote: 'These commitments apply to establishments in trial and production phases. SLAs are contractualized and measured monthly.',
+      securityTitle: 'Security checks',
+      incidentHistory: 'Incident history',
+      noIncidents: 'No incidents reported',
+      noIncidentsDetail: 'No major incidents recorded in the last 90 days.',
+      duration: 'Duration:',
+      infrastructure: 'Infrastructure',
+      breadcrumbHome: 'Home',
+      breadcrumbStatus: 'Status',
     },
   },
 
@@ -1161,6 +1398,83 @@ export const translations: Record<Locale, TranslationTree> = {
       catTrial: 'Prueba y despliegue',
       catPricing: 'Precios',
     },
+    roles: {
+      title: 'Selección de rol',
+      titleNewUser: 'En espera de asignación',
+      subtitle: 'Elija su perfil para esta sesión',
+      subtitleNewUser: 'Un administrador debe asignarle un rol para acceder a la plataforma',
+      noRoleTitle: 'Sin rol asignado',
+      noRoleText: 'Su cuenta aún no tiene un rol asignado. Contacte a un administrador para obtener acceso a la plataforma.',
+      noRoleContact: 'Email de contacto:',
+      noRoleToast: 'No tiene rol asignado. Contacte a un administrador para obtener acceso.',
+      logout: 'Cerrar sesión',
+      medecin: 'Médico',
+      medecinDesc: 'Board panorámico y expedientes',
+      ioa: 'Enfermero de triaje',
+      ioaDesc: 'Cola de espera y triaje',
+      ide: 'Enfermero',
+      ideDesc: 'Gráfico unificado y administraciones',
+      as: 'Auxiliar de enfermería',
+      asDesc: 'Signos vitales y vigilancia',
+      secretaire: 'Secretario/a',
+      secretaireDesc: 'Admisiones y recepción',
+    },
+    about: {
+      badge: 'Acerca de',
+      heroTitle: 'Los hospitales públicos merecen un software que controlen.',
+      heroSubtitle: 'EmotionsCare crea UrgenceOS: un software que el hospital posee, módulos dedicados a urgencias con resultados medibles, y una arquitectura que reduce costes en lugar de aumentarlos.',
+      missionTitle: 'Nuestra convicción',
+      missionP1: 'Los hospitales acumulan una deuda operativa invisible: licencias recurrentes en aumento, interfaces frágiles entre 15 a 40 aplicaciones, tiempo clínico perdido en fricción de software, superficie de ataque que crece con cada herramienta adicional. El problema no es la falta de software. Es un exceso de herramientas no controladas.',
+      missionP2: 'Hospital-Owned Software es nuestra respuesta: una base interna que el hospital posee y gobierna, sobre la que se conectan módulos de negocio interoperables. La HCE permanece. Las herramientas satélite desaparecen una a una. La deuda disminuye en lugar de acumularse.',
+      principlesTitle: 'Nuestros principios',
+      visionTitle: 'Visión: del ensayo al territorio',
+      visionSubtitle: 'Un hospital valida. Un grupo comparte. Un territorio estandariza.',
+      phase1: 'Fase 1', phase1Title: 'Prueba', phase1Desc: 'Un establecimiento prueba el ROI en urgencias. 10 semanas, criterios go/no-go definidos.',
+      phase2: 'Fase 2', phase2Title: 'Mutualización', phase2Desc: 'Tres establecimientos comparten la base y los módulos. Datos aislados, costes divididos.',
+      phase3: 'Fase 3', phase3Title: 'Estandarización', phase3Desc: 'El grupo estandariza sus flujos, conectores e indicadores. Listo para el regulador.',
+      timelineTitle: 'Nuestro recorrido',
+      ecosystemTitle: 'Ecosistema',
+      ecosystemSubtitle: 'UrgenceOS se construye con los actores del terreno',
+      founderRole: 'Fundadora y Presidenta — EmotionsCare SASU',
+      founderBio: 'Convencida de que los hospitales públicos merecen herramientas digitales a la altura de su misión, Laeticia creó EmotionsCare para devolver a los establecimientos sanitarios el control de su informática. UrgenceOS nació de esta convicción: un software diseñado con los cuidadores, propiedad del hospital, y medido con resultados concretos.',
+      companyTitle: 'EmotionsCare SASU',
+      ctaTitle: '¿Listo para retomar el control de su informática?',
+      ctaSubtitle: '10 semanas para medir resultados concretos. Sin compromiso plurianual.',
+      ctaButton: 'Solicitar una prueba',
+      ctaDemo: 'Ver la demo',
+      disclaimer: 'UrgenceOS es una herramienta de gestión para servicios de urgencias hospitalarias. No es un dispositivo médico certificado según la normativa vigente.',
+      breadcrumbHome: 'Inicio',
+      breadcrumbAbout: 'Acerca de',
+    },
+    status: {
+      pageTitle: 'Estado de los servicios',
+      monitoring: 'Monitoreo 24/7',
+      title: 'Estado de los servicios',
+      lastCheck: 'Última verificación:',
+      waitingData: 'Esperando el primer chequeo automático',
+      refresh: 'Actualizar',
+      allOperational: 'Todos los sistemas operativos',
+      degraded: 'Rendimiento degradado en algunos servicios',
+      incidentActive: 'Incidente activo',
+      uptime90: 'Uptime 90d',
+      avgLatency: 'Latencia promedio',
+      resolvedIncidents: 'Incidentes resueltos',
+      uptimeLast90: 'Uptime — últimos 90 días',
+      daysAgo: '90 días',
+      today: 'Hoy',
+      systemComponents: 'Componentes del sistema',
+      slaTitle: 'Compromisos SLA',
+      slaConsult: 'Consultar SLA',
+      slaNote: 'Estos compromisos se aplican a los establecimientos en fase de prueba y producción. Los SLA se contractualizan y miden mensualmente.',
+      securityTitle: 'Verificaciones de seguridad',
+      incidentHistory: 'Historial de incidentes',
+      noIncidents: 'Sin incidentes reportados',
+      noIncidentsDetail: 'No se registraron incidentes importantes en los últimos 90 días.',
+      duration: 'Duración:',
+      infrastructure: 'Infraestructura',
+      breadcrumbHome: 'Inicio',
+      breadcrumbStatus: 'Estado',
+    },
   },
 
   de: {
@@ -1447,6 +1761,83 @@ export const translations: Record<Locale, TranslationTree> = {
       catSecurity: 'Sicherheit und Daten',
       catTrial: 'Test und Bereitstellung',
       catPricing: 'Preise',
+    },
+    roles: {
+      title: 'Rollenauswahl',
+      titleNewUser: 'Warte auf Zuweisung',
+      subtitle: 'Wählen Sie Ihr Profil für diese Sitzung',
+      subtitleNewUser: 'Ein Administrator muss Ihnen eine Rolle zuweisen, um auf die Plattform zuzugreifen',
+      noRoleTitle: 'Keine Rolle zugewiesen',
+      noRoleText: 'Ihr Konto hat noch keine Rolle. Kontaktieren Sie einen Administrator für den Zugang zur Plattform.',
+      noRoleContact: 'Kontakt-E-Mail:',
+      noRoleToast: 'Keine Rolle Ihrem Konto zugewiesen. Kontaktieren Sie einen Administrator.',
+      logout: 'Abmelden',
+      medecin: 'Arzt',
+      medecinDesc: 'Panorama-Board & Patientenakten',
+      ioa: 'Triage-Pflegekraft',
+      ioaDesc: 'Warteschlange & Patiententriage',
+      ide: 'Pflegekraft',
+      ideDesc: 'Einheitliche Übersicht & Verabreichungen',
+      as: 'Pflegehilfe',
+      asDesc: 'Vitalzeichen & Überwachung',
+      secretaire: 'Sekretär/in',
+      secretaireDesc: 'Aufnahmen & Empfang',
+    },
+    about: {
+      badge: 'Über uns',
+      heroTitle: 'Öffentliche Krankenhäuser verdienen Software, die sie kontrollieren.',
+      heroSubtitle: 'EmotionsCare entwickelt UrgenceOS: Software, die das Krankenhaus besitzt, Module für Notaufnahmen mit messbaren Ergebnissen, und eine Architektur, die Kosten senkt statt sie zu erhöhen.',
+      missionTitle: 'Unsere Überzeugung',
+      missionP1: 'Krankenhäuser häufen unsichtbare operative Schulden an: steigende wiederkehrende Lizenzen, fragile Schnittstellen zwischen 15 bis 40 Anwendungen, klinische Zeit verloren durch Software-Reibung, Angriffsfläche die mit jedem zusätzlichen Tool wächst. Das Problem ist nicht ein Mangel an Software. Es ist ein Übermaß an unkontrollierten Werkzeugen.',
+      missionP2: 'Hospital-Owned Software ist unsere Antwort: ein internes Fundament, das das Krankenhaus besitzt und steuert, an das sich interoperable Geschäftsmodule anschließen. Das KIS bleibt bestehen. Satelliten-Tools verschwinden nacheinander. Die Schulden sinken statt sich anzuhäufen.',
+      principlesTitle: 'Unsere Prinzipien',
+      visionTitle: 'Vision: Vom Test zum Territorium',
+      visionSubtitle: 'Ein Krankenhaus validiert. Eine Gruppe teilt. Ein Territorium standardisiert.',
+      phase1: 'Phase 1', phase1Title: 'Test', phase1Desc: 'Ein Haus beweist den ROI im Notaufnahmebereich. 10 Wochen, Go/No-Go-Kriterien definiert.',
+      phase2: 'Phase 2', phase2Title: 'Bündelung', phase2Desc: 'Drei Häuser teilen Fundament und Module. Isolierte Daten, geteilte Kosten.',
+      phase3: 'Phase 3', phase3Title: 'Standardisierung', phase3Desc: 'Die Gruppe standardisiert ihre Abläufe, Konnektoren und Indikatoren. Behörden-ready.',
+      timelineTitle: 'Unser Weg',
+      ecosystemTitle: 'Ökosystem',
+      ecosystemSubtitle: 'UrgenceOS wird mit den Akteuren vor Ort gebaut',
+      founderRole: 'Gründerin & Präsidentin — EmotionsCare SASU',
+      founderBio: 'Überzeugt, dass öffentliche Krankenhäuser digitale Werkzeuge verdienen, die ihrer Mission gerecht werden, hat Laeticia EmotionsCare gegründet, um Gesundheitseinrichtungen die Kontrolle über ihre IT zurückzugeben. UrgenceOS entstand aus dieser Überzeugung: Software mit Pflegekräften entwickelt, im Besitz des Krankenhauses, und an konkreten Ergebnissen gemessen.',
+      companyTitle: 'EmotionsCare SASU',
+      ctaTitle: 'Bereit, die Kontrolle über Ihre IT zurückzugewinnen?',
+      ctaSubtitle: '10 Wochen, um konkrete Ergebnisse zu messen. Ohne mehrjährige Bindung.',
+      ctaButton: 'Test anfragen',
+      ctaDemo: 'Demo ansehen',
+      disclaimer: 'UrgenceOS ist ein Management-Tool für Notaufnahmen. Es ist kein zertifiziertes Medizinprodukt im Sinne der geltenden Vorschriften.',
+      breadcrumbHome: 'Startseite',
+      breadcrumbAbout: 'Über uns',
+    },
+    status: {
+      pageTitle: 'Service-Status',
+      monitoring: '24/7-Monitoring',
+      title: 'Service-Status',
+      lastCheck: 'Letzte Überprüfung:',
+      waitingData: 'Warte auf ersten automatischen Check',
+      refresh: 'Aktualisieren',
+      allOperational: 'Alle Systeme betriebsbereit',
+      degraded: 'Eingeschränkte Leistung bei einigen Diensten',
+      incidentActive: 'Aktiver Vorfall',
+      uptime90: '90-Tage-Uptime',
+      avgLatency: 'Durchschn. Latenz',
+      resolvedIncidents: 'Gelöste Vorfälle',
+      uptimeLast90: 'Uptime — letzte 90 Tage',
+      daysAgo: '90 Tage',
+      today: 'Heute',
+      systemComponents: 'Systemkomponenten',
+      slaTitle: 'SLA-Zusagen',
+      slaConsult: 'SLA einsehen',
+      slaNote: 'Diese Zusagen gelten für Einrichtungen in Test- und Produktionsphasen. SLAs werden vertraglich festgelegt und monatlich gemessen.',
+      securityTitle: 'Sicherheitsprüfungen',
+      incidentHistory: 'Vorfallhistorie',
+      noIncidents: 'Keine Vorfälle gemeldet',
+      noIncidentsDetail: 'Keine größeren Vorfälle in den letzten 90 Tagen verzeichnet.',
+      duration: 'Dauer:',
+      infrastructure: 'Infrastruktur',
+      breadcrumbHome: 'Startseite',
+      breadcrumbStatus: 'Status',
     },
   },
 };
