@@ -2,8 +2,19 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from '@/i18n/I18nContext';
+
+const TEXTS: Record<string, { text: string; dismiss: string }> = {
+  fr: { text: 'Premiers essais hospitaliers ouverts pour 2026', dismiss: "Fermer l'annonce" },
+  en: { text: 'First hospital trials open for 2026', dismiss: 'Dismiss announcement' },
+  es: { text: 'Primeros ensayos hospitalarios abiertos para 2026', dismiss: 'Cerrar anuncio' },
+  de: { text: 'Erste Krankenhaus-Tests für 2026 geöffnet', dismiss: 'Ankündigung schließen' },
+};
 
 export function AnnouncementBanner() {
+  const { locale } = useI18n();
+  const tx = TEXTS[locale] || TEXTS.fr;
+
   const [dismissed, setDismissed] = useState(() => {
     try { return sessionStorage.getItem('announcement-dismissed') === '1'; } catch { return false; }
   });
@@ -29,13 +40,13 @@ export function AnnouncementBanner() {
               className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors group bg-primary/5 rounded-full px-4 py-1 border border-primary/15 hover:border-primary/30 hover:bg-primary/10"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="font-medium text-xs sm:text-sm">Premiers essais hospitaliers ouverts pour 2026</span>
+              <span className="font-medium text-xs sm:text-sm">{tx.text}</span>
               <ArrowRight className="h-3.5 w-3.5 text-primary group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <button
               onClick={handleDismiss}
               className="p-1 rounded-full hover:bg-primary/10 transition-colors"
-              aria-label="Fermer l'annonce"
+              aria-label={tx.dismiss}
             >
               <X className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
