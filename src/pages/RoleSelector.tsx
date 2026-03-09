@@ -93,7 +93,7 @@ export default function RoleSelector() {
           <h2 className="text-xl font-bold mb-2">{t.roles.noRoleTitle}</h2>
           <p className="text-muted-foreground text-sm mb-4">{t.roles.noRoleText}</p>
           <p className="text-xs text-muted-foreground">
-            {t.roles.noRoleContact} <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
+            {t.roles.noRoleContact} <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a>
           </p>
         </div>
       ) : (

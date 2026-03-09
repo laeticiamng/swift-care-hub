@@ -248,7 +248,7 @@ export default function SLAPage() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-12">
-            EmotionsCare SASU — SIREN 944 505 445 — Amiens, France — support@urgenceos.fr
+            EmotionsCare SASU — SIREN 944 505 445 — Amiens, France — contact@emotionscare.com
           </p>
         </div>
       </article>

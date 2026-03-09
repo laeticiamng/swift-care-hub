@@ -11,7 +11,7 @@ interface AlertPayload {
   timestamp?: string;
 }
 
-const ALERT_RECIPIENTS = ["support@urgenceos.fr"];
+const ALERT_RECIPIENTS = ["contact@emotionscare.com"];
 
 Deno.serve(async (req) => {
   const end = log.start(req);

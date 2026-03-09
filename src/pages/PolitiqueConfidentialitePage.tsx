@@ -36,7 +36,7 @@ export default function PolitiqueConfidentialitePage() {
           <ul className="space-y-1 text-muted-foreground leading-relaxed">
             <li><strong className="text-foreground">Siège social :</strong> Rue Caudron, Amiens (80000), France</li>
             <li><strong className="text-foreground">Contact DPO :</strong> <a href="mailto:dpo@urgenceos.fr" className="text-primary hover:underline" rel="noopener noreferrer">dpo@urgenceos.fr</a></li>
-            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline" rel="noopener noreferrer">contact@urgenceos.fr</a></li>
+            <li><strong className="text-foreground">Contact général :</strong> <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline" rel="noopener noreferrer">contact@emotionscare.com</a></li>
           </ul>
         </section>
 

@@ -165,14 +165,24 @@ export default function AboutPage() {
               <h2 className="text-2xl font-bold mb-1">Laeticia Motongane</h2>
               <p className="text-primary font-medium mb-3">{a.founderRole}</p>
               <p className="text-muted-foreground leading-relaxed mb-4">{a.founderBio}</p>
-              <a
-                href="https://www.linkedin.com/company/emotionscare/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-              >
-                LinkedIn →
-              </a>
+              <div className="flex gap-4">
+                <a
+                  href="https://www.linkedin.com/in/laeticiamotongane/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  LinkedIn personnel →
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/emotionscare/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  EmotionsCare →
+                </a>
+              </div>
             </div>
           </div>
         </div>
