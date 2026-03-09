@@ -1000,7 +1000,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'About',
       board: 'Board',
       seeDemo: 'See the demo',
-      dashboard: 'Dashboard',
+      dashboard: 'Platform',
     },
     hero: {
       title: 'The emergency software',
