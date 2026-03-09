@@ -43,6 +43,23 @@ export default function LoginPage() {
     if (!rl.allowed) { setError(`${t.login.tooManyAttempts} ${Math.ceil(rl.resetIn / 1000)}s`); return; }
     setLoading(true);
     try {
+      // Server-side rate limit check (fail-open)
+      try {
+        const rlResp = await fetch(
+          `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/rate-limit`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+            body: JSON.stringify({ action: 'login', identifier: email }),
+          }
+        );
+        if (rlResp.status === 429) {
+          const rlData = await rlResp.json();
+          setError(rlData.error || `${t.login.tooManyAttempts} 60s`);
+          return;
+        }
+      } catch { /* fail open */ }
+
       const { error } = await signIn(email, password);
       if (error) { setError(t.login.wrongCredentials); } else { navigate('/select-role'); }
     } finally { setLoading(false); }
