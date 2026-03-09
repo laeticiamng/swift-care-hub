@@ -152,12 +152,18 @@ export function PlatformPreviewSection() {
           })}
         </div>
 
-        <div className="text-center mt-10">
+        <motion.div
+          className="text-center mt-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-20px' }}
+          transition={{ duration: 0.5, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           <Button size="lg" onClick={() => navigate('/flow')} className="gap-2">
             {tx.cta}
             <ArrowRight className="h-4 w-4" />
           </Button>
-        </div>
+        </motion.div>
       </div>
     </Section>
   );
