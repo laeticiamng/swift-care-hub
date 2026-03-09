@@ -129,22 +129,29 @@ export function PlatformPreviewSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((f) => {
+          {FEATURES.map((f, i) => {
             const Icon = f.icon;
             return (
-              <Card
+              <motion.div
                 key={f.titleKey}
-                className="border-none shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm cursor-pointer group"
-                onClick={() => navigate('/flow')}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                <CardContent className="p-6 flex flex-col gap-3">
-                  <div className={`inline-flex items-center justify-center h-10 w-10 rounded-lg ${f.bg}`}>
-                    <Icon className={`h-5 w-5 ${f.color}`} />
-                  </div>
-                  <h3 className="font-semibold text-foreground">{tx[f.titleKey]}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{tx[f.descKey]}</p>
-                </CardContent>
-              </Card>
+                <Card
+                  className="border-none shadow-md hover:shadow-lg transition-shadow bg-card/80 backdrop-blur-sm cursor-pointer group h-full hover-scale"
+                  onClick={() => navigate('/flow')}
+                >
+                  <CardContent className="p-6 flex flex-col gap-3">
+                    <div className={`inline-flex items-center justify-center h-10 w-10 rounded-lg ${f.bg}`}>
+                      <Icon className={`h-5 w-5 ${f.color}`} />
+                    </div>
+                    <h3 className="font-semibold text-foreground">{tx[f.titleKey]}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{tx[f.descKey]}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
