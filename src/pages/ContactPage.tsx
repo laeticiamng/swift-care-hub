@@ -143,7 +143,7 @@ export default function ContactPage() {
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   {t.contact.directEmail}{' '}
-                  <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
+                  <a href="mailto:contact@emotionscare.com" className="text-primary hover:underline">contact@emotionscare.com</a>
                 </p>
               </form>
             </CardContent>

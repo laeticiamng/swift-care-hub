@@ -19,8 +19,8 @@ async function sendLeadNotification(leadData: Record<string, string | null>) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "UrgenceOS <leads@urgenceos.fr>",
-        to: ["contact@urgenceos.fr"],
+        from: "UrgenceOS <leads@emotionscare.com>",
+        to: ["contact@emotionscare.com"],
         subject: `🏥 Nouveau lead UrgenceOS — ${leadData.establishment}`,
         html: `
           <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:24px">

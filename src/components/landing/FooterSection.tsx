@@ -11,7 +11,7 @@ export function FooterSection() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-medium">
-              Urgence<span className="text-primary">OS</span> — EmotionsCare SASU — {new Date().getFullYear()}
+              Urgence<span className="text-primary">OS</span> — EmotionsCare SASU — Amiens, France — {new Date().getFullYear()}
             </p>
             <Link to="/contact" className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-1">
               <Mail className="h-3 w-3" /> {t.footer.contactUs}

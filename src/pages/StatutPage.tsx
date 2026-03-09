@@ -382,8 +382,8 @@ export default function StatutPage() {
           <h3 className="font-bold mb-2">Signaler un incident</h3>
           <p className="text-sm text-muted-foreground mb-1">En cas de problème technique, contactez notre équipe d'astreinte.</p>
           <p className="text-xs text-muted-foreground mb-3">Temps de réponse garanti : &lt; 30 min pour les incidents P1</p>
-          <a href="mailto:support@urgenceos.fr" rel="noopener noreferrer" className="text-primary hover:underline text-sm font-medium">
-            support@urgenceos.fr
+          <a href="mailto:contact@emotionscare.com" rel="noopener noreferrer" className="text-primary hover:underline text-sm font-medium">
+            contact@emotionscare.com
           </a>
         </div>
 
