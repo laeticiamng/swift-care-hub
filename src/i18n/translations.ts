@@ -353,6 +353,35 @@ type TranslationTree = {
     breadcrumbHome: string;
     breadcrumbAbout: string;
   };
+  status: {
+    pageTitle: string;
+    monitoring: string;
+    title: string;
+    lastCheck: string;
+    waitingData: string;
+    refresh: string;
+    allOperational: string;
+    degraded: string;
+    incidentActive: string;
+    uptime90: string;
+    avgLatency: string;
+    resolvedIncidents: string;
+    uptimeLast90: string;
+    daysAgo: string;
+    today: string;
+    systemComponents: string;
+    slaTitle: string;
+    slaConsult: string;
+    slaNote: string;
+    securityTitle: string;
+    incidentHistory: string;
+    noIncidents: string;
+    noIncidentsDetail: string;
+    duration: string;
+    infrastructure: string;
+    breadcrumbHome: string;
+    breadcrumbStatus: string;
+  };
   forgotPassword: {
     backToLogin: string;
     title: string;
