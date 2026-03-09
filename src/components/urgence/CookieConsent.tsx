@@ -82,14 +82,13 @@ export function CookieConsent() {
     );
   }
 
-  // Expanded customization panel
   return (
     <div className="fixed bottom-0 inset-x-0 z-50 p-4 animate-in slide-in-from-bottom-4 duration-300">
       <div className="max-w-md mx-auto bg-card/95 backdrop-blur-xl border rounded-2xl shadow-lg p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Cookie className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">Paramètres cookies</span>
+            <span className="text-sm font-medium">{t.cookieConsent.settingsTitle}</span>
           </div>
           <button onClick={() => setExpanded(false)} className="p-1 rounded-md hover:bg-accent">
             <X className="h-4 w-4 text-muted-foreground" />
@@ -99,15 +98,15 @@ export function CookieConsent() {
         <div className="space-y-3 border-t pt-3">
           <div className="flex items-center justify-between">
             <div>
-              <Label className="text-sm font-medium">Essentiels</Label>
-              <p className="text-xs text-muted-foreground">Session d'authentification</p>
+              <Label className="text-sm font-medium">{t.cookieConsent.essential}</Label>
+              <p className="text-xs text-muted-foreground">{t.cookieConsent.essentialDesc}</p>
             </div>
             <Switch checked disabled />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <Label className="text-sm font-medium">Préférences</Label>
-              <p className="text-xs text-muted-foreground">Thème, onboarding</p>
+              <Label className="text-sm font-medium">{t.cookieConsent.preferences}</Label>
+              <p className="text-xs text-muted-foreground">{t.cookieConsent.preferencesDesc}</p>
             </div>
             <Switch checked={preferences.preferences} onCheckedChange={(v) => setPreferences({ ...preferences, preferences: v })} />
           </div>
@@ -115,10 +114,10 @@ export function CookieConsent() {
 
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="flex-1" onClick={refuseAll}>
-            Refuser tout
+            {t.cookieConsent.refuseAll}
           </Button>
           <Button size="sm" className="flex-1" onClick={saveCustom}>
-            Enregistrer
+            {t.cookieConsent.save}
           </Button>
         </div>
       </div>

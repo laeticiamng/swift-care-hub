@@ -140,41 +140,29 @@ export default function PricingPage() {
             <div className="p-4 rounded-xl border bg-card">
               <h4 className="font-semibold text-sm mb-2 text-foreground">{t.pricing.currentCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>Licences outils satellites urgences</li>
-                <li>Maintenance et support éditeurs</li>
-                <li>Coûts d'interfaces et connecteurs</li>
-                <li>Incidents d'intégration (heures DSI)</li>
-                <li>Temps clinique perdu (min/poste x postes x 365j)</li>
+                {t.pricingBusinessCase.currentItems.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </div>
             <div className="p-4 rounded-xl border bg-card">
               <h4 className="font-semibold text-sm mb-2 text-primary">{t.pricing.targetCosts}</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>Investissement initial (socle + modules + formation)</li>
-                <li>Équipe plateforme interne (part ETP DSI)</li>
-                <li>Hébergement HDS</li>
-                <li>MCO et audit sécurité annuel</li>
-                <li>Voir les formules détaillées ci-dessous</li>
+                {t.pricingBusinessCase.targetItems.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </div>
           </div>
           <div className="mt-6 p-4 rounded-xl border bg-card">
             <h4 className="font-semibold text-sm mb-3">{t.pricing.roiFormulas}</h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
-              <li><strong className="text-foreground">Économie annuelle nette</strong> = coûts actuels (A) - coûts cible (B)</li>
-              <li><strong className="text-foreground">ROI année 1</strong> = (A - B - investissement initial) / investissement × 100</li>
-              <li><strong className="text-foreground">Payback</strong> = investissement initial / (A - B) en mois</li>
-              <li><strong className="text-foreground">ROI cumulé 5 ans</strong> = ((A - B) × 5 - investissement) / investissement × 100</li>
+              {t.pricingBusinessCase.roiItems.map((item, i) => {
+                const [label, ...rest] = item.split(' = ');
+                return <li key={i}><strong className="text-foreground">{label}</strong> = {rest.join(' = ')}</li>;
+              })}
             </ul>
           </div>
           <div className="mt-4 p-4 rounded-xl border bg-card">
             <h4 className="font-semibold text-sm mb-3">{t.pricing.dafMethod}</h4>
             <ul className="space-y-1 text-xs text-muted-foreground">
-              <li>0-10 min — Contexte : combien d'outils, combien de licences, combien d'interfaces</li>
-              <li>10-30 min — Remplissage collaboratif : vos chiffres dans notre modèle TCO</li>
-              <li>30-45 min — Calcul ROI en direct : coûts actuels vs coûts cible, payback estimé</li>
-              <li>45-55 min — Dimension "temps clinique perdu" : valorisation des minutes récupérées</li>
-              <li>55-60 min — Prochaines étapes : go/no-go essai, calendrier, périmètre</li>
+              {t.pricingBusinessCase.dafItems.map((item, i) => <li key={i}>{item}</li>)}
             </ul>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4">
