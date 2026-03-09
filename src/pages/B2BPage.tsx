@@ -25,10 +25,12 @@ export default function B2BPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
-    setSubmitting(true);
     const form = formRef.current;
     if (!form) return;
     const data = new FormData(form);
+    // Honeypot check — bots fill hidden fields
+    if (data.get('website')) return;
+    setSubmitting(true);
     try {
       const { error } = await supabase.functions.invoke('contact-lead', {
         body: {
