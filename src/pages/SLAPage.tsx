@@ -141,7 +141,7 @@ export default function SLAPage() {
           <div className="mt-6 p-4 rounded-lg border bg-muted/30">
             <p className="font-medium mb-1">Canal de signalement</p>
             <p className="text-muted-foreground">
-              Email : <strong>support@urgenceos.fr</strong> — Astreinte 24/7 pour les incidents P1.
+              Email : <strong>contact@emotionscare.com</strong> — Astreinte 24/7 pour les incidents P1.
             </p>
           </div>
         </Section>
