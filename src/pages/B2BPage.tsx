@@ -253,6 +253,8 @@ export default function B2BPage() {
               </div>
             ) : (
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+                {/* Honeypot — hidden from real users, filled by bots */}
+                <input type="text" name="website" autoComplete="off" tabIndex={-1} aria-hidden="true" className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden" />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Nom *</Label>
