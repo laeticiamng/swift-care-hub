@@ -79,10 +79,10 @@ export default function RoleSelector() {
           <span className="text-2xl font-bold">Urgence<span className="text-primary">OS</span></span>
         </div>
         <h1 className="text-2xl font-bold">
-          {isNewUser ? 'En attente d\'attribution' : 'Sélection du rôle'}
+          {isNewUser ? t.roles.titleNewUser : t.roles.title}
         </h1>
         <p className="text-muted-foreground mt-1">
-          {isNewUser ? 'Un administrateur doit vous attribuer un rôle pour accéder à la plateforme' : 'Choisissez votre profil pour cette session'}
+          {isNewUser ? t.roles.subtitleNewUser : t.roles.subtitle}
         </p>
         {user && <p className="text-sm text-muted-foreground mt-2">{user.email}</p>}
       </div>
@@ -90,12 +90,10 @@ export default function RoleSelector() {
       {isNewUser ? (
         <div className="relative z-10 max-w-md w-full text-center p-8 rounded-2xl border bg-card shadow-sm animate-in fade-in duration-300">
           <AlertTriangle className="h-10 w-10 text-medical-warning mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Aucun rôle attribué</h2>
-          <p className="text-muted-foreground text-sm mb-4">
-            Votre compte n'a pas encore de rôle assigné. Contactez un administrateur pour obtenir l'accès à la plateforme.
-          </p>
+          <h2 className="text-xl font-bold mb-2">{t.roles.noRoleTitle}</h2>
+          <p className="text-muted-foreground text-sm mb-4">{t.roles.noRoleText}</p>
           <p className="text-xs text-muted-foreground">
-            Email de contact : <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
+            {t.roles.noRoleContact} <a href="mailto:contact@urgenceos.fr" className="text-primary hover:underline">contact@urgenceos.fr</a>
           </p>
         </div>
       ) : (
