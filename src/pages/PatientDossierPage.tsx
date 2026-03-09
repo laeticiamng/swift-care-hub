@@ -540,7 +540,11 @@ export default function PatientDossierPage() {
           <SheetHeader className="sr-only"><SheetTitle>Ordonnance</SheetTitle></SheetHeader>
           <div className="p-4">
             <h3 className="text-lg font-bold mb-4">Ordonnance — {patient.nom} {patient.prenom}</h3>
-            <div dangerouslySetInnerHTML={{ __html: interop.ordonnanceHTML }} className="prose prose-sm max-w-none" />
+            <div className="prose prose-sm max-w-none">
+                {interop.ordonnanceHTML.split(/<\/?[^>]+>/).filter(Boolean).map((text, i) => (
+                  <p key={i}>{text}</p>
+                ))}
+              </div>
           </div>
         </SheetContent>
       </Sheet>

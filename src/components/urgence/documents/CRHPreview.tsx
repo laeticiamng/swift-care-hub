@@ -76,7 +76,7 @@ export function CRHPreview({ htmlContent, status, onSign, onSendMSSante, onDownl
             srcDoc={htmlContent}
             className="w-full h-full border-0"
             title="CRH Preview"
-            sandbox="allow-same-origin"
+            sandbox=""
           />
         ) : (
           <pre className="text-xs font-mono p-4 bg-slate-950 text-slate-200 h-full overflow-auto whitespace-pre-wrap">
