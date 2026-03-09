@@ -63,7 +63,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   en: {
     heading: 'The platform in action',
     sub: 'Five integrated modules to manage your ER in real time.',
-    cta: 'See the live dashboard',
+    cta: 'Discover the platform',
     flowDashboard: 'Flow Dashboard',
     flowDesc: 'Real-time zone map with color codes, wait counters and bottleneck alerts.',
     aiTriage: 'AI Manchester Triage',
