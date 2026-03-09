@@ -5,10 +5,6 @@ import { LayoutDashboard, Brain, Siren, Target, ShieldCheck, ArrowRight } from '
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { LayoutDashboard, Brain, Siren, Target, ShieldCheck, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useI18n } from '@/i18n/I18nContext';
 
 const FEATURES = [
   {
