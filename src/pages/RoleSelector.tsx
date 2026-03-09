@@ -7,14 +7,14 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import MFASetup from '@/components/urgence/MFASetup';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
+import { useI18n } from '@/i18n/I18nContext';
 
-const roleConfig: { role: AppRole; label: string; description: string; icon: React.ElementType; color: string }[] = [
-  { role: 'medecin', label: 'Médecin', description: 'Board panoramique & dossiers patients', icon: Stethoscope, color: 'text-medical-info' },
-  { role: 'ioa', label: 'IOA', description: 'File d\'attente & tri des patients', icon: ClipboardList, color: 'text-medical-warning' },
-  { role: 'ide', label: 'IDE', description: 'Pancarte unifiée & administrations', icon: Syringe, color: 'text-medical-success' },
-  { role: 'as', label: 'Aide-soignant', description: 'Constantes & surveillance', icon: Heart, color: 'text-medical-critical' },
-  { role: 'secretaire', label: 'Secrétaire', description: 'Admissions & accueil', icon: UserPlus, color: 'text-muted-foreground' },
-];
+const ROLE_ICONS: Record<AppRole, React.ElementType> = {
+  medecin: Stethoscope, ioa: ClipboardList, ide: Syringe, as: Heart, secretaire: UserPlus,
+};
+const ROLE_COLORS: Record<AppRole, string> = {
+  medecin: 'text-medical-info', ioa: 'text-medical-warning', ide: 'text-medical-success', as: 'text-medical-critical', secretaire: 'text-muted-foreground',
+};
 
 const roleRedirects: Record<AppRole, string> = {
   medecin: '/board',
