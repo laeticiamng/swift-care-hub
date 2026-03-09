@@ -21,6 +21,7 @@ export default function ContactPage() {
   const [establishment, setEstablishment] = useState('');
   const [roleFunction, setRoleFunction] = useState('');
   const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -28,6 +29,10 @@ export default function ContactPage() {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !email.trim() || !establishment.trim() || !roleFunction.trim()) {
       toast.error(t.contact.fillRequired);
+      return;
+    }
+    if (website) {
+      setSuccess(true);
       return;
     }
     setLoading(true);
@@ -40,6 +45,7 @@ export default function ContactPage() {
           establishment: establishment.trim(),
           roleFunction: roleFunction.trim(),
           message: message.trim() || null,
+          website: '',
         },
       });
       if (error) throw error;
@@ -123,6 +129,10 @@ export default function ContactPage() {
                 <div className="space-y-2">
                   <Label htmlFor="message">{t.contact.message}</Label>
                   <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)} placeholder={t.contact.messagePlaceholder} rows={4} maxLength={2000} />
+                </div>
+                <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input id="website" name="website" type="text" value={website} onChange={e => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? t.contact.sending : (
