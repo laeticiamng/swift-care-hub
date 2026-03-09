@@ -28,6 +28,14 @@ export default function RoleSelector() {
   const { selectRole, availableRoles, role, signOut, user, loading, mfaRequired, mfaEnrollRequired, completeMFA, completeMFAEnroll } = useAuth();
   const navigate = useNavigate();
   const [assigning, setAssigning] = useState(false);
+  const { t } = useI18n();
+
+  const roleLabels: Record<AppRole, string> = {
+    medecin: t.roles.medecin, ioa: t.roles.ioa, ide: t.roles.ide, as: t.roles.as, secretaire: t.roles.secretaire,
+  };
+  const roleDescs: Record<AppRole, string> = {
+    medecin: t.roles.medecinDesc, ioa: t.roles.ioaDesc, ide: t.roles.ideDesc, as: t.roles.asDesc, secretaire: t.roles.secretaireDesc,
+  };
 
   useEffect(() => {
     if (!loading && role && availableRoles.length > 0) {
@@ -37,8 +45,7 @@ export default function RoleSelector() {
 
   const handleSelect = async (selectedRole: AppRole) => {
     if (availableRoles.length === 0 && user) {
-      // New users cannot self-assign roles — must be assigned by an administrator
-      toast.error('Aucun rôle attribué à votre compte. Contactez un administrateur pour obtenir un accès.');
+      toast.error(t.roles.noRoleToast);
       return;
     }
     await selectRole(selectedRole);
@@ -46,7 +53,7 @@ export default function RoleSelector() {
   };
 
   const isNewUser = !loading && availableRoles.length === 0;
-  const visibleRoles = roleConfig.filter(r => availableRoles.includes(r.role));
+  const visibleRoles = availableRoles.map(r => ({ role: r, label: roleLabels[r], description: roleDescs[r], icon: ROLE_ICONS[r], color: ROLE_COLORS[r] }));
 
   // MFA screens for medical roles
   if (mfaEnrollRequired) {
