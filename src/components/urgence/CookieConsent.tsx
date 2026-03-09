@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Cookie, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Cookie, X } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useI18n } from '@/i18n/I18nContext';
 
 const CONSENT_KEY = 'urgenceos-cookie-consent';
 
