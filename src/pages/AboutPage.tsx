@@ -5,85 +5,67 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   ArrowRight, Shield, Users, Target, Building2,
   Mail, Layers, BarChart3, Handshake, GitBranch,
 } from 'lucide-react';
 
-const VALUES = [
-  {
-    icon: Building2,
-    title: 'Autonomie hospitalière',
-    desc: 'L\'hôpital possède son socle logiciel. Pas de licence récurrente, pas de dépendance fournisseur. Les priorités d\'évolution sont décidées en interne.',
-  },
-  {
-    icon: Shield,
-    title: 'Sécurité structurelle',
-    desc: 'La sécurité n\'est pas une couche ajoutée. Elle est dans l\'architecture : RBAC, audit immuable, chiffrement, séparation des environnements.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Preuve par les chiffres',
-    desc: 'Chaque déploiement commence par une mesure. ROI mesuré, critères go/no-go définis à l\'avance. Pas de promesse sans preuve.',
-  },
-  {
-    icon: Users,
-    title: 'Co-construction terrain',
-    desc: 'Chaque module est conçu avec des soignants en exercice. L\'ergonomie est validée par ceux qui l\'utilisent, pas par ceux qui la vendent.',
-  },
-];
-
-const MILESTONES = [
-  { year: '2024', event: 'Création d\'EmotionsCare SASU — naissance du concept Hospital-Owned Software' },
-  { year: '2024', event: 'Premiers prototypes co-conçus avec des urgentistes et DSI hospitaliers' },
-  { year: '2025', event: 'Architecture socle validée : identité, droits d\'accès, audit, connecteurs dossier patient' },
-  { year: '2025', event: 'Modules ROI #1 (récap parcours) et #2 (traçabilité temps réel) fonctionnels' },
-  { year: '2026', event: 'Lancement du premier essai 10 semaines en établissement' },
-  { year: '2026', event: 'Ouverture du modèle consortium GHT — mutualisation multi-établissements' },
-];
-
-const ECOSYSTEM = [
-  { icon: Building2, title: 'Établissements partenaires', desc: 'Partenariats avec des services d\'urgences pour valider le ROI sur données réelles et mesurer la réduction de dette opérationnelle.' },
-  { icon: Handshake, title: 'DSI hospitalières', desc: 'Co-construction de l\'architecture socle avec les DSI pour garantir l\'intégration DPI et la gouvernance interne.' },
-  { icon: Layers, title: 'GHT & ARS', desc: 'Modèle de mutualisation conçu pour les groupements hospitaliers de territoire. Socle partagé, données isolées, coûts divisés.' },
-  { icon: GitBranch, title: 'Standards ouverts', desc: 'Compatible avec les référentiels nationaux de santé. Échanges standardisés, pas propriétaires.' },
-];
-
 export default function AboutPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const a = t.about;
+
+  const VALUES = [
+    { icon: Building2, title: 'Autonomie hospitalière', desc: a.missionP1.slice(0, 120) + '…' },
+    { icon: Shield, title: 'Sécurité structurelle', desc: 'La sécurité n\'est pas une couche ajoutée. Elle est dans l\'architecture : RBAC, audit immuable, chiffrement.' },
+    { icon: BarChart3, title: 'Preuve par les chiffres', desc: 'Chaque déploiement commence par une mesure. ROI mesuré, critères go/no-go définis à l\'avance.' },
+    { icon: Users, title: 'Co-construction terrain', desc: 'Chaque module est conçu avec des soignants en exercice.' },
+  ];
+
+  const MILESTONES = [
+    { year: '2024', event: 'Création d\'EmotionsCare SASU — naissance du concept Hospital-Owned Software' },
+    { year: '2024', event: 'Premiers prototypes co-conçus avec des urgentistes et DSI hospitaliers' },
+    { year: '2025', event: 'Architecture socle validée : identité, droits d\'accès, audit, connecteurs dossier patient' },
+    { year: '2025', event: 'Modules ROI #1 (récap parcours) et #2 (traçabilité temps réel) fonctionnels' },
+    { year: '2026', event: 'Lancement du premier essai 10 semaines en établissement' },
+    { year: '2026', event: 'Ouverture du modèle consortium GHT — mutualisation multi-établissements' },
+  ];
+
+  const ECOSYSTEM = [
+    { icon: Building2, title: 'Établissements partenaires', desc: 'Partenariats avec des services d\'urgences pour valider le ROI.' },
+    { icon: Handshake, title: 'DSI hospitalières', desc: 'Co-construction avec les DSI pour garantir l\'intégration DPI.' },
+    { icon: Layers, title: 'GHT & ARS', desc: 'Modèle de mutualisation conçu pour les GHT. Socle partagé, données isolées.' },
+    { icon: GitBranch, title: 'Standards ouverts', desc: 'Compatible avec les référentiels nationaux de santé.' },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PageMeta
         title="À propos d'UrgenceOS — EmotionsCare, Hospital-Owned Software"
-        description="EmotionsCare conçoit UrgenceOS : socle Hospital-Owned pour urgences hospitalières. Autonomie SI, ROI mesurable, co-construction terrain, sécurité structurelle."
+        description="EmotionsCare conçoit UrgenceOS : socle Hospital-Owned pour urgences hospitalières."
         canonical="https://urgenceos.fr/about"
       />
       <JsonLd id="about-webpage" data={webPageSchema({
         name: 'À propos d\'UrgenceOS — EmotionsCare SASU',
-        description: 'EmotionsCare conçoit UrgenceOS : socle Hospital-Owned Software que l\'hôpital possède, modules urgences à ROI mesurable, architecture sécurité structurelle.',
+        description: 'EmotionsCare conçoit UrgenceOS : socle Hospital-Owned Software.',
         url: 'https://urgenceos.fr/about',
-        breadcrumb: ['Accueil', 'À propos'],
+        breadcrumb: [a.breadcrumbHome, a.breadcrumbAbout],
       })} />
       <JsonLd id="about-org" data={organizationSchema()} />
       <SiteHeader />
 
-      <main className="max-w-5xl mx-auto px-6 py-16">
+      <main id="main-content" className="max-w-5xl mx-auto px-6 py-16">
         <Breadcrumb items={[
-          { label: 'Accueil', to: '/' },
-          { label: 'À propos' },
+          { label: a.breadcrumbHome, to: '/' },
+          { label: a.breadcrumbAbout },
         ]} />
+
         {/* Hero */}
         <div className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4">À propos</Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            L'hôpital public mérite un logiciel qu'il contrôle.
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            EmotionsCare conçoit UrgenceOS : un logiciel que l'hôpital possède,
-            des modules dédiés aux urgences avec des résultats mesurables, et une architecture qui réduit les coûts
-            au lieu de les aggraver.
-          </p>
+          <Badge variant="secondary" className="mb-4">{a.badge}</Badge>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{a.heroTitle}</h1>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{a.heroSubtitle}</p>
         </div>
 
         {/* Mission */}
@@ -91,25 +73,16 @@ export default function AboutPage() {
           <div className="flex items-start gap-4 mb-6">
             <Target className="h-8 w-8 text-primary shrink-0" />
             <div>
-              <h2 className="text-2xl font-bold mb-3">Notre conviction</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                Les hôpitaux accumulent une dette opérationnelle invisible : licences récurrentes en hausse,
-                interfaces fragiles entre 15 à 40 applications, temps clinique perdu en friction logicielle,
-                surface d'attaque qui croît avec chaque outil supplémentaire.
-                <strong className="text-foreground"> Le problème n'est pas un manque de logiciels. C'est un excès d'outils non maîtrisés.</strong>
-              </p>
-              <p className="text-muted-foreground leading-relaxed mt-3">
-                Hospital-Owned Software est notre réponse : un socle interne que l'hôpital possède et gouverne,
-                sur lequel se branchent des modules métier interopérables. Le DPI reste en place. Les outils
-                satellites disparaissent un par un. La dette diminue au lieu de s'accumuler.
-              </p>
+              <h2 className="text-2xl font-bold mb-3">{a.missionTitle}</h2>
+              <p className="text-muted-foreground leading-relaxed">{a.missionP1}</p>
+              <p className="text-muted-foreground leading-relaxed mt-3">{a.missionP2}</p>
             </div>
           </div>
         </div>
 
         {/* Values */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Nos principes</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{a.principlesTitle}</h2>
           <div className="grid sm:grid-cols-2 gap-6">
             {VALUES.map((v) => (
               <div key={v.title} className="flex items-start gap-4 p-6 rounded-xl border bg-card">
@@ -127,15 +100,13 @@ export default function AboutPage() {
 
         {/* Vision GHT */}
         <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-          <h2 className="text-2xl font-bold text-center mb-3">Vision : de l'essai au territoire</h2>
-          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
-            Un hôpital valide. Un GHT mutualise. Un territoire standardise.
-          </p>
+          <h2 className="text-2xl font-bold text-center mb-3">{a.visionTitle}</h2>
+          <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">{a.visionSubtitle}</p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { step: 'Phase 1', title: 'Essai', desc: 'Un établissement prouve le ROI sur le périmètre urgences. 10 semaines, critères go/no-go définis.' },
-              { step: 'Phase 2', title: 'Mutualisation', desc: 'Trois établissements partagent le socle et les modules. Données isolées, coûts divisés.' },
-              { step: 'Phase 3', title: 'Standardisation', desc: 'Le GHT standardise ses flux, ses connecteurs et ses indicateurs. ARS-ready.' },
+              { step: a.phase1, title: a.phase1Title, desc: a.phase1Desc },
+              { step: a.phase2, title: a.phase2Title, desc: a.phase2Desc },
+              { step: a.phase3, title: a.phase3Title, desc: a.phase3Desc },
             ].map((item) => (
               <div key={item.step} className="p-5 rounded-xl border bg-card space-y-2 text-center">
                 <span className="text-xs font-semibold text-primary">{item.step}</span>
@@ -148,7 +119,7 @@ export default function AboutPage() {
 
         {/* Timeline */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">Notre parcours</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{a.timelineTitle}</h2>
           <div className="max-w-2xl mx-auto">
             {MILESTONES.map((m, i) => (
               <div key={i} className="flex gap-4 mb-4">
@@ -167,8 +138,8 @@ export default function AboutPage() {
 
         {/* Ecosystem */}
         <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Écosystème</h2>
-          <p className="text-muted-foreground text-center mb-8">UrgenceOS se construit avec les acteurs du terrain</p>
+          <h2 className="text-2xl font-bold text-center mb-2">{a.ecosystemTitle}</h2>
+          <p className="text-muted-foreground text-center mb-8">{a.ecosystemSubtitle}</p>
           <div className="grid sm:grid-cols-2 gap-6">
             {ECOSYSTEM.map((p) => (
               <div key={p.title} className="flex items-start gap-4 p-6 rounded-xl border bg-card">
@@ -192,30 +163,23 @@ export default function AboutPage() {
             </div>
             <div>
               <h2 className="text-2xl font-bold mb-1">Laeticia Motongane</h2>
-              <p className="text-primary font-medium mb-3">Fondatrice & Présidente — EmotionsCare SASU</p>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                Convaincue que l'hôpital public mérite des outils numériques à la hauteur de sa mission,
-                Laeticia a créé EmotionsCare pour redonner aux établissements de santé la maîtrise de leur informatique.
-                UrgenceOS est né de cette conviction : un logiciel conçu avec les soignants, détenu par l'hôpital,
-                et mesuré sur des résultats concrets.
-              </p>
-              <div className="flex gap-3">
-                <a
-                  href="https://www.linkedin.com/company/emotionscare/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-                >
-                  LinkedIn →
-                </a>
-              </div>
+              <p className="text-primary font-medium mb-3">{a.founderRole}</p>
+              <p className="text-muted-foreground leading-relaxed mb-4">{a.founderBio}</p>
+              <a
+                href="https://www.linkedin.com/company/emotionscare/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+              >
+                LinkedIn →
+              </a>
             </div>
           </div>
         </div>
 
         {/* Company info */}
         <div className="mb-20 p-8 rounded-2xl border bg-card">
-          <h2 className="text-xl font-bold mb-4">EmotionsCare SASU</h2>
+          <h2 className="text-xl font-bold mb-4">{a.companyTitle}</h2>
           <div className="grid sm:grid-cols-2 gap-6 text-sm">
             <div className="space-y-2">
               <p><span className="text-muted-foreground">Forme juridique :</span> SASU</p>
@@ -240,26 +204,21 @@ export default function AboutPage() {
 
         {/* CTA */}
         <div className="text-center py-12 px-6 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-3">Prêt à reprendre le contrôle de votre informatique ?</h2>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            10 semaines pour mesurer les résultats concrets. Sans engagement pluriannuel.
-          </p>
+          <h2 className="text-2xl font-bold mb-3">{a.ctaTitle}</h2>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">{a.ctaSubtitle}</p>
           <div className="flex justify-center gap-3">
             <Button onClick={() => navigate('/b2b')}>
-              Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
+              {a.ctaButton} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button variant="outline" onClick={() => navigate('/demo')}>
-              Voir la démo
+              {a.ctaDemo}
             </Button>
           </div>
         </div>
 
         {/* Disclaimer */}
         <div className="mt-12 p-4 rounded-lg border bg-muted/30 text-center">
-          <p className="text-xs text-muted-foreground">
-            UrgenceOS est un outil d'aide à la gestion des urgences hospitalières.
-            Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.
-          </p>
+          <p className="text-xs text-muted-foreground">{a.disclaimer}</p>
         </div>
       </main>
 
