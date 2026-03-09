@@ -8,7 +8,9 @@ import { BenefitsSection } from '@/components/landing/BenefitsSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { CTASection } from '@/components/landing/CTASection';
 import { AntiFeatureSection } from '@/components/landing/AntiFeatureSection';
+import { PlatformPreviewSection } from '@/components/landing/PlatformPreviewSection';
 import { FooterSection } from '@/components/landing/FooterSection';
+import { CyberSecurityFooter } from '@/components/urgence/CyberSecurityFooter';
 import { AnnouncementBanner } from '@/components/landing/AnnouncementBanner';
 import { JsonLd, PageMeta, howToSchema, webPageSchema } from '@/components/seo/JsonLd';
 
