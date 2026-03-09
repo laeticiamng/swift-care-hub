@@ -10,26 +10,26 @@ import { z } from 'zod';
 import { checkRateLimit } from '@/lib/server-role-guard';
 import MFAChallenge from '@/components/urgence/MFAChallenge';
 import MFASetup from '@/components/urgence/MFASetup';
-
-const loginSchema = z.object({
-  email: z.string().trim().email('Email invalide'),
-  password: z.string().min(8, 'Minimum 8 caractères'),
-});
+import { useI18n } from '@/i18n/I18nContext';
 
 export default function LoginPage() {
   const { signIn, mfaRequired, mfaEnrollRequired, completeMFA, completeMFAEnroll, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // MFA Challenge after login
+  const loginSchema = z.object({
+    email: z.string().trim().email(t.login.invalidEmail),
+    password: z.string().min(8, t.login.minChars),
+  });
+
   if (mfaRequired) {
     return <MFAChallenge onVerified={() => { completeMFA(); navigate('/select-role'); }} onCancel={signOut} />;
   }
-  // MFA Enrollment required for medical roles
   if (mfaEnrollRequired) {
     return <MFASetup onComplete={() => { completeMFAEnroll(); navigate('/select-role'); }} />;
   }
@@ -40,17 +40,16 @@ export default function LoginPage() {
     const validation = loginSchema.safeParse({ email, password });
     if (!validation.success) { setError(validation.error.errors[0].message); return; }
     const rl = checkRateLimit(`login_${email}`, 5, 60_000);
-    if (!rl.allowed) { setError(`Trop de tentatives. Réessayez dans ${Math.ceil(rl.resetIn / 1000)}s`); return; }
+    if (!rl.allowed) { setError(`${t.login.tooManyAttempts} ${Math.ceil(rl.resetIn / 1000)}s`); return; }
     setLoading(true);
     try {
       const { error } = await signIn(email, password);
-      if (error) { setError('Email ou mot de passe incorrect'); } else { navigate('/select-role'); }
+      if (error) { setError(t.login.wrongCredentials); } else { navigate('/select-role'); }
     } finally { setLoading(false); }
   };
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
-      {/* Left panel — illustration (desktop only) */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-medical-success/10 flex-col items-center justify-center p-12 relative">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -62,13 +61,13 @@ export default function LoginPage() {
           </div>
           <h2 className="text-3xl font-bold">Urgence<span className="text-primary">OS</span></h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Pilotez votre service d'urgences en temps réel. Triage, prescriptions, résultats et coordination — tout en un seul outil.
+            {t.login.leftPanelText}
           </p>
           <div className="grid grid-cols-3 gap-4 pt-4">
             {[
-              { value: '< 30s', label: 'Temps de triage' },
-              { value: '100%', label: 'Traçabilité' },
-              { value: '0', label: 'Papier' },
+              { value: '< 30s', label: t.login.statTriageTime },
+              { value: '100%', label: t.login.statTraceability },
+              { value: '0', label: t.login.statPaper },
             ].map((stat, i) => (
               <div key={stat.label} className="text-center animate-in fade-in slide-in-from-bottom-4"
                 style={{ animationDelay: `${(i + 1) * 150}ms`, animationFillMode: 'both' }}>
@@ -80,7 +79,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right panel — login form */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 relative">
         <div className="absolute inset-0 pointer-events-none lg:hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-medical-success/5" />
@@ -90,7 +88,7 @@ export default function LoginPage() {
 
         <div className="w-full max-w-md mb-4 relative z-10">
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+            <ArrowLeft className="h-4 w-4" /> {t.login.backToHome}
           </Link>
         </div>
         <Card className="w-full max-w-md shadow-lg border relative z-10 animate-in fade-in scale-in duration-300">
@@ -101,44 +99,44 @@ export default function LoginPage() {
             <div>
               <CardTitle className="text-2xl">UrgenceOS</CardTitle>
               <CardDescription className="mt-1">
-                Connexion au système
+                {t.login.systemLogin}
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="nom@hopital.fr" required />
+                <Label htmlFor="email">{t.login.email}</Label>
+                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t.login.emailPlaceholder} required />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Mot de passe</Label>
-                  <Link to="/forgot-password" className="text-xs text-primary hover:underline">Mot de passe oublié ?</Link>
+                  <Label htmlFor="password">{t.login.password}</Label>
+                  <Link to="/forgot-password" className="text-xs text-primary hover:underline">{t.login.forgotPassword}</Link>
                 </div>
                 <div className="relative">
                   <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••" required className="pr-10" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1} aria-label={showPassword ? t.login.hidePassword : t.login.showPassword}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               {error && <p className="text-sm text-medical-critical animate-in fade-in duration-200">{error}</p>}
               <Button type="submit" className="w-full touch-target" disabled={loading}>
-                {loading ? 'Chargement...' : 'Se connecter'}
+                {loading ? t.login.loading : t.login.submit}
               </Button>
             </form>
             <div className="mt-6 space-y-3">
               <div className="text-center text-sm text-muted-foreground">
-                Pas encore de compte ?{' '}
-                <Link to="/signup" className="text-primary hover:underline font-medium">Créer un compte</Link>
+                {t.login.noAccount}{' '}
+                <Link to="/signup" className="text-primary hover:underline font-medium">{t.login.createAccount}</Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">ou</span></div>
+                <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">{t.login.or}</span></div>
               </div>
               <Button variant="outline" className="w-full touch-target bg-green-50 hover:bg-green-100 dark:bg-green-950/30 dark:hover:bg-green-950/50 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300" onClick={() => navigate('/demo/live')}>
-                <Play className="h-4 w-4 mr-2" /> Mode Démo — Aucun compte requis
+                <Play className="h-4 w-4 mr-2" /> {t.login.demoMode}
               </Button>
             </div>
           </CardContent>

@@ -148,6 +148,157 @@ type TranslationTree = {
     search: string;
     noData: string;
   };
+  login: {
+    backToHome: string;
+    systemLogin: string;
+    subtitle: string;
+    email: string;
+    emailPlaceholder: string;
+    password: string;
+    forgotPassword: string;
+    showPassword: string;
+    hidePassword: string;
+    invalidEmail: string;
+    minChars: string;
+    tooManyAttempts: string;
+    wrongCredentials: string;
+    loading: string;
+    submit: string;
+    noAccount: string;
+    createAccount: string;
+    or: string;
+    demoMode: string;
+    leftPanelText: string;
+    statTriageTime: string;
+    statTraceability: string;
+    statPaper: string;
+  };
+  signup: {
+    backToLogin: string;
+    title: string;
+    subtitle: string;
+    fullName: string;
+    fullNamePlaceholder: string;
+    professionalEmail: string;
+    emailPlaceholder: string;
+    password: string;
+    passwordPlaceholder: string;
+    confirmPassword: string;
+    confirmPlaceholder: string;
+    showPassword: string;
+    hidePassword: string;
+    passwordHint: string;
+    strengthWeak: string;
+    strengthMedium: string;
+    strengthFair: string;
+    strengthStrong: string;
+    strengthVeryStrong: string;
+    passwordsMismatch: string;
+    minChars: string;
+    maxChars: string;
+    invalidEmail: string;
+    alreadyRegistered: string;
+    compromisedPassword: string;
+    creating: string;
+    createAccount: string;
+    termsAgree: string;
+    termsLink: string;
+    andOur: string;
+    privacyLink: string;
+    alreadyHaveAccount: string;
+    loginLink: string;
+    successTitle: string;
+    successText: string;
+    successNote: string;
+    backToLoginBtn: string;
+    leftPanelText: string;
+  };
+  contact: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    successTitle: string;
+    successText: string;
+    backToHome: string;
+    formTitle: string;
+    formDescription: string;
+    firstName: string;
+    firstNamePlaceholder: string;
+    lastName: string;
+    lastNamePlaceholder: string;
+    professionalEmail: string;
+    emailPlaceholder: string;
+    establishment: string;
+    establishmentPlaceholder: string;
+    role: string;
+    rolePlaceholder: string;
+    message: string;
+    messagePlaceholder: string;
+    sending: string;
+    send: string;
+    directEmail: string;
+    requiredFields: string;
+    fillRequired: string;
+    errorGeneric: string;
+    breadcrumbHome: string;
+    breadcrumbContact: string;
+  };
+  pricing: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    recommended: string;
+    trialName: string;
+    trialTarget: string;
+    trialPrice: string;
+    trialDescription: string;
+    trialCta: string;
+    extensionName: string;
+    extensionTarget: string;
+    extensionPrice: string;
+    extensionDescription: string;
+    extensionCta: string;
+    consortiumName: string;
+    consortiumTarget: string;
+    consortiumPrice: string;
+    consortiumDescription: string;
+    consortiumCta: string;
+    pricingNote: string;
+    contactForQuote: string;
+    businessCaseTitle: string;
+    businessCaseSubtitle: string;
+    currentCosts: string;
+    targetCosts: string;
+    roiFormulas: string;
+    dafMethod: string;
+    transparency: string;
+    faqTitle: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    requestTrial: string;
+    seeDemo: string;
+    disclaimer: string;
+    breadcrumbHome: string;
+    breadcrumbPricing: string;
+  };
+  faq: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    contactUs: string;
+    requestTrial: string;
+    seeDemo: string;
+    disclaimer: string;
+    breadcrumbHome: string;
+    breadcrumbFaq: string;
+    catUnderstand: string;
+    catHowItWorks: string;
+    catSecurity: string;
+    catTrial: string;
+    catPricing: string;
+  };
 };
 
 export const translations: Record<Locale, TranslationTree> = {
@@ -285,6 +436,157 @@ export const translations: Record<Locale, TranslationTree> = {
       search: 'Rechercher',
       noData: 'Aucune donnée',
     },
+    login: {
+      backToHome: 'Retour à l\'accueil',
+      systemLogin: 'Connexion au système',
+      subtitle: 'Pilotez votre service d\'urgences en temps réel. Triage, prescriptions, résultats et coordination — tout en un seul outil.',
+      email: 'Email',
+      emailPlaceholder: 'nom@hopital.fr',
+      password: 'Mot de passe',
+      forgotPassword: 'Mot de passe oublié ?',
+      showPassword: 'Afficher le mot de passe',
+      hidePassword: 'Masquer le mot de passe',
+      invalidEmail: 'Email invalide',
+      minChars: 'Minimum 8 caractères',
+      tooManyAttempts: 'Trop de tentatives. Réessayez dans',
+      wrongCredentials: 'Email ou mot de passe incorrect',
+      loading: 'Chargement...',
+      submit: 'Se connecter',
+      noAccount: 'Pas encore de compte ?',
+      createAccount: 'Créer un compte',
+      or: 'ou',
+      demoMode: 'Mode Démo — Aucun compte requis',
+      leftPanelText: 'Pilotez votre service d\'urgences en temps réel. Triage, prescriptions, résultats et coordination — tout en un seul outil.',
+      statTriageTime: 'Temps de triage',
+      statTraceability: 'Traçabilité',
+      statPaper: 'Papier',
+    },
+    signup: {
+      backToLogin: 'Retour à la connexion',
+      title: 'Créer un compte',
+      subtitle: 'Inscription à UrgenceOS',
+      fullName: 'Nom complet',
+      fullNamePlaceholder: 'Dr. Marie Dupont',
+      professionalEmail: 'Email professionnel',
+      emailPlaceholder: 'nom@hopital.fr',
+      password: 'Mot de passe',
+      passwordPlaceholder: 'Minimum 8 caractères',
+      confirmPassword: 'Confirmer le mot de passe',
+      confirmPlaceholder: 'Répétez le mot de passe',
+      showPassword: 'Afficher le mot de passe',
+      hidePassword: 'Masquer le mot de passe',
+      passwordHint: 'Utilisez majuscules, chiffres et caractères spéciaux',
+      strengthWeak: 'Faible',
+      strengthMedium: 'Moyen',
+      strengthFair: 'Correct',
+      strengthStrong: 'Fort',
+      strengthVeryStrong: 'Très fort',
+      passwordsMismatch: 'Les mots de passe ne correspondent pas',
+      minChars: 'Minimum 2 caractères',
+      maxChars: 'Maximum 100 caractères',
+      invalidEmail: 'Email invalide',
+      alreadyRegistered: 'Un compte existe déjà avec cet email.',
+      compromisedPassword: 'Le mot de passe a été compromis ou est trop faible. Choisissez-en un autre.',
+      creating: 'Création...',
+      createAccount: 'Créer mon compte',
+      termsAgree: 'En créant un compte, vous acceptez nos',
+      termsLink: 'CGU',
+      andOur: 'et notre',
+      privacyLink: 'politique de confidentialité',
+      alreadyHaveAccount: 'Déjà un compte ?',
+      loginLink: 'Se connecter',
+      successTitle: 'Vérifiez votre email',
+      successText: 'Un email de confirmation a été envoyé à',
+      successNote: 'Après confirmation, un administrateur vous attribuera un rôle pour accéder à la plateforme.',
+      backToLoginBtn: 'Retour à la connexion',
+      leftPanelText: 'Rejoignez la plateforme de gestion des urgences hospitalières. Créez votre compte et un administrateur vous attribuera votre rôle.',
+    },
+    contact: {
+      badge: 'Nous contacter',
+      title: 'Parlons de votre projet',
+      subtitle: 'Une question sur UrgenceOS, un essai à planifier, ou simplement envie d\'en savoir plus ? Remplissez le formulaire ci-dessous.',
+      successTitle: 'Message envoyé !',
+      successText: 'Nous reviendrons vers vous sous 48h ouvrées.',
+      backToHome: 'Retour à l\'accueil',
+      formTitle: 'Formulaire de contact',
+      formDescription: 'Tous les champs marqués * sont obligatoires.',
+      firstName: 'Prénom *',
+      firstNamePlaceholder: 'Marie',
+      lastName: 'Nom *',
+      lastNamePlaceholder: 'Dupont',
+      professionalEmail: 'Email professionnel *',
+      emailPlaceholder: 'marie.dupont@hopital.fr',
+      establishment: 'Établissement *',
+      establishmentPlaceholder: 'CHU de Lyon',
+      role: 'Fonction *',
+      rolePlaceholder: 'DSI, Médecin urgentiste...',
+      message: 'Message (optionnel)',
+      messagePlaceholder: 'Décrivez votre besoin, la taille de votre service, vos contraintes...',
+      sending: 'Envoi...',
+      send: 'Envoyer le message',
+      directEmail: 'Vous pouvez aussi nous écrire directement à',
+      requiredFields: 'Tous les champs marqués * sont obligatoires.',
+      fillRequired: 'Veuillez remplir tous les champs obligatoires.',
+      errorGeneric: 'Une erreur est survenue. Réessayez ou contactez-nous par email.',
+      breadcrumbHome: 'Accueil',
+      breadcrumbContact: 'Contact',
+    },
+    pricing: {
+      badge: 'Modèle économique',
+      title: 'Un essai de 10 semaines pour voir les résultats.',
+      subtitle: 'Pas d\'engagement pluriannuel. Un essai encadré de 10 semaines pour mesurer les gains concrets avec vos propres chiffres. Si ça marche, vous continuez. Sinon, vous arrêtez.',
+      recommended: 'Recommandé',
+      trialName: 'Essai',
+      trialTarget: 'Un service d\'urgences',
+      trialPrice: 'À partir de 15 000 €',
+      trialDescription: '10 semaines d\'essai. 2 modules inclus. Résultats mesurés. Connexion à votre dossier patient existant.',
+      trialCta: 'Demander un essai',
+      extensionName: 'Extension',
+      extensionTarget: 'Multi-services',
+      extensionPrice: 'Sur mesure',
+      extensionDescription: 'Après validation de l\'essai. Extension à d\'autres services + modules supplémentaires.',
+      extensionCta: 'Contacter l\'équipe',
+      consortiumName: 'Consortium GHT',
+      consortiumTarget: 'Multi-établissements',
+      consortiumPrice: 'Mutualisé',
+      consortiumDescription: 'Plateforme partagée. Modules communs. Coûts divisés. Gouvernance commune.',
+      consortiumCta: 'Contacter l\'équipe',
+      pricingNote: 'Le montant de l\'essai dépend de la complexité d\'intégration avec votre informatique existante.',
+      contactForQuote: 'Contactez-nous pour un devis personnalisé →',
+      businessCaseTitle: 'Business case : vos chiffres, pas les nôtres.',
+      businessCaseSubtitle: 'Nous fournissons un modèle de business case TCO 5 ans à remplir avec les données de votre établissement. Aucun chiffre inventé. Les formules ROI/payback sont transparentes.',
+      currentCosts: 'Coûts actuels (à mesurer)',
+      targetCosts: 'Coûts cible (avec UrgenceOS)',
+      roiFormulas: 'Formules ROI / Payback',
+      dafMethod: 'Méthode : réunion DAF 60 minutes',
+      transparency: 'Transparence totale. ROI calculé sur vos données réelles. Aucun chiffre présélectionné.',
+      faqTitle: 'Questions fréquentes',
+      ctaTitle: 'Prêt à évaluer les gains pour votre service ?',
+      ctaSubtitle: '60 minutes pour estimer vos économies avec vos propres chiffres. Sans engagement.',
+      requestTrial: 'Demander un essai',
+      seeDemo: 'Voir la démo',
+      disclaimer: 'Les tarifs dépendent du périmètre de déploiement et de la complexité d\'intégration. UrgenceOS ne constitue pas un dispositif médical certifié.',
+      breadcrumbHome: 'Accueil',
+      breadcrumbPricing: 'Tarifs',
+    },
+    faq: {
+      badge: 'Centre d\'aide',
+      title: 'Questions fréquentes',
+      subtitle: 'Tout ce que les DSI, DAF, directions d\'établissements et équipes soignantes doivent savoir sur UrgenceOS et le modèle Hospital-Owned Software.',
+      ctaTitle: 'Vous n\'avez pas trouvé votre réponse ?',
+      ctaSubtitle: 'Notre équipe répond à toutes les questions : architecture, sécurité, intégration DPI, business case.',
+      contactUs: 'Nous contacter',
+      requestTrial: 'Demander un essai',
+      seeDemo: 'Voir la démo',
+      disclaimer: 'UrgenceOS est un outil d\'aide à la gestion des urgences hospitalières. Il ne constitue pas un dispositif médical certifié au sens de la réglementation en vigueur.',
+      breadcrumbHome: 'Accueil',
+      breadcrumbFaq: 'FAQ',
+      catUnderstand: 'Comprendre UrgenceOS',
+      catHowItWorks: 'Comment ça marche',
+      catSecurity: 'Sécurité et données',
+      catTrial: 'Essai et déploiement',
+      catPricing: 'Tarifs',
+    },
   },
 
   en: {
@@ -420,6 +722,157 @@ export const translations: Record<Locale, TranslationTree> = {
       next: 'Next',
       search: 'Search',
       noData: 'No data',
+    },
+    login: {
+      backToHome: 'Back to home',
+      systemLogin: 'System login',
+      subtitle: 'Manage your emergency department in real time. Triage, prescriptions, results and coordination — all in one tool.',
+      email: 'Email',
+      emailPlaceholder: 'name@hospital.com',
+      password: 'Password',
+      forgotPassword: 'Forgot password?',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      invalidEmail: 'Invalid email',
+      minChars: 'Minimum 8 characters',
+      tooManyAttempts: 'Too many attempts. Try again in',
+      wrongCredentials: 'Incorrect email or password',
+      loading: 'Loading...',
+      submit: 'Sign in',
+      noAccount: 'No account yet?',
+      createAccount: 'Create an account',
+      or: 'or',
+      demoMode: 'Demo Mode — No account required',
+      leftPanelText: 'Manage your emergency department in real time. Triage, prescriptions, results and coordination — all in one tool.',
+      statTriageTime: 'Triage time',
+      statTraceability: 'Traceability',
+      statPaper: 'Paper',
+    },
+    signup: {
+      backToLogin: 'Back to login',
+      title: 'Create an account',
+      subtitle: 'Sign up for UrgenceOS',
+      fullName: 'Full name',
+      fullNamePlaceholder: 'Dr. Jane Smith',
+      professionalEmail: 'Professional email',
+      emailPlaceholder: 'name@hospital.com',
+      password: 'Password',
+      passwordPlaceholder: 'Minimum 8 characters',
+      confirmPassword: 'Confirm password',
+      confirmPlaceholder: 'Repeat password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      passwordHint: 'Use uppercase, numbers and special characters',
+      strengthWeak: 'Weak',
+      strengthMedium: 'Medium',
+      strengthFair: 'Fair',
+      strengthStrong: 'Strong',
+      strengthVeryStrong: 'Very strong',
+      passwordsMismatch: 'Passwords do not match',
+      minChars: 'Minimum 2 characters',
+      maxChars: 'Maximum 100 characters',
+      invalidEmail: 'Invalid email',
+      alreadyRegistered: 'An account already exists with this email.',
+      compromisedPassword: 'The password has been compromised or is too weak. Choose another one.',
+      creating: 'Creating...',
+      createAccount: 'Create my account',
+      termsAgree: 'By creating an account, you agree to our',
+      termsLink: 'Terms of use',
+      andOur: 'and our',
+      privacyLink: 'Privacy policy',
+      alreadyHaveAccount: 'Already have an account?',
+      loginLink: 'Sign in',
+      successTitle: 'Check your email',
+      successText: 'A confirmation email has been sent to',
+      successNote: 'After confirmation, an administrator will assign you a role to access the platform.',
+      backToLoginBtn: 'Back to login',
+      leftPanelText: 'Join the hospital emergency management platform. Create your account and an administrator will assign your role.',
+    },
+    contact: {
+      badge: 'Contact us',
+      title: 'Let\'s talk about your project',
+      subtitle: 'A question about UrgenceOS, a trial to plan, or simply want to learn more? Fill out the form below.',
+      successTitle: 'Message sent!',
+      successText: 'We will get back to you within 48 business hours.',
+      backToHome: 'Back to home',
+      formTitle: 'Contact form',
+      formDescription: 'All fields marked * are required.',
+      firstName: 'First name *',
+      firstNamePlaceholder: 'Jane',
+      lastName: 'Last name *',
+      lastNamePlaceholder: 'Smith',
+      professionalEmail: 'Professional email *',
+      emailPlaceholder: 'jane.smith@hospital.com',
+      establishment: 'Hospital *',
+      establishmentPlaceholder: 'City General Hospital',
+      role: 'Role *',
+      rolePlaceholder: 'CIO, Emergency physician...',
+      message: 'Message (optional)',
+      messagePlaceholder: 'Describe your needs, department size, constraints...',
+      sending: 'Sending...',
+      send: 'Send message',
+      directEmail: 'You can also email us directly at',
+      requiredFields: 'All fields marked * are required.',
+      fillRequired: 'Please fill in all required fields.',
+      errorGeneric: 'An error occurred. Please try again or contact us by email.',
+      breadcrumbHome: 'Home',
+      breadcrumbContact: 'Contact',
+    },
+    pricing: {
+      badge: 'Pricing model',
+      title: 'A 10-week trial to see the results.',
+      subtitle: 'No multi-year commitment. A structured 10-week trial to measure concrete gains with your own numbers. If it works, you continue. If not, you stop.',
+      recommended: 'Recommended',
+      trialName: 'Trial',
+      trialTarget: 'One emergency department',
+      trialPrice: 'From €15,000',
+      trialDescription: '10-week trial. 2 modules included. Measured results. Connection to your existing EHR.',
+      trialCta: 'Request a trial',
+      extensionName: 'Extension',
+      extensionTarget: 'Multi-department',
+      extensionPrice: 'Custom',
+      extensionDescription: 'After trial validation. Extension to other departments + additional modules.',
+      extensionCta: 'Contact the team',
+      consortiumName: 'GHT Consortium',
+      consortiumTarget: 'Multi-hospital',
+      consortiumPrice: 'Shared',
+      consortiumDescription: 'Shared platform. Common modules. Shared costs. Joint governance.',
+      consortiumCta: 'Contact the team',
+      pricingNote: 'Trial cost depends on integration complexity with your existing IT.',
+      contactForQuote: 'Contact us for a personalized quote →',
+      businessCaseTitle: 'Business case: your numbers, not ours.',
+      businessCaseSubtitle: 'We provide a 5-year TCO business case template to fill with your establishment\'s data. No invented figures. ROI/payback formulas are transparent.',
+      currentCosts: 'Current costs (to measure)',
+      targetCosts: 'Target costs (with UrgenceOS)',
+      roiFormulas: 'ROI / Payback formulas',
+      dafMethod: 'Method: 60-minute CFO meeting',
+      transparency: 'Full transparency. ROI calculated on your actual data. No pre-selected figures.',
+      faqTitle: 'Frequently asked questions',
+      ctaTitle: 'Ready to evaluate gains for your department?',
+      ctaSubtitle: '60 minutes to estimate your savings with your own numbers. No commitment.',
+      requestTrial: 'Request a trial',
+      seeDemo: 'See the demo',
+      disclaimer: 'Pricing depends on deployment scope and integration complexity. UrgenceOS is not a certified medical device.',
+      breadcrumbHome: 'Home',
+      breadcrumbPricing: 'Pricing',
+    },
+    faq: {
+      badge: 'Help center',
+      title: 'Frequently asked questions',
+      subtitle: 'Everything CIOs, CFOs, hospital directors and care teams need to know about UrgenceOS and the Hospital-Owned Software model.',
+      ctaTitle: 'Didn\'t find your answer?',
+      ctaSubtitle: 'Our team answers all questions: architecture, security, EHR integration, business case.',
+      contactUs: 'Contact us',
+      requestTrial: 'Request a trial',
+      seeDemo: 'See the demo',
+      disclaimer: 'UrgenceOS is a management tool for hospital emergency departments. It is not a certified medical device under applicable regulations.',
+      breadcrumbHome: 'Home',
+      breadcrumbFaq: 'FAQ',
+      catUnderstand: 'Understanding UrgenceOS',
+      catHowItWorks: 'How it works',
+      catSecurity: 'Security and data',
+      catTrial: 'Trial and deployment',
+      catPricing: 'Pricing',
     },
   },
 
@@ -557,6 +1010,157 @@ export const translations: Record<Locale, TranslationTree> = {
       search: 'Buscar',
       noData: 'Sin datos',
     },
+    login: {
+      backToHome: 'Volver al inicio',
+      systemLogin: 'Iniciar sesión',
+      subtitle: 'Gestione su servicio de urgencias en tiempo real. Triaje, prescripciones, resultados y coordinación — todo en una sola herramienta.',
+      email: 'Email',
+      emailPlaceholder: 'nombre@hospital.es',
+      password: 'Contraseña',
+      forgotPassword: '¿Olvidó su contraseña?',
+      showPassword: 'Mostrar contraseña',
+      hidePassword: 'Ocultar contraseña',
+      invalidEmail: 'Email inválido',
+      minChars: 'Mínimo 8 caracteres',
+      tooManyAttempts: 'Demasiados intentos. Inténtelo de nuevo en',
+      wrongCredentials: 'Email o contraseña incorrectos',
+      loading: 'Cargando...',
+      submit: 'Iniciar sesión',
+      noAccount: '¿No tiene cuenta?',
+      createAccount: 'Crear una cuenta',
+      or: 'o',
+      demoMode: 'Modo Demo — Sin cuenta necesaria',
+      leftPanelText: 'Gestione su servicio de urgencias en tiempo real. Triaje, prescripciones, resultados y coordinación — todo en una sola herramienta.',
+      statTriageTime: 'Tiempo de triaje',
+      statTraceability: 'Trazabilidad',
+      statPaper: 'Papel',
+    },
+    signup: {
+      backToLogin: 'Volver al inicio de sesión',
+      title: 'Crear una cuenta',
+      subtitle: 'Registro en UrgenceOS',
+      fullName: 'Nombre completo',
+      fullNamePlaceholder: 'Dra. María García',
+      professionalEmail: 'Email profesional',
+      emailPlaceholder: 'nombre@hospital.es',
+      password: 'Contraseña',
+      passwordPlaceholder: 'Mínimo 8 caracteres',
+      confirmPassword: 'Confirmar contraseña',
+      confirmPlaceholder: 'Repita la contraseña',
+      showPassword: 'Mostrar contraseña',
+      hidePassword: 'Ocultar contraseña',
+      passwordHint: 'Use mayúsculas, números y caracteres especiales',
+      strengthWeak: 'Débil',
+      strengthMedium: 'Medio',
+      strengthFair: 'Aceptable',
+      strengthStrong: 'Fuerte',
+      strengthVeryStrong: 'Muy fuerte',
+      passwordsMismatch: 'Las contraseñas no coinciden',
+      minChars: 'Mínimo 2 caracteres',
+      maxChars: 'Máximo 100 caracteres',
+      invalidEmail: 'Email inválido',
+      alreadyRegistered: 'Ya existe una cuenta con este email.',
+      compromisedPassword: 'La contraseña ha sido comprometida o es demasiado débil. Elija otra.',
+      creating: 'Creando...',
+      createAccount: 'Crear mi cuenta',
+      termsAgree: 'Al crear una cuenta, acepta nuestros',
+      termsLink: 'Términos de uso',
+      andOur: 'y nuestra',
+      privacyLink: 'Política de privacidad',
+      alreadyHaveAccount: '¿Ya tiene cuenta?',
+      loginLink: 'Iniciar sesión',
+      successTitle: 'Verifique su email',
+      successText: 'Se ha enviado un email de confirmación a',
+      successNote: 'Tras la confirmación, un administrador le asignará un rol para acceder a la plataforma.',
+      backToLoginBtn: 'Volver al inicio de sesión',
+      leftPanelText: 'Únase a la plataforma de gestión de urgencias hospitalarias. Cree su cuenta y un administrador le asignará su rol.',
+    },
+    contact: {
+      badge: 'Contáctenos',
+      title: 'Hablemos de su proyecto',
+      subtitle: '¿Una pregunta sobre UrgenceOS, una prueba que planificar, o simplemente quiere saber más? Rellene el formulario.',
+      successTitle: '¡Mensaje enviado!',
+      successText: 'Le responderemos en un plazo de 48 horas laborables.',
+      backToHome: 'Volver al inicio',
+      formTitle: 'Formulario de contacto',
+      formDescription: 'Todos los campos marcados con * son obligatorios.',
+      firstName: 'Nombre *',
+      firstNamePlaceholder: 'María',
+      lastName: 'Apellido *',
+      lastNamePlaceholder: 'García',
+      professionalEmail: 'Email profesional *',
+      emailPlaceholder: 'maria.garcia@hospital.es',
+      establishment: 'Hospital *',
+      establishmentPlaceholder: 'Hospital Universitario',
+      role: 'Función *',
+      rolePlaceholder: 'DSI, Médico urgencista...',
+      message: 'Mensaje (opcional)',
+      messagePlaceholder: 'Describa su necesidad, el tamaño de su servicio, sus restricciones...',
+      sending: 'Enviando...',
+      send: 'Enviar mensaje',
+      directEmail: 'También puede escribirnos directamente a',
+      requiredFields: 'Todos los campos marcados con * son obligatorios.',
+      fillRequired: 'Por favor, rellene todos los campos obligatorios.',
+      errorGeneric: 'Ha ocurrido un error. Inténtelo de nuevo o contáctenos por email.',
+      breadcrumbHome: 'Inicio',
+      breadcrumbContact: 'Contacto',
+    },
+    pricing: {
+      badge: 'Modelo económico',
+      title: 'Una prueba de 10 semanas para ver los resultados.',
+      subtitle: 'Sin compromiso plurianual. Una prueba estructurada de 10 semanas para medir los beneficios concretos con sus propios datos. Si funciona, continúa. Si no, para.',
+      recommended: 'Recomendado',
+      trialName: 'Prueba',
+      trialTarget: 'Un servicio de urgencias',
+      trialPrice: 'Desde 15 000 €',
+      trialDescription: '10 semanas de prueba. 2 módulos incluidos. Resultados medidos. Conexión a su HCE existente.',
+      trialCta: 'Solicitar una prueba',
+      extensionName: 'Extensión',
+      extensionTarget: 'Multi-servicio',
+      extensionPrice: 'A medida',
+      extensionDescription: 'Tras la validación de la prueba. Extensión a otros servicios + módulos adicionales.',
+      extensionCta: 'Contactar al equipo',
+      consortiumName: 'Consorcio',
+      consortiumTarget: 'Multi-hospital',
+      consortiumPrice: 'Compartido',
+      consortiumDescription: 'Plataforma compartida. Módulos comunes. Costes divididos. Gobernanza conjunta.',
+      consortiumCta: 'Contactar al equipo',
+      pricingNote: 'El coste de la prueba depende de la complejidad de integración con su informática existente.',
+      contactForQuote: 'Contáctenos para un presupuesto personalizado →',
+      businessCaseTitle: 'Business case: sus cifras, no las nuestras.',
+      businessCaseSubtitle: 'Proporcionamos un modelo de business case TCO a 5 años para rellenar con los datos de su establecimiento. Sin cifras inventadas. Las fórmulas ROI/payback son transparentes.',
+      currentCosts: 'Costes actuales (a medir)',
+      targetCosts: 'Costes objetivo (con UrgenceOS)',
+      roiFormulas: 'Fórmulas ROI / Payback',
+      dafMethod: 'Método: reunión DAF de 60 minutos',
+      transparency: 'Transparencia total. ROI calculado con sus datos reales. Sin cifras preseleccionadas.',
+      faqTitle: 'Preguntas frecuentes',
+      ctaTitle: '¿Listo para evaluar los beneficios para su servicio?',
+      ctaSubtitle: '60 minutos para estimar sus ahorros con sus propios datos. Sin compromiso.',
+      requestTrial: 'Solicitar una prueba',
+      seeDemo: 'Ver la demo',
+      disclaimer: 'Los precios dependen del alcance del despliegue y la complejidad de integración. UrgenceOS no es un dispositivo médico certificado.',
+      breadcrumbHome: 'Inicio',
+      breadcrumbPricing: 'Precios',
+    },
+    faq: {
+      badge: 'Centro de ayuda',
+      title: 'Preguntas frecuentes',
+      subtitle: 'Todo lo que los directores de sistemas, directores financieros, directores de hospitales y equipos asistenciales deben saber sobre UrgenceOS y el modelo Hospital-Owned Software.',
+      ctaTitle: '¿No encontró su respuesta?',
+      ctaSubtitle: 'Nuestro equipo responde a todas las preguntas: arquitectura, seguridad, integración HCE, business case.',
+      contactUs: 'Contáctenos',
+      requestTrial: 'Solicitar una prueba',
+      seeDemo: 'Ver la demo',
+      disclaimer: 'UrgenceOS es una herramienta de gestión para servicios de urgencias hospitalarias. No es un dispositivo médico certificado según la normativa vigente.',
+      breadcrumbHome: 'Inicio',
+      breadcrumbFaq: 'FAQ',
+      catUnderstand: 'Entender UrgenceOS',
+      catHowItWorks: 'Cómo funciona',
+      catSecurity: 'Seguridad y datos',
+      catTrial: 'Prueba y despliegue',
+      catPricing: 'Precios',
+    },
   },
 
   de: {
@@ -692,6 +1296,157 @@ export const translations: Record<Locale, TranslationTree> = {
       next: 'Weiter',
       search: 'Suchen',
       noData: 'Keine Daten',
+    },
+    login: {
+      backToHome: 'Zurück zur Startseite',
+      systemLogin: 'Systemanmeldung',
+      subtitle: 'Verwalten Sie Ihre Notaufnahme in Echtzeit. Triage, Verordnungen, Ergebnisse und Koordination — alles in einem Tool.',
+      email: 'E-Mail',
+      emailPlaceholder: 'name@krankenhaus.de',
+      password: 'Passwort',
+      forgotPassword: 'Passwort vergessen?',
+      showPassword: 'Passwort anzeigen',
+      hidePassword: 'Passwort verbergen',
+      invalidEmail: 'Ungültige E-Mail',
+      minChars: 'Mindestens 8 Zeichen',
+      tooManyAttempts: 'Zu viele Versuche. Versuchen Sie es erneut in',
+      wrongCredentials: 'E-Mail oder Passwort falsch',
+      loading: 'Laden...',
+      submit: 'Anmelden',
+      noAccount: 'Noch kein Konto?',
+      createAccount: 'Konto erstellen',
+      or: 'oder',
+      demoMode: 'Demo-Modus — Kein Konto erforderlich',
+      leftPanelText: 'Verwalten Sie Ihre Notaufnahme in Echtzeit. Triage, Verordnungen, Ergebnisse und Koordination — alles in einem Tool.',
+      statTriageTime: 'Triage-Zeit',
+      statTraceability: 'Rückverfolgbarkeit',
+      statPaper: 'Papier',
+    },
+    signup: {
+      backToLogin: 'Zurück zur Anmeldung',
+      title: 'Konto erstellen',
+      subtitle: 'Registrierung bei UrgenceOS',
+      fullName: 'Vollständiger Name',
+      fullNamePlaceholder: 'Dr. Anna Müller',
+      professionalEmail: 'Berufliche E-Mail',
+      emailPlaceholder: 'name@krankenhaus.de',
+      password: 'Passwort',
+      passwordPlaceholder: 'Mindestens 8 Zeichen',
+      confirmPassword: 'Passwort bestätigen',
+      confirmPlaceholder: 'Passwort wiederholen',
+      showPassword: 'Passwort anzeigen',
+      hidePassword: 'Passwort verbergen',
+      passwordHint: 'Verwenden Sie Großbuchstaben, Zahlen und Sonderzeichen',
+      strengthWeak: 'Schwach',
+      strengthMedium: 'Mittel',
+      strengthFair: 'Akzeptabel',
+      strengthStrong: 'Stark',
+      strengthVeryStrong: 'Sehr stark',
+      passwordsMismatch: 'Passwörter stimmen nicht überein',
+      minChars: 'Mindestens 2 Zeichen',
+      maxChars: 'Maximal 100 Zeichen',
+      invalidEmail: 'Ungültige E-Mail',
+      alreadyRegistered: 'Ein Konto mit dieser E-Mail existiert bereits.',
+      compromisedPassword: 'Das Passwort wurde kompromittiert oder ist zu schwach. Wählen Sie ein anderes.',
+      creating: 'Erstellen...',
+      createAccount: 'Mein Konto erstellen',
+      termsAgree: 'Mit der Erstellung eines Kontos akzeptieren Sie unsere',
+      termsLink: 'AGB',
+      andOur: 'und unsere',
+      privacyLink: 'Datenschutzrichtlinie',
+      alreadyHaveAccount: 'Bereits ein Konto?',
+      loginLink: 'Anmelden',
+      successTitle: 'Überprüfen Sie Ihre E-Mail',
+      successText: 'Eine Bestätigungs-E-Mail wurde gesendet an',
+      successNote: 'Nach der Bestätigung wird Ihnen ein Administrator eine Rolle zuweisen, um auf die Plattform zuzugreifen.',
+      backToLoginBtn: 'Zurück zur Anmeldung',
+      leftPanelText: 'Treten Sie der Plattform für das Notaufnahmemanagement bei. Erstellen Sie Ihr Konto und ein Administrator wird Ihnen Ihre Rolle zuweisen.',
+    },
+    contact: {
+      badge: 'Kontaktieren Sie uns',
+      title: 'Lassen Sie uns über Ihr Projekt sprechen',
+      subtitle: 'Eine Frage zu UrgenceOS, einen Test planen, oder einfach mehr erfahren? Füllen Sie das Formular aus.',
+      successTitle: 'Nachricht gesendet!',
+      successText: 'Wir melden uns innerhalb von 48 Geschäftsstunden bei Ihnen.',
+      backToHome: 'Zurück zur Startseite',
+      formTitle: 'Kontaktformular',
+      formDescription: 'Alle mit * markierten Felder sind Pflichtfelder.',
+      firstName: 'Vorname *',
+      firstNamePlaceholder: 'Anna',
+      lastName: 'Nachname *',
+      lastNamePlaceholder: 'Müller',
+      professionalEmail: 'Berufliche E-Mail *',
+      emailPlaceholder: 'anna.mueller@krankenhaus.de',
+      establishment: 'Krankenhaus *',
+      establishmentPlaceholder: 'Universitätsklinikum',
+      role: 'Funktion *',
+      rolePlaceholder: 'CIO, Notarzt...',
+      message: 'Nachricht (optional)',
+      messagePlaceholder: 'Beschreiben Sie Ihren Bedarf, die Größe Ihrer Abteilung, Ihre Einschränkungen...',
+      sending: 'Senden...',
+      send: 'Nachricht senden',
+      directEmail: 'Sie können uns auch direkt schreiben an',
+      requiredFields: 'Alle mit * markierten Felder sind Pflichtfelder.',
+      fillRequired: 'Bitte füllen Sie alle Pflichtfelder aus.',
+      errorGeneric: 'Ein Fehler ist aufgetreten. Versuchen Sie es erneut oder kontaktieren Sie uns per E-Mail.',
+      breadcrumbHome: 'Startseite',
+      breadcrumbContact: 'Kontakt',
+    },
+    pricing: {
+      badge: 'Preismodell',
+      title: 'Ein 10-wöchiger Test, um die Ergebnisse zu sehen.',
+      subtitle: 'Keine mehrjährige Bindung. Ein strukturierter 10-wöchiger Test, um konkrete Vorteile mit Ihren eigenen Zahlen zu messen. Wenn es funktioniert, machen Sie weiter. Wenn nicht, hören Sie auf.',
+      recommended: 'Empfohlen',
+      trialName: 'Test',
+      trialTarget: 'Eine Notaufnahme',
+      trialPrice: 'Ab 15.000 €',
+      trialDescription: '10-wöchiger Test. 2 Module inklusive. Gemessene Ergebnisse. Anbindung an Ihr bestehendes KIS.',
+      trialCta: 'Test anfragen',
+      extensionName: 'Erweiterung',
+      extensionTarget: 'Multi-Abteilung',
+      extensionPrice: 'Individuell',
+      extensionDescription: 'Nach Testvalidierung. Erweiterung auf andere Abteilungen + zusätzliche Module.',
+      extensionCta: 'Team kontaktieren',
+      consortiumName: 'Konsortium',
+      consortiumTarget: 'Multi-Krankenhaus',
+      consortiumPrice: 'Geteilt',
+      consortiumDescription: 'Gemeinsame Plattform. Gemeinsame Module. Geteilte Kosten. Gemeinsame Governance.',
+      consortiumCta: 'Team kontaktieren',
+      pricingNote: 'Die Testkosten hängen von der Integrationskomplexität mit Ihrer bestehenden IT ab.',
+      contactForQuote: 'Kontaktieren Sie uns für ein individuelles Angebot →',
+      businessCaseTitle: 'Business Case: Ihre Zahlen, nicht unsere.',
+      businessCaseSubtitle: 'Wir stellen eine 5-Jahres-TCO-Business-Case-Vorlage bereit, die mit den Daten Ihres Hauses ausgefüllt wird. Keine erfundenen Zahlen. Die ROI/Payback-Formeln sind transparent.',
+      currentCosts: 'Aktuelle Kosten (zu messen)',
+      targetCosts: 'Zielkosten (mit UrgenceOS)',
+      roiFormulas: 'ROI / Payback-Formeln',
+      dafMethod: 'Methode: 60-Minuten-CFO-Meeting',
+      transparency: 'Volle Transparenz. ROI berechnet mit Ihren tatsächlichen Daten. Keine vorausgewählten Zahlen.',
+      faqTitle: 'Häufig gestellte Fragen',
+      ctaTitle: 'Bereit, die Vorteile für Ihre Abteilung zu bewerten?',
+      ctaSubtitle: '60 Minuten, um Ihre Einsparungen mit Ihren eigenen Zahlen zu schätzen. Ohne Bindung.',
+      requestTrial: 'Test anfragen',
+      seeDemo: 'Demo ansehen',
+      disclaimer: 'Die Preise hängen vom Umfang der Bereitstellung und der Integrationskomplexität ab. UrgenceOS ist kein zertifiziertes Medizinprodukt.',
+      breadcrumbHome: 'Startseite',
+      breadcrumbPricing: 'Preise',
+    },
+    faq: {
+      badge: 'Hilfezentrum',
+      title: 'Häufig gestellte Fragen',
+      subtitle: 'Alles, was CIOs, CFOs, Krankenhausdirektoren und Pflegeteams über UrgenceOS und das Hospital-Owned-Software-Modell wissen müssen.',
+      ctaTitle: 'Ihre Frage nicht gefunden?',
+      ctaSubtitle: 'Unser Team beantwortet alle Fragen: Architektur, Sicherheit, KIS-Integration, Business Case.',
+      contactUs: 'Kontaktieren Sie uns',
+      requestTrial: 'Test anfragen',
+      seeDemo: 'Demo ansehen',
+      disclaimer: 'UrgenceOS ist ein Management-Tool für Notaufnahmen. Es ist kein zertifiziertes Medizinprodukt im Sinne der geltenden Vorschriften.',
+      breadcrumbHome: 'Startseite',
+      breadcrumbFaq: 'FAQ',
+      catUnderstand: 'UrgenceOS verstehen',
+      catHowItWorks: 'So funktioniert es',
+      catSecurity: 'Sicherheit und Daten',
+      catTrial: 'Test und Bereitstellung',
+      catPricing: 'Preise',
     },
   },
 };
