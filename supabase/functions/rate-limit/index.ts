@@ -30,39 +30,44 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Authenticate
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      log.warn("Missing or invalid auth header");
-      end(401);
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      log.warn("Auth failed", { error: userError?.message });
-      end(401);
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const userId = user.id;
-
     // Parse request
     const body = await req.json();
     const action = body.action || "default";
     const limits = ACTION_LIMITS[action] || ACTION_LIMITS.default;
+
+    // For login action, use identifier (email) instead of user ID
+    let userId: string;
+    if (action === "login" && body.identifier) {
+      userId = `anon:${body.identifier}`;
+    } else {
+      // Authenticate for non-login actions
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        log.warn("Missing or invalid auth header");
+        end(401);
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        log.warn("Auth failed", { error: userError?.message });
+        end(401);
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      userId = user.id;
+    }
 
     // Check rate limit
     const key = `${userId}:${action}`;
