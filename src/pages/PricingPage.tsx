@@ -18,16 +18,7 @@ export default function PricingPage() {
       target: t.pricing.trialTarget,
       price: t.pricing.trialPrice,
       description: t.pricing.trialDescription,
-      features: [
-        'Plateforme complète (identité, droits d\'accès, traçabilité)',
-        'Module récap parcours patient par rôle',
-        'Module traçabilité temps réel',
-        'Connexion à votre dossier patient existant',
-        'Réception des résultats de laboratoire',
-        'Formation par rôle (2h par profil)',
-        'Rapport de résultats pour la direction',
-        'Critères de succès définis à l\'avance',
-      ],
+      features: t.pricingFeatures.trial,
       cta: t.pricing.trialCta,
       popular: true,
     },
@@ -36,16 +27,7 @@ export default function PricingPage() {
       target: t.pricing.extensionTarget,
       price: t.pricing.extensionPrice,
       description: t.pricing.extensionDescription,
-      features: [
-        'Tout l\'essai initial +',
-        'Modules supplémentaires (triage, prescriptions, sortie)',
-        'Connexion bidirectionnelle au dossier patient',
-        'Authentification unique institutionnelle (SSO)',
-        'Supervision complète',
-        'Comité de suivi trimestriel',
-        'Audit sécurité annuel inclus',
-        'Coûts récurrents décroissants',
-      ],
+      features: t.pricingFeatures.extension,
       cta: t.pricing.extensionCta,
       popular: false,
     },
@@ -54,38 +36,17 @@ export default function PricingPage() {
       target: t.pricing.consortiumTarget,
       price: t.pricing.consortiumPrice,
       description: t.pricing.consortiumDescription,
-      features: [
-        'Plateforme partagée multi-établissements',
-        'Bibliothèque de modules partagés',
-        'Connecteurs réutilisables entre établissements',
-        'Équipe technique mutualisée',
-        'Interopérabilité commune',
-        'Indicateurs consolidés pour les tutelles',
-        'Division des coûts par établissement',
-        'Standardisation des échanges',
-      ],
+      features: t.pricingFeatures.consortium,
       cta: t.pricing.consortiumCta,
       popular: false,
     },
   ];
 
   const FAQ_PRICING = [
-    {
-      q: 'Pourquoi commencer par un essai plutôt qu\'un déploiement complet ?',
-      a: 'L\'essai mesure le ROI sur vos données réelles avant tout engagement. 10 semaines, périmètre urgences, critères go/no-go définis à l\'avance. Si les résultats sont là, vous décidez de la suite. Si non, vous arrêtez. Pas d\'engagement pluriannuel en première intention.',
-    },
-    {
-      q: 'Comment le modèle économique diffère-t-il d\'un éditeur classique ?',
-      a: 'Le socle est possédé par l\'hôpital. Pas de licence récurrente sur le socle. Les coûts portent sur le déploiement, la formation, le MCO, et les évolutions. Ils sont prévisibles et décroissants — pas de hausse unilatérale.',
-    },
-    {
-      q: 'Comment construire le business case pour mon établissement ?',
-      a: 'Nous fournissons un modèle de business case vierge (TCO 5 ans, formules ROI/payback) que nous remplissons ensemble lors d\'une réunion de 60 minutes avec le DAF. Les chiffres sont les vôtres, pas les nôtres.',
-    },
-    {
-      q: 'Quel est le coût d\'un essai ?',
-      a: 'Le forfait essai est calibré sur le périmètre (un service d\'urgences, 2 modules, 10 semaines). Il inclut le cadrage, le déploiement, la formation, et le rapport de mesure. Le montant exact dépend de la complexité d\'intégration avec votre DPI. Demandez un devis.',
-    },
+    { q: t.pricingFaq.q1, a: t.pricingFaq.a1 },
+    { q: t.pricingFaq.q2, a: t.pricingFaq.a2 },
+    { q: t.pricingFaq.q3, a: t.pricingFaq.a3 },
+    { q: t.pricingFaq.q4, a: t.pricingFaq.a4 },
   ];
 
   return (
