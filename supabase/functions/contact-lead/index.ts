@@ -4,7 +4,16 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 const log = createLogger("contact-lead");
 
-async function sendLeadNotification(leadData: Record<string, string | null>) {
+function escapeHtml(str: string | null): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
   const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
   if (!RESEND_API_KEY) {
     log.warn("RESEND_API_KEY not configured — skipping email notification");

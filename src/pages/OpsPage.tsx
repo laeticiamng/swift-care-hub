@@ -38,19 +38,29 @@ export default function OpsPage() {
     setLoading(true);
     const windowStart = getWindowStart(range);
 
-    const [checksRes, errorsRes, alertsRes, leadsRes, incidentsRes] = await Promise.all([
+    const [checksRes, alertsRes, incidentsRes] = await Promise.all([
       supabase.from("status_checks").select("*").gte("checked_at", windowStart).order("checked_at", { ascending: true }).limit(1000),
-      supabase.from("error_logs" as any).select("*").gte("created_at", windowStart).order("created_at", { ascending: false }).limit(200),
       supabase.from("audit_logs").select("*").in("action", ["error_spike_alert", "security_alert", "rate_limit_exceeded"]).gte("created_at", windowStart).order("created_at", { ascending: false }).limit(50),
-      supabase.from("contact_leads").select("id, created_at, establishment").gte("created_at", windowStart).order("created_at", { ascending: false }).limit(50),
       supabase.from("incident_logs").select("*").order("started_at", { ascending: false }).limit(20),
     ]);
 
     setStatusChecks(checksRes.data || []);
-    setErrorLogs((errorsRes.data as any[]) || []);
     setAuditAlerts(alertsRes.data || []);
-    setLeads(leadsRes.data || []);
     setIncidents(incidentsRes.data || []);
+
+    // Fetch error_logs and contact_leads via ops-data edge function (bypasses RLS)
+    try {
+      const { data: opsData, error: opsError } = await supabase.functions.invoke('ops-data', {
+        body: { windowStart },
+      });
+      if (!opsError && opsData) {
+        setErrorLogs(opsData.errorLogs || []);
+        setLeads(opsData.leads || []);
+      }
+    } catch {
+      // Silently fail — dashboard still shows other data
+    }
+
     setLoading(false);
   };
 
