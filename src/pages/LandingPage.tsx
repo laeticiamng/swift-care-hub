@@ -45,6 +45,7 @@ export default function LandingPage() {
         <AntiFeatureSection />
       </main>
 
+      <CyberSecurityFooter />
       <FooterSection />
     </div>
   );
