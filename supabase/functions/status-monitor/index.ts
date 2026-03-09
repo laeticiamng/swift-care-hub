@@ -67,15 +67,29 @@ Deno.serve(async (req) => {
   }
 
   if (req.method === 'POST') {
-    // Verify internal caller — accept service role key from Authorization header or apikey header
+    // Verify internal caller — accept service role key, anon key, or valid Supabase JWT
     const authHeader = req.headers.get("Authorization");
-    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-    const apikeyToken = req.headers.get("apikey");
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+    const apikeyToken = req.headers.get("apikey")?.trim();
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim();
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")?.trim();
     const validTokens = [serviceKey, anonKey].filter(Boolean);
-    // Check all provided tokens (bearer and apikey may both be present)
-    const isAuthorized = (bearerToken && validTokens.includes(bearerToken)) || (apikeyToken && validTokens.includes(apikeyToken));
+    
+    let isAuthorized = (bearerToken && validTokens.includes(bearerToken)) || (apikeyToken && validTokens.includes(apikeyToken));
+    
+    // Fallback: verify as a valid Supabase JWT (e.g. from pg_cron pg_net)
+    if (!isAuthorized && bearerToken) {
+      try {
+        const verifyClient = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_ANON_KEY')!,
+          { global: { headers: { Authorization: `Bearer ${bearerToken}` } } }
+        );
+        const { data } = await verifyClient.auth.getUser(bearerToken);
+        if (data?.user) isAuthorized = true;
+      } catch { /* not a valid user JWT either */ }
+    }
+    
     if (!isAuthorized) {
       log.warn("POST auth failed", { hasBearerToken: !!bearerToken, hasApikeyToken: !!apikeyToken, bearerLen: bearerToken?.length, apikeyLen: apikeyToken?.length });
       end(403);

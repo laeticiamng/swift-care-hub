@@ -13,6 +13,15 @@ interface CRHPreviewProps {
   onDownload?: () => void;
 }
 
+// Strip script tags and event handlers from AI-generated HTML
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript\s*:/gi, '');
+}
+
 export function CRHPreview({ htmlContent, status, onSign, onSendMSSante, onDownload }: CRHPreviewProps) {
   const [viewMode, setViewMode] = useState<'preview' | 'html'>('preview');
   const { toast } = useToast();
@@ -73,7 +82,7 @@ export function CRHPreview({ htmlContent, status, onSign, onSendMSSante, onDownl
       <div className="flex-1 overflow-auto bg-white">
         {viewMode === 'preview' ? (
           <iframe
-            srcDoc={htmlContent}
+            srcDoc={sanitizeHtml(htmlContent)}
             className="w-full h-full border-0"
             title="CRH Preview"
             sandbox=""
