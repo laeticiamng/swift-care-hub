@@ -1509,7 +1509,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'Acerca de',
       board: 'Board',
       seeDemo: 'Ver demo',
-      dashboard: 'Dashboard',
+      dashboard: 'Plataforma',
     },
     hero: {
       title: 'El software de urgencias',
