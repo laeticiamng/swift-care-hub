@@ -125,7 +125,7 @@ export default function RoleSelector() {
       )}
 
       <Button variant="ghost" onClick={signOut} className="mt-8 text-muted-foreground relative z-10">
-        <LogOut className="h-4 w-4 mr-2" /> Déconnexion
+        <LogOut className="h-4 w-4 mr-2" /> {t.roles.logout}
       </Button>
     </div>
   );
