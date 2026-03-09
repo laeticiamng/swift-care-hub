@@ -2114,7 +2114,7 @@ export const translations: Record<Locale, TranslationTree> = {
       pricing: 'Preise',
       demo: 'Demo',
       security: 'Sicherheit',
-      dashboard: 'Dashboard',
+      dashboard: 'Plattform',
       status: 'Status',
       sla: 'SLA',
       about: 'Über uns',
