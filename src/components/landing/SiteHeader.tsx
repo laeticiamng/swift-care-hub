@@ -70,9 +70,6 @@ export function SiteHeader() {
               <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')}>
                 {t.nav.login}
               </Button>
-              <Button size="sm" variant="outline" className="hidden sm:inline-flex" onClick={() => navigate('/demo')}>
-                {t.nav.demo}
-              </Button>
               <Button size="sm" onClick={() => navigate('/b2b')}>
                 {t.nav.requestTrial}
               </Button>

@@ -93,7 +93,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   de: {
     heading: 'Die Plattform in Aktion',
     sub: 'Fünf integrierte Module zur Echtzeit-Steuerung Ihrer Notaufnahme.',
-    cta: 'Live-Dashboard ansehen',
+    cta: 'Plattform entdecken',
     flowDashboard: 'Flow Dashboard',
     flowDesc: 'Echtzeit-Zonenkarte mit Farbcodes, Wartezählern und Engpass-Warnungen.',
     aiTriage: 'KI Manchester Triage',
