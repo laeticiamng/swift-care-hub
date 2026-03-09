@@ -13,6 +13,15 @@ interface CRHPreviewProps {
   onDownload?: () => void;
 }
 
+// Strip script tags and event handlers from AI-generated HTML
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript\s*:/gi, '');
+}
+
 export function CRHPreview({ htmlContent, status, onSign, onSendMSSante, onDownload }: CRHPreviewProps) {
   const [viewMode, setViewMode] = useState<'preview' | 'html'>('preview');
   const { toast } = useToast();
