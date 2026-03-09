@@ -586,7 +586,7 @@ export const translations: Record<Locale, TranslationTree> = {
       pricing: 'Tarifs',
       demo: 'Démo',
       security: 'Sécurité',
-      dashboard: 'Dashboard',
+      dashboard: 'Plateforme',
       status: 'Statut',
       sla: 'SLA',
       about: 'À propos',
