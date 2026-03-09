@@ -48,7 +48,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   fr: {
     heading: 'La plateforme en action',
     sub: 'Cinq modules intégrés pour piloter vos urgences en temps réel.',
-    cta: 'Voir le dashboard en direct',
+    cta: 'Découvrir la plateforme',
     flowDashboard: 'Flow Dashboard',
     flowDesc: "Carte temps réel des zones avec codes couleur, compteurs d'attente et alertes de goulets d'étranglement.",
     aiTriage: 'Triage IA Manchester',
@@ -63,7 +63,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   en: {
     heading: 'The platform in action',
     sub: 'Five integrated modules to manage your ER in real time.',
-    cta: 'See the live dashboard',
+    cta: 'Discover the platform',
     flowDashboard: 'Flow Dashboard',
     flowDesc: 'Real-time zone map with color codes, wait counters and bottleneck alerts.',
     aiTriage: 'AI Manchester Triage',
@@ -78,7 +78,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   es: {
     heading: 'La plataforma en acción',
     sub: 'Cinco módulos integrados para gestionar sus urgencias en tiempo real.',
-    cta: 'Ver el dashboard en vivo',
+    cta: 'Descubrir la plataforma',
     flowDashboard: 'Flow Dashboard',
     flowDesc: 'Mapa en tiempo real con códigos de color, contadores de espera y alertas de cuellos de botella.',
     aiTriage: 'Triaje IA Manchester',
@@ -93,7 +93,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   de: {
     heading: 'Die Plattform in Aktion',
     sub: 'Fünf integrierte Module zur Echtzeit-Steuerung Ihrer Notaufnahme.',
-    cta: 'Live-Dashboard ansehen',
+    cta: 'Plattform entdecken',
     flowDashboard: 'Flow Dashboard',
     flowDesc: 'Echtzeit-Zonenkarte mit Farbcodes, Wartezählern und Engpass-Warnungen.',
     aiTriage: 'KI Manchester Triage',

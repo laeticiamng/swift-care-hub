@@ -88,7 +88,7 @@ export function CTASection() {
                 onClick={() => navigate('/b2b')}
                 className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
-                Demander un essai gratuit <ArrowRight className="h-4 w-4" />
+                Demander un essai <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"

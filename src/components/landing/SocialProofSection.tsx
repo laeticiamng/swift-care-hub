@@ -33,7 +33,7 @@ export function SocialProofSection() {
             transition={{ duration: 0.5 }}
             className="text-sm font-semibold text-primary uppercase tracking-wider mb-3"
           >
-            Chiffres clés
+            Le produit en bref
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 12 }}
@@ -42,7 +42,7 @@ export function SocialProofSection() {
             transition={{ duration: 0.5, delay: 0.05 }}
             className="text-2xl sm:text-3xl font-bold mb-2"
           >
-            Des engagements concrets, pas des promesses.
+            Ce que vous obtenez dès le premier jour.
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -51,7 +51,7 @@ export function SocialProofSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-muted-foreground text-sm max-w-xl mx-auto"
           >
-            Chaque indicateur est vérifiable. Chaque résultat est mesurable dès l'essai.
+            Quatre repères simples pour comprendre ce que change UrgenceOS dans votre service.
           </motion.p>
         </div>
 

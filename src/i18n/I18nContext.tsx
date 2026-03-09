@@ -15,9 +15,8 @@ function getInitialLocale(): Locale {
   try {
     const saved = localStorage.getItem('urgenceos-locale');
     if (saved && saved in translations) return saved as Locale;
-    const browserLang = navigator.language.slice(0, 2);
-    if (browserLang in translations) return browserLang as Locale;
   } catch {}
+  // Produit ciblant le marché français — forcer FR par défaut
   return 'fr';
 }
 
