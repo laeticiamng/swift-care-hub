@@ -185,7 +185,7 @@ export default function AboutPage() {
               <p><span className="text-muted-foreground">Forme juridique :</span> SASU</p>
               <p><span className="text-muted-foreground">SIREN :</span> 944 505 445</p>
               <p><span className="text-muted-foreground">Capital social :</span> 1 000 €</p>
-              <p><span className="text-muted-foreground">Siège social :</span> Paris (75000), France</p>
+              <p><span className="text-muted-foreground">Siège social :</span> Amiens (80000), France</p>
               <p><span className="text-muted-foreground">Présidente :</span> Laeticia Motongane</p>
             </div>
             <div className="space-y-2">
