@@ -17,9 +17,9 @@ const TEXTS: Record<string, {
     ],
   },
   en: {
-    heading: 'What we don't do',
+    heading: "What we don\u2019t do",
     items: [
-      { title: 'No overhaul of your systems', desc: 'Your EHR stays in place. UrgenceOS plugs into it — it doesn't replace it.' },
+      { title: 'No overhaul of your systems', desc: "Your EHR stays in place. UrgenceOS plugs into it \u2014 it doesn\u2019t replace it." },
       { title: 'Not another tool to stack', desc: "UrgenceOS is an integrated platform with role-based modules. Not yet another tool to pile on." },
       { title: 'No unrealistic promises', desc: 'We start with a 10-week trial in your ER. If results are there, you continue.' },
       { title: 'No gimmick AI', desc: 'Decision support relies on validated medical scores, not algorithmic hype.' },
