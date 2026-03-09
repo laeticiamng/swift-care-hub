@@ -21,6 +21,7 @@ export default function ContactPage() {
   const [establishment, setEstablishment] = useState('');
   const [roleFunction, setRoleFunction] = useState('');
   const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
