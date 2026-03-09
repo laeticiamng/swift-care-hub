@@ -48,7 +48,7 @@ const TEXTS: Record<string, Record<string, string>> = {
   fr: {
     heading: 'La plateforme en action',
     sub: 'Cinq modules intégrés pour piloter vos urgences en temps réel.',
-    cta: 'Voir le dashboard en direct',
+    cta: 'Découvrir la plateforme',
     flowDashboard: 'Flow Dashboard',
     flowDesc: "Carte temps réel des zones avec codes couleur, compteurs d'attente et alertes de goulets d'étranglement.",
     aiTriage: 'Triage IA Manchester',
