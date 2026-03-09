@@ -868,6 +868,8 @@ export const translations: Record<Locale, TranslationTree> = {
       backHome: 'Retour à l\'accueil',
     },
   },
+
+  en: {
     nav: {
       features: 'Features',
       pricing: 'Pricing',
