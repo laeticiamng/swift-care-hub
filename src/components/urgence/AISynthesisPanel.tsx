@@ -119,10 +119,9 @@ export function AISynthesisPanel({ patientData, className, onCRHGenerated }: AIS
               </Button>
             </div>
             {mode === 'crh' ? (
-              <div
-                className="p-4 rounded-lg border bg-card text-sm prose prose-sm max-w-none dark:prose-invert max-h-96 overflow-y-auto"
-                dangerouslySetInnerHTML={{ __html: result }}
-              />
+              <div className="p-4 rounded-lg border bg-card text-sm prose prose-sm max-w-none dark:prose-invert max-h-96 overflow-y-auto">
+                <ReactMarkdown>{result}</ReactMarkdown>
+              </div>
             ) : (
               <div className="p-4 rounded-lg border bg-card text-sm prose prose-sm max-w-none dark:prose-invert max-h-96 overflow-y-auto">
                 <ReactMarkdown>{result}</ReactMarkdown>
