@@ -28,6 +28,7 @@ type TranslationTree = {
     about: string;
     board: string;
     seeDemo: string;
+    dashboard: string;
   };
   hero: {
     title: string;
@@ -490,6 +491,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'À propos',
       board: 'Board',
       seeDemo: 'Voir la démo',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'Le logiciel des urgences',
@@ -998,6 +1000,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'About',
       board: 'Board',
       seeDemo: 'See the demo',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'The emergency software',
@@ -1506,6 +1509,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'Acerca de',
       board: 'Board',
       seeDemo: 'Ver demo',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'El software de urgencias',
@@ -2015,6 +2019,7 @@ export const translations: Record<Locale, TranslationTree> = {
       about: 'Über uns',
       board: 'Board',
       seeDemo: 'Demo ansehen',
+      dashboard: 'Dashboard',
     },
     hero: {
       title: 'Die Notaufnahme-Software,',

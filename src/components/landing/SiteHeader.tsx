@@ -16,7 +16,7 @@ export function SiteHeader() {
 
   const NAV_LINKS = [
     { label: t.nav.features, to: '/features' },
-    { label: 'Dashboard', to: '/flow' },
+    { label: t.nav.dashboard, to: '/flow' },
     { label: t.nav.demo, to: '/demo' },
     { label: t.nav.pricing, to: '/tarifs' },
     { label: t.nav.establishments, to: '/b2b' },
