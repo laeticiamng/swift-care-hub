@@ -28,6 +28,7 @@ type TranslationTree = {
     about: string;
     board: string;
     seeDemo: string;
+    dashboard: string;
   };
   hero: {
     title: string;
