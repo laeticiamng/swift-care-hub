@@ -984,6 +984,7 @@ export const translations: Record<Locale, TranslationTree> = {
       ],
     },
   },
+  en: {
     nav: {
       features: 'Features',
       pricing: 'Pricing',
