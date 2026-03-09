@@ -1290,6 +1290,8 @@ export const translations: Record<Locale, TranslationTree> = {
       backHome: 'Back to home',
     },
   },
+
+  es: {
     nav: {
       features: 'Funcionalidades',
       pricing: 'Precios',
