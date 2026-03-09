@@ -442,6 +442,37 @@ type TranslationTree = {
     detail: string;
     backHome: string;
   };
+  cookieConsent: {
+    technicalOnly: string;
+    learnMore: string;
+    customize: string;
+    refuse: string;
+    accept: string;
+    settingsTitle: string;
+    essential: string;
+    essentialDesc: string;
+    preferences: string;
+    preferencesDesc: string;
+    refuseAll: string;
+    save: string;
+  };
+  pricingFeatures: {
+    trial: string[];
+    extension: string[];
+    consortium: string[];
+  };
+  pricingFaq: {
+    q1: string; a1: string;
+    q2: string; a2: string;
+    q3: string; a3: string;
+    q4: string; a4: string;
+  };
+  pricingBusinessCase: {
+    currentItems: string[];
+    targetItems: string[];
+    roiItems: string[];
+    dafItems: string[];
+  };
 };
 
 export const translations: Record<Locale, TranslationTree> = {
