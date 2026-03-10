@@ -86,7 +86,7 @@ export default function DemoLivePage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="text-center mb-10 space-y-3">
           <h1 className="text-3xl font-bold">{dl.chooseRole}</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">{dl.chooseRoleDesc}</p>

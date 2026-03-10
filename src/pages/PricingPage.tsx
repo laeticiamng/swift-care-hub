@@ -65,26 +65,26 @@ export default function PricingPage() {
       <JsonLd id="pricing-faq" data={faqPageSchema(FAQ_PRICING.map(f => ({ question: f.q, answer: f.a })))} />
       <SiteHeader />
 
-      <main className="max-w-6xl mx-auto px-6 py-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: t.pricing.breadcrumbHome, to: '/' },
           { label: t.pricing.breadcrumbPricing },
         ]} />
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <Badge variant="secondary" className="mb-4">{t.pricing.badge}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             {t.pricing.title}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
             {t.pricing.subtitle}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-20">
           {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl border p-8 flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+              className={`relative rounded-2xl border p-5 sm:p-8 flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                 plan.popular
                   ? 'border-primary bg-primary/5 shadow-xl shadow-primary/15 ring-2 ring-primary/25'
                   : 'bg-card hover:border-primary/20 hover:shadow-primary/5'
@@ -121,7 +121,7 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
-        <p className="text-sm text-muted-foreground text-center mb-20 -mt-14">
+        <p className="text-sm text-muted-foreground text-center mb-12 sm:mb-20 -mt-6 sm:-mt-14">
           {t.pricing.pricingNote}{' '}
           <button onClick={() => navigate('/b2b')} className="text-primary hover:underline font-medium">{t.pricing.contactForQuote}</button>
         </p>
@@ -185,17 +185,17 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <div className="text-center py-12 px-6 rounded-2xl border bg-card">
+        <div className="text-center py-8 sm:py-12 px-4 sm:px-6 rounded-2xl border bg-card">
           <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-3">{t.pricing.ctaTitle}</h2>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">{t.pricing.ctaTitle}</h2>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm sm:text-base">
             {t.pricing.ctaSubtitle}
           </p>
-          <div className="flex justify-center gap-3">
-            <Button onClick={() => navigate('/b2b')}>
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Button onClick={() => navigate('/b2b')} className="w-full sm:w-auto">
               {t.pricing.requestTrial} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
-            <Button variant="outline" onClick={() => navigate('/demo')}>
+            <Button variant="outline" onClick={() => navigate('/demo')} className="w-full sm:w-auto">
               {t.pricing.seeDemo}
             </Button>
           </div>

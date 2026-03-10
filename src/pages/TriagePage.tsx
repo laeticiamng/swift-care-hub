@@ -362,11 +362,11 @@ export default function TriagePage() {
             <span className="text-sm text-muted-foreground">Étape {step + 1} / 5</span>
           </div>
           <Progress value={((step + 1) / 5) * 100} className="h-2" />
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-between mt-2 overflow-x-auto scrollbar-hide gap-1">
             {STEPS.map((s, i) => (
-              <div key={s} className="flex items-center gap-1">
-                <div className={cn('h-2 w-2 rounded-full transition-colors', i <= step ? 'bg-primary' : 'bg-muted-foreground/30')} />
-                <span className={cn('text-xs transition-colors', i <= step ? 'text-primary font-medium' : 'text-muted-foreground')}>{s}</span>
+              <div key={s} className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+                <div className={cn('h-2 w-2 rounded-full transition-colors shrink-0', i <= step ? 'bg-primary' : 'bg-muted-foreground/30')} />
+                <span className={cn('text-[10px] sm:text-xs transition-colors whitespace-nowrap', i <= step ? 'text-primary font-medium' : 'text-muted-foreground')}>{s}</span>
               </div>
             ))}
           </div>
@@ -384,7 +384,7 @@ export default function TriagePage() {
                     <Check className="h-3 w-3 mr-1" /> Patient pré-rempli depuis la file d'attente
                   </Badge>
                 )}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="relative">
                     <Label>Nom</Label>
                     <Input value={nom} onChange={e => handleNomChange(e.target.value)} placeholder="DUPONT" className="mt-1" disabled={!!prefilled} />
@@ -418,7 +418,7 @@ export default function TriagePage() {
                   </div>
                   <div><Label>Prénom</Label><Input value={prenom} onChange={e => setPrenom(e.target.value)} placeholder="Jean" className="mt-1" disabled={!!prefilled} /></div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div><Label>Date de naissance</Label><Input type="date" value={dateNaissance} onChange={e => setDateNaissance(e.target.value)} className="mt-1" disabled={!!prefilled} /></div>
                   <div>
                     <Label>Sexe</Label>
@@ -465,7 +465,7 @@ export default function TriagePage() {
                   ) : null;
                 })()}
                 {!selectedExisting && (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <Label>Allergies (optionnel)</Label>
                       <Input value={newAllergies} onChange={e => setNewAllergies(e.target.value)} placeholder="Pénicilline, iode..." className="mt-1" />
@@ -544,14 +544,14 @@ export default function TriagePage() {
                     </p>
                   </div>
                 )}
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {[1, 2, 3, 4, 5].map(level => (
                     <button key={level} onClick={() => setCimu(level)}
                       className={cn(
-                        'flex flex-col items-center justify-center p-4 rounded-xl text-lg font-bold transition-all touch-target-lg',
+                        'flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl text-lg font-bold transition-all touch-target-lg',
                         cimu === level ? cimuColors[level - 1] : 'border bg-card hover:bg-accent',
                       )}>
-                      <span className="text-2xl">{level}</span>
+                      <span className="text-xl sm:text-2xl">{level}</span>
                       <span className="text-[10px] mt-1 font-normal leading-tight text-center">{cimuLabels[level - 1]}</span>
                     </button>
                   ))}

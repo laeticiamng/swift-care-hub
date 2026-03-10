@@ -212,7 +212,7 @@ export default function GlossairePage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: 'Accueil', to: '/' },
           { label: 'Glossaire' },
@@ -223,10 +223,10 @@ export default function GlossairePage() {
             <BookOpen className="h-3 w-3 mr-1" />
             Référentiel
           </Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Glossaire métier
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
             {GLOSSARY_TERMS.length} termes clés des urgences hospitalières, de l'interopérabilité
             et du système d'information de santé. Définitions claires, contexte UrgenceOS.
           </p>

@@ -59,7 +59,7 @@ export function AntiFeatureSection() {
   const tx = TEXTS[locale] || TEXTS.fr;
 
   return (
-    <Section className="py-16 px-6">
+    <Section className="py-10 sm:py-16 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 12 }}

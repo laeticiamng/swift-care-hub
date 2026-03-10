@@ -38,7 +38,7 @@ export function HeroSection() {
       {/* Top gradient fade */}
       <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-background to-transparent pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto text-center px-6 sm:px-8 pt-28 pb-24 relative">
+      <div className="max-w-4xl mx-auto text-center px-4 sm:px-8 pt-16 sm:pt-28 pb-16 sm:pb-24 relative">
         <motion.div {...fadeUp(0)}>
           <Badge variant="secondary" className="mb-6 gap-1.5 px-4 py-1.5 text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-default group">
             <Building2 className="h-3.5 w-3.5 group-hover:rotate-6 transition-transform" />
@@ -48,7 +48,7 @@ export function HeroSection() {
 
         <motion.h1
           {...fadeUp(0.1)}
-          className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.1]"
+          className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1]"
         >
           {t.hero.title}<br />
           <span className="relative inline-block bg-gradient-to-r from-primary via-[hsl(207,67%,62%)] to-primary bg-[length:200%_auto] bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite]">
@@ -58,7 +58,7 @@ export function HeroSection() {
 
         <motion.p
           {...fadeUp(0.2)}
-          className="mt-6 text-xl sm:text-2xl font-semibold text-foreground max-w-3xl mx-auto leading-snug"
+          className="mt-6 text-lg sm:text-xl md:text-2xl font-semibold text-foreground max-w-3xl mx-auto leading-snug"
         >
           {t.hero.subtitle}
         </motion.p>
@@ -72,19 +72,19 @@ export function HeroSection() {
 
         <motion.div
           {...fadeUp(0.4)}
-          className="mt-10 flex flex-wrap justify-center gap-4"
+          className="mt-8 sm:mt-10 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 sm:gap-4"
         >
           <Button
             size="lg"
             onClick={() => navigate('/b2b')}
-            className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="gap-2 px-6 sm:px-8 h-12 text-base shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 w-full sm:w-auto"
           >
             {t.hero.cta} <ArrowRight className="h-4 w-4" />
           </Button>
           <Button
             size="lg"
             variant="outline"
-            className="px-8 h-12 text-base hover:bg-primary/5 hover:border-primary/30 active:scale-[0.98] transition-all duration-200"
+            className="px-6 sm:px-8 h-12 text-base hover:bg-primary/5 hover:border-primary/30 active:scale-[0.98] transition-all duration-200 w-full sm:w-auto"
             onClick={() => navigate('/demo')}
           >
             {t.hero.ctaDemo}
@@ -105,7 +105,7 @@ export function HeroSection() {
               </div>
               <span className="ml-2 font-medium">Board — SAU</span>
             </div>
-            <div className="p-4 grid grid-cols-3 sm:grid-cols-4 gap-3">
+            <div className="p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
               {[
                 { box: 1, name: 'M. Dupont', ccmu: 2, time: '1h20', color: 'border-l-[hsl(var(--medical-warning))]' },
                 { box: 2, name: 'Mme Martin', ccmu: 4, time: '0h45', color: 'border-l-[hsl(var(--medical-success))]' },
@@ -129,7 +129,7 @@ export function HeroSection() {
         {/* Trust indicators */}
         <motion.div
           {...fadeUp(0.7)}
-          className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground"
+          className="mt-10 sm:mt-12 flex flex-wrap justify-center gap-3 sm:gap-6 text-[11px] sm:text-xs text-muted-foreground"
         >
           {[
             t.hero.trustCompatible,

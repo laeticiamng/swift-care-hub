@@ -6,7 +6,7 @@ export function FooterSection() {
   const { t } = useI18n();
 
   return (
-    <footer className="border-t py-10 px-6">
+    <footer className="border-t py-8 sm:py-10 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto flex flex-col gap-6 text-sm text-muted-foreground">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
@@ -25,29 +25,29 @@ export function FooterSection() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 border-t pt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 border-t pt-6">
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{t.footer.product}</p>
-            <Link to="/features" className="block text-xs hover:text-foreground transition-colors">{t.footer.features}</Link>
-            <Link to="/tarifs" className="block text-xs hover:text-foreground transition-colors">{t.footer.pricing}</Link>
-            <Link to="/demo" className="block text-xs hover:text-foreground transition-colors">{t.footer.demo}</Link>
-            <Link to="/securite" className="block text-xs hover:text-foreground transition-colors">{t.footer.security}</Link>
-            <Link to="/flow" className="block text-xs hover:text-foreground transition-colors">{t.footer.dashboard}</Link>
-            <Link to="/statut" className="block text-xs hover:text-foreground transition-colors">{t.footer.status}</Link>
-            <Link to="/sla" className="block text-xs hover:text-foreground transition-colors">{t.footer.sla}</Link>
+            <Link to="/features" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.features}</Link>
+            <Link to="/tarifs" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.pricing}</Link>
+            <Link to="/demo" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.demo}</Link>
+            <Link to="/securite" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.security}</Link>
+            <Link to="/flow" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.dashboard}</Link>
+            <Link to="/statut" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.status}</Link>
+            <Link to="/sla" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.sla}</Link>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{t.footer.company}</p>
-            <Link to="/about" className="block text-xs hover:text-foreground transition-colors">{t.footer.about}</Link>
-            <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors">{t.footer.establishments}</Link>
-            <Link to="/faq" className="block text-xs hover:text-foreground transition-colors">{t.footer.faq}</Link>
-            <Link to="/contact" className="block text-xs hover:text-foreground transition-colors">{t.footer.contact}</Link>
+            <Link to="/about" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.about}</Link>
+            <Link to="/b2b" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.establishments}</Link>
+            <Link to="/faq" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.faq}</Link>
+            <Link to="/contact" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.contact}</Link>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{t.footer.legal}</p>
-            <Link to="/mentions-legales" className="block text-xs hover:text-foreground transition-colors">{t.footer.legalNotices}</Link>
-            <Link to="/politique-confidentialite" className="block text-xs hover:text-foreground transition-colors">{t.footer.privacy}</Link>
-            <Link to="/cgu" className="block text-xs hover:text-foreground transition-colors">{t.footer.terms}</Link>
+            <Link to="/mentions-legales" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.legalNotices}</Link>
+            <Link to="/politique-confidentialite" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.privacy}</Link>
+            <Link to="/cgu" className="block text-xs hover:text-foreground transition-colors py-0.5">{t.footer.terms}</Link>
           </div>
           <div className="space-y-2">
             <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{t.footer.compliance}</p>

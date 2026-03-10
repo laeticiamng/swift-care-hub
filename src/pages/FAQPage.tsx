@@ -103,17 +103,17 @@ export default function FAQPage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: t.faq.breadcrumbHome, to: '/' },
           { label: t.faq.breadcrumbFaq },
         ]} />
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">{t.faq.badge}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             {t.faq.title}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
             {t.faq.subtitle}
           </p>
         </div>

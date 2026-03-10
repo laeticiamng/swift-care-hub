@@ -60,7 +60,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
-      <main className="max-w-3xl mx-auto px-6 py-12">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <Breadcrumb items={[
           { label: t.contact.breadcrumbHome, to: '/' },
           { label: t.contact.breadcrumbContact },

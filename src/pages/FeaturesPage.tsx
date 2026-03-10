@@ -29,18 +29,18 @@ export default function FeaturesPage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-5xl mx-auto px-6 py-12">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <Breadcrumb items={[
           { label: 'Accueil', to: '/' },
           { label: 'Fonctionnalités' },
         ]} />
         {/* Hero */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <Badge variant="outline" className="mb-4">Fonctionnalités</Badge>
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-4">
             Tout ce dont vos urgences ont besoin, sur un seul écran.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
             Une plateforme adaptée à chaque rôle soignant, connectée à votre DPI existant, avec traçabilité complète et alertes en temps réel.
           </p>
         </div>
@@ -316,16 +316,16 @@ export default function FeaturesPage() {
         </div>
 
         {/* CTA */}
-        <div className="text-center py-12 px-6 rounded-2xl border bg-card">
-          <h2 className="text-2xl font-bold mb-3">Prêt à évaluer l'architecture ?</h2>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+        <div className="text-center py-8 sm:py-12 px-4 sm:px-6 rounded-2xl border bg-card">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">Prêt à évaluer l'architecture ?</h2>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm sm:text-base">
             Atelier technique DSI de 2 heures. Audit de votre existant. Connecteurs testables.
           </p>
-          <div className="flex justify-center gap-3">
-            <Button onClick={() => navigate('/b2b')}>
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Button onClick={() => navigate('/b2b')} className="w-full sm:w-auto">
               Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
-            <Button variant="outline" onClick={() => navigate('/demo')}>
+            <Button variant="outline" onClick={() => navigate('/demo')} className="w-full sm:w-auto">
               Voir la démo
             </Button>
           </div>

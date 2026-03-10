@@ -522,21 +522,21 @@ export default function PatientDossierPage() {
       {encounterId && <RecapDrawer encounterId={encounterId} />}
 
       <Sheet open={interop.fhirDrawerOpen} onOpenChange={interop.setFhirDrawerOpen}>
-        <SheetContent side="right" className="w-[600px] sm:w-[700px] p-0">
+        <SheetContent side="right" className="w-full sm:w-[600px] md:w-[700px] sm:max-w-[700px] p-0">
           <SheetHeader className="sr-only"><SheetTitle>Export FHIR R4</SheetTitle></SheetHeader>
           {interop.fhirBundle && <FHIRViewer bundle={interop.fhirBundle} title={`Bundle FHIR — ${patient.nom} ${patient.prenom}`} />}
         </SheetContent>
       </Sheet>
 
       <Sheet open={interop.crhDrawerOpen} onOpenChange={interop.setCrhDrawerOpen}>
-        <SheetContent side="right" className="w-[600px] sm:w-[700px] overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:w-[600px] md:w-[700px] sm:max-w-[700px] overflow-y-auto">
           <SheetHeader className="sr-only"><SheetTitle>CRH</SheetTitle></SheetHeader>
           <CRHPreview htmlContent={interop.crhHTML} status={interop.crhStatus} onSign={interop.handleSignCRH} onSendMSSante={interop.handleSendMSSante} />
         </SheetContent>
       </Sheet>
 
       <Sheet open={interop.ordonnanceDrawerOpen} onOpenChange={interop.setOrdonnanceDrawerOpen}>
-        <SheetContent side="right" className="w-[600px] sm:w-[700px] overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:w-[600px] md:w-[700px] sm:max-w-[700px] overflow-y-auto">
           <SheetHeader className="sr-only"><SheetTitle>Ordonnance</SheetTitle></SheetHeader>
           <div className="p-4">
             <h3 className="text-lg font-bold mb-4">Ordonnance — {patient.nom} {patient.prenom}</h3>

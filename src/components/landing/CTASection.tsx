@@ -76,9 +76,9 @@ export function CTASection() {
   const tx = TEXTS[locale] || TEXTS.fr;
 
   return (
-    <Section className="py-24 px-6">
+    <Section className="py-12 sm:py-24 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto text-center">
-        <div className="grid sm:grid-cols-3 gap-6 mb-16">
+        <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
           {tx.pillars.map((p, i) => {
             const Icon = ICONS[i];
             return (
@@ -90,7 +90,7 @@ export function CTASection() {
                 viewport={{ once: true, margin: '-40px' }}
                 variants={pillarVariants}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="p-6 rounded-xl border bg-card/50 text-center space-y-3 hover:shadow-lg hover:border-primary/20 transition-all duration-300 group"
+                className="p-4 sm:p-6 rounded-xl border bg-card/50 text-center space-y-3 hover:shadow-lg hover:border-primary/20 transition-all duration-300 group"
               >
                 <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
                   <Icon className="h-5 w-5 text-primary" />
@@ -107,7 +107,7 @@ export function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl border border-primary/15 p-12 sm:p-16 shadow-sm overflow-hidden"
+          className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl sm:rounded-3xl border border-primary/15 p-6 sm:p-12 md:p-16 shadow-sm overflow-hidden"
         >
           <div
             className="absolute inset-0 pointer-events-none opacity-[0.03]"
@@ -122,18 +122,18 @@ export function CTASection() {
             <p className="text-muted-foreground mb-10 max-w-lg mx-auto leading-relaxed">
               {tx.sub}
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
               <Button
                 size="lg"
                 onClick={() => navigate('/b2b')}
-                className="gap-2 px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="gap-2 px-6 sm:px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto"
               >
                 {tx.cta} <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="px-8 h-12 text-base hover:bg-primary/5 active:scale-[0.98] transition-all"
+                className="px-6 sm:px-8 h-12 text-base hover:bg-primary/5 active:scale-[0.98] transition-all w-full sm:w-auto"
                 onClick={() => navigate('/demo')}
               >
                 {tx.ctaDemo}

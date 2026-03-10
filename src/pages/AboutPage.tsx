@@ -55,7 +55,7 @@ export default function AboutPage() {
       <JsonLd id="about-org" data={organizationSchema()} />
       <SiteHeader />
 
-      <main id="main-content" className="max-w-5xl mx-auto px-6 py-16">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: a.breadcrumbHome, to: '/' },
           { label: a.breadcrumbAbout },
@@ -64,12 +64,12 @@ export default function AboutPage() {
         {/* Hero */}
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">{a.badge}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{a.heroTitle}</h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{a.heroSubtitle}</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">{a.heroTitle}</h1>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">{a.heroSubtitle}</p>
         </div>
 
         {/* Mission */}
-        <div className="mb-20 py-12 px-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+        <div className="mb-12 sm:mb-20 py-8 sm:py-12 px-4 sm:px-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <div className="flex items-start gap-4 mb-6">
             <Target className="h-8 w-8 text-primary shrink-0" />
             <div>
@@ -81,11 +81,11 @@ export default function AboutPage() {
         </div>
 
         {/* Values */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-8">{a.principlesTitle}</h2>
-          <div className="grid sm:grid-cols-2 gap-6">
+        <div className="mb-12 sm:mb-20">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">{a.principlesTitle}</h2>
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             {VALUES.map((v) => (
-              <div key={v.title} className="flex items-start gap-4 p-6 rounded-xl border bg-card">
+              <div key={v.title} className="flex items-start gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl border bg-card">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                   <v.icon className="h-5 w-5 text-primary" />
                 </div>

@@ -67,7 +67,7 @@ export function TestimonialsSection() {
   const tx = TEXTS[locale] || TEXTS.fr;
 
   return (
-    <Section className="py-24 px-6 bg-secondary/30">
+    <Section className="py-12 sm:py-24 px-4 sm:px-6 bg-secondary/30">
       <div className="max-w-5xl mx-auto text-center">
         <motion.p
           initial={{ opacity: 0, y: 12 }}

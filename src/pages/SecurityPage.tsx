@@ -143,7 +143,7 @@ export default function SecurityPage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-5xl mx-auto px-6 py-16">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: 'Accueil', to: '/' },
           { label: 'Sécurité' },
@@ -153,10 +153,10 @@ export default function SecurityPage() {
           <Badge variant="secondary" className="mb-4 gap-1.5">
             <Shield className="h-3 w-3" /> Sécurité intégrée
           </Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             La sécurité n'est pas une option. C'est l'architecture.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
             Dans un contexte où les cyberattaques contre les hôpitaux se multiplient, un SI sécurisé par conception
             est un avantage structurel. UrgenceOS intègre la sécurité dès l'architecture, pas en option.
           </p>

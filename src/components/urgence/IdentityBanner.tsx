@@ -106,15 +106,16 @@ export function IdentityBanner({
           </div>
         )}
 
-        <div className="flex items-center gap-3 flex-wrap">
+        {/* Row 1: Back + Patient name + Actions */}
+        <div className="flex items-center gap-2 min-w-0">
           {onBack && (
-            <button onClick={onBack} className="touch-target flex items-center justify-center rounded-lg hover:bg-accent transition-colors min-w-[44px] min-h-[44px]">
+            <button onClick={onBack} className="touch-target flex items-center justify-center rounded-lg hover:bg-accent transition-colors shrink-0">
               <ArrowLeft className="h-5 w-5" />
             </button>
           )}
 
           {/* Patient photo / avatar */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0 hidden sm:block">
             {photoUrl ? (
               <img src={photoUrl} alt={`${nom} ${prenom}`} className="h-10 w-10 rounded-full object-cover border-2 border-primary/20" />
             ) : (
@@ -124,70 +125,69 @@ export function IdentityBanner({
             )}
           </div>
 
-          {/* M1-01: Identity fields - NOM + Prénom + DDN + IPP + Service + N° séjour */}
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-1">
-              <Shield className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs font-semibold text-muted-foreground tracking-tight">Urgence<span className="text-primary">OS</span></span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <h2 className="text-lg font-bold">{nom.toUpperCase()} {prenom}</h2>
-            <span className="text-muted-foreground text-sm">
-              {age} ans · {sexe}{poids ? ` · ${poids} kg` : ''}
+          {/* M1-01: Core identity — always visible */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap min-w-0 flex-1">
+            <h2 className="text-base sm:text-lg font-bold truncate max-w-[200px] sm:max-w-none">{nom.toUpperCase()} {prenom}</h2>
+            <span className="text-muted-foreground text-xs sm:text-sm shrink-0">
+              {age}a · {sexe}{poids ? ` · ${poids}kg` : ''}
             </span>
             {ccmu && <CCMUBadge level={ccmu} />}
             {boxNumber && (
-              <Badge variant="outline" className="text-xs font-medium">Box {boxNumber}</Badge>
+              <Badge variant="outline" className="text-xs font-medium shrink-0">Box {boxNumber}</Badge>
             )}
           </div>
 
-          {/* M1-01: Identifiers row */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="secondary" className="text-xs font-mono">
-              DDN: {new Date(dateNaissance).toLocaleDateString('fr-FR')}
-            </Badge>
-            <Badge variant="secondary" className="text-xs font-mono bg-primary/10 text-primary">
-              IPP: {ipp}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {service}
-            </Badge>
-            <Badge variant="outline" className="text-xs font-mono">
-              {numeroSejour}
-            </Badge>
-          </div>
-
-          {motif && (
-            <Badge variant="secondary" className="text-xs font-medium">{motif}</Badge>
-          )}
-
-          {hasAllergies && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-medical-critical/10 border border-medical-critical/20">
-              <AlertTriangle className="h-3.5 w-3.5 text-medical-critical" />
-              <span className="text-xs font-semibold text-medical-critical">
-                {allergies.join(', ')}
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-center gap-1.5 ml-auto">
-            {medecinName && (
-              <span className="text-sm text-muted-foreground mr-2">Dr. {medecinName}</span>
-            )}
+          {/* Right actions — compact on mobile */}
+          <div className="flex items-center gap-1 shrink-0 ml-auto">
             {encounterId && !isOnRecapPage && (
               <RecapDrawer
                 encounterId={encounterId}
                 trigger={
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2 sm:px-3 py-1.5 rounded-lg flex items-center gap-1">
                     <FileText className="w-4 h-4" />
-                    RECAP
+                    <span className="hidden sm:inline">RECAP</span>
                   </Button>
                 }
               />
             )}
-            <NetworkStatus />
-            <ThemeToggle />
+            <div className="hidden sm:flex items-center gap-1">
+              <NetworkStatus />
+              <ThemeToggle />
+            </div>
           </div>
+        </div>
+
+        {/* Row 2: Identifiers + Allergies — scrollable on mobile */}
+        <div className="flex items-center gap-1.5 mt-1.5 overflow-x-auto scrollbar-hide flex-nowrap pb-0.5 -mb-0.5">
+          <Badge variant="secondary" className="text-[10px] sm:text-xs font-mono shrink-0 hidden sm:inline-flex">
+            <Shield className="h-3 w-3 mr-0.5 text-primary" /> UrgenceOS
+          </Badge>
+          <Badge variant="secondary" className="text-[10px] sm:text-xs font-mono shrink-0">
+            DDN: {new Date(dateNaissance).toLocaleDateString('fr-FR')}
+          </Badge>
+          <Badge variant="secondary" className="text-[10px] sm:text-xs font-mono bg-primary/10 text-primary shrink-0">
+            IPP: {ipp}
+          </Badge>
+          <Badge variant="outline" className="text-[10px] sm:text-xs shrink-0">
+            {service}
+          </Badge>
+          <Badge variant="outline" className="text-[10px] sm:text-xs font-mono shrink-0">
+            {numeroSejour}
+          </Badge>
+          {motif && (
+            <Badge variant="secondary" className="text-[10px] sm:text-xs font-medium shrink-0">{motif}</Badge>
+          )}
+          {medecinName && (
+            <span className="text-xs text-muted-foreground shrink-0 hidden md:inline">Dr. {medecinName}</span>
+          )}
+          {hasAllergies && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-medical-critical/10 border border-medical-critical/20 shrink-0">
+              <AlertTriangle className="h-3 w-3 text-medical-critical" />
+              <span className="text-[10px] sm:text-xs font-semibold text-medical-critical whitespace-nowrap">
+                {allergies.join(', ')}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
