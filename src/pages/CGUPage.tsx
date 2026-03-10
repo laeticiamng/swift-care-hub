@@ -20,7 +20,7 @@ export default function CGUPage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-3xl mx-auto px-6 py-16 space-y-10">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-16 space-y-8 sm:space-y-10">
         <Breadcrumb items={[
           { label: 'Accueil', to: '/' },
           { label: 'CGU' },

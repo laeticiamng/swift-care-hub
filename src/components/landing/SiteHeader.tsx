@@ -31,8 +31,8 @@ export function SiteHeader() {
       Aller au contenu principal
     </a>
     <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b" role="navigation" aria-label="Navigation principale">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
-        <Link to="/" className="text-lg font-bold tracking-tight" aria-label="UrgenceOS — Accueil">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3">
+        <Link to="/" className="text-lg font-bold tracking-tight shrink-0" aria-label="UrgenceOS — Accueil">
           Urgence<span className="text-primary">OS</span>
         </Link>
 
@@ -55,14 +55,14 @@ export function SiteHeader() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
           <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/about')}>
             {t.nav.about}
           </Button>
           {isDemoMode ? (
-            <Button size="sm" onClick={() => navigate('/board')}>
+            <Button size="sm" onClick={() => navigate('/board')} className="hidden sm:inline-flex">
               <LayoutGrid className="h-4 w-4 mr-1" /> {t.nav.board}
             </Button>
           ) : (
@@ -70,7 +70,7 @@ export function SiteHeader() {
               <Button size="sm" variant="ghost" className="hidden sm:inline-flex text-muted-foreground" onClick={() => navigate('/login')}>
                 {t.nav.login}
               </Button>
-              <Button size="sm" onClick={() => navigate('/b2b')}>
+              <Button size="sm" onClick={() => navigate('/b2b')} className="hidden sm:inline-flex">
                 {t.nav.requestTrial}
               </Button>
             </>
@@ -78,7 +78,7 @@ export function SiteHeader() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-accent"
+            className="md:hidden p-2.5 rounded-lg hover:bg-accent touch-target flex items-center justify-center"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={mobileOpen}
@@ -91,46 +91,49 @@ export function SiteHeader() {
 
       {/* Mobile dropdown */}
       {mobileOpen && (
-        <div id="mobile-nav" className="md:hidden border-t bg-background px-6 py-3 space-y-1" role="menu" aria-label="Menu mobile">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              role="menuitem"
-              onClick={closeMobile}
-              aria-current={location.pathname === link.to ? 'page' : undefined}
-              className={`block px-3 py-2 text-sm rounded-md transition-colors ${
-                location.pathname === link.to
-                  ? 'text-foreground bg-accent font-medium'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              }`}
-            >
-              {link.label}
+        <>
+          <div className="fixed inset-0 top-[53px] bg-black/20 z-30 md:hidden" onClick={closeMobile} aria-hidden="true" />
+          <div id="mobile-nav" className="md:hidden border-t bg-background px-4 sm:px-6 py-3 space-y-0.5 relative z-40 max-h-[calc(100dvh-53px)] overflow-y-auto" role="menu" aria-label="Menu mobile">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                role="menuitem"
+                onClick={closeMobile}
+                aria-current={location.pathname === link.to ? 'page' : undefined}
+                className={`block px-3 py-3 text-sm rounded-lg transition-colors ${
+                  location.pathname === link.to
+                    ? 'text-foreground bg-accent font-medium'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link to="/about" role="menuitem" onClick={closeMobile} className="block px-3 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg">
+              {t.nav.about}
             </Link>
-          ))}
-          <Link to="/about" role="menuitem" onClick={closeMobile} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md">
-            {t.nav.about}
-          </Link>
-          <Link to="/login" role="menuitem" onClick={closeMobile} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md">
-            {t.nav.login}
-          </Link>
-          <div className="border-t pt-2 mt-2 flex gap-2">
-            {isDemoMode ? (
-              <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/board'); }}>
-                <LayoutGrid className="h-4 w-4 mr-1" /> {t.nav.board}
-              </Button>
-            ) : (
-              <>
-                <Button size="sm" variant="outline" className="flex-1" onClick={() => { closeMobile(); navigate('/demo'); }}>
-                  {t.nav.seeDemo}
+            <Link to="/login" role="menuitem" onClick={closeMobile} className="block px-3 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg">
+              {t.nav.login}
+            </Link>
+            <div className="border-t pt-3 mt-2 flex gap-2">
+              {isDemoMode ? (
+                <Button size="sm" className="flex-1 h-11" onClick={() => { closeMobile(); navigate('/board'); }}>
+                  <LayoutGrid className="h-4 w-4 mr-1" /> {t.nav.board}
                 </Button>
-                <Button size="sm" className="flex-1" onClick={() => { closeMobile(); navigate('/b2b'); }}>
-                  {t.nav.requestTrial}
-                </Button>
-              </>
-            )}
+              ) : (
+                <>
+                  <Button size="sm" variant="outline" className="flex-1 h-11" onClick={() => { closeMobile(); navigate('/demo'); }}>
+                    {t.nav.seeDemo}
+                  </Button>
+                  <Button size="sm" className="flex-1 h-11" onClick={() => { closeMobile(); navigate('/b2b'); }}>
+                    {t.nav.requestTrial}
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </nav>
     </>

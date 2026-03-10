@@ -68,39 +68,39 @@ export default function B2BPage() {
       })} />
       <SiteHeader />
 
-      <main className="max-w-6xl mx-auto px-6 py-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         <Breadcrumb items={[
           { label: 'Accueil', to: '/' },
           { label: 'Établissements' },
         ]} />
         {/* Hero — Positionnement stratégique */}
-        <div className="text-center mb-20">
-          <Badge variant="secondary" className="mb-4">Direction Générale / Direction financière / Informatique</Badge>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+        <div className="text-center mb-12 sm:mb-20">
+          <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">Direction Générale / Direction financière / Informatique</Badge>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Reprenez le contrôle de votre informatique hospitalière.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-2">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto mb-2">
             UrgenceOS n'est pas un logiciel de plus à acheter. C'est un plan d'autonomie :
             un logiciel que votre hôpital possède, des modules urgences aux résultats mesurables, et une compatibilité totale avec votre existant.
           </p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
             Votre dossier patient reste en place. Les outils dispersés disparaissent. Les coûts diminuent.
           </p>
-          <div className="mt-8 flex justify-center gap-3">
-            <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+            <Button size="lg" className="w-full sm:w-auto" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Demander un essai <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/features')}>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={() => navigate('/features')}>
               Voir les fonctionnalités
             </Button>
           </div>
         </div>
 
         {/* 4 discours par persona */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Un discours, quatre interlocuteurs.</h2>
-          <p className="text-muted-foreground text-center mb-10">Chaque décideur trouve sa réponse dans UrgenceOS.</p>
-          <div className="grid sm:grid-cols-2 gap-6">
+        <div className="mb-12 sm:mb-20">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-2">Un discours, quatre interlocuteurs.</h2>
+          <p className="text-muted-foreground text-center mb-6 sm:mb-10 text-sm sm:text-base">Chaque décideur trouve sa réponse dans UrgenceOS.</p>
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             {[
               {
                 icon: Building2,
@@ -123,7 +123,7 @@ export default function B2BPage() {
                 message: 'Un écran unique, structuré par rôle, où le parcours patient complet est lisible en moins de 10 secondes. Timeline horodatée, alertes labo, tâches en cours, transmissions. Un tap pour valider un acte. Zéro ressaisie. Zéro navigation inutile.',
               },
             ].map((p) => (
-              <div key={p.role} className="p-6 rounded-xl border bg-card space-y-3">
+              <div key={p.role} className="p-4 sm:p-6 rounded-xl border bg-card space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <p.icon className="h-5 w-5 text-primary" />
@@ -137,11 +137,11 @@ export default function B2BPage() {
         </div>
 
         {/* Hospital-Owned Software */}
-        <div className="mb-20 p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-          <div className="flex items-start gap-4 mb-6">
+        <div className="mb-12 sm:mb-20 p-4 sm:p-8 rounded-2xl border bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+          <div className="flex items-start gap-3 sm:gap-4 mb-6">
             <Layers className="h-6 w-6 text-primary shrink-0 mt-1" />
             <div>
-              <h2 className="text-2xl font-bold mb-2">Un logiciel que votre hôpital possède</h2>
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">Un logiciel que votre hôpital possède</h2>
               <p className="text-muted-foreground leading-relaxed">
                 L'établissement détient, gouverne et priorise un socle logiciel interne. Le code est accessible.
                 Les données restent sous gouvernance hospitalière. Les priorités d'évolution sont décidées par l'hôpital, pas par un éditeur.
@@ -166,8 +166,8 @@ export default function B2BPage() {
         </div>
 
         {/* Ce que nous remplaçons / Ce que nous unifions */}
-        <div className="mb-20 grid sm:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl border bg-card space-y-4">
+        <div className="mb-12 sm:mb-20 grid sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="p-4 sm:p-6 rounded-xl border bg-card space-y-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <RefreshCcw className="h-5 w-5 text-medical-critical" /> Ce que nous remplaçons
             </h3>
@@ -186,7 +186,7 @@ export default function B2BPage() {
               ))}
             </ul>
           </div>
-          <div className="p-6 rounded-xl border bg-card space-y-4">
+          <div className="p-4 sm:p-6 rounded-xl border bg-card space-y-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" /> Ce que nous unifions
             </h3>
@@ -208,9 +208,9 @@ export default function B2BPage() {
         </div>
 
         {/* Essai 10 semaines */}
-        <div className="mb-20">
-          <h2 className="text-2xl font-bold text-center mb-2">Essai encadré : 10 semaines pour voir les résultats.</h2>
-          <p className="text-muted-foreground text-center mb-8">
+        <div className="mb-12 sm:mb-20">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-2">Essai encadré : 10 semaines pour voir les résultats.</h2>
+          <p className="text-muted-foreground text-center mb-6 sm:mb-8 text-sm sm:text-base">
             Périmètre défini. Résultats mesurés. Critères de succès fixés avant le lancement.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -234,7 +234,7 @@ export default function B2BPage() {
 
         {/* Contact form */}
         <div id="contact" className="scroll-mt-20 mb-20">
-          <div className="max-w-2xl mx-auto p-8 rounded-2xl border bg-card">
+          <div className="max-w-2xl mx-auto p-4 sm:p-8 rounded-2xl border bg-card">
             <div className="text-center mb-8">
               <Building2 className="h-10 w-10 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">Demander un essai</h2>

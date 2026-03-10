@@ -24,7 +24,7 @@ export function SecuritySection() {
   const navigate = useNavigate();
 
   return (
-    <Section className="py-16 px-6 bg-secondary/30">
+    <Section className="py-10 sm:py-16 px-4 sm:px-6 bg-secondary/30">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

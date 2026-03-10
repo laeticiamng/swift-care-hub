@@ -113,9 +113,9 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
       style={{ animationDelay: `${index * 40}ms`, animationFillMode: 'both' }}
       onClick={onClick}
     >
-      <CardContent className="p-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-wrap">
+      <CardContent className="p-3 sm:p-4 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
             <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
             <span className="font-semibold">{p.nom.toUpperCase()} {p.prenom}</span>
             <span className="text-sm text-muted-foreground">{age}a · {p.sexe}</span>
@@ -204,7 +204,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
             </Select>
           </div>
         )}
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-sm gap-2 flex-wrap">
           <span className={cn('font-medium', waitCritical ? 'text-medical-critical' : waitWarning ? 'text-medical-warning' : 'text-muted-foreground')}>
             {waitStr}
           </span>
@@ -237,7 +237,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
                 key={z.key}
                 onClick={() => onMoveZone(encounter.id, z.key)}
                 className={cn(
-                  'px-2 py-0.5 rounded text-[10px] font-semibold border transition-all',
+                  'px-2.5 py-1 sm:px-2 sm:py-0.5 rounded text-[11px] sm:text-[10px] font-semibold border transition-all min-h-[28px] sm:min-h-0',
                   encounter.zone === z.key
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-card hover:bg-accent border-border text-muted-foreground',

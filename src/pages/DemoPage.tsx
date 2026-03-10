@@ -287,7 +287,7 @@ export default function DemoPage() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Intro */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-3">

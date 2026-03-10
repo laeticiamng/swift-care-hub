@@ -97,34 +97,34 @@ export default function StatisticsPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-20 border-b shadow-sm px-4 py-3 bg-card/80 backdrop-blur-lg">
-        <div className="flex items-center justify-between max-w-7xl mx-auto flex-wrap gap-2">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between max-w-7xl mx-auto gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Button variant="ghost" size="icon" onClick={() => navigate('/board')}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" /> Statistiques
+            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" /> <span className="hidden sm:inline">Statistiques</span><span className="sm:hidden">Stats</span>
             </h1>
-            <Badge variant="outline">Temps réel</Badge>
+            <Badge variant="outline" className="hidden sm:inline-flex">Temps réel</Badge>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide flex-nowrap">
             {PERIODS.map(p => (
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
+                  'px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium border transition-all whitespace-nowrap shrink-0',
                   period === p.value ? 'bg-primary text-primary-foreground border-primary' : 'bg-card hover:bg-accent border-border'
                 )}
               >
                 {p.label}
               </button>
             ))}
-            <Button variant="outline" size="sm" onClick={handleExportCSV}>
-              <Download className="h-4 w-4 mr-1" /> CSV
+            <Button variant="outline" size="sm" onClick={handleExportCSV} className="shrink-0 h-8 px-2 sm:px-3">
+              <Download className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">CSV</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={handleExportRPU}>
-              <Download className="h-4 w-4 mr-1" /> RPU
+            <Button variant="outline" size="sm" onClick={handleExportRPU} className="shrink-0 h-8 px-2 sm:px-3">
+              <Download className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">RPU</span>
             </Button>
             <ThemeToggle />
           </div>
@@ -138,9 +138,9 @@ export default function StatisticsPage() {
       ) : (
         <div className="max-w-7xl mx-auto p-4 space-y-6">
           {/* KPIs */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
             {kpis.map(kpi => (
-              <div key={kpi.label} className="bg-card border rounded-xl p-4 space-y-1">
+              <div key={kpi.label} className="bg-card border rounded-xl p-3 sm:p-4 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-muted-foreground">{kpi.label}</span>
                   <kpi.icon className={cn('h-4 w-4', kpi.color)} />
@@ -211,7 +211,7 @@ export default function StatisticsPage() {
                 <BarChart data={stats.zoneOccupancy} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 10 }} className="fill-muted-foreground" />
-                  <YAxis dataKey="label" type="category" tick={{ fontSize: 12 }} width={90} className="fill-muted-foreground" />
+                  <YAxis dataKey="label" type="category" tick={{ fontSize: 11 }} width={70} className="fill-muted-foreground" />
                   <Tooltip
                     contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
                     formatter={(value: number, name: string, props: any) => {
@@ -241,7 +241,7 @@ export default function StatisticsPage() {
                   <BarChart data={stats.topMotifs} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" horizontal={false} />
                     <XAxis type="number" tick={{ fontSize: 10 }} className="fill-muted-foreground" />
-                    <YAxis dataKey="motif" type="category" tick={{ fontSize: 11 }} width={150} className="fill-muted-foreground" />
+                    <YAxis dataKey="motif" type="category" tick={{ fontSize: 10 }} width={100} className="fill-muted-foreground" />
                     <Tooltip
                       contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
                       formatter={(value: number, _: string, props: any) => [`${value} (${props.payload.pct}%)`, 'Patients']}

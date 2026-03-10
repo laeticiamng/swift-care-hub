@@ -18,7 +18,7 @@ const cardVariants = {
 
 export function VisionSection() {
   return (
-    <Section className="py-16 px-6 bg-card border-y">
+    <Section className="py-10 sm:py-16 px-4 sm:px-6 bg-card border-y">
       <div className="max-w-4xl mx-auto text-center">
         <motion.p
           initial={{ opacity: 0, y: 12 }}

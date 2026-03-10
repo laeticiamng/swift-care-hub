@@ -79,7 +79,7 @@ export function ProblemSection() {
   const tx = TEXTS[locale] || TEXTS.fr;
 
   return (
-    <Section className="bg-secondary/30 py-24 px-6">
+    <Section className="bg-secondary/30 py-12 sm:py-24 px-4 sm:px-6">
       <div id="problem" className="max-w-5xl mx-auto text-center">
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -123,7 +123,7 @@ export function ProblemSection() {
                 viewport={{ once: true, margin: '-40px' }}
                 variants={cardVariants}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="bg-card rounded-2xl border p-6 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col items-center gap-3 text-center group"
+                className="bg-card rounded-2xl border p-4 sm:p-6 shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col items-center gap-3 text-center group"
               >
                 <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
                   <Icon className="h-6 w-6 text-primary" />

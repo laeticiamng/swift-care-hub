@@ -87,7 +87,7 @@ export function SocialProofSection() {
   const tx = TEXTS[locale] || TEXTS.fr;
 
   return (
-    <Section className="py-20 px-6 border-y bg-card/50">
+    <Section className="py-12 sm:py-20 px-4 sm:px-6 border-y bg-card/50">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <motion.p
