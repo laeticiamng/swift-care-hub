@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDemo } from '@/contexts/DemoContext';
 import { supabase } from '@/integrations/supabase/client';
-import { DEMO_ENCOUNTERS } from '@/lib/demo-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/urgence/StatCard';
@@ -17,7 +16,7 @@ import { ZONE_CONFIGS, ZoneKey } from '@/lib/box-config';
 import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
 import { NotificationCenter } from '@/components/urgence/NotificationCenter';
 import { useNotifications } from '@/hooks/useNotifications';
-import { SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
+import { mapLabAlert, type LabAlertRow } from '@/lib/sih-live';
 import { Users, LogOut, Filter, UserPlus, Hourglass, LayoutGrid, List, MapPin, Activity, CheckCircle, Syringe, ClipboardList, Shield } from 'lucide-react';
 import { FloorPlanView } from '@/components/urgence/FloorPlanView';
 import { BoardEmptyState } from '@/components/urgence/BoardEmptyState';
@@ -69,10 +68,7 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [finishedCount, setFinishedCount] = useState(0);
   const [, setTick] = useState(0);
-  const [labAlerts, setLabAlerts] = useState(() => {
-    const acked = JSON.parse(localStorage.getItem('urgenceos_acked_lab_alerts') || '[]') as string[];
-    return SIH_LAB_ALERTS.map(a => acked.includes(a.id) ? { ...a, acknowledged: true } : a);
-  });
+  const [labAlerts, setLabAlerts] = useState(() => [] as ReturnType<typeof mapLabAlert>[]);
   const [dechocagePending, setDechocagePending] = useState<{ encounterId: string; patientName: string; boxNumber?: number; source: 'move' | 'drop' } | null>(null);
   const [mobileSelectedEncounter, setMobileSelectedEncounter] = useState<EncounterWithPatient | null>(null);
 
@@ -82,10 +78,12 @@ export default function BoardPage() {
 
   useEffect(() => {
     fetchEncounters();
+    fetchLabAlerts();
     const channel = supabase
       .channel('board-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, () => fetchEncounters())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, () => fetchEncounters())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lab_alerts' }, () => fetchLabAlerts())
       .subscribe();
     const timer = setInterval(() => setTick(t => t + 1), 60000);
     return () => { supabase.removeChannel(channel); clearInterval(timer); };
@@ -97,28 +95,6 @@ export default function BoardPage() {
   }, [effectiveRole, navigate]);
 
   const fetchEncounters = async () => {
-    if (isDemoMode) {
-      const demoData = DEMO_ENCOUNTERS.map(e => ({
-        id: e.id,
-        patient_id: e.patient_id,
-        status: e.status,
-        zone: e.zone as ZoneKey | null,
-        box_number: e.box_number,
-        ccmu: e.ccmu,
-        cimu: e.cimu,
-        motif_sfmu: e.motif_sfmu,
-        medecin_id: e.medecin_id,
-        arrival_time: e.arrival_time,
-        patients: { nom: e.patients.nom, prenom: e.patients.prenom, date_naissance: e.patients.date_naissance, sexe: e.patients.sexe, allergies: e.patients.allergies },
-        medecin_profile: e.medecin_id ? { full_name: 'Dr. Martin Dupont' } : null,
-        diagnostic: null,
-        last_admin_at: null,
-        active_rx_count: 0,
-      }));
-      setEncounters(demoData as EncounterWithPatient[]);
-      setLoading(false);
-      return;
-    }
     // Fetch finished encounters in last 24h
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { count } = await supabase
@@ -215,6 +191,20 @@ export default function BoardPage() {
       setRxCounts(Array.from(rxMap.entries()).map(([encounter_id, count]) => ({ encounter_id, count })));
     }
     setLoading(false);
+  };
+
+  const fetchLabAlerts = async () => {
+    const { data } = await supabase
+      .from('lab_alerts' as never)
+      .select('*')
+      .eq('acknowledged', false)
+      .order('created_at', { ascending: false });
+
+    const acked = new Set(JSON.parse(localStorage.getItem('urgenceos_acked_lab_alerts') || '[]') as string[]);
+    const mapped = ((data || []) as unknown as LabAlertRow[]).map(mapLabAlert).map((alert) => (
+      acked.has(alert.id) ? { ...alert, acknowledged: true } : alert
+    ));
+    setLabAlerts(mapped);
   };
 
   const ZONE_LABELS: Record<string, string> = { sau: 'SAU', uhcd: 'UHCD', dechocage: 'Déchocage' };
@@ -379,13 +369,22 @@ export default function BoardPage() {
       {/* M3-02: Lab alert notifications — visible on all board views */}
       <LabAlertNotification
         alerts={labAlerts}
-        onAcknowledge={(alertId, note) => {
+        onAcknowledge={async (alertId, note) => {
+          await supabase
+            .from('lab_alerts' as never)
+            .update({
+              acknowledged: true,
+              acknowledged_by: user?.id || 'user',
+              acknowledged_at: new Date().toISOString(),
+              acknowledgment_note: note,
+            } as never)
+            .eq('id', alertId);
+
           setLabAlerts(prev => {
             const updated = prev.map(a =>
               a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: user?.id || 'user', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
             );
-            const acked = updated.filter(a => a.acknowledged).map(a => a.id);
-            localStorage.setItem('urgenceos_acked_lab_alerts', JSON.stringify(acked));
+            localStorage.setItem('urgenceos_acked_lab_alerts', JSON.stringify(updated.filter(a => a.acknowledged).map(a => a.id)));
             return updated;
           });
         }}

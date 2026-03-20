@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useDemo } from '@/contexts/DemoContext';
-import { DEMO_ENCOUNTERS } from '@/lib/demo-data';
 
 export type StatPeriod = 'today' | 'week' | 'month' | 'quarter';
 
@@ -44,73 +42,7 @@ function periodStart(period: StatPeriod): Date {
   }
 }
 
-// Generate demo statistics when in demo mode
-function generateDemoStats(): StatsData {
-  const encounters = DEMO_ENCOUNTERS;
-  const now = new Date();
-
-  const hourlyArrivals = Array.from({ length: 24 }, (_, i) => {
-    const h = String(i).padStart(2, '0') + ':00';
-    const base = i >= 10 && i <= 14 ? 8 : i >= 18 && i <= 22 ? 10 : i >= 2 && i <= 6 ? 1 : 4;
-    const arrivals = base + Math.floor(Math.random() * 3);
-    return { hour: h, arrivals, discharges: Math.max(0, arrivals - 1 + Math.floor(Math.random() * 3)) };
-  });
-
-  const ccmuDistribution = [1, 2, 3, 4, 5].map(level => {
-    const count = encounters.filter(e => e.ccmu === level).length || (level === 3 ? 12 : level === 2 ? 5 : level === 4 ? 8 : 2);
-    return { level, label: CCMU_LABELS[level], count, pct: 0 };
-  });
-  const totalCcmu = ccmuDistribution.reduce((s, c) => s + c.count, 0) || 1;
-  ccmuDistribution.forEach(c => c.pct = Math.round((c.count / totalCcmu) * 1000) / 10);
-
-  const zoneOccupancy = Object.entries(ZONE_CAPACITIES).map(([zone, cfg]) => ({
-    zone, label: cfg.label,
-    current: encounters.filter(e => e.zone === zone && e.status !== 'finished').length,
-    capacity: cfg.capacity,
-  }));
-
-  const motifMap: Record<string, number> = {};
-  encounters.forEach(e => {
-    if (e.motif_sfmu) motifMap[e.motif_sfmu] = (motifMap[e.motif_sfmu] || 0) + 1;
-  });
-  const totalMotifs = encounters.length || 1;
-  const topMotifs = Object.entries(motifMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([motif, count]) => ({ motif, count, pct: Math.round((count / totalMotifs) * 1000) / 10 }));
-
-  const finished = encounters.filter(e => e.status === 'finished');
-  const avgMs = finished.length > 0
-    ? 4.2 * 3600000 // Demo: ~4h12 average
-    : 4.2 * 3600000;
-
-  return {
-    loading: false,
-    totalPassages: encounters.length || 127,
-    patientsEnCours: encounters.filter(e => e.status !== 'finished').length,
-    avgPassageMinutes: Math.round(avgMs / 60000),
-    hospitalisationRate: 28,
-    sortiesSignees: finished.length || 89,
-    bioEnAttente: 8,
-    hourlyArrivals,
-    ccmuDistribution,
-    zoneOccupancy,
-    topMotifs,
-    qualityIndicators: [
-      { label: 'Taux RPU complets', value: 94.2, target: 95 },
-      { label: 'Diagnostic renseigné', value: 97.8, target: 95 },
-      { label: 'CCMU renseigné', value: 99.1, target: 95 },
-      { label: 'Mode sortie renseigné', value: 96.5, target: 95 },
-      { label: 'Délai IOA < 10 min', value: 82.3, target: 90 },
-      { label: 'Délai médecin < 60 min', value: 71.5, target: 80 },
-      { label: 'CRH envoyé au MT', value: 67.2, target: 80 },
-      { label: 'INS qualifié', value: 88.1, target: 85 },
-    ],
-  };
-}
-
 export function useStatistics(period: StatPeriod) {
-  const { isDemoMode } = useDemo();
   const [data, setData] = useState<StatsData>({
     loading: true, totalPassages: 0, patientsEnCours: 0, avgPassageMinutes: 0,
     hospitalisationRate: 0, sortiesSignees: 0, bioEnAttente: 0,
@@ -118,11 +50,6 @@ export function useStatistics(period: StatPeriod) {
   });
 
   useEffect(() => {
-    if (isDemoMode) {
-      setData(generateDemoStats());
-      return;
-    }
-
     let cancelled = false;
     async function fetchStats() {
       setData(prev => ({ ...prev, loading: true }));
@@ -242,7 +169,7 @@ export function useStatistics(period: StatPeriod) {
 
     fetchStats();
     return () => { cancelled = true; };
-  }, [period, isDemoMode]);
+  }, [period]);
 
   return data;
 }

@@ -1,125 +1,161 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { useDemo } from '@/contexts/DemoContext';
-import { DEMO_ENCOUNTERS, DEMO_PATIENTS, DEMO_VITALS } from '@/lib/demo-data';
-import { SIH_TIMELINE_ENTRIES, SIH_LAB_ALERTS, SIH_COMMUNICATIONS } from '@/lib/sih-demo-data';
-import { generateIPP } from '@/lib/homonymy-detection';
-import type { TimelineEntry, Communication } from '@/lib/sih-types';
+import { buildPatientIdentity, buildSihTimelineEntries, mapCommunication, mapLabAlert, type CommunicationRow, type EncounterRow, type LabAlertRow, type PatientRow, type PrescriptionRow, type ResultRow, type TimelineItemRow, type VitalRow } from '@/lib/sih-live';
+import type { Communication, LabAlert, PatientIdentity, TimelineEntry } from '@/lib/sih-types';
 
 export function usePatientData(encounterId: string | undefined) {
-  const { user } = useAuth();
-  const { isDemoMode } = useDemo();
-
-  const [encounter, setEncounter] = useState<any>(null);
-  const [patient, setPatient] = useState<any>(null);
-  const [vitals, setVitals] = useState<any[]>([]);
-  const [prescriptions, setPrescriptions] = useState<any[]>([]);
-  const [results, setResults] = useState<any[]>([]);
-  const [timeline, setTimeline] = useState<any[]>([]);
+  const [encounter, setEncounter] = useState<EncounterRow | null>(null);
+  const [patient, setPatient] = useState<PatientRow | null>(null);
+  const [vitals, setVitals] = useState<VitalRow[]>([]);
+  const [prescriptions, setPrescriptions] = useState<PrescriptionRow[]>([]);
+  const [results, setResults] = useState<ResultRow[]>([]);
+  const [timeline, setTimeline] = useState<TimelineItemRow[]>([]);
   const [medecinName, setMedecinName] = useState<string | undefined>(undefined);
+  const [allPatients, setAllPatients] = useState<PatientIdentity[]>([]);
 
-  // SIH state
   const [sihTimelineEntries, setSihTimelineEntries] = useState<TimelineEntry[]>([]);
-  const [sihLabAlerts, setSihLabAlerts] = useState(SIH_LAB_ALERTS);
-  const [sihCommunications, setSihCommunications] = useState(SIH_COMMUNICATIONS);
+  const [sihLabAlerts, setSihLabAlerts] = useState<LabAlert[]>([]);
+  const [sihCommunications, setSihCommunications] = useState<Communication[]>([]);
 
   const fetchAll = useCallback(async () => {
     if (!encounterId) return;
 
-    if (isDemoMode) {
-      const demoEnc = DEMO_ENCOUNTERS.find(e => e.id === encounterId);
-      if (!demoEnc) return;
-      const demoPat = DEMO_PATIENTS.find(p => p.id === demoEnc.patient_id);
-      if (!demoPat) return;
-      setEncounter({
-        id: demoEnc.id, patient_id: demoEnc.patient_id, status: demoEnc.status,
-        zone: demoEnc.zone, box_number: demoEnc.box_number, ccmu: demoEnc.ccmu,
-        cimu: demoEnc.cimu, motif_sfmu: demoEnc.motif_sfmu, medecin_id: demoEnc.medecin_id,
-        arrival_time: demoEnc.arrival_time, triage_time: demoEnc.triage_time,
-      });
-      setPatient({
-        id: demoPat.id, nom: demoPat.nom, prenom: demoPat.prenom,
-        date_naissance: demoPat.date_naissance, sexe: demoPat.sexe,
-        allergies: demoPat.allergies, antecedents: demoPat.antecedents,
-        medecin_traitant: demoPat.medecin_traitant, poids: demoPat.poids,
-        telephone: demoPat.telephone,
-      });
-      setVitals(DEMO_VITALS.filter(v => v.encounter_id === encounterId));
+    const { data: enc } = await supabase.from('encounters').select('*').eq('id', encounterId).single();
+    if (!enc) {
+      setEncounter(null);
+      setPatient(null);
+      setVitals([]);
       setPrescriptions([]);
       setResults([]);
       setTimeline([]);
-      if (demoEnc.medecin_id) setMedecinName('Dr. Martin Dupont');
+      setSihTimelineEntries([]);
+      setSihLabAlerts([]);
+      setSihCommunications([]);
       return;
     }
 
-    const { data: enc } = await supabase.from('encounters').select('*').eq('id', encounterId).single();
-    if (!enc) return;
-    setEncounter(enc);
+    const encounterRow = enc as EncounterRow;
+    setEncounter(encounterRow);
 
-    const [patRes, vitRes, rxRes, resRes, tlRes] = await Promise.all([
-      supabase.from('patients').select('*').eq('id', enc.patient_id).single(),
+    const [
+      patRes,
+      vitRes,
+      rxRes,
+      resRes,
+      tlRes,
+      labAlertRes,
+      commRes,
+    ] = await Promise.all([
+      supabase.from('patients').select('*').eq('id', encounterRow.patient_id).single(),
       supabase.from('vitals').select('*').eq('encounter_id', encounterId).order('recorded_at', { ascending: true }),
       supabase.from('prescriptions').select('*').eq('encounter_id', encounterId).order('created_at', { ascending: false }),
       supabase.from('results').select('*').eq('encounter_id', encounterId).order('received_at', { ascending: false }),
-      supabase.from('timeline_items').select('*').eq('patient_id', enc.patient_id).order('source_date', { ascending: false }),
+      supabase.from('timeline_items').select('*').eq('patient_id', encounterRow.patient_id).order('created_at', { ascending: false }),
+      supabase.from('lab_alerts' as never).select('*').eq('encounter_id', encounterId).order('created_at', { ascending: false }),
+      supabase.from('communications' as never).select('*').eq('encounter_id', encounterId).order('created_at', { ascending: false }),
     ]);
 
-    if (patRes.data) setPatient(patRes.data);
-    if (vitRes.data) setVitals(vitRes.data);
-    if (rxRes.data) setPrescriptions(rxRes.data);
-    if (resRes.data) setResults(resRes.data);
-    if (tlRes.data) setTimeline(tlRes.data);
+    const patientRow = (patRes.data || null) as PatientRow | null;
+    const vitalsRows = (vitRes.data || []) as VitalRow[];
+    const prescriptionRows = (rxRes.data || []) as PrescriptionRow[];
+    const resultRows = (resRes.data || []) as ResultRow[];
+    const timelineRows = (tlRes.data || []) as TimelineItemRow[];
+    const labAlerts = ((labAlertRes.data || []) as unknown as LabAlertRow[]).map(mapLabAlert);
+    const communications = ((commRes.data || []) as unknown as CommunicationRow[]).map(mapCommunication);
 
-    // Build SIH timeline
-    const matchingEntries = SIH_TIMELINE_ENTRIES.filter(e => e.patient_id === enc.patient_id || e.encounter_id === encounterId);
-    if (matchingEntries.length > 0) {
-      setSihTimelineEntries(matchingEntries);
+    setPatient(patientRow);
+    setVitals(vitalsRows);
+    setPrescriptions(prescriptionRows);
+    setResults(resultRows);
+    setTimeline(timelineRows);
+    setSihLabAlerts(labAlerts);
+    setSihCommunications(communications);
+
+    if (!patientRow) {
+      setSihTimelineEntries([]);
+      setAllPatients([]);
+      return;
+    }
+
+    let resolvedMedecinName: string | undefined;
+    if (encounterRow.medecin_id) {
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', encounterRow.medecin_id).single();
+      resolvedMedecinName = profile?.full_name || undefined;
+      setMedecinName(resolvedMedecinName);
     } else {
-      const autoEntries: TimelineEntry[] = [];
-      const patientIpp = generateIPP(enc.patient_id);
-      if (enc.arrival_time) {
-        autoEntries.push({ id: `auto-arr-${enc.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'arrivee', content: `Arrivee aux urgences${enc.motif_sfmu ? ` — ${enc.motif_sfmu}` : ''}`, author_id: 'system', author_name: 'Systeme', validation_status: 'valide', created_at: enc.arrival_time });
-      }
-      if (enc.triage_time) {
-        autoEntries.push({ id: `auto-tri-${enc.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'triage', content: `Triage IOA${enc.cimu ? ` — CIMU ${enc.cimu}` : ''}${enc.ccmu ? ` — CCMU ${enc.ccmu}` : ''}`, author_id: 'system', author_name: 'IOA', validation_status: 'valide', created_at: enc.triage_time });
-      }
-      if (rxRes.data) {
-        rxRes.data.forEach((rx: any) => {
-          autoEntries.push({ id: `auto-rx-${rx.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: 'prescription_ecrite', content: `${rx.medication_name} ${rx.dosage} ${rx.route}`, author_id: rx.prescriber_id || 'system', author_name: 'Prescripteur', validation_status: 'valide', created_at: rx.created_at });
-        });
-      }
-      if (resRes.data) {
-        resRes.data.forEach((r: any) => {
-          const entryType = r.category === 'imagerie' ? 'resultat_imagerie' : r.category === 'ecg' ? 'resultat_ecg' : 'resultat_bio';
-          autoEntries.push({ id: `auto-res-${r.id}`, encounter_id: enc.id, patient_id: enc.patient_id, patient_ipp: patientIpp, entry_type: entryType, content: `${r.title}${r.is_critical ? ' — CRITIQUE' : ''}`, author_id: 'system', author_name: r.category === 'imagerie' ? 'Imagerie' : r.category === 'ecg' ? 'ECG' : 'Labo', validation_status: r.is_critical ? 'critique' : 'valide', created_at: r.received_at || r.created_at });
-        });
-      }
-      setSihTimelineEntries(autoEntries);
+      setMedecinName(undefined);
     }
 
-    // Fetch medecin name
-    if (enc.medecin_id) {
-      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', enc.medecin_id).single();
-      if (profile) setMedecinName(profile.full_name);
-    }
-  }, [encounterId, isDemoMode]);
+    const sameNamePatients = await supabase
+      .from('patients')
+      .select('id, nom, prenom, date_naissance, sexe, allergies, ins_numero, ipp, photo_url')
+      .eq('nom', patientRow.nom)
+      .eq('prenom', patientRow.prenom)
+      .limit(10);
+
+    const sameNameRows = (sameNamePatients.data || []) as PatientRow[];
+    const encounterRowsByPatientId = sameNameRows.length > 0
+      ? await supabase
+          .from('encounters')
+          .select('id, patient_id, zone, arrival_time')
+          .in('patient_id', sameNameRows.map((currentPatient) => currentPatient.id))
+          .order('arrival_time', { ascending: false })
+      : { data: [] };
+
+    const latestEncounterByPatient = new Map(
+      ((encounterRowsByPatientId.data || []) as Array<Pick<EncounterRow, 'id' | 'patient_id' | 'zone'>>)
+        .map((currentEncounter) => [currentEncounter.patient_id, currentEncounter]),
+    );
+
+    const homonymCandidates = sameNameRows
+      .map((currentPatient) => buildPatientIdentity(currentPatient, latestEncounterByPatient.get(currentPatient.id) || encounterRow))
+      .filter((candidate) => candidate.id !== patientRow.id);
+
+    setAllPatients(homonymCandidates);
+    setSihTimelineEntries(buildSihTimelineEntries({
+      encounter: encounterRow,
+      patient: patientRow,
+      vitals: vitalsRows,
+      prescriptions: prescriptionRows,
+      results: resultRows,
+      timeline: timelineRows,
+      communications,
+      labAlerts,
+      medecinName: resolvedMedecinName,
+    }));
+  }, [encounterId]);
 
   useEffect(() => {
     if (!encounterId) return;
     fetchAll();
-    if (isDemoMode) return;
+
     const channel = supabase.channel(`dossier-${encounterId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'results', filter: `encounter_id=eq.${encounterId}` }, fetchAll)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'prescriptions', filter: `encounter_id=eq.${encounterId}` }, fetchAll)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'timeline_items' }, fetchAll)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lab_alerts' }, fetchAll)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'communications' }, fetchAll)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [encounterId, isDemoMode, fetchAll]);
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [encounterId, fetchAll]);
 
   return {
-    encounter, patient, vitals, prescriptions, results, timeline,
-    medecinName, sihTimelineEntries, setSihTimelineEntries,
-    sihLabAlerts, setSihLabAlerts, sihCommunications,
+    encounter,
+    patient,
+    vitals,
+    prescriptions,
+    results,
+    timeline,
+    medecinName,
+    allPatients,
+    sihTimelineEntries,
+    setSihTimelineEntries,
+    sihLabAlerts,
+    setSihLabAlerts,
+    sihCommunications,
     fetchAll,
   };
 }

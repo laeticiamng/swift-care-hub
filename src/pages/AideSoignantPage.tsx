@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
-import { DEMO_ENCOUNTERS } from '@/lib/demo-data';
 import { Activity, Eye, Truck, Bed, LogOut, ArrowLeft, Check, User, Users, Clock, Thermometer, Heart, Droplets, Wind, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -80,18 +79,11 @@ export default function AideSoignantPage() {
   useEffect(() => { fetchEncounters(); }, []);
 
   const fetchEncounters = async () => {
-    if (isDemoMode) {
-      const demoEncs = DEMO_ENCOUNTERS.filter(e => e.status !== 'arrived').map(e => ({
-        id: e.id,
-        patient_id: e.patient_id,
-        box_number: e.box_number,
-        zone: e.zone,
-        patients: { nom: e.patients.nom, prenom: e.patients.prenom },
-      }));
-      setEncounters(demoEncs);
-      return;
-    }
-    const { data } = await supabase.from('encounters').select('id, patient_id, box_number, zone, patients(nom, prenom)').in('status', ['arrived', 'triaged', 'in-progress']);
+    const { data } = await supabase
+      .from('encounters')
+      .select('id, patient_id, box_number, zone, patients(nom, prenom)')
+      .in('status', ['arrived', 'triaged', 'in-progress'])
+      .order('arrival_time', { ascending: true });
     if (data) setEncounters(data as unknown as EncounterItem[]);
   };
 
@@ -108,7 +100,7 @@ export default function AideSoignantPage() {
   }, []);
 
   const handleSaveVital = async (key: string, value: string, value2?: string) => {
-    if (!selectedEncounter || !value) return;
+    if (!user || !selectedEncounter || !value) { toast.error('Connexion requise pour enregistrer une constante'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
 
@@ -118,13 +110,6 @@ export default function AideSoignantPage() {
       checkAndAlert('pa_diastolique', parseFloat(value2));
     }
 
-    if (isDemoMode) {
-      toast.success('Constante enregistree (demo)');
-      setVitalValue('');
-      setVitalValue2('');
-      setView('constantes');
-      return;
-    }
 
     const obj: Record<string, unknown> = { encounter_id: selectedEncounter, patient_id: patientId, recorded_by: user?.id };
     obj[key] = numValue;
@@ -141,7 +126,7 @@ export default function AideSoignantPage() {
   };
 
   const handleSaveVitals = async () => {
-    if ((!user && !isDemoMode) || !selectedEncounter) return;
+    if (!user || !selectedEncounter) { toast.error('Connexion requise pour enregistrer des constantes'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
 
@@ -150,12 +135,6 @@ export default function AideSoignantPage() {
       if (val) checkAndAlert(key, parseFloat(val));
     });
 
-    if (isDemoMode) {
-      toast.success('Constantes enregistrees (demo)');
-      setVitals({ fc: '', pa_systolique: '', pa_diastolique: '', spo2: '', temperature: '', frequence_respiratoire: '', gcs: '', eva_douleur: '' });
-      setView('menu');
-      return;
-    }
 
     const obj: Record<string, unknown> = { encounter_id: selectedEncounter, patient_id: patientId, recorded_by: user?.id };
     if (vitals.fc) obj.fc = parseInt(vitals.fc);
@@ -174,8 +153,7 @@ export default function AideSoignantPage() {
   };
 
   const handleSurveillance = async () => {
-    if ((!user && !isDemoMode) || !selectedEncounter) return;
-    if (isDemoMode) { toast.success('Surveillance tracee (demo)'); setSurvNotes(''); setView('menu'); return; }
+    if (!user || !selectedEncounter) { toast.error('Connexion requise pour tracer une surveillance'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
     await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Surveillance: ${survNotes || 'Patient vu, RAS'}` });
@@ -184,8 +162,7 @@ export default function AideSoignantPage() {
   };
 
   const handleBrancardage = async () => {
-    if ((!user && !isDemoMode) || !selectedEncounter) return;
-    if (isDemoMode) { toast.success('Brancardage trace (demo)'); setBrancDestination(''); setView('menu'); return; }
+    if (!user || !selectedEncounter) { toast.error('Connexion requise pour tracer un brancardage'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
     await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Brancardage: ${brancDestination || 'Transport effectue'}` });
@@ -194,8 +171,7 @@ export default function AideSoignantPage() {
   };
 
   const handleConfort = async () => {
-    if ((!user && !isDemoMode) || !selectedEncounter) return;
-    if (isDemoMode) { toast.success('Soin de confort trace (demo)'); setConfortNotes(''); setView('menu'); return; }
+    if (!user || !selectedEncounter) { toast.error('Connexion requise pour tracer un soin de confort'); return; }
     const patientId = getSelectedPatientId();
     if (!patientId) return;
     await supabase.from('procedures').insert({ encounter_id: selectedEncounter, patient_id: patientId, performed_by: user!.id, procedure_type: 'autre' as any, notes: `Confort: ${confortNotes || 'Soins de confort effectues'}` });

@@ -1,79 +1,122 @@
-/**
- * Guard Mode Page — M7 Multi-service guard view
- */
-
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GuardModeView } from '@/components/urgence/GuardModeView';
 import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
-import { SIH_PATIENTS, SIH_GUARD_SCHEDULE, SIH_LAB_ALERTS } from '@/lib/sih-demo-data';
-import { generateIPP, generateNumeroSejour } from '@/lib/homonymy-detection';
 import { useToast } from '@/hooks/use-toast';
-import { DEMO_ENCOUNTERS } from '@/lib/demo-data';
+import { supabase } from '@/integrations/supabase/client';
+import { buildPatientIdentity, mapGuardSchedule, mapLabAlert, type GuardScheduleRow, type LabAlertRow, type PatientRow } from '@/lib/sih-live';
+import type { GuardSchedule, LabAlert } from '@/lib/sih-types';
+import { generateIPP } from '@/lib/homonymy-detection';
 
-const now = Date.now();
-const hoursAgo = (h: number) => {
-  const ms = h * 3600000;
-  const mins = Math.floor(ms / 60000);
-  if (mins < 60) return `${mins} min`;
-  return `${Math.floor(mins / 60)}h${(mins % 60).toString().padStart(2, '0')}`;
-};
+interface EncounterWithPatient {
+  id: string;
+  patient_id: string;
+  status: string;
+  zone: 'sau' | 'uhcd' | 'dechocage' | null;
+  box_number: number | null;
+  cimu: number | null;
+  motif_sfmu: string | null;
+  arrival_time: string;
+  patients: PatientRow | null;
+}
+
+function formatWaitTime(arrivalTime: string) {
+  const waitMs = Date.now() - new Date(arrivalTime).getTime();
+  const waitMins = Math.floor(waitMs / 60000);
+  return waitMins < 60 ? `${waitMins} min` : `${Math.floor(waitMins / 60)}h${String(waitMins % 60).padStart(2, '0')}`;
+}
 
 export default function GardePage() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [labAlerts, setLabAlerts] = useState(SIH_LAB_ALERTS);
+  const [encounters, setEncounters] = useState<EncounterWithPatient[]>([]);
+  const [labAlerts, setLabAlerts] = useState<LabAlert[]>([]);
+  const [guardSchedule, setGuardSchedule] = useState<GuardSchedule[]>([]);
 
-  const guardPatients = DEMO_ENCOUNTERS
-    .filter(e => e.status !== 'finished')
-    .map(enc => {
-      const sihPatient = SIH_PATIENTS.find(p => p.id === enc.patient_id);
-      const waitMs = now - new Date(enc.arrival_time).getTime();
-      const waitMins = Math.floor(waitMs / 60000);
-      const waitStr = waitMins < 60 ? `${waitMins} min` : `${Math.floor(waitMins / 60)}h${(waitMins % 60).toString().padStart(2, '0')}`;
+  useEffect(() => {
+    const fetchGuardData = async () => {
+      const [encountersRes, alertsRes, scheduleRes] = await Promise.all([
+        supabase
+          .from('encounters')
+          .select('id, patient_id, status, zone, box_number, cimu, motif_sfmu, arrival_time, patients(*)')
+          .neq('status', 'finished')
+          .order('arrival_time', { ascending: true }),
+        supabase.from('lab_alerts' as never).select('*').order('created_at', { ascending: false }),
+        supabase.from('guard_schedule' as never).select('*').eq('is_active', true).order('start_time', { ascending: false }),
+      ]);
+
+      setEncounters((encountersRes.data || []) as unknown as EncounterWithPatient[]);
+      setLabAlerts(((alertsRes.data || []) as unknown as LabAlertRow[]).map(mapLabAlert));
+      setGuardSchedule(((scheduleRes.data || []) as unknown as GuardScheduleRow[]).map(mapGuardSchedule));
+    };
+
+    fetchGuardData();
+
+    const channel = supabase
+      .channel('garde-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'encounters' }, fetchGuardData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lab_alerts' }, fetchGuardData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'guard_schedule' }, fetchGuardData)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const guardPatients = useMemo(() => encounters
+    .filter((encounter) => encounter.patients)
+    .map((encounter) => {
+      const patient = encounter.patients as PatientRow;
+      const identity = buildPatientIdentity(patient, { id: encounter.id, zone: encounter.zone });
 
       return {
-        id: enc.patient_id,
-        nom: enc.patients.nom,
-        prenom: enc.patients.prenom,
-        date_naissance: enc.patients.date_naissance,
-        ipp: sihPatient?.ipp || generateIPP(enc.patient_id),
-        service: enc.zone === 'uhcd' ? 'UHCD' : enc.zone === 'dechocage' ? 'Dechocage' : 'SAU',
-        numero_sejour: sihPatient?.numero_sejour || generateNumeroSejour(enc.id),
-        sexe: enc.patients.sexe,
-        allergies: enc.patients.allergies || [],
-        encounterId: enc.id,
-        motif: enc.motif_sfmu || 'Non precise',
-        cimu: enc.cimu || 4,
-        zone: enc.zone || 'SAU',
-        boxNumber: enc.box_number || 0,
-        status: enc.status,
-        waitTime: waitStr,
-        hasCriticalAlert: labAlerts.some(a => a.patient_id === enc.patient_id && !a.acknowledged),
-        pendingActions: enc.status === 'arrived' ? 1 : 0,
+        ...identity,
+        ipp: identity.ipp || generateIPP(patient.id),
+        encounterId: encounter.id,
+        motif: encounter.motif_sfmu || 'Motif non renseigné',
+        cimu: encounter.cimu || 4,
+        zone: encounter.zone || 'sau',
+        boxNumber: encounter.box_number || 0,
+        status: encounter.status,
+        waitTime: formatWaitTime(encounter.arrival_time),
+        hasCriticalAlert: labAlerts.some((alert) => alert.patient_id === encounter.patient_id && !alert.acknowledged),
+        pendingActions: Number(encounter.status === 'arrived') + Number((encounter.zone && !encounter.box_number) || false),
       };
-    });
+    }), [encounters, labAlerts]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background has-bottom-nav">
       <LabAlertNotification
-        alerts={labAlerts}
-        onAcknowledge={(alertId, note) => {
-          setLabAlerts(prev => prev.map(a =>
-            a.id === alertId ? { ...a, acknowledged: true, acknowledged_by: 'demo-medecin', acknowledged_at: new Date().toISOString(), acknowledgment_note: note } : a
-          ));
-          toast({ title: 'Alerte acquittee', description: 'Resultat vu et pris en compte' });
+        alerts={labAlerts.filter((alert) => !alert.acknowledged)}
+        onAcknowledge={async (alertId, note) => {
+          await supabase
+            .from('lab_alerts' as never)
+            .update({
+              acknowledged: true,
+              acknowledged_at: new Date().toISOString(),
+              acknowledgment_note: note,
+            } as never)
+            .eq('id', alertId);
+
+          setLabAlerts((currentAlerts) => currentAlerts.map((alert) => (
+            alert.id === alertId
+              ? { ...alert, acknowledged: true, acknowledged_at: new Date().toISOString(), acknowledgment_note: note }
+              : alert
+          )));
+          toast({ title: 'Alerte acquittée', description: 'Résultat critique tracé côté backend.' });
         }}
       />
 
       <GuardModeView
         patients={guardPatients}
-        guardSchedule={SIH_GUARD_SCHEDULE}
+        guardSchedule={guardSchedule}
         services={['SAU', 'UHCD', 'Dechocage']}
         currentService="all"
-        onPatientClick={(encId) => navigate(`/patient/${encId}`)}
-        onGenerateHandover={(encId) => {
-          toast({ title: 'Fiche transmission', description: 'Fiche de transmission generee (demo)' });
+        onPatientClick={(encounterId) => navigate(`/patient/${encounterId}`)}
+        onGenerateHandover={(encounterId) => {
+          navigate(`/recap/${encounterId}`);
+          toast({ title: 'Transmission prête', description: 'La synthèse patient a été ouverte à partir des données live.' });
         }}
       />
     </div>

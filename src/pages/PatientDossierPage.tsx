@@ -7,7 +7,6 @@ import { IdentityBanner } from '@/components/urgence/IdentityBanner';
 import { SIHTimeline } from '@/components/urgence/SIHTimeline';
 import { CommunicationEntryButton } from '@/components/urgence/CommunicationEntry';
 import { LabAlertNotification } from '@/components/urgence/LabAlertNotification';
-import { SIH_PATIENTS } from '@/lib/sih-demo-data';
 import { generateIPP } from '@/lib/homonymy-detection';
 import type { TimelineEntry } from '@/lib/sih-types';
 import { isVitalAbnormal } from '@/lib/vitals-utils';
@@ -54,7 +53,7 @@ export default function PatientDossierPage() {
 
   // Data
   const data = usePatientData(encounterId);
-  const { encounter, patient, vitals, prescriptions, results, timeline, medecinName, sihTimelineEntries, setSihTimelineEntries, sihLabAlerts, setSihLabAlerts, fetchAll } = data;
+  const { encounter, patient, vitals, prescriptions, results, timeline, medecinName, allPatients, sihTimelineEntries, setSihTimelineEntries, sihLabAlerts, setSihLabAlerts, fetchAll } = data;
 
   // Prescription logic
   const rx = usePrescription(encounter, patient, prescriptions, fetchAll);
@@ -112,7 +111,7 @@ export default function PatientDossierPage() {
         service={encounter.zone === 'uhcd' ? 'UHCD' : encounter.zone === 'dechocage' ? 'Dechocage' : 'SAU'}
         ccmu={encounter.ccmu} cimu={encounter.cimu} motif={encounter.motif_sfmu}
         allergies={patient.allergies || []} boxNumber={encounter.box_number}
-        poids={patient.poids} photoUrl={patient.photo_url} allPatients={SIH_PATIENTS}
+        poids={patient.poids} photoUrl={patient.photo_url} allPatients={allPatients}
         medecinName={medecinName} onBack={() => navigate(-1)}
       />
 
