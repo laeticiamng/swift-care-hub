@@ -18,7 +18,7 @@ export function StatCard({ label, value, icon: Icon, variant = 'default', classN
   };
 
   return (
-    <div className={cn('flex items-center gap-3 rounded-lg border px-4 py-3 shadow-sm', variantClasses[variant], className)}>
+    <div className={cn('flex items-center gap-3 rounded-lg border px-4 py-3 shadow-sm premium-surface premium-hover-tilt', variantClasses[variant], className)}>
       {Icon && <Icon className="h-5 w-5 shrink-0" />}
       <div>
         <p className="text-2xl font-bold leading-none">{value}</p>

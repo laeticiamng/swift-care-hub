@@ -106,7 +106,7 @@ export function PatientCard({ encounter, resultCount, rxCount, role, index, show
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={cn(
-        'cursor-grab hover:shadow-md transition-all duration-200 active:scale-[0.99] active:cursor-grabbing animate-in fade-in slide-in-from-bottom-2',
+        'cursor-grab hover:shadow-md transition-all duration-200 active:scale-[0.99] active:cursor-grabbing animate-in fade-in slide-in-from-bottom-2 premium-surface-subtle premium-hover-tilt',
         borderColor && `border-l-4 ${borderColor}`,
         waitCritical && 'ring-2 ring-medical-critical/40',
       )}
